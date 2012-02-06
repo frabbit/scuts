@@ -1,6 +1,6 @@
 package scuts.core.types;
 
-import scuts.core.Assert;
+import scuts.Assert;
 import scuts.core.types.Option;
 
 #if scuts_multithreaded
