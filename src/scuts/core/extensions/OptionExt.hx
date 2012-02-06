@@ -3,7 +3,7 @@ package scuts.core.extensions;
 import scuts.core.types.Option;
 import scuts.Scuts;
 
-class Options {
+class OptionExt {
 
   public static inline function isSome (o:Option<Dynamic>):Bool {
     return switch (o) {
@@ -16,7 +16,12 @@ class Options {
     return !isSome(o);
   }
   
+  // TODO remove me
   public static inline function value <T>(o:Option<T>):T {
+    return extract(o);
+  }
+  
+  public static inline function extract <T>(o:Option<T>):T {
     return switch (o) {
       case Some(v): v;
       case None: Scuts.error("Cannot extract value from Option None");
