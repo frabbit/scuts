@@ -11,6 +11,16 @@ using scuts.core.extensions.Function3Ext;
 class IteratorExt 
 {
 
+  public static function toArray<T> (iter:Iterator<T>):Array<T>
+  {
+    var res = [];
+    for (i in iter) {
+      res.push(i);
+    }
+    return res;
+  }
+  
+  
   public static function any<T>(iter:Iterator<T>, f:T->Bool):Bool
   {
     for (e in iter) {
