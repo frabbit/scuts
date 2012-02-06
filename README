@@ -1,11 +1,8 @@
 (h)igher (o)rder (t)ype(s) for haxe
 
 Haxe lacks type constructor polymorphism, which is essential for the implementation of High Order Types.
-To circumvent this missing piece we introduce two special abstract types "Of" and "In".
-"Of" is a type constructor which takes two types, the wrapper type and the inner type.
-The abstract haskell type "f a" translates to the haxe type "Of<F,A>". A type class is represented by
-an interface and a corresponding abstract class which implements default implementations. Every type class has an
-abstract base class, even if there is no implementation (this may change in further revisions).
+To circumvent this missing piece we introduce two special abstract types "Of" and "In". "Of" is a type constructor which takes two types, the wrapper type and the inner type.
+The abstract haskell type "f a" translates to the haxe type "Of<F,A>". A type class is represented by an interface and a corresponding abstract class which implements default implementations. Every type class has an abstract base class, even if there is no implementation (this may change in further revisions).
 
 Functor translation example: haskell -> haxe
 
@@ -22,10 +19,9 @@ interface Functor<F> implements hots.TC {
   public function map<A,B>(f:A->B, val:Of<F,A>):Of<F,B> return Scuts.abstractMethod()
 }
 
-Another important feature of type classes are constraints for type parameters. This is
-achieved by interface inheritance and delegation inside of the abstract class.
+Another important feature of type classes are constraints for type parameters. This is achieved by interface inheritance and delegation inside of the abstract class.
 
-The class Applicative in haxe has the constraint that the wrapped inner type must be a Functor instance:
+The class Applicative in haxe for example has the constraint that the wrapped inner type must be a Functor instance:
 
 interface Applicative<M> implements Functor<M>, implements TC
 {
