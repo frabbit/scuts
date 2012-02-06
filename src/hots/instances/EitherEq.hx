@@ -1,0 +1,42 @@
+package hots.instances;
+
+import hots.classes.Eq;
+import hots.classes.EqAbstract;
+import scuts.core.types.Either;
+
+#if macro
+import hots.macros.TypeClasses;
+import haxe.macro.Expr;
+#end
+
+class EitherEq {
+  
+  static var hash:Hash<Eq<Dynamic>> = new Hash();
+  
+  @:macro public static function get <A,B>(eqA:ExprRequire<Eq<A>>, eqB:ExprRequire<Eq<B>>):Expr {
+    return TypeClasses.forType([eqA, eqB], "Hash<Eq<Dynamic>>", "hots.instances.EqEitherImpl", "hots.instances.EqEither");
+  }
+}
+
+class EitherEqImpl<A,B> extends EqAbstract<Either<A,B>> {
+
+  var eqA:Eq<A>;
+  var eqB:Eq<B>;
+  
+  public function new (eqA:Eq<A>, eqB:Eq<B>) 
+  {
+    this.eqA = eqA;
+    this.eqB = eqB;
+  }
+  
+  override public function eq (a:Either<A,B>, b:Either<A,B>):Bool 
+  {
+    return switch (a) {
+      case Left(l1):
+        switch (b) { case Left(l2): eqA.eq(l1, l2); default: false;}
+      case Right(r1):
+        switch (b) { case Right(r2): eqB.eq(r1, r2); default: false;}
+    }
+  }
+  
+}
