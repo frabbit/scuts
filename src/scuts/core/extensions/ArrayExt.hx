@@ -234,6 +234,13 @@ class ArrayExt
   }
   
   
+  public static function some <T>(arr:Array<T>, e:T->Bool):Option<T> {
+    for (i in arr) {
+      if (e(i)) return Some(i);
+    }
+    return None;
+  }
+  
   public static function reduceRight <T,S>(a:Array<T>, f:T->S->S, first:T->S):S
   {
     return reduceLeft(a, f.flip(), first);
