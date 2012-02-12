@@ -17,7 +17,7 @@ class Tup6<A,B,C,D,E,F> {
     this._6 = _6;
 	}
 	public static function create <A,B,C,D,E,F>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F) {
-		return new Tup5(_1, _2, _3, _4, _5, _6);
+		return new Tup6(_1, _2, _3, _4, _5, _6);
 	}
 	public function toString () {
     
