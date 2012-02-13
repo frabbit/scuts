@@ -6,20 +6,8 @@ import hots.classes.Foldable;
 
 using hots.instances.ArrayBox;
 
-class FoldableArray {
-  
-  static var instance;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new FoldableArrayImpl();
-    return instance;
-  }
 
-}
-
-
-private class FoldableArrayImpl extends FoldableAbstract<Array<In>> 
+class ArrayOfFoldableImpl extends FoldableAbstract<Array<In>> 
 {
   public function new () {}
   
@@ -32,3 +20,5 @@ private class FoldableArrayImpl extends FoldableAbstract<Array<In>>
   }
   
 }
+
+typedef ArrayOfFoldable = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfFoldableImpl)]>;

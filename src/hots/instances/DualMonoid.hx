@@ -4,23 +4,6 @@ using scuts.core.extensions.Function1Ext;
 import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
 
-import scuts.Scuts;
-
-#if (macro || display)
-import hots.macros.TypeClasses;
-import haxe.macro.Expr;
-#end
-
-
-class DualMonoid
-{
-  static var hash:Hash<Monoid<Dynamic>> = new Hash();
-  
-  @:macro public static function get <S>(mon:ExprRequire<Monoid<S>>):Expr {
-    return TypeClasses.forType([mon], "Hash<Monoid<Dynamic>>", "hots.instances.DualMonoidImpl", "hots.instances.DualMonoid");
-  }
-  
-}
 
 class DualMonoidImpl<T> extends MonoidAbstract<T>
 {
@@ -37,3 +20,5 @@ class DualMonoidImpl<T> extends MonoidAbstract<T>
     return monoid.empty();
   }
 }
+
+typedef DualMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(DualMonoidImpl)]>;

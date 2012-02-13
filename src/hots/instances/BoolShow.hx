@@ -3,18 +3,7 @@ import hots.classes.Show;
 import hots.classes.ShowAbstract;
 
 
-class BoolShow {
-  
-  static var instance;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new BoolShowImpl();
-    return instance;
-  }
-}
-
-private class BoolShowImpl extends ShowAbstract<Bool> 
+class BoolShowImpl extends ShowAbstract<Bool> 
 {
   public function new () {}
 
@@ -22,3 +11,5 @@ private class BoolShowImpl extends ShowAbstract<Bool>
     return Std.string(v);
   }
 }
+
+typedef BoolShow = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(BoolShowImpl)]>;

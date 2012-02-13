@@ -5,18 +5,9 @@ import hots.classes.OrdAbstract;
 import hots.instances.BoolEq;
 import scuts.core.types.Ordering;
 
-class BoolOrd {
-  
-  static var instance;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new BoolOrdImpl();
-    return instance;
-  }
-}
 
-private class BoolOrdImpl extends OrdAbstract<Bool> {
+
+class BoolOrdImpl extends OrdAbstract<Bool> {
   
   public function new () super(BoolEq.get())
   
@@ -35,3 +26,5 @@ private class BoolOrdImpl extends OrdAbstract<Bool> {
   
   
 }
+
+typedef BoolOrd = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(BoolOrdImpl)]>;

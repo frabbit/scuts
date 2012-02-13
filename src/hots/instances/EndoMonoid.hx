@@ -6,19 +6,7 @@ import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
 import scuts.Scuts;
 
-
-class EndoMonoid
-{
-  static var instance:EndoMonoidImpl<Dynamic>;
-
-  public static function get <T>():EndoMonoidImpl<T>
-  {
-    if (instance == null) instance = new EndoMonoidImpl<T>();
-    return cast instance;
-  }
-}
-
-private class EndoMonoidImpl<T> extends MonoidAbstract<T->T>
+class EndoMonoidImpl<T> extends MonoidAbstract<T->T>
 {
   public function new () {}
   
@@ -29,3 +17,5 @@ private class EndoMonoidImpl<T> extends MonoidAbstract<T->T>
     return Scuts.id;
   }
 }
+
+typedef EndoMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EndoMonoidImpl)]>;

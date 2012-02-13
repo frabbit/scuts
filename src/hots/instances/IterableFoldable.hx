@@ -7,18 +7,7 @@ import hots.classes.Foldable;
 
 using hots.instances.IterableBox;
 
-class IterableFoldable {
-  
-  static var instance;
-  
-  static function get ()
-  {
-    if (instance == null) instance = new IterableFoldableImpl();
-    return instance;
-  }
-}
-
-private class IterableFoldableImpl extends FoldableAbstract<Iterable<In>> 
+class IterableFoldableImpl extends FoldableAbstract<Iterable<In>> 
 {
   public function new () {}
   
@@ -31,3 +20,5 @@ private class IterableFoldableImpl extends FoldableAbstract<Iterable<In>>
   }
   
 }
+
+typedef IterableFoldable = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IterableFoldableImpl)]>;

@@ -6,16 +6,6 @@ import hots.macros.TypeClasses;
 
 
 
-class StringEq {
-  static var instance:StringEqImpl;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new StringEqImpl();
-    return instance;
-  }
-}
-
 class StringEqImpl extends EqAbstract<String> 
 {
   public function new () {}
@@ -26,4 +16,4 @@ class StringEqImpl extends EqAbstract<String>
 }
 
 
-typedef StringProvider = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(StringEqImpl)]>;
+typedef StringEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(StringEqImpl)]>;

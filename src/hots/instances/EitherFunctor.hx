@@ -7,21 +7,6 @@ import hots.classes.Monad;
 import hots.In;
 import scuts.core.types.Either;
 
-#if (macro || display)
-import hots.macros.TypeClasses;
-import haxe.macro.Expr;
-#end
-
-class EitherFunctor 
-{
-  static var instance:EitherFunctorImpl<Dynamic>;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new EitherFunctorImpl();
-    return cast instance;
-  }
-}
 
 private typedef B = EitherBox;
 
@@ -40,3 +25,5 @@ class EitherFunctorImpl<L> extends FunctorAbstract<Either<L,In>> {
     );
  }
 }
+
+typedef EitherFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EitherFunctorImpl)]>;

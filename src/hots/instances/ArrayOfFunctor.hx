@@ -7,19 +7,8 @@ import hots.classes.Functor;
 
 using hots.instances.ArrayBox;
 
-class ArrayFunctor
-{
 
-  static var instance:ArrayFunctorImpl;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new ArrayFunctorImpl();
-    return instance;
-  }
-}
-
-private class ArrayFunctorImpl extends FunctorAbstract<Array<In>>
+class ArrayOfFunctorImpl extends FunctorAbstract<Array<In>>
 {
   public function new () {}
   
@@ -27,3 +16,5 @@ private class ArrayFunctorImpl extends FunctorAbstract<Array<In>>
     return ArrayExt.map(fa.unbox(), f).box();
   }
 }
+
+typedef ArrayOfFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfFunctorImpl)]>;

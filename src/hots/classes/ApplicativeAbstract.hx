@@ -40,6 +40,7 @@ import scuts.Scuts;
    */
   public function thenLeft<A,B>(val1:Of<M,A>, val2:Of<M,B>):Of<M,A> return val1
 
-  // delegation
+  
+  // delegation of functor
   @:final public inline function map<A,B>(f:A->B, val:Of<M,A>):Of<M,B> return functor.map(f, val)
 }

@@ -1,23 +1,10 @@
 package hots.instances;
 import hots.classes.Read;
+import hots.classes.ReadAbstract;
 
 import scuts.Scuts;
 
-#if macro
-import hots.macros.TypeClasses;
-import haxe.macro.Expr;
-#end
-
-class ArrayRead  {
-  
-  static var hash:Hash<Read<Dynamic>> = new Hash();
-  
-  @:macro public static function get <S>(readT:ExprRequire<Read<S>>):Expr {
-    return TypeClasses.forType([readT], "Hash<Read<Dynamic>>", "hots.instances.ArrayReadImpl", "hots.instances.ArrayRead");
-  }
-}
-
-private class ArrayReadImpl<T> implements Read<Array<T>> {
+class ArrayReadImpl<T> extends ReadAbstract<Array<T>> {
   
   public var readT:Read<T>;
   
@@ -25,8 +12,9 @@ private class ArrayReadImpl<T> implements Read<Array<T>> {
     this.readT = readT;
   }
   
-  public function read (v:String):Array<T> {
-    
+  override public function read (v:String):Array<T> {
     return Scuts.notImplemented();
   }
 }
+
+typedef ArrayRead = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayReadImpl)]>;

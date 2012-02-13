@@ -4,17 +4,7 @@ import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
 
 
-class ArrayMonoid
-{
-  
-  static var instance:ArrayMonoidImpl<Dynamic>;
-  
-  public static function get <T>()
-  {
-    if (instance == null) instance = new ArrayMonoidImpl();
-    return instance;
-  }
-}
+
 
 class ArrayMonoidImpl<T> extends MonoidAbstract<Array<T>>
 {
@@ -29,4 +19,4 @@ class ArrayMonoidImpl<T> extends MonoidAbstract<Array<T>>
 
 }
 
-typedef ArrayMonoidProvider = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayMonoidImpl)]>;
+typedef ArrayMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayMonoidImpl)]>;

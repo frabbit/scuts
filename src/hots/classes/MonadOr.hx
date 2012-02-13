@@ -1,6 +1,6 @@
 package hots.classes;
 import hots.classes.MonadZero;
-import hots.wrapper.MVal;
+import hots.Of;
 import scuts.Scuts;
 
 /**
@@ -13,5 +13,5 @@ import scuts.Scuts;
 
 interface MonadOr<M> implements MonadZero<M>
 {
-  public function orElse <A>(val1:MVal<M,A>, val2:MVal<M,A>):MVal<M,A> return Scuts.abstractMethod()
+  public function orElse <A>(val1:Of<M,A>, val2:Of<M,A>):Of<M,A>;
 }

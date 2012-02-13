@@ -6,4 +6,4 @@ import hots.COf;
 
 
 // M [a]
-typedef ArrayTOf<M, A> = COf<M, Array<In>, A>
+typedef ArrayOfT<M, A> = COf<M, Array<In>, A>

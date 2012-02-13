@@ -9,7 +9,6 @@ private typedef SType = scuts.mcore.Type;
 import haxe.macro.Type;
 import haxe.macro.Expr;
 import haxe.macro.Context;
-import hots.instances.ArrayTFunctor;
 import neko.FileSystem;
 import neko.io.File;
 import scuts.core.types.Option;
@@ -208,100 +207,118 @@ class TypeClasses
     // get tinst
     var inst = Context.getType(instanceTypeStr);
     
+    
+    
     // check constraints
     switch (inst) {
       case Type.TInst(t, params):
-        var fullInstanceStr = SType.getFullQualifiedTypeName(t.get());
-
-        var meta = if (!t.get().meta.has(":tcInstanceInfo")) {
-          Scuts.macroError("You have to define your provider after your type class, or import it first if it's in another class");
-        } 
-
-        var constraintArr = {
-          var constraints = tcInstanceConstraints.get(fullInstanceStr);
-          constraints.map(function (a) return a.map(function (t) 
-            return replaceSelfClassTypeParams(Print.typeStr(t), instanceTypeStr)));
-        }
-        
-        var superClass = t.get().superClass;
-        
-        var usingResult = {
-          var wrappedType = if (superClass.params.length == 1) {
-            var p = superClass.params[0];
-            Context.follow(p, false);
-          } else {
-            Scuts.macroError("Every type class must have one free type parameter");
-          };
-          replaceInnerInTypes(Print.typeStr(wrappedType));
-        };
-
-        var usingType = replaceSelfClassTypeParams(usingResult.result, instanceTypeStr);
-        
-        var paramStrings = {
-          var params = t.get().params;
-          params.map(function (p) return replaceSelfClassTypeParams(Print.typeStr(p.t), instanceTypeStr));
-        }
-        
-        var allParams = usingResult.replacements.concat(paramStrings);
-
-        var className = "Provider__" + fullInstanceStr.split(".").join("__");
-
-        var getProviderClass = {
-          var tcClass = SType.getFullQualifiedTypeName(superClass.t.get().interfaces[0].t.get()).split(".").join("_");
-          var prePost = if (allParams.length > 0) true else false;
-          var getMeParams = (if(prePost) '<' else '') + allParams.join(",") + (if(prePost) '>' else '');
-          '
-          public static function get_' + tcClass + getMeParams + '(t:' + usingType + ') {
-            return '+ className +';
-          }
-          ';
-        };
-        
-        var getter = if (constraintArr.isSome() && constraintArr.extract().length > 0) { // we need a hash
-          var constraints = switch (constraintArr) {
-            case Some(v): v;
-            case None: Scuts.macroError("assert");
-          }
-          var constraintParams = constraints.mapWithIndex(function (c,i) return "arg" + i + ": ExprRequire<" + c + ">");
-          var constraintArgs = constraints.mapWithIndex(function (c,i) return "arg" + i);
-          '
-          static var hash:Hash<' + fullInstanceStr + '<Dynamic>> = new Hash();
-          
-          @:macro public static function get<' + paramStrings.join(",") + '>(' + constraintParams.join(",") + '):Expr {
-            return hots.macros.TypeClasses.forType([' + constraintArgs.join(",") + '], 
-              "Hash<' + fullInstanceStr + '<Dynamic>>", "'+fullInstanceStr+'", "'+className+'");
-                
-          }
-          ';
-        } else if (paramStrings.length > 0){
-          
-          var dynamicParams = paramStrings.map(function (s) return "Dynamic");
-          '
-          private static var instance:' + fullInstanceStr + '<'+ dynamicParams.join(",") +'>;
-          public static function get<'+ paramStrings.join(",") +'>():' + fullInstanceStr + '<' + paramStrings.join(",") + '> {
-            if (instance == null) instance = new ' + fullInstanceStr + '();
-            return cast instance;
-          }
-          ';
+        if (t.get().isPrivate) {
+          Scuts.macroError("Instances of Type classes cannot be private");
         } else {
-          '
-          private static var instance:' + fullInstanceStr + ';
-          public static function get() {
-            if (instance == null) instance = new ' + fullInstanceStr + '();
-            return instance;
+          var fullInstanceStr = SType.getFullQualifiedTypeName(t.get());
+
+          var meta = if (!t.get().meta.has(":tcInstanceInfo")) {
+            Scuts.macroError("You have to define your provider after your type class, or import it first if it's in another class");
+          } 
+
+          var constraintArr = {
+            var constraints = tcInstanceConstraints.get(fullInstanceStr);
+            constraints.map(function (a) return a.map(function (t) 
+              return replaceSelfClassTypeParams(Print.typeStr(t), instanceTypeStr)));
           }
-          ';
+          
+          var superClass = t.get().superClass;
+          
+          var usingResult = {
+            // we need to find the wrapped type 
+            trace(superClass.params);
+            var wrappers = superClass.params.filter(function (p) return Print.typeStr(p).indexOf("hots.In") >= 0);
+            var wrappedType = if (wrappers.length == 1) {
+              var p = wrappers[0];
+              Context.follow(p, false);
+            } else {
+              if (superClass.params.length == 0) {
+                Scuts.macroError("Every type class must have one free type parameter");
+              } else {
+                Context.follow(superClass.params[0], false);
+              }
+            };
+            replaceInnerInTypes(Print.typeStr(wrappedType));
+          };
+
+          var usingType = replaceSelfClassTypeParams(usingResult.result, instanceTypeStr);
+          
+          var paramStrings = {
+            var params = t.get().params;
+            params.map(function (p) return replaceSelfClassTypeParams(Print.typeStr(p.t), instanceTypeStr));
+          }
+          
+          var allParams = usingResult.replacements.concat(paramStrings);
+
+          var className = "Provider__" + fullInstanceStr.split(".").join("__");
+
+          var getProviderClass = {
+            var tcClass = SType.getFullQualifiedTypeName(superClass.t.get().interfaces[0].t.get()).split(".").join("_");
+            var prePost = if (allParams.length > 0) true else false;
+            var getMeParams = (if(prePost) '<' else '') + allParams.join(",") + (if(prePost) '>' else '');
+            '
+    public static function get_' + tcClass + getMeParams + '(t:' + usingType + ') {
+      return '+ className +';
+    }';
+          };
+          
+          var getter = if (constraintArr.isSome() && constraintArr.extract().length > 0) { // we need a hash
+            var constraints = switch (constraintArr) {
+              case Some(v): v;
+              case None: Scuts.macroError("assert");
+            }
+            //var constraintParams = constraints.mapWithIndex(function (c,i) return "arg" + i + ": ExprRequire<" + c + ">");
+            var constraintParams = constraints.mapWithIndex(function (c,i) return "arg" + i + ": " + c );
+            var constraintArgs = constraints.mapWithIndex(function (c,i) return "arg" + i);
+            '
+    static var hash:Hash<' + fullInstanceStr + '<' + constraints.map(function (c) return "Dynamic").join(",") + '>> = new Hash();
+    
+    public static function get <' + paramStrings.join(",") + '>(' + constraintParams.join(",") + ') {
+      var id = ' + constraintArgs.map(function (x) return "Type.getClassName(Type.getClass(" + x + "))").join("+\"__\"+") + ';
+      var val = hash.get(id);
+      return if (val == null) {
+        var v = new ' + fullInstanceStr + '(' + constraintArgs.join(",") + ');
+        hash.set(id, v);
+        v;
+      } else {
+        cast val;
+      }
+    }';
+          } else if (paramStrings.length > 0){
+            
+            var dynamicParams = paramStrings.map(function (s) return "Dynamic");
+            '
+    private static var instance:' + fullInstanceStr + '<'+ dynamicParams.join(",") +'>;
+    public static function get<'+ paramStrings.join(",") +'>():' + fullInstanceStr + '<' + paramStrings.join(",") + '> {
+      if (instance == null) instance = new ' + fullInstanceStr + '();
+      return cast instance;
+    }';
+          } else {
+            '
+    private static var instance:' + fullInstanceStr + ';
+    public static function get() {
+      if (instance == null) instance = new ' + fullInstanceStr + '();
+      return instance;
+    }';
+          }
+          
+          var classStr = 'class ' + className + ' \n{\n
+            \t' + getProviderClass + '\n
+            \t' + getter + '\n}';
+          
+          var file = File.write(className + ".hx");
+          file.writeString(classStr);
+          file.close();
+          var ret = Context.getType(className);
+          // let's type it
+          Context.typeof(Context.parse("{ var a:" + className + "; a; }", Context.currentPos()));
+          return ret;
         }
-        
-        var classStr = '#if macro import haxe.macro.Expr; #end\nclass ' + className + ' {
-          ' + getProviderClass + '
-          ' + getter + '
-        }';
-        
-        var file = File.write(className + ".hx");
-        file.writeString(classStr);
-        file.close();
-        return Context.getType(className);
         
       default:
         Scuts.macroError("Type must be TInst");

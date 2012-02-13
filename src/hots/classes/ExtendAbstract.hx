@@ -25,5 +25,5 @@ using scuts.core.extensions.Function2Ext;
   
   public function duplicate<A,B>(val:Of<W,A>):Of<W, Of<W,A>> return extend(Scuts.id)(val)
   
-  @:final public inline function map<A,B>(f:A->B, val:Of<W,A>):Of<W,B> return functor.map(f, val)
+  public inline function map<A,B>(f:A->B, val:Of<W,A>):Of<W,B> return functor.map(f, val)
 }

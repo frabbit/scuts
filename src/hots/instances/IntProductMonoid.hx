@@ -1,19 +1,9 @@
 package hots.instances;
 
-import hots.classes.Monoid;
+import hots.classes.MonoidAbstract;
 
-class MonoidIntProduct
-{
-  static var instance:MonoidIntProductImpl;
-  
-  public static function get ():Monoid<Int>
-  {
-    if (instance == null) instance = new MonoidIntProductImpl();
-    return cast instance;
-  }
-}
 
-private class MonoidIntProductImpl extends MonoidDefault<Int>
+class IntProductMonoidImpl extends MonoidAbstract<Int>
 {
   public function new () {}
   
@@ -24,3 +14,5 @@ private class MonoidIntProductImpl extends MonoidDefault<Int>
     return 1;
   }
 }
+
+typedef IntProductMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IntProductMonoidImpl)]>;

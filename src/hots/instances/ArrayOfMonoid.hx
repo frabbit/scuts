@@ -7,18 +7,6 @@ import hots.extensions.ArrayOfExt;
 
 using hots.extensions.ArrayOfExt;
 
-class ArrayOfMonoid
-{
-  
-  static var instance:ArrayOfMonoidImpl<Dynamic>;
-  
-  public static function get <T>():ArrayOfMonoidImpl<T>
-  {
-    if (instance == null) instance = new ArrayOfMonoidImpl();
-    return cast instance;
-  }
-}
-
 
 private class ArrayOfMonoidImpl<T> extends MonoidAbstract<ArrayOf<T>>
 {
@@ -32,3 +20,5 @@ private class ArrayOfMonoidImpl<T> extends MonoidAbstract<ArrayOf<T>>
   }
 
 }
+
+typedef ArrayOfMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfMonoidImpl)]>;

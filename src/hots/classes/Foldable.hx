@@ -5,7 +5,7 @@ import hots.TC;
 
 
 // minimal implementation foldRight or foldMap
-interface Foldable<F>, implements TC 
+interface Foldable<F> implements TC 
 {
   public function fold <A>(mon:Monoid<A>, val:Of<F,A>):A;
   

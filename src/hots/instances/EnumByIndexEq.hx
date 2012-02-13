@@ -1,24 +1,16 @@
 package hots.instances;
 
 import hots.classes.Eq;
+import hots.classes.EqAbstract;
+import hots.instances.IntEq;
 
-class EqEnumByIndex  {
-  
-  public static var get(getInstance, null):EqEnumByIndexImpl;
-  
-  static function getInstance ()
-  {
-    if (get == null) get = new EqEnumByIndexImpl();
-    return get;
-  }
-  
-}
-
-private class EqEnumByIndexImpl extends EqDefault<Enum<Dynamic>> {
+class EnumByIndexEqImpl extends EqAbstract<Enum<Dynamic>> {
   
   public function new () {}
 
   override public function eq (a:Enum<Dynamic>, b:Enum<Dynamic>):Bool {
-    return EqInt.get.eq(Type.enumIndex(a),Type.enumIndex(b));
+    return IntEq.get().eq(Type.enumIndex(a),Type.enumIndex(b));
   }
 }
+
+typedef EnumByIndexEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EnumByIndexEqImpl)]>;

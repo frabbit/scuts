@@ -11,25 +11,6 @@ using hots.instances.OptionBox;
 
 
 
-
-class OptionMonoid
-{
-  static var hash:Hash<Monoid<Dynamic>> = new Hash();
-  
-  @:macro public static function get <S>(monoid:haxe.macro.Expr.ExprRequire<Monoid<S>>):haxe.macro.Expr {
-    return getM(monoid);
-  }
-  #if macro
-  public static function getM <S>(monoid:Expr):haxe.macro.Expr {
-    return hots.macros.TypeClasses.forType([monoid], "Hash<hots.classes.Monoid<Dynamic>>", "hots.instances.OptionMonoidImpl", "hots.instances.OptionMonoid");
-  }
-  #end
-
-}
-
-//typedef OptionMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.get(OptionMonoidImpl)]>;
-
-
 class OptionMonoidImpl<X> extends MonoidAbstract<Option<X>>
 {
   var monoid:Monoid<X>;
@@ -44,4 +25,4 @@ class OptionMonoidImpl<X> extends MonoidAbstract<Option<X>>
   }
 }
 
-typedef OptionMonoidProvider = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(hots.instances.OptionMonoidImpl)]>;
+typedef OptionMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(hots.instances.OptionMonoidImpl)]>;

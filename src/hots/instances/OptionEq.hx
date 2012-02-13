@@ -5,19 +5,6 @@ import scuts.core.types.Option;
 import hots.classes.Eq;
 
 
-#if macro
-import hots.macros.TypeClasses;
-import haxe.macro.Expr;
-#end
-
-class OptionEq {
-  static var hash:Hash<Eq<Dynamic>> = new Hash();
-  
-  @:macro public static function get <S>(eqT:ExprRequire<Eq<S>>):Expr {
-    return TypeClasses.forType([eqT], "Hash<Eq<Dynamic>>", "hots.instances.OptionEqImpl", "hots.instances.OptionEq");
-  }
-}
-
 class OptionEqImpl<T> extends EqAbstract<Option<T>> {
   
   var equals:Eq<T>;
@@ -42,3 +29,5 @@ class OptionEqImpl<T> extends EqAbstract<Option<T>> {
   }
   
 }
+
+typedef OptionEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionEqImpl)]>;

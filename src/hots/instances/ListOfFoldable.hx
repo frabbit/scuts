@@ -3,23 +3,11 @@ package hots.instances;
 import hots.classes.FoldableAbstract;
 import hots.In;
 import scuts.core.extensions.IterableExt;
-import hots.classes.Foldable;
 
 
 using hots.instances.ListBox;
 
-class ListFoldable {
-  
-  static var instance;
-  
-  static function get ()
-  {
-    if (instance == null) instance = new ListFoldableImpl();
-    return instance;
-  }
-}
-
-private class ListFoldableImpl extends FoldableAbstract<List<In>> 
+class ListOfFoldableImpl extends FoldableAbstract<List<In>> 
 {
   public function new () {}
   
@@ -32,3 +20,5 @@ private class ListFoldableImpl extends FoldableAbstract<List<In>>
   }
   
 }
+
+typedef ListOfFoldable = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ListOfFoldableImpl)]>;

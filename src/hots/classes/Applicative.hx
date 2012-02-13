@@ -16,13 +16,13 @@ import scuts.Scuts;
 interface Applicative<M> implements Functor<M>, implements TC
 {
   /**
-   * aka return
+   * aka return, pure
    */
   public function ret<A>(x:A):Of<M,A>;
   /**
    * aka <*>
    */
-  public function apply<A,B>(f:Of<M,A->B>, val:Of<M,B>):Of<M,B>;
+  public function apply<A,B>(f:Of<M,A->B>, val:Of<M,A>):Of<M,B>;
   
   /**
    * aka *>

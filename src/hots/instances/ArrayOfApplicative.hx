@@ -7,20 +7,9 @@ import scuts.core.types.Option;
 
 using hots.instances.ArrayBox;
 
-class ArrayApplicative
+class ArrayOfApplicativeImpl extends ApplicativeAbstract<Array<In>>
 {
-  static var instance:ArrayApplicativeImpl;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new ArrayApplicativeImpl();
-    return instance;
-  }
-}
-
-class ArrayApplicativeImpl extends ApplicativeAbstract<Array<In>>
-{
-  public function new () super(ArrayFunctor.get())
+  public function new () super(ArrayOfFunctor.get())
   
   override public function ret<B>(b:B):ArrayOf<B> 
   {
@@ -41,3 +30,5 @@ class ArrayApplicativeImpl extends ApplicativeAbstract<Array<In>>
     return res.box();
   }
 }
+
+typedef ArrayOfApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfApplicativeImpl)]>;

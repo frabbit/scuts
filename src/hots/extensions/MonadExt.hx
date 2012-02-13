@@ -1,4 +1,5 @@
 package hots.extensions;
+import hots.instances.ArrayOfMonad;
 import hots.Of;
 import scuts.core.extensions.ArrayExt;
 import hots.classes.Monad;
@@ -11,15 +12,35 @@ import hots.classes.Monad;
 
 class MonadExt 
 {
-
+  
+  public static function lift2 <M, A1, A2, R>(m:Monad<M>, f:A1->A2->R ):Of<M, A1>->Of<M, A2>->Of<M, R>
+  {
+    return function (v1:Of<M, A1>, v2:Of<M, A2>) {
+      return m.flatMap(v1, function (x1) {
+        return m.flatMap(v2, function (x2) {
+          return m.ret(f(x1,x2));
+        });
+      });
+    };
+  }
+  
+  public static function ap<M,A,B>(m:Monad<M>, f:Of<M, A->B>):Of<M, A>->Of<M,B> 
+  {
+    return function (v:Of<M,A>) {
+      return m.flatMap(f, function (f1:A->B):Of<M,B> {
+        return m.map(function (a2:A):B {
+          return f1(a2);
+        }, v);
+      });
+    };
+    
+  }
   public static function sequence <M,B>(monad:Monad<M>, arr:Array<Of<M, B>>):Of<M,Array<B>>
   {
-    var arrMonad = ArrayMonad.get;
+    var arrMonad = ArrayOfMonad.get();
     var k = function (m1:Of<M,B>,m2:Of<M,Array<B>>) {
       return monad.flatMap(m1, function (x:B) {
-        type(x);
         return monad.flatMap(m2, function (xs:Array<B>) {
-          type(xs);
           return monad.ret([x].concat(xs));
         });
       });
@@ -31,30 +52,13 @@ class MonadExt
   
   public static inline function mapM <M,A,B>(mon:Monad<M>, f:A->Of<M,B>, a:Array<A>):Of<M,Array<B>>
   {
-    return sequence(ArrayExt.map(a,f), mon);
+    return sequence(mon, ArrayExt.map(a,f));
   }
   
   // from functor
-  public static inline function map<M,A,B>(mon:Monad<M>, f:A->B, val:Of<M,A>):Of<M,B> {
-    return mon.getFunctor().map(f, val);
-  }
   
-  // from applicative
-  public static inline function ret<M,A>(mon:Monad<M>, x:A):Of<M,A> return mon.getApplicative().ret(x)
-  /**
-   * aka <*>
-   */
-  public static function apply<M,A,B>(mon:Monad<M>, val:Of<M,A->B>, f:Of<M,A>):Of<M,B> return mon.getApplicative().apply(x)
   
-  /**
-   * aka *>, >>, then
-   */
-  public static function thenRight<M,A,B>(mon:Monad<M>, val:MVal<M,A>, fb:MVal<M,B>):MVal<M,B> return mon.getApplicative().thenRight(x)
   
-  /**
-   * aka <*
-   */
-  public static function thenLeft<M,A,B>(mon:Monad<M>, val:MVal<M,A>, fb:MVal<M,B>):MVal<M,B> return mon.getApplicative().thenLeft(x)
   
   
 }

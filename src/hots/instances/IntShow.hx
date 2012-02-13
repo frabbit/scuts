@@ -1,21 +1,8 @@
 package hots.instances;
-import hots.classes.Show;
 import hots.classes.ShowAbstract;
 
 
-class IntShow 
-{
-  static var instance;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new IntShowImpl();
-    return instance;
-  }
-  
-}
-
-private class IntShowImpl extends ShowAbstract<Int> 
+class IntShowImpl extends ShowAbstract<Int> 
 {
   public function new () {}
   
@@ -23,3 +10,5 @@ private class IntShowImpl extends ShowAbstract<Int>
     return Std.string(v);
   }
 }
+
+typedef IntShow = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IntShowImpl)]>;

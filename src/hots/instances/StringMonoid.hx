@@ -3,17 +3,6 @@ package hots.instances;
 
 import hots.classes.MonoidAbstract;
 
-class StringMonoid
-{
-  static var instance;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new StringMonoidImpl();
-    return instance;
-  }
-}
-
 class StringMonoidImpl extends MonoidAbstract<String>
 {
   public function new () {}
@@ -25,3 +14,5 @@ class StringMonoidImpl extends MonoidAbstract<String>
     return "";
   }
 }
+
+typedef StringMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(StringMonoidImpl)]>;

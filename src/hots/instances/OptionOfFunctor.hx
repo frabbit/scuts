@@ -3,25 +3,11 @@ package hots.instances;
 import hots.classes.FunctorAbstract;
 import hots.In;
 import scuts.core.extensions.OptionExt;
-
-import hots.classes.Applicative;
-import hots.classes.Functor;
 import scuts.core.types.Option;
 
 using hots.instances.OptionBox;
 
-class OptionFunctor
-{
-  static var instance;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new OptionFunctorImpl();
-    return instance;
-  }
-}
-
-private class OptionFunctorImpl extends FunctorAbstract<Option<In>>
+class OptionOfFunctorImpl extends FunctorAbstract<Option<In>>
 {
   public function new () {}
   
@@ -29,3 +15,5 @@ private class OptionFunctorImpl extends FunctorAbstract<Option<In>>
     return OptionExt.map(val.unbox(), f).box();
   }
 }
+
+typedef OptionOfFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionOfFunctorImpl)]>;

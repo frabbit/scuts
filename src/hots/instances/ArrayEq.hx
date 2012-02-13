@@ -3,21 +3,8 @@ package hots.instances;
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
 
-#if macro
-import haxe.macro.Expr;
-import scuts.macro.builder.TypeClasses;
-#end
 
-class EqArray  {
-
-  static var hash:Hash<EqArrayImpl<Dynamic>> = new Hash();
-  
-  @:macro public static function forType <S>(eqT:ExprRequire<Eq<S>>):Expr {
-    return TypeClasses.forType([eqT], "Hash<hots.instances.EqArrayImpl<Dynamic>>", "hots.instances.EqArrayImpl", "hots.instances.EqArray");
-  }
-}
-
-class EqArrayImpl<T> extends EqAbstract<Array<T>> {
+class ArrayEqImpl<T> extends EqAbstract<Array<T>> {
   
   var eqT:Eq<T>;
   
@@ -35,3 +22,5 @@ class EqArrayImpl<T> extends EqAbstract<Array<T>> {
   }
   
 }
+
+typedef ArrayEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayEqImpl)]>;

@@ -3,17 +3,7 @@ package hots.instances;
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
 
-class BoolEq  {
-  static var instance;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new BoolEqImpl();
-    return instance;
-  }
-}
-
-private class BoolEqImpl extends EqAbstract<Bool> {
+class BoolEqImpl extends EqAbstract<Bool> {
   
   public function new () {}
 
@@ -22,3 +12,5 @@ private class BoolEqImpl extends EqAbstract<Bool> {
   }
   
 }
+
+typedef BoolEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(BoolEqImpl)]>;

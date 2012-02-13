@@ -6,22 +6,10 @@ import scuts.core.extensions.ArrayExt;
 
 using hots.instances.ArrayBox;
 
-
-class ArrayMonad {
-  
-  static var instance:ArrayMonadImpl;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new ArrayMonadImpl();
-    return instance;
-  }
-}
-
-private class ArrayMonadImpl extends MonadAbstract<Array<In>>
+private class ArrayOfMonadImpl extends MonadAbstract<Array<In>>
 {
   
-  public function new () super(ArrayApplicative.get())
+  public function new () super(ArrayOfApplicative.get())
   
   override public function flatMap<A,B>(fa:ArrayOf<A>, f: A->ArrayOf<B>):ArrayOf<B> 
   {
@@ -29,3 +17,5 @@ private class ArrayMonadImpl extends MonadAbstract<Array<In>>
   }
     
 }
+
+typedef ArrayOfMonad = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfMonadImpl)]>;

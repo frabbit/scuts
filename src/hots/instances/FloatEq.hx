@@ -4,17 +4,6 @@ import hots.classes.Eq;
 import hots.classes.EqAbstract;
 import scuts.core.math.MathConstants;
 
-
-class FloatEq {
-  static var instance;
-  
-  public static function get()
-  {
-    if (instance == null) instance = new FloatEqImpl();
-    return instance;
-  }
-}
-
 class FloatEqImpl extends EqAbstract<Float> {
   
   public function new () {}
@@ -30,3 +19,5 @@ class FloatEqImpl extends EqAbstract<Float> {
   
   
 }
+
+typedef FloatEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(FloatEqImpl)]>;

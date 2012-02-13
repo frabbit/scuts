@@ -27,7 +27,7 @@ import scuts.Scuts;
 
   @:final public inline function ret<A>(x:A):Of<M,A> return a.ret(x)
   
-  @:final public inline function apply<A,B>(f:Of<M,A->B>, val:Of<M,B>):Of<M,B> return a.apply(f,val)
+  @:final public inline function apply<A,B>(f:Of<M,A->B>, val:Of<M,A>):Of<M,B> return a.apply(f,val)
   
   @:final public inline function thenRight<A,B>(val1:Of<M,A>, val2:Of<M,B>):Of<M,B> return a.thenRight(val1,val2)
   

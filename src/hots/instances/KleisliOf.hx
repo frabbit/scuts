@@ -7,8 +7,3 @@ import hots.COf;
 
 
 typedef KleisliOf<M,A,B> = COf<In->Of<M, In>, A, B>; //  A -> Monad<B>
-
-
-
-
-

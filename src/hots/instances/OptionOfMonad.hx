@@ -10,20 +10,10 @@ import scuts.Scuts;
 using scuts.core.extensions.OptionExt;
 using hots.instances.OptionBox;
 
-class OptionMonad {
-    
-  static var instance;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new OptionMonadImpl();
-    return instance;
-  }
-}
 
-private class OptionMonadImpl extends MonadAbstract<Option<In>>
+class OptionOfMonadImpl extends MonadAbstract<Option<In>>
 {
-  public function new () super(OptionApplicative.get())
+  public function new () super(OptionOfApplicative.get())
   
   override public function flatMap<A,B>(val:OptionOf<A>, f: A->OptionOf<B>):OptionOf<B> 
   {
@@ -55,4 +45,4 @@ private class OptionMonadImpl extends MonadAbstract<Option<In>>
   */
   
 }
-
+typedef OptionOfMonad = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionOfMonadImpl)]>;

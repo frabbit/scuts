@@ -1,19 +1,9 @@
 package hots.instances;
 
-import hots.classes.Eq;
 
-class EqInt{
+import hots.classes.EqAbstract;
 
-  public static var get(getInstance, null):EqIntImpl;
-  
-  static function getInstance ()
-  {
-    if (get == null) get = new EqIntImpl();
-    return get;
-  }
-}
-
-class EqIntImpl extends EqDefault<Int> {
+class IntEqImpl extends EqAbstract<Int> {
   
   public function new () {}
   
@@ -22,3 +12,5 @@ class EqIntImpl extends EqDefault<Int> {
   }
   
 }
+
+typedef IntEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IntEqImpl)]>;

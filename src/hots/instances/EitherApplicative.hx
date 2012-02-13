@@ -1,27 +1,8 @@
 package hots.instances;
 
 import hots.classes.ApplicativeAbstract;
-import hots.classes.FunctorAbstract;
-import scuts.Scuts;
-import hots.classes.Monad;
 import hots.In;
 import scuts.core.types.Either;
-
-#if (macro || display)
-import hots.macros.TypeClasses;
-import haxe.macro.Expr;
-#end
-
-class EitherApplicative 
-{
-  static var instance:EitherApplicativeImpl<Dynamic>;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new EitherApplicativeImpl();
-    return cast instance;
-  }
-}
 
 private typedef B = EitherBox;
 
@@ -49,8 +30,6 @@ class EitherApplicativeImpl<L> extends ApplicativeAbstract<Either<L,In>> {
     }
     return B.box(res);
   }
-  
-  
-  
-
 }
+
+typedef EitherApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EitherApplicativeImpl)]>;

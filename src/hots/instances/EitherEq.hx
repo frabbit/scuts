@@ -4,20 +4,6 @@ import hots.classes.Eq;
 import hots.classes.EqAbstract;
 import scuts.core.types.Either;
 
-#if macro
-import hots.macros.TypeClasses;
-import haxe.macro.Expr;
-#end
-
-class EitherEq {
-  
-  static var hash:Hash<Eq<Dynamic>> = new Hash();
-  
-  @:macro public static function get <A,B>(eqA:ExprRequire<Eq<A>>, eqB:ExprRequire<Eq<B>>):Expr {
-    return TypeClasses.forType([eqA, eqB], "Hash<Eq<Dynamic>>", "hots.instances.EqEitherImpl", "hots.instances.EqEither");
-  }
-}
-
 class EitherEqImpl<A,B> extends EqAbstract<Either<A,B>> {
 
   var eqA:Eq<A>;
@@ -40,3 +26,5 @@ class EitherEqImpl<A,B> extends EqAbstract<Either<A,B>> {
   }
   
 }
+
+typedef EitherEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EitherEqImpl)]>;

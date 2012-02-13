@@ -6,7 +6,7 @@ import scuts.core.extensions.Function1Ext;
 using scuts.core.extensions.Function1Ext;
 
 
-interface Enumeration<T>, implements TC {
+interface Enumeration<T> implements TC {
   public function pred (a:T):T;
   
   public function succ (a:T):T;

@@ -1,6 +1,6 @@
 package hots.extensions;
 import hots.instances.ArrayBox;
-import hots.instances.ArrayFunctor;
+import hots.instances.ArrayOfFunctor;
 import hots.instances.ArrayOf;
 
 private typedef B = ArrayBox;
@@ -20,7 +20,7 @@ extern class ArrayOfExt
   
   public static inline function map<A,B>(a:ArrayOf<A>, f:A->B):ArrayOf<B> 
   {
-    return ArrayFunctor.get().map(f,a);
+    return ArrayOfFunctor.get().map(f,a);
   }
   
   public static inline function empty<A>():ArrayOf<A> 

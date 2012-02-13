@@ -2,22 +2,7 @@ package hots.instances;
 import hots.classes.Enumeration;
 import hots.classes.EnumerationAbstract;
 
-
-
-class DateInWeeksEnumeration {
-  
-  static var instance;
-  
-  static function get ()
-  {
-    if (instance == null) instance = new DateInWeeksEnumerationImpl();
-    return instance;
-  }
-  
-}
-
-private class DateInWeeksEnumerationImpl extends EnumerationAbstract<Date>{
-  
+class DateInWeeksEnumerationImpl extends EnumerationAbstract<Date>{
   
   public function new () {}
   
@@ -29,3 +14,5 @@ private class DateInWeeksEnumerationImpl extends EnumerationAbstract<Date>{
     return Date.fromTime(i*(1000.0*60.0*60.0*24.0*7.0) - (1000.0*60.0*60.0*1.0));
   }
 }
+
+typedef DateInWeeksEnumeration = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(DateInWeeksEnumerationImpl)]>;

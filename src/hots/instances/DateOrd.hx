@@ -6,23 +6,10 @@ import hots.instances.DateEq;
 import hots.instances.FloatOrd;
 import scuts.core.types.Ordering;
 
-class DateOrd {
-  
-  public static var instance;
-  
-  public static function get ()
-  {
-    if (instance == null) instance = new DateOrdImpl(DateEq.get());
-    return instance;
-  }
-  
-  
-}
 
 private class DateOrdImpl extends OrdAbstract<Date> {
 
   public function new (eq) { super(eq);}
-  //
   
   override public function less (a:Date, b:Date):Bool {
     return FloatOrd.get().less(a.getTime(), b.getTime());
@@ -35,6 +22,6 @@ private class DateOrdImpl extends OrdAbstract<Date> {
   override public inline function compareInt (a:Date, b:Date):Int {
     return FloatOrd.get().compareInt(a.getTime(), b.getTime());
   }
-  
-  
 }
+
+typedef DateOrd = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(DateOrdImpl)]>;
