@@ -1,11 +1,12 @@
 package hots.instances;
 import hots.classes.CategoryAbstract;
+import hots.In;
 
 using scuts.core.extensions.Function1Ext;
 
 private typedef B = FunctionBox;
 
-class FunctionCategoryImpl extends CategoryAbstract<FunctionTypeConstructor>
+class FunctionCategoryImpl extends CategoryAbstract<In->In>
 {
 
   public function new() {}

@@ -243,6 +243,7 @@ class TypeClasses
                 Context.follow(superClass.params[0], false);
               }
             };
+            
             replaceInnerInTypes(Print.typeStr(wrappedType));
           };
 
@@ -254,15 +255,14 @@ class TypeClasses
           }
           
           var allParams = usingResult.replacements.concat(paramStrings);
-
+          
           var className = "Provider__" + fullInstanceStr.split(".").join("__");
 
           var getProviderClass = {
             var tcClass = SType.getFullQualifiedTypeName(superClass.t.get().interfaces[0].t.get()).split(".").join("_");
             var prePost = if (allParams.length > 0) true else false;
             var getMeParams = (if(prePost) '<' else '') + allParams.join(",") + (if(prePost) '>' else '');
-            '
-    public static function get_' + tcClass + getMeParams + '(t:' + usingType + ') {
+            'public static function get_' + tcClass + getMeParams + '(t:' + usingType + ') {
       return '+ className +';
     }';
           };
