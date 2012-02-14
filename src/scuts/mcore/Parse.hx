@@ -3,9 +3,6 @@ package scuts.mcore;
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
 
-private typedef RootType = Type;
-private typedef ScutsType = scuts.mcore.Type;
-private typedef EH = Make;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -14,20 +11,14 @@ import haxe.macro.Type;
 
 using StringTools;
 
-
-
-
-
 //using scuts.Core;
 
 class Parse 
 {
-
-	public static function parse (s:String, ?ctx:Dynamic, ?pos:Position):Expr 
-	{
-		
-    
-		if (Std.is(ctx, Array)) {
+  
+  public static function createContextAndString (ctx:Dynamic, s:String):{ctx : Dynamic, s:String} 
+  {
+    if (Std.is(ctx, Array)) {
 			var a:Array<Dynamic> = cast ctx;
 			ctx = { };
       
@@ -50,10 +41,21 @@ class Parse
 			var ereg = ~/[$]([a-zA-Z_][a-zA-Z0-9]*)$/g;
 			s = ereg.replace(s, "T___$1"); 
 		}
+    
 		if (ctx == null) {
 			ctx = { };
 		}
 		else if (!Reflect.isObject(ctx))  throw "ctx should be Object or Array";
+    
+    return {ctx:ctx, s:s};
+  }
+  
+	public static function parse (s:String, ?ctx:Dynamic, ?pos:Position):Expr 
+	{
+		
+    var base = createContextAndString(ctx,s);
+		var ctx = base.ctx;
+    var s = base.s;
 		
 		pos = pos == null ? Context.currentPos() : pos;
 
@@ -209,24 +211,24 @@ class Parse
 					if (tp.pack.length > 0) {
 						for (p in tp.pack) {
 							if (cur == null) {
-								cur = EH.mkConstExpr(CIdent(p));
+								cur = Make.mkConstExpr(CIdent(p));
 							} else {
-								cur = EH.mkFieldExpr(cur, p);
+								cur = Make.mkFieldExpr(cur, p);
 							}
 						}
 					}
 					if (tp.sub != null) {
 						if (cur == null) {
-							cur = EH.mkConstExpr(CType(tp.sub));
+							cur = Make.mkConstExpr(CType(tp.sub));
 						} else {
-							cur = EH.mkFieldExpr(cur, tp.sub);
+							cur = Make.mkFieldExpr(cur, tp.sub);
 						}
 					}
 					
 					if (cur == null) {
-						cur = EH.mkConstExpr(CType(tp.name));
+						cur = Make.mkConstExpr(CType(tp.name));
 					} else {
-						cur = EH.mkFieldExpr(cur, tp.name);
+						cur = Make.mkFieldExpr(cur, tp.name);
 					}
 					return cur;
 					

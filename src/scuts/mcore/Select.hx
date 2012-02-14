@@ -6,8 +6,14 @@ package scuts.mcore;
 
 import haxe.macro.Expr;
 import scuts.core.types.Pair;
-using scuts.Core;
-import scuts.CoreTypes;
+import scuts.core.types.Option;
+import scuts.core.types.Tup2;
+//using scuts.Core;
+using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.DynamicExt;
+
+//import scuts.CoreTypes;
 
 class Select 
 {

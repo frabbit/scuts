@@ -5,7 +5,7 @@ package scuts.mcore;
 #elseif (display || macro)
 import haxe.macro.Expr;
 
-using scuts.Core;
+
 import scuts.CoreTypes;
 
 /*

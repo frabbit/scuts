@@ -179,7 +179,7 @@ class Check
   
   
   public static function isConstIdent (e:Expr, ?f:String->Bool) {
-    f = f.getOrElseNoMacro(function (s) return true);
+    f = f.getOrElse(function (s) return true);
     return switch (e.expr) {
       case EConst(c):
         switch (c) {

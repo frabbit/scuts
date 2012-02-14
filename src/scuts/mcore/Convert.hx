@@ -9,10 +9,7 @@ import haxe.macro.Context;
 import scuts.Scuts;
 
 using scuts.core.extensions.ArrayExt;
-/**
- * ...
- * @author 
- */
+
 
 class Convert 
 {
@@ -29,9 +26,9 @@ class Convert
 				switch (b[0].expr) {
 					case EVars(v):
 						v[0].type;
-					default:scuts.mcoreError("assert");
+					default:Scuts.macroError("assert");
 				}
-			default: scuts.mcoreError("assert");
+			default: Scuts.macroError("assert");
 		}
     
 	}

@@ -8,19 +8,12 @@ package scuts.mcore;
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.IterableExt;
 
-import scuts.CoreTypes.F;
-
-//using scuts.core.Fold;
-
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Expr.Binop;
 import haxe.macro.Type;
 
 private typedef SType = scuts.mcore.Type;
-
-
-//using Lambda;
 
 
 class Print 
@@ -916,7 +909,7 @@ class Print
 				if (realType) pack = [];
         
         var foldPack = function (v, a) return v + "." + a;
-        var reduceParams = function (v, a) return "," + typeStr(v, t.get()) + a;
+        var reduceParams = function (v, a) return typeStr(v, t.get()) + "," + a;
         var reduceFirst = function (v) return typeStr(v, t.get());
 				var res = 
           pack.foldRight(foldPack, tName) + 
@@ -979,8 +972,10 @@ class Print
 	}
 	
 	public static function funArgStr (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool):String {
+    trace("simple: " + simpleFunctionSignatures);
+    trace("arg.name: " + (arg.name == ""));
 		return (if (arg.opt && !simpleFunctionSignatures) "?" else "") + 
-		  (if (arg.name != null && !simpleFunctionSignatures) arg.name + (if (arg.t != null) " : " else "") else "") + 
+		  (if ((arg.name != null && arg.name != "") && !simpleFunctionSignatures) (arg.name + (if (arg.t != null && arg.name != null) " :   " else "")) else "") + 
 		  (if (arg.t != null) typeStr(arg.t) else "");
 	}
 	
