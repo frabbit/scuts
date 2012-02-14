@@ -2,7 +2,7 @@ package hots.instances;
 import hots.classes.Applicative;
 import hots.classes.ApplicativeAbstract;
 import hots.classes.FunctorAbstract;
-import hots.instances.ArrayOfTFunctor;
+import hots.instances.ArrayTOfFunctor;
 import hots.In;
 import hots.Of;
 import scuts.core.extensions.ArrayExt;
@@ -15,13 +15,13 @@ private typedef B = ArrayTBox;
 
 
 
-class ArrayOfTApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
+class ArrayTOfApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
   
   var appM:Applicative<M>;
 
   public function new (appM:Applicative<M>) 
   {
-    var f = ArrayOfTFunctor.get(appM);
+    var f = ArrayTOfFunctor.get(appM);
     super(f);
     this.appM = appM;
   }
@@ -29,13 +29,13 @@ class ArrayOfTApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
   /**
    * aka return, pure
    */
-  override public function ret<A>(x:A):ArrayOfT<M,A> {
+  override public function ret<A>(x:A):ArrayTOf<M,A> {
     return B.box(appM.ret([x]));
   }
   /**
    * aka <*>
    */
-  override public function apply<A,B>(f:ArrayOfT<M,A->B>, val:ArrayOfT<M,A>):ArrayOfT<M,B> {
+  override public function apply<A,B>(f:ArrayTOf<M,A->B>, val:ArrayTOf<M,A>):ArrayTOf<M,B> {
     var f1:Of<M, Array<A->B>> = B.unbox(f);
     var val1:Of<M, Array<A>> = B.unbox(val);
     
@@ -57,4 +57,4 @@ class ArrayOfTApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
 
 }
 
-typedef ArrayOfTApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfTApplicativeImpl)]>;
+typedef ArrayTOfApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayTOfApplicativeImpl)]>;

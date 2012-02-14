@@ -6,4 +6,5 @@ import hots.COf;
 import scuts.core.types.Option;
 
 // M [a]
+
 typedef OptionTOf<M, A> = COf<M, Option<In>, A>

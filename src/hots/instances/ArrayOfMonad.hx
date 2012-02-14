@@ -6,7 +6,7 @@ import scuts.core.extensions.ArrayExt;
 
 using hots.instances.ArrayBox;
 
-private class ArrayOfMonadImpl extends MonadAbstract<Array<In>>
+class ArrayOfMonadImpl extends MonadAbstract<Array<In>>
 {
   
   public function new () super(ArrayOfApplicative.get())

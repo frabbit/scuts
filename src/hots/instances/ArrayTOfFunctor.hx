@@ -12,7 +12,7 @@ import scuts.core.extensions.Function2Ext;
 private typedef BT = ArrayTBox;
 private typedef B = ArrayBox;
 
-class ArrayOfTFunctorImpl<M> extends FunctorAbstract<Of<M,Array<In>>> {
+class ArrayTOfFunctorImpl<M> extends FunctorAbstract<Of<M,Array<In>>> {
   
   var functorM:Functor<M>;
   
@@ -24,11 +24,11 @@ class ArrayOfTFunctorImpl<M> extends FunctorAbstract<Of<M,Array<In>>> {
   /**
    * @inheritDoc
    */
-  override public function map<A,B>(f:A->B, fa:ArrayOfT<M, A>):ArrayOfT<M, B> {
+  override public function map<A,B>(f:A->B, fa:ArrayTOf<M, A>):ArrayTOf<M, B> {
     return BT.box(functorM.map(function (x:Array<A>) {
       return B.unbox(ArrayOfFunctor.get().map(f, B.box(x)));
     },BT.unbox(fa)));
   }
 }
 
-typedef ArrayOfTFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfTFunctorImpl)]>;
+typedef ArrayTOfFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayTOfFunctorImpl)]>;

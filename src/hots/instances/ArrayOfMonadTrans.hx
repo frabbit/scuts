@@ -1,13 +1,9 @@
 package hots.instances;
+
 import hots.classes.MonadTransAbstract;
-import hots.classes.MonadTransAbstract;
+import hots.classes.Monad;
 import hots.In;
 import hots.Of;
-import scuts.core.extensions.ArrayExt;
-import hots.classes.Monad;
-
-
-
 
 using scuts.core.extensions.Function1Ext;
 
