@@ -16,20 +16,14 @@ private typedef B = OptionTBox;
 
 class OptionTOfApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Option<In>>> {
   
-  var appM:Applicative<M>;
+  var applicativeM:Applicative<M>;
 
-  public function new (appM:Applicative<M>) 
+  public function new (applicativeM:Applicative<M>) 
   {
-    super(OptionTOfFunctor.get(appM));
-    this.appM = appM;
+    super(OptionTOfPointed.get(applicativeM));
+    this.applicativeM = applicativeM;
   }
 
-  /**
-   * aka return, pure
-   */
-  override public function ret<A>(x:A):OptionTOf<M,A> {
-    return B.box(appM.ret(Some(x)));
-  }
   /**
    * aka <*>
    */
@@ -37,7 +31,7 @@ class OptionTOfApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Option<In>>> 
     var f1:Of<M, Option<A->B>> = B.unbox(f);
     var val1:Of<M, Option<A>> = B.unbox(val);
     
-    var f2 = appM.map(function (f:Option<A->B>) {
+    var f2 = applicativeM.map(function (f:Option<A->B>) {
       return function (a:Option<A>) {
         return switch (f) {
           case Some(v):
@@ -49,9 +43,7 @@ class OptionTOfApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Option<In>>> 
         }
       }
     }, f1);
-    
-    return B.box(appM.apply(f2, val1));
-
+    return B.box(applicativeM.apply(f2, val1));
   }
 
 }

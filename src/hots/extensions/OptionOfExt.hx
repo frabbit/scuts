@@ -2,7 +2,7 @@ package hots.extensions;
 
 import hots.classes.Monoid;
 import hots.instances.OptionBox;
-import hots.instances.OptionFunctor;
+import hots.instances.OptionOfFunctor;
 import hots.instances.OptionOf;
 import scuts.core.types.Option;
 
@@ -18,7 +18,7 @@ extern class OptionOfExt
   
   public static inline function map<A,B>(a:OptionOf<A>, f:A->B):OptionOf<B> 
   {
-    return OptionFunctor.get().map(f,a);
+    return OptionOfFunctor.get().map(f,a);
   }
   
   public static inline function empty<A>():OptionOf<A> 

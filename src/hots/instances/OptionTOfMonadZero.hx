@@ -10,15 +10,15 @@ private typedef BT = OptionTBox;
 
 class OptionTOfMonadZeroImpl<M> extends MonadZeroAbstract<Of<M, Option<In>>> {
   
-  var monad:Monad<M>;
+  var monadM:Monad<M>;
   
-  public function new (monad:Monad<M>) {
-    super(OptionTOfMonad.get(monad));
-    this.monad = monad;
+  public function new (monadM:Monad<M>) {
+    super(OptionTOfMonad.get(monadM));
+    this.monadM = monadM;
   }
   
   override public inline function zero <A>():OptionTOf<M,A> {
-    return BT.box(monad.ret(None));
+    return BT.box(monadM.pure(None));
   }
 }
 

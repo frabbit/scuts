@@ -9,11 +9,9 @@ private typedef B = EitherBox;
 class EitherApplicativeImpl<L> extends ApplicativeAbstract<Either<L,In>> {
   
   public function new () {
-    super(EitherFunctor.get());
+    super(EitherPointed.get());
   }
   
-  override public function ret<A>(x:A):EitherOf<L,A> return B.box(Right(x))
-
   override public function apply<A,B>(f:EitherOf<L,A->B>, val:EitherOf<L,A>):EitherOf<L,B> {
     var val1 = B.unbox(val);
     var res = switch (B.unbox(f)) {

@@ -13,12 +13,8 @@ import scuts.Scuts;
    (<*>) :: f (a -> b) -> f a -> f b
  */
 
-interface Applicative<M> implements Functor<M>, implements TC
+interface Applicative<M> implements Pointed<M>, implements TC
 {
-  /**
-   * aka return, pure
-   */
-  public function ret<A>(x:A):Of<M,A>;
   /**
    * aka <*>
    */

@@ -9,21 +9,13 @@ using hots.instances.ArrayBox;
 
 class ArrayOfApplicativeImpl extends ApplicativeAbstract<Array<In>>
 {
-  public function new () super(ArrayOfFunctor.get())
+  public function new () super(ArrayOfPointed.get())
   
-  override public function ret<B>(b:B):ArrayOf<B> 
+  override public function apply<B,C>(f:ArrayOf<B->C>, v:ArrayOf<B>):ArrayOf<C> 
   {
-    return [b].box();
-  }
-  
-  override public function apply<B,C>(fa:ArrayOf<B->C>, f:ArrayOf<B>):ArrayOf<C> 
-  {
-    var funcs = fa.unbox();
-    var elems = f.unbox();
     var res = [];
-
-    for (func in funcs) {
-      for (e in elems) {
+    for (func in f.unbox()) {
+      for (e in v.unbox()) {
         res.push(func(e));
       }
     }

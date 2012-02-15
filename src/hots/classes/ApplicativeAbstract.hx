@@ -16,15 +16,12 @@ import scuts.Scuts;
 {
 
   // constraint
-  var functor:Functor<M>;
+  var pointed:Pointed<M>;
   
-  function new (functor:Functor<M>) { this.functor = functor; }
+  function new (pointed:Pointed<M>) { this.pointed = pointed; }
   
   // functions 
-  /**
-   * aka return
-   */
-  public function ret<A>(x:A):Of<M,A> return Scuts.abstractMethod()
+  
   /**
    * aka <*>
    */
@@ -42,5 +39,8 @@ import scuts.Scuts;
 
   
   // delegation of functor
-  @:final public inline function map<A,B>(f:A->B, val:Of<M,A>):Of<M,B> return functor.map(f, val)
+  @:final public inline function map<A,B>(f:A->B, val:Of<M,A>):Of<M,B> return pointed.map(f, val)
+  
+  // delegation of pointed
+  @:final public inline function pure<A>(x:A):Of<M,A> return pointed.pure(x)
 }

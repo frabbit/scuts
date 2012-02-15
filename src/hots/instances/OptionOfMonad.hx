@@ -30,9 +30,6 @@ class OptionOfMonadImpl extends MonadAbstract<Option<In>>
   }
   
   
-  public function zero <A>():MValOption<A> {
-    return None.box();
-  }
   
   public function orElse <A>(v1:MValOption<A>, v2:MValOption<A>):MValOption<A> {
     return if (v1.unbox().isSome()) v1 else v2;

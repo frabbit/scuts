@@ -16,16 +16,16 @@ private typedef BT = OptionTBox;
 
 class OptionTOfMonadImpl<M> extends MonadAbstract<Of<M, Option<In>>> {
   
-  var monad:Monad<M>;
+  var monadM:Monad<M>;
   
-  public function new (monad:Monad<M>) {
-    super(OptionTOfApplicative.get(monad));
-    this.monad = monad;
+  public function new (monadM:Monad<M>) {
+    super(OptionTOfApplicative.get(monadM));
+    this.monadM = monadM;
   }
   
   override public function flatMap<A,B>(val:OptionTOf<M,A>, f: A->OptionTOf<M,B>):OptionTOf<M,B> 
   {
-    var fmapped = monad.flatMap(BT.unbox(val), 
+    var fmapped = monadM.flatMap(BT.unbox(val), 
       function (a) {
         var mapped = OptionOfMonad.get().map(f, B.box(a));
         var unboxed = B.unbox(mapped);
@@ -33,12 +33,12 @@ class OptionTOfMonadImpl<M> extends MonadAbstract<Of<M, Option<In>>> {
         var res = switch (unboxed) {
           case Some(v): 
             var r = None;
-            monad.map(function (x:Option<B>) r = x, BT.unbox(v));
+            monadM.map(function (x:Option<B>) r = x, BT.unbox(v));
             r;
             
           case None: None;
         }
-        return monad.ret(res);//res;
+        return monadM.pure(res);//res;
       });
     return BT.box(fmapped);
   }
