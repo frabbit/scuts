@@ -23,14 +23,14 @@ class KleisliArrowImpl<M> extends ArrowAbstract<In->Of<M,In>>
   }
   
   override public function arr <B,C>(f:B->C):KleisliOf<M,B, C> {
-    return B.box(m.ret.compose(f));
+    return B.box(m.pure.compose(f));
   }
   
   override public function first <B,C,D>(f:KleisliOf<M,B,C>):KleisliOf<M, Tup2<B,D>, Tup2<C,D>> {
     var f = 
       function (t:Tup2<B,D>) {
       var f1 = B.unbox(f);
-      return m.flatMap(m.ret(t), function (t) {
+      return m.flatMap(m.pure(t), function (t) {
         var d = f1(t._1);
         return m.map(function (c) return Tup2.create(c,t._2), d); 
       });

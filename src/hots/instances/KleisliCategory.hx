@@ -17,7 +17,7 @@ class KleisliCategoryImpl<M> extends CategoryAbstract<In->Of<M,In>> {
   }
   
   override public function id <A>(a:A):KleisliOf<M, A, A> {
-    return KleisliBox.box(function (a) return m.ret(a));
+    return KleisliBox.box(function (a) return m.pure(a));
   }
   /**
    * aka (.)
