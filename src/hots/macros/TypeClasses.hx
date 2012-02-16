@@ -36,6 +36,8 @@ class TypeClasses
   static var tcInstanceConstraints:Hash<Option<Array<Type>>> = new Hash();
   
   
+  public static var tcConstraintUsings:Hash<Array<String>> = new Hash();
+  
   public static function forType <S>(equals:Array<Expr>, hashType:String, instanceType:String, staticType:String):Expr {
     
     
@@ -227,11 +229,14 @@ class TypeClasses
               return replaceSelfClassTypeParams(Print.typeStr(t), instanceTypeStr)));
           }
           
+          
+          
+          
           var superClass = t.get().superClass;
           
-          var usingResult = {
+          var wrappedTypeStr = {
             // we need to find the wrapped type 
-            trace(superClass.params);
+            //trace(superClass.params);
             var wrappers = superClass.params.filter(function (p) return Print.typeStr(p).indexOf("hots.In") >= 0);
             var wrappedType = if (wrappers.length == 1) {
               var p = wrappers[0];
@@ -244,9 +249,23 @@ class TypeClasses
               }
             };
             
-            replaceInnerInTypes(Print.typeStr(wrappedType));
+            Print.typeStr(wrappedType);
           };
-
+          
+          var usingResult = replaceInnerInTypes(wrappedTypeStr);
+          
+          
+          var usingTypeOf = {
+            var base = replaceSelfClassTypeParams(wrappedTypeStr, instanceTypeStr);
+            var res = base;
+            for (i in usingResult.replacements) {
+              res = "hots.Of<" + res + ", " + i + ">";
+            }
+            res;
+          }
+          
+          
+          
           var usingType = replaceSelfClassTypeParams(usingResult.result, instanceTypeStr);
           
           var paramStrings = {
@@ -254,10 +273,32 @@ class TypeClasses
             params.map(function (p) return replaceSelfClassTypeParams(Print.typeStr(p.t), instanceTypeStr));
           }
           
+          
+          
           var allParams = usingResult.replacements.concat(paramStrings);
           
           var className = "Provider__" + fullInstanceStr.split(".").join("__");
 
+          
+          var c = {
+            var constraints = tcInstanceConstraints.get(fullInstanceStr);
+            var constraintsArr = constraints.map(function (a) return a.map(function (t) {
+              
+              return switch (t) {
+                case TInst(t, params):
+                  SType.getFullQualifiedTypeName(t.get());
+                default: Scuts.macroError("assert");
+              }
+              
+            }));
+            switch (constraintsArr) {
+              case Some(a):a;
+              case None: [];
+            }
+          }
+          
+          tcConstraintUsings.set(className, c);
+          
           var getProviderClass = {
             var tcClass = SType.getFullQualifiedTypeName(superClass.t.get().interfaces[0].t.get()).split(".").join("_");
             var prePost = if (allParams.length > 0) true else false;
@@ -267,6 +308,34 @@ class TypeClasses
     }';
           };
           
+          var getProviderClassOf = {
+            var tcClass = SType.getFullQualifiedTypeName(superClass.t.get().interfaces[0].t.get()).split(".").join("_");
+            var prePost = if (allParams.length > 0) true else false;
+            var getMeParams = (if(prePost) '<' else '') + allParams.join(",") + (if(prePost) '>' else '');
+           
+            
+            
+            'public static function getOf_' + tcClass + getMeParams + '(t:' + usingTypeOf + ') {
+      return '+ className +';
+    }';
+          };
+          
+          
+          
+          var constraintTypeGetters = {
+            var s = "";
+            for (i in 0...paramStrings.length) {
+              s+= '\tpublic static function get_constraint_'
+                  + i + '_type<' + allParams.join(",") + '>(t:' + usingType + '):'
+                  + paramStrings[i] + ' return cast null\n';
+              s+= '\tpublic static function getOf_constraint_'
+                  + i + '_type<' + allParams.join(",") + '>(t:' + usingTypeOf + '):'
+                  + paramStrings[i] + ' return cast null\n';
+            }
+            s;
+          }
+          
+          
           var getter = if (constraintArr.isSome() && constraintArr.extract().length > 0) { // we need a hash
             var constraints = switch (constraintArr) {
               case Some(v): v;
@@ -275,6 +344,11 @@ class TypeClasses
             //var constraintParams = constraints.mapWithIndex(function (c,i) return "arg" + i + ": ExprRequire<" + c + ">");
             var constraintParams = constraints.mapWithIndex(function (c,i) return "arg" + i + ": " + c );
             var constraintArgs = constraints.mapWithIndex(function (c,i) return "arg" + i);
+            
+            //var constraintTypes = constraints.mapWithIndex(function (c,i) return {type:c, index:i} );
+            
+           
+            
             '
     static var hash:Hash<' + fullInstanceStr + '<' + constraints.map(function (c) return "Dynamic").join(",") + '>> = new Hash();
     
@@ -308,8 +382,10 @@ class TypeClasses
           }
           
           var classStr = 'class ' + className + ' \n{\n
-            \t' + getProviderClass + '\n
-            \t' + getter + '\n}';
+' + constraintTypeGetters + '\n
+\t' + getProviderClassOf + '\n
+\t' + getProviderClass + '\n
+\t' + getter + '\n}';
           
           var file = File.write(className + ".hx");
           file.writeString(classStr);
@@ -324,7 +400,7 @@ class TypeClasses
         Scuts.macroError("Type must be TInst");
     }
 
-    return Scuts.macroError("Cannot revolve Type");
+    return Scuts.macroError("Cannot resolve Type");
     
   }
   #if (macro || display)
@@ -340,6 +416,8 @@ class TypeClasses
     }
     return {result:typeStr, replacements:replacements};
   }
+  
+  
   
   static function replaceSelfClassTypeParams (type:String, clName:String ):String
   {
