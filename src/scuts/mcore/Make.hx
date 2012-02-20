@@ -52,6 +52,10 @@ class Make
 		}
 	}
 	
+  public static function mkCall (e:Expr, func:String, params:Array<Expr>, ?pos:Position) {
+    return mkExpr(ECall(mkFieldExpr(e, func, pos), params), pos);
+  }
+  
   public static inline function mkExpr (def:ExprDef, ?pos:Position):Expr
     return { 
       expr:def, 
