@@ -96,7 +96,7 @@ class ExprCache
                 Lib.println("-----------------------------");
                 Lib.println(callId + ": " +  keyPrinter() + "\n");
                 Lib.println("--->\n");
-                Lib.println(Print.exprStr(expr).toString());
+                Lib.println(Print.expr(expr).toString());
                 Lib.println("-----------------------------");
               }
             cache.set(id, expr);

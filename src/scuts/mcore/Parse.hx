@@ -3,11 +3,11 @@ package scuts.mcore;
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
 
-private typedef StdType = Type;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
+import scuts.core.std.StdType;
 import scuts.Scuts;
 import scuts.core.types.Option;
 
@@ -116,7 +116,7 @@ class Parse
                 null;
             }
           case EType(_, _): 
-            var s = Print.exprStr(a);
+            var s = Print.expr(a);
             Convert.stringToComplexType(s, pos);
           default: 
             Scuts.macroError("Cannot convert context variable " + a + " to ComplexType");
@@ -290,7 +290,7 @@ class Parse
       if (Check.isExpr(a)) 
         cast a;
       else if (Std.is(a, haxe.macro.Type)) 
-        Make.const(CType(Print.typeStr(cast a, true)), pos);
+        Make.const(CType(Print.type(cast a, true)), pos);
       else if (Std.is(a, ComplexType)) 
       {
         var ct:ComplexType = cast a;
@@ -298,8 +298,9 @@ class Parse
       }
       else if (Std.is(a, Int)) 
         Make.const(CInt(Std.string(a)), pos);
-      else 
+      else {
         Context.makeExpr(a, pos);
+      }
   }
   
   static function isTypePrefix (s:String) {

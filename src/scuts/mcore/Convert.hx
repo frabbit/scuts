@@ -155,7 +155,7 @@ class Convert
 	{
     if (pos == null) pos = Context.currentPos();
     
-    var s = Print.typeStr( t, true);
+    var s = Print.type( t, true);
     
     
     
@@ -170,11 +170,11 @@ class Convert
 				switch (c) {
 					case CType(t):
 						stringToComplexType(t, e.pos);
-					default: throw "Expression " + Print.exprStr(e) + " is not a Type";
+					default: throw "Expression " + Print.expr(e) + " is not a Type";
 				}
       case EType(_, _):
-        stringToComplexType(Print.exprStr(e), e.pos);
-			default: throw "Expression " + Print.exprStr(e) + " is not a Type";
+        stringToComplexType(Print.expr(e), e.pos);
+			default: throw "Expression " + Print.expr(e) + " is not a Type";
 		}
 	}
   /* from MacroTools */

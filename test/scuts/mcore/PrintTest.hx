@@ -7,7 +7,7 @@ import haxe.macro.Expr;
 @:macro private class Helper {
   public static function getStringExpr (expr:Expr, indent:Int = 0, indentStr:String = "\t") {
     
-    return { expr:EConst(CString(Print.exprStr(expr, indent, indentStr))), pos:expr.pos };
+    return { expr:EConst(CString(Print.expr(expr, indent, indentStr))), pos:expr.pos };
   }
 }
 #if !macro

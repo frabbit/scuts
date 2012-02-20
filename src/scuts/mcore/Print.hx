@@ -17,7 +17,7 @@ import scuts.Scuts;
 
 private typedef SType = scuts.mcore.Type;
 
-
+private typedef P = Print;
 class Print 
 {
 
@@ -27,11 +27,11 @@ class Print
     return unopStr1(op, new StringBuf(), indent, indentStr).toString();
   }
   
-  public static function exprStr (expr:Expr, indent:Int = 0, indentStr = "\t"):String 
+  public static function expr (ex:Expr, indent:Int = 0, indentStr = "\t"):String 
   {
     var buf = new StringBuf();
     addIndent(buf, indent, indentStr);
-    return exprStr1(expr, buf, indent, indentStr).toString();
+    return expr1(ex, buf, indent, indentStr).toString();
   }
   
   public static function binopStr (op:Binop):String 
@@ -94,13 +94,13 @@ class Print
     return buf;
   }
   
-  static function exprStr1 (expr:Expr, buf:StringBuf, indent:Int, indentStr:String):StringBuf
+  static function expr1 (ex:Expr, buf:StringBuf, indent:Int, indentStr:String):StringBuf
   {
     #if scutsDebug
-    if (expr == null || buf == null) throw "assert";
+    if (ex == null || buf == null) throw "assert";
     #end
     
-    var exprStr = function (expr) return exprStr1(expr, buf, indent, indentStr);
+    var expr = function (ex) return expr1(ex, buf, indent, indentStr);
     
     
     var constStr = function (c) return constStr1(c, buf);
@@ -119,29 +119,29 @@ class Print
     
     var add = function (str) { buf.add(str); return buf;} 
     
-    return switch(expr.expr) {
+    return switch(ex.expr) {
       case EConst( c ):
         constStr(c);
       case EArray( e1, e2): 
-        exprStr(e1);
+        expr(e1);
         add("[");
-        exprStr(e2);
+        expr(e2);
         add("]");
       case EBinop( op, e1, e2 ):
-        exprStr(e1);
+        expr(e1);
         binopStr(op);
-        exprStr(e2);
+        expr(e2);
       case EField( e, field): 
-        exprStr(e);
+        expr(e);
         add(".");
         add(field);
       case EType( e, field): 
-        exprStr(e);
+        expr(e);
         add(".");
         add(field);
       case EParenthesis( e ): 
         add("(");
-        exprStr(e);
+        expr(e);
         add(")");
       case EObjectDecl( fields ):
         add("{");
@@ -152,7 +152,7 @@ class Print
           if (i != 0) add(",");
           add(f.field);
           add(":");
-          exprStr(f.expr);
+          expr(f.expr);
         }
         newLineDec();
         add("}");
@@ -161,16 +161,16 @@ class Print
         for (i in 0...values.length) 
         {
           if (i != 0) add(",");
-          exprStr(values[i]);
+          expr(values[i]);
         }
         add("]");
       case ECall( e, params ):
-        exprStr(e);
+        expr(e);
         add("(");
         for (i in 0...params.length) 
         {
           if (i != 0) add(", ");
-          exprStr(params[i]);
+          expr(params[i]);
         }
         add(")");
       case ENew( t, params ):
@@ -180,12 +180,12 @@ class Print
         for (i in 0...params.length) 
         {
           if (i != 0) add(", ");
-          exprStr(params[i]);
+          expr(params[i]);
         }
         add(")");
       case EUnop( op , postFix, e ):
         if (!postFix) unopStr(op);
-        exprStr(e);
+        expr(e);
         if (postFix) unopStr(op);
         buf;
       case EVars( vars ):
@@ -203,7 +203,7 @@ class Print
           if (v.expr != null) 
           {
             add(" = ");
-            exprStr(v.expr);
+            expr(v.expr);
           }
         }
         buf;
@@ -224,56 +224,56 @@ class Print
           {
             if (first) first = false else newLine();
             if (e == null) throw "assert";
-            exprStr(e);
+            expr(e);
             add(";");
             
           }
           newLineDec();
           add("}");
         }
-      case EFor( eIn, expr ):
+      case EFor( eIn, ex ):
         add("for (");
-        exprStr(eIn);
+        expr(eIn);
         add(") ");
-        exprStr(expr);
+        expr(ex);
       case EIn(v, it):
-        exprStr(v);
+        expr(v);
         add(" in ");
-        exprStr(it);  
+        expr(it);  
       case EIf( econd, eif, eelse ):
         add("if (");
-        exprStr(econd);
+        expr(econd);
         add(") ");
-        exprStr(eif);
+        expr(eif);
         if (eelse != null) 
         {
           add(" else ");
-          exprStr(eelse);
+          expr(eelse);
         }
         buf;
       case EWhile( econd, e, normalWhile ):
         if (normalWhile) 
         {
           add("while (");
-          exprStr(econd);
+          expr(econd);
           add(")");
         } 
         else add("do");
         
         add(" ");
-        exprStr(e);
+        expr(e);
         
         if (!normalWhile) 
         {
           add(" while (");
-          exprStr(econd);
+          expr(econd);
           add(")");
         }
         buf;
       case ESwitch( e, cases, edef ):
         // switch expr is by default EParenthesis, so we don't need to print them
         add("switch ");
-        exprStr(e);
+        expr(e);
         add(" {");
         newLineInc();
         for (i in 0...cases.length) 
@@ -284,7 +284,7 @@ class Print
           for (i in 0...c.values.length) 
             {
               if (i != 0) add(",");
-              exprStr(c.values[i]);
+              expr(c.values[i]);
             }
           add(":");
           
@@ -295,7 +295,7 @@ class Print
           }
           if (allExprs.length > 0) newLineInc();
           for (e in allExprs) {
-            exprStr(e);
+            expr(e);
             add(";");
           }
           if (allExprs.length > 0) indent--;
@@ -309,7 +309,7 @@ class Print
           }
           if (allExprs.length > 0) newLineInc();
           for (e in allExprs) {
-            exprStr(e);
+            expr(e);
             add(";");
           }
         }
@@ -318,7 +318,7 @@ class Print
         add("}");
       case ETry( e, catches ):
         add("try ");
-        exprStr(e);
+        expr(e);
         add(" ");
         var first = true;
         for (c in catches) {
@@ -328,7 +328,7 @@ class Print
           add(":");
           complexTypeStr1(c.type, buf, indent, indentStr);
           add(") ");
-          exprStr(c.expr);
+          expr(c.expr);
         }
         buf;
 
@@ -336,7 +336,7 @@ class Print
         add("return");
         if (e != null) {
           add(" ");
-          exprStr(e);
+          expr(e);
         }
         buf;
       case EBreak:
@@ -345,17 +345,17 @@ class Print
         add("continue");
       case EUntyped( e ):
         add("untyped ");
-        exprStr(e);
+        expr(e);
       case EThrow( e ):
         add("throw ");
-        exprStr(e);
+        expr(e);
       case ECast( e, t  ):
         if (t == null) {
           add("cast ");
-          exprStr(e);
+          expr(e);
         } else {
           add("cast(");
-          exprStr(e);
+          expr(e);
           add(", ");
           complexTypeStr1(t, buf, indent, indentStr);
           add(")");
@@ -369,14 +369,14 @@ class Print
         buf;
       case ETernary( econd, eif, eelse ):
       
-        exprStr(econd);
+        expr(econd);
         add(" ? ");
-        exprStr(eif);
+        expr(eif);
         add(" : ");
-        exprStr(eelse);
+        expr(eelse);
       case ECheckType(e, t):
         // TODO what is this exactly
-        exprStr(e);
+        expr(e);
     }
   }
   
@@ -502,10 +502,10 @@ class Print
       if (len > 0) 
       {
         buf.add("(");
-        exprStr1(m.params[0], buf, indent, indentStr);
+        expr1(m.params[0], buf, indent, indentStr);
         for (i in 1...len) 
         {
-          exprStr1(m.params[i], buf, indent, indentStr);
+          expr1(m.params[i], buf, indent, indentStr);
         }
         buf.add(")");
       }
@@ -530,7 +530,7 @@ class Print
         if (e != null) 
         {
           add(":");
-          exprStr1(e, buf, 0, indentStr);
+          expr1(e, buf, 0, indentStr);
         }
         add(";");
       case FFun( fn ):
@@ -548,7 +548,7 @@ class Print
         complexTypeStr1(t, buf, indent, indentStr);
         if (pExpr != null) {
           add("=");
-          exprStr1(pExpr, buf, 0, indentStr);
+          expr1(pExpr, buf, 0, indentStr);
         }
         add(";");
     }
@@ -581,7 +581,7 @@ class Print
       if (a.value != null) 
       {
         add(" = ");
-        exprStr1(a.value, buf, 0, indentStr);
+        expr1(a.value, buf, 0, indentStr);
       }
     }
     add(")");
@@ -595,7 +595,7 @@ class Print
     if (!onlySignature && f.expr != null) 
     { 
       add(" "); 
-      exprStr1(f.expr, buf, 0, indentStr); 
+      expr1(f.expr, buf, 0, indentStr); 
     }
     return buf;
     
@@ -664,7 +664,7 @@ class Print
       case TPType(ct): 
         complexTypeStr1(ct, buf, indent, indentStr, cl);
       case TPExpr(e):
-        exprStr1(e, buf, indent, indentStr);
+        expr1(e, buf, indent, indentStr);
     }
     return buf;
   }
@@ -762,7 +762,7 @@ class Print
     }
   }
   
-  public static function typeStr (t:Type, ?simpleFunctionSignatures:Bool = false, ?typeParam:BaseType = null) 
+  public static function type (t:Type, ?simpleFunctionSignatures:Bool = false, ?typeParam:BaseType = null) 
   {
     var isTypeParam = typeParam != null;
     var paramsHash = new Hash();
@@ -782,8 +782,8 @@ class Print
           if (params.length > 0) 
           {
             var r = params.reduceRight(
-              function (v, a) return typeStr(v, t.get()) + "," + a,
-              function (v) return typeStr(v, t.get())
+              function (v, a) return P.type(v, t.get()) + "," + a,
+              function (v) return P.type(v, t.get())
             );
             "<" + r + ">";
           }
@@ -809,8 +809,8 @@ class Print
         var packCopy = if (realType) [] else pack;
         
         var foldPack = function (v, a) return v + "." + a;
-        var reduceParams = function (v, a) return typeStr(v, ct) + "," + a;
-        var reduceFirst = function (v) return typeStr(v, ct);
+        var reduceParams = function (v, a) return P.type(v, ct) + "," + a;
+        var reduceFirst = function (v) return P.type(v, ct);
         var res = 
           packCopy.foldRight(foldPack, tName) 
           + if (params.length > 0) 
@@ -822,7 +822,7 @@ class Print
         var dt = t.get();
         
         var foldPack = function (v, a) return v + "." + a;
-        var foldParams = function (v, a,i) return typeStr(v, dt) + (if (i > 0) "," else "") + a;
+        var foldParams = function (v, a,i) return P.type(v, dt) + (if (i > 0) "," else "") + a;
         
         var typeStr = dt.pack.foldRight(foldPack, dt.name);
         var paramsStr = if (params.length > 0) "<" + params.foldRightWithIndex(foldParams, ">") else "";
@@ -838,7 +838,7 @@ class Print
             var reduceFirst = function (val) return funArgStr(val, simpleFunctionSignatures);
             args.reduceLeft(reduceArgs, reduceFirst);
           }
-        argumentsStr + " -> " + typeStr(ret);
+        argumentsStr + " -> " + P.type(ret);
       case TAnonymous( a ): 
         var reduced = 
         {
@@ -848,14 +848,14 @@ class Print
         }
         "{ " + reduced + " }";
       case TDynamic( t ): 
-        "Dynamic" + if (t != null) "<" + typeStr(t) + ">" else "";
+        "Dynamic" + if (t != null) "<" + P.type(t) + ">" else "";
     }
     return str;
   }
   
   public static function anonFieldStr (c:ClassField):String 
   {
-    return c.name + " : " + typeStr(c.type);
+    return c.name + " : " + P.type(c.type);
   }
   
   public static function funArgStr (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool):String 
@@ -867,7 +867,7 @@ class Print
         + if (arg.t != null && arg.name != null) " :   " 
           else ""
       else "";
-    var argType = if (arg.t != null) typeStr(arg.t) else "";
+    var argType = if (arg.t != null) P.type(arg.t) else "";
     
     return optPrefix + argName + argType;
   }

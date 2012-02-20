@@ -21,8 +21,8 @@ class ParseTest
     var s = "[$0, $1]";
     var e = Parse.parse(s, [2, 3]);
     
-    var actual = Print.exprStr(e);
-    var expected = Print.exprStr(Context.parse("[2,3]", Context.currentPos()));
+    var actual = Print.expr(e);
+    var expected = Print.expr(Context.parse("[2,3]", Context.currentPos()));
 
     Assert.equals(expected, actual);
   }
@@ -32,9 +32,9 @@ class ParseTest
     var s = "function a<T, S>(b:$0<T>, c:S->$1->Void):$2 { return $3;}";
     var e = Parse.parse(s, ['Array', 'Foo', 'Array<String>', ['a']]);
     
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("function a<T, S>(b:Array<T>, c:S->Foo->Void):Array<String> { return [\"a\"];}", Context.currentPos())
       );
 
@@ -46,9 +46,9 @@ class ParseTest
     
     var s = "{ a : $0 }";
     var e = Parse.parse(s, [Context.getType("String")]);
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("{\n\ta : String\n}", Context.currentPos())
       );
 
@@ -58,13 +58,10 @@ class ParseTest
   public function test_optional_field_in_anonymous_type () 
   {
     var s = "{var u:{ @:optional var x: $0;};}";
-    trace("------------------");
     var e = Parse.parse(s, ["String"]);
-    trace("------------------");
-    var actual = Print.exprStr(e);
-    trace(actual);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("{\n\tvar u: {\n\t\t@:optional var x : String;\n\t}\n}", Context.currentPos())
       );
 
@@ -74,13 +71,11 @@ class ParseTest
   public function test_type_in_parenthesis () 
   {
     var s = "{var u:{ x: ($0)};}";
-    trace("------------------");
     var e = Parse.parse(s, ["String"]);
-    trace("------------------");
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("{\n\tvar u: {\n\t\tx : (String)\n\t}\n}", Context.currentPos())
       );
 
@@ -90,13 +85,11 @@ class ParseTest
   public function test_complex_anonymous_type_def () 
   {
     var s = "{var u:{ x: $0->Int, y: Int->$1 };}";
-    trace("------------------");
     var e = Parse.parse(s, ["Void", "Array<String>"]);
-    trace("------------------");
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("{\n\tvar u: {\n\t\tx : Void -> Int,\n\t\ty:Int->Array<String>\n\t}\n}", Context.currentPos())
       );
 
@@ -106,13 +99,13 @@ class ParseTest
   public function test_anonymous_type_def_with_super_type () 
   {
     var s = "{var u:{ > $0, x:Int}}";
-    trace("------------------");
+    
     var e = Parse.parse(s, ["BaseType"]);
-    trace("------------------");
-    var actual = Print.exprStr(e);
+    
+    var actual = Print.expr(e);
     
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("{\n\tvar u: {\n\t\t > BaseType,\n\t\tx:Int\n\t}\n}", Context.currentPos())
       );
 
@@ -122,13 +115,13 @@ class ParseTest
   public function test_simple_anonymous_type_def () 
   {
     var s = "{var u:{ a : $0 };}";
-    trace("------------------");
+    
     var e = Parse.parse(s, ["Array<String>"]);
-    trace("------------------");
-    var actual = Print.exprStr(e);
+    
+    var actual = Print.expr(e);
     
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("{\n\tvar u: {\n\t\ta : Array<String>\n\t}\n}", Context.currentPos())
       );
 
@@ -141,8 +134,8 @@ class ParseTest
     
     var e = Parse.parse(s, [5]);
     
-    var actual = Print.exprStr(e);
-    var expected = Print.exprStr(
+    var actual = Print.expr(e);
+    var expected = Print.expr(
       Context.parse("function a (b = 5):Void {}", Context.currentPos()));
 
     Assert.equals(expected, actual);
@@ -154,8 +147,8 @@ class ParseTest
     
     var e = Parse.parse(s, [0, 5]);
     
-    var actual = Print.exprStr(e);
-    var expected = Print.exprStr(
+    var actual = Print.expr(e);
+    var expected = Print.expr(
       Context.parse("for (i in 0...5) {}", Context.currentPos()));
 
     Assert.equals(expected, actual);
@@ -167,9 +160,9 @@ class ParseTest
     
     var e = Parse.parse(s, [Make.constIdent("a"), 0, 5]);
     
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("switch (a) {\n\tcase A: 0;\n\tcase B: 5;\n}", Context.currentPos())
       );
 
@@ -182,9 +175,9 @@ class ParseTest
     
     var e = Parse.parse(s, [5]);
     
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("switch (a) {\n\tdefault: 5;\n}", Context.currentPos())
       );
 
@@ -197,9 +190,9 @@ class ParseTest
     
     var e = Parse.parse(s, [0,1]);
     
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("switch (a) {\n\tcase A: 0;\n\tdefault: 1;\n}", Context.currentPos())
       );
 
@@ -212,9 +205,9 @@ class ParseTest
     
     var e = Parse.parse(s, [5,3]);
     
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("switch (a) {\n\tcase 5 > 3: 0;\n}", Context.currentPos())
       );
 
@@ -227,9 +220,9 @@ class ParseTest
     
     var e = Parse.parse(s, [Context.getType("String")]);
     
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("switch (a) {\n\tcase String: 0;\n}", Context.currentPos())
       );
 
@@ -242,9 +235,9 @@ class ParseTest
     
     var e = Parse.parse(s, [1,2,3]);
     
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("while (1 > 2) {\n\t3;\n}", Context.currentPos())
       );
 
@@ -257,9 +250,9 @@ class ParseTest
     
     var e = Parse.parse(s, [1,2,3]);
     
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("while (1 > 2) {}", Context.currentPos())
       );
 
@@ -271,9 +264,9 @@ class ParseTest
     
     var e = Parse.parse(s, [1,2,3]);
     
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("do {\n\t3;\n} while (1 > 2)", Context.currentPos())
       );
 
@@ -286,9 +279,9 @@ class ParseTest
     
     var e = Parse.parse(s, [1,2]);
     
-    var actual = Print.exprStr(e);
+    var actual = Print.expr(e);
     var expected = 
-      Print.exprStr(
+      Print.expr(
         Context.parse("do {} while (1 > 2)", Context.currentPos())
       );
 

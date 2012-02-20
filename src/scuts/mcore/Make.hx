@@ -71,9 +71,9 @@ class Make
   public static inline function emptyBlock (?pos:Position):Expr 
     return expr(EBlock([]), pos)
   
-  public static inline function varExpr (variableId:String, ?type:ComplexType, ?expr:Expr, ?pos:Position) 
+  public static inline function varExpr (variableId:String, ?type:ComplexType, ?ex:Expr, ?pos:Position) 
   {
-    return vars([{ type : type, expr: expr, name:variableId}], pos);
+    return vars([{ type : type, expr: ex, name:variableId}], pos);
   }
   
   public static inline function varNullExpr (name:String, ?type:ComplexType, ?pos:Position):Expr
