@@ -21,7 +21,7 @@ private typedef SType = scuts.mcore.Type;
 class Print 
 {
 
-	//{ region public
+  //{ region public
   public static function unopStr (op:Unop, indent:Int = 0, indentStr = "\t"):String
   {
     return unopStr1(op, new StringBuf(), indent, indentStr).toString();
@@ -63,12 +63,12 @@ class Print
   {
     return functionStr1(f, new StringBuf(), indent, indentStr, functionName).toString();
   }
-	
+  
   public static function fieldStr(f:Field, indent:Int = 0, indentStr:String = "\t"):String
   {
     return fieldStr1(f, new StringBuf(), indent, indentStr).toString();
   }
-	
+  
   public static function functionSignatureStr(f:Function, ?functionName:String = "", indent:Int = 0, indentStr:String = "\t"):StringBuf 
   {
     return functionStr1(f, new StringBuf(), indent, indentStr, functionName, true);
@@ -95,55 +95,55 @@ class Print
   }
   
   static function exprStr1 (expr:Expr, buf:StringBuf, indent:Int, indentStr:String):StringBuf
-	{
-		#if scutsDebug
-		if (expr == null || buf == null) throw "assert";
-		#end
-		
-		var exprStr = function (expr) return exprStr1(expr, buf, indent, indentStr);
-	  
-		
-		var constStr = function (c) return constStr1(c, buf);
-		var binopStr = function (op) return binopStr1(op, buf);
-		var unopStr = function (op) return unopStr1(op, buf, indent, indentStr);
-		var newLine = function () return newLine(buf, indent, indentStr);
+  {
+    #if scutsDebug
+    if (expr == null || buf == null) throw "assert";
+    #end
+    
+    var exprStr = function (expr) return exprStr1(expr, buf, indent, indentStr);
+    
+    
+    var constStr = function (c) return constStr1(c, buf);
+    var binopStr = function (op) return binopStr1(op, buf);
+    var unopStr = function (op) return unopStr1(op, buf, indent, indentStr);
+    var newLine = function () return newLine(buf, indent, indentStr);
 
-		var newLineInc = function () {
-		  ++indent;
-		  return newLine();
-		}
-		var newLineDec = function () {
-		  --indent;
-		  return newLine();
-		}
-		
-		var add = function (str) { buf.add(str); return buf;} 
-		
-		return switch(expr.expr) {
-		  case EConst( c ):
+    var newLineInc = function () {
+      ++indent;
+      return newLine();
+    }
+    var newLineDec = function () {
+      --indent;
+      return newLine();
+    }
+    
+    var add = function (str) { buf.add(str); return buf;} 
+    
+    return switch(expr.expr) {
+      case EConst( c ):
         constStr(c);
-		  case EArray( e1, e2): 
+      case EArray( e1, e2): 
         exprStr(e1);
         add("[");
         exprStr(e2);
         add("]");
-		  case EBinop( op, e1, e2 ):
+      case EBinop( op, e1, e2 ):
         exprStr(e1);
         binopStr(op);
         exprStr(e2);
-		  case EField( e, field): 
+      case EField( e, field): 
         exprStr(e);
         add(".");
         add(field);
-		  case EType( e, field): 
+      case EType( e, field): 
         exprStr(e);
         add(".");
         add(field);
-		  case EParenthesis( e ): 
+      case EParenthesis( e ): 
         add("(");
         exprStr(e);
         add(")");
-		  case EObjectDecl( fields ):
+      case EObjectDecl( fields ):
         add("{");
         newLineInc();
         for (i in 0...fields.length) 
@@ -156,7 +156,7 @@ class Print
         }
         newLineDec();
         add("}");
-		  case EArrayDecl( values ):
+      case EArrayDecl( values ):
         add("[");
         for (i in 0...values.length) 
         {
@@ -164,7 +164,7 @@ class Print
           exprStr(values[i]);
         }
         add("]");
-		  case ECall( e, params ):
+      case ECall( e, params ):
         exprStr(e);
         add("(");
         for (i in 0...params.length) 
@@ -173,7 +173,7 @@ class Print
           exprStr(params[i]);
         }
         add(")");
-		  case ENew( t, params ):
+      case ENew( t, params ):
         add("new ");
         typePathStr1(t, buf, indent, indentStr);
         add("(");
@@ -183,12 +183,12 @@ class Print
           exprStr(params[i]);
         }
         add(")");
-		  case EUnop( op , postFix, e ):
+      case EUnop( op , postFix, e ):
         if (!postFix) unopStr(op);
         exprStr(e);
         if (postFix) unopStr(op);
         buf;
-		  case EVars( vars ):
+      case EVars( vars ):
         add("var ");
         for (i in 0...vars.length) 
         {
@@ -207,10 +207,10 @@ class Print
           }
         }
         buf;
-		  case EFunction( name, f):
-			  functionStr1(f, buf, indent, indentStr, name);
+      case EFunction( name, f):
+        functionStr1(f, buf, indent, indentStr, name);
         
-		  case EBlock( exprs ):
+      case EBlock( exprs ):
         if (exprs.length == 0) 
         {
           add("{}");
@@ -231,7 +231,7 @@ class Print
           newLineDec();
           add("}");
         }
-		  case EFor( eIn, expr ):
+      case EFor( eIn, expr ):
         add("for (");
         exprStr(eIn);
         add(") ");
@@ -240,7 +240,7 @@ class Print
         exprStr(v);
         add(" in ");
         exprStr(it);  
-		  case EIf( econd, eif, eelse ):
+      case EIf( econd, eif, eelse ):
         add("if (");
         exprStr(econd);
         add(") ");
@@ -251,7 +251,7 @@ class Print
           exprStr(eelse);
         }
         buf;
-		  case EWhile( econd, e, normalWhile ):
+      case EWhile( econd, e, normalWhile ):
         if (normalWhile) 
         {
           add("while (");
@@ -270,7 +270,7 @@ class Print
           add(")");
         }
         buf;
-		  case ESwitch( e, cases, edef ):
+      case ESwitch( e, cases, edef ):
         // switch expr is by default EParenthesis, so we don't need to print them
         add("switch ");
         exprStr(e);
@@ -316,7 +316,7 @@ class Print
         indent--;
         newLineDec();
         add("}");
-		  case ETry( e, catches ):
+      case ETry( e, catches ):
         add("try ");
         exprStr(e);
         add(" ");
@@ -332,24 +332,24 @@ class Print
         }
         buf;
 
-		  case EReturn( e ):
+      case EReturn( e ):
         add("return");
         if (e != null) {
           add(" ");
           exprStr(e);
         }
         buf;
-		  case EBreak:
+      case EBreak:
         add("break");
-		  case EContinue:
+      case EContinue:
         add("continue");
-		  case EUntyped( e ):
+      case EUntyped( e ):
         add("untyped ");
         exprStr(e);
-		  case EThrow( e ):
+      case EThrow( e ):
         add("throw ");
         exprStr(e);
-		  case ECast( e, t  ):
+      case ECast( e, t  ):
         if (t == null) {
           add("cast ");
           exprStr(e);
@@ -360,15 +360,15 @@ class Print
           complexTypeStr1(t, buf, indent, indentStr);
           add(")");
         }
-		  case EDisplay( e, isCall ):
-			  buf;
+      case EDisplay( e, isCall ):
+        buf;
         //throw "not implemented yet";
-		  case EDisplayNew( t ):
-			  
+      case EDisplayNew( t ):
+        
         //throw "not implemented yet";
         buf;
-		  case ETernary( econd, eif, eelse ):
-			
+      case ETernary( econd, eif, eelse ):
+      
         exprStr(econd);
         add(" ? ");
         exprStr(eif);
@@ -764,20 +764,20 @@ class Print
   
   public static function typeStr (t:Type, ?simpleFunctionSignatures:Bool = false, ?typeParam:BaseType = null) 
   {
-		var isTypeParam = typeParam != null;
-		var paramsHash = new Hash();
-		if (typeParam != null) {
-		for (tp in typeParam.params) {
-			paramsHash.set(tp.name, tp.t);
-		}
-		}
-		var str = switch (t) {
+    var isTypeParam = typeParam != null;
+    var paramsHash = new Hash();
+    if (typeParam != null) {
+    for (tp in typeParam.params) {
+      paramsHash.set(tp.name, tp.t);
+    }
+    }
+    var str = switch (t) {
       case TLazy(f):
         "TLazy";
-			case TMono(t): 
-				"Unknown";
-					
-			case TEnum( t, params ): 
+      case TMono(t): 
+        "Unknown";
+          
+      case TEnum( t, params ): 
         var paramsReduced = 
           if (params.length > 0) 
           {
@@ -789,14 +789,14 @@ class Print
           }
           else "";
         t.get().module + "." + t.get().name + paramsReduced;
-			case TInst( t, params ): 
+      case TInst( t, params ): 
         var ct = t.get();
         var module = ct.module;
         var pack = ct.pack;
         var name = ct.name;
         
-				var realType = SType.getTypeFromModule(module, name) != null;
-				var tName = 
+        var realType = SType.getTypeFromModule(module, name) != null;
+        var tName = 
           if (realType) 
           {
             var moduleName = 
@@ -806,29 +806,29 @@ class Print
             module + if (moduleName == name) "" else "." + name;
           }
           else name;
-				var packCopy = if (realType) [] else pack;
+        var packCopy = if (realType) [] else pack;
         
         var foldPack = function (v, a) return v + "." + a;
         var reduceParams = function (v, a) return typeStr(v, ct) + "," + a;
         var reduceFirst = function (v) return typeStr(v, ct);
-				var res = 
+        var res = 
           packCopy.foldRight(foldPack, tName) 
-      		+ if (params.length > 0) 
+          + if (params.length > 0) 
               "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
             else "";
         res;
-			case TType( t , params ): 
+      case TType( t , params ): 
         
         var dt = t.get();
         
         var foldPack = function (v, a) return v + "." + a;
         var foldParams = function (v, a,i) return typeStr(v, dt) + (if (i > 0) "," else "") + a;
-				
+        
         var typeStr = dt.pack.foldRight(foldPack, dt.name);
         var paramsStr = if (params.length > 0) "<" + params.foldRightWithIndex(foldParams, ">") else "";
         
         typeStr + paramsStr;
-			case TFun( args , ret ):
+      case TFun( args , ret ):
         
         var argumentsStr =
           if (args.length == 0) "Void" 
@@ -847,20 +847,20 @@ class Print
           a.get().fields.reduceLeft(reduceFields, reduceFirst);
         }
         "{ " + reduced + " }";
-			case TDynamic( t ): 
+      case TDynamic( t ): 
         "Dynamic" + if (t != null) "<" + typeStr(t) + ">" else "";
-		}
-		return str;
-	}
-	
-	public static function anonFieldStr (c:ClassField):String 
+    }
+    return str;
+  }
+  
+  public static function anonFieldStr (c:ClassField):String 
   {
-		return c.name + " : " + typeStr(c.type);
-	}
-	
-	public static function funArgStr (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool):String 
+    return c.name + " : " + typeStr(c.type);
+  }
+  
+  public static function funArgStr (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool):String 
   {
-		var optPrefix = if (arg.opt && !simpleFunctionSignatures) "?" else "";
+    var optPrefix = if (arg.opt && !simpleFunctionSignatures) "?" else "";
     var argName = 
       if ((arg.name != null && arg.name != "") && !simpleFunctionSignatures) 
         arg.name 
@@ -870,8 +870,8 @@ class Print
     var argType = if (arg.t != null) typeStr(arg.t) else "";
     
     return optPrefix + argName + argType;
-	}
-	
+  }
+  
 }
 
 #end
