@@ -36,7 +36,7 @@ class Convert
 	public static function complexTypeToType (t:ComplexType):haxe.macro.Type
 	{
     
-    var ctAsString = Print.complexTypeStr(t);
+    var ctAsString = Print.complexType(t);
 		var e = Parse.parse("{ var a : $0 = null; a;}", [ctAsString]);
 		return Context.typeof(e);
 	}

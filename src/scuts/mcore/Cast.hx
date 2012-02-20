@@ -16,7 +16,7 @@ class Cast
   {
     var id = Context.signature(type);
     var clName = "TypedCast__" + id;
-    var ct = Print.complexTypeStr(type);
+    var ct = Print.complexType(type);
     var cl = "class " + clName + " { public static inline function doCast (e:Dynamic):" + ct + " return cast e }";
     var out = File.write(clName + ".hx", false);
     out.writeString(cl);

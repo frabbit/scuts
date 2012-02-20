@@ -22,9 +22,9 @@ class Print
 {
 
   //{ region public
-  public static function unopStr (op:Unop, indent:Int = 0, indentStr = "\t"):String
+  public static function unop (op:Unop, indent:Int = 0, indentStr = "\t"):String
   {
-    return unopStr1(op, new StringBuf(), indent, indentStr).toString();
+    return unop1(op, new StringBuf(), indent, indentStr).toString();
   }
   
   public static function expr (ex:Expr, indent:Int = 0, indentStr = "\t"):String 
@@ -34,44 +34,44 @@ class Print
     return expr1(ex, buf, indent, indentStr).toString();
   }
   
-  public static function binopStr (op:Binop):String 
+  public static function binop(op:Binop):String 
   {
-    return binopStr1(op, new StringBuf()).toString();
+    return binop1(op, new StringBuf()).toString();
   }
   
-  public static function constStr (c:Constant):String 
+  public static function const (c:Constant):String 
   {
-    return constStr1(c, new StringBuf()).toString();
+    return const1(c, new StringBuf()).toString();
   }
     
-  public static function typeParamValueStr (typeParam:TypeParam, ?cl:Array<TypeParam>, indent:Int = 0, indentStr = "\t"):String 
+  public static function typeParamValue (typeParam:TypeParam, ?cl:Array<TypeParam>, indent:Int = 0, indentStr = "\t"):String 
   {
-    return typeParamValueStr1(typeParam, new StringBuf(), indent, indentStr, cl).toString();
+    return typeParamValue1(typeParam, new StringBuf(), indent, indentStr, cl).toString();
   }
   
-  public static function typeParamValuesStr (typeParams:Array<TypeParam>, ?cl:Array<TypeParam>, indent:Int = 0, indentStr = "\t"):String 
+  public static function typeParamValues (typeParams:Array<TypeParam>, ?cl:Array<TypeParam>, indent:Int = 0, indentStr = "\t"):String 
   {
-    return typeParamValuesStr1(typeParams, new StringBuf(), indent, indentStr, cl).toString();
+    return typeParamValues1(typeParams, new StringBuf(), indent, indentStr, cl).toString();
   }
   
-  public static function complexTypeStr (c:ComplexType, indent:Int = 0, indentStr:String = "\t"):String
+  public static function complexType (c:ComplexType, indent:Int = 0, indentStr:String = "\t"):String
   {
-    return complexTypeStr1(c, new StringBuf(), indent, indentStr).toString();
+    return complexType1(c, new StringBuf(), indent, indentStr).toString();
   }
     
-  public static function functionStr(f:Function, functionName:String = "", indent:Int = 0, indentStr:String = "\t"):String
+  public static function func(f:Function, functionName:String = "", indent:Int = 0, indentStr:String = "\t"):String
   {
-    return functionStr1(f, new StringBuf(), indent, indentStr, functionName).toString();
+    return func1(f, new StringBuf(), indent, indentStr, functionName).toString();
   }
   
-  public static function fieldStr(f:Field, indent:Int = 0, indentStr:String = "\t"):String
+  public static function field(f:Field, indent:Int = 0, indentStr:String = "\t"):String
   {
-    return fieldStr1(f, new StringBuf(), indent, indentStr).toString();
+    return field1(f, new StringBuf(), indent, indentStr).toString();
   }
   
-  public static function functionSignatureStr(f:Function, ?functionName:String = "", indent:Int = 0, indentStr:String = "\t"):StringBuf 
+  public static function functionSignature(f:Function, ?functionName:String = "", indent:Int = 0, indentStr:String = "\t"):StringBuf 
   {
-    return functionStr1(f, new StringBuf(), indent, indentStr, functionName, true);
+    return func1(f, new StringBuf(), indent, indentStr, functionName, true);
   }
 
   //} region public
@@ -103,9 +103,9 @@ class Print
     var expr = function (ex) return expr1(ex, buf, indent, indentStr);
     
     
-    var constStr = function (c) return constStr1(c, buf);
-    var binopStr = function (op) return binopStr1(op, buf);
-    var unopStr = function (op) return unopStr1(op, buf, indent, indentStr);
+    var const = function (c) return const1(c, buf);
+    var binop = function (op) return binop1(op, buf);
+    var unop = function (op) return unop1(op, buf, indent, indentStr);
     var newLine = function () return newLine(buf, indent, indentStr);
 
     var newLineInc = function () {
@@ -121,7 +121,7 @@ class Print
     
     return switch(ex.expr) {
       case EConst( c ):
-        constStr(c);
+        const(c);
       case EArray( e1, e2): 
         expr(e1);
         add("[");
@@ -129,7 +129,7 @@ class Print
         add("]");
       case EBinop( op, e1, e2 ):
         expr(e1);
-        binopStr(op);
+        binop(op);
         expr(e2);
       case EField( e, field): 
         expr(e);
@@ -184,9 +184,9 @@ class Print
         }
         add(")");
       case EUnop( op , postFix, e ):
-        if (!postFix) unopStr(op);
+        if (!postFix) unop(op);
         expr(e);
-        if (postFix) unopStr(op);
+        if (postFix) unop(op);
         buf;
       case EVars( vars ):
         add("var ");
@@ -198,7 +198,7 @@ class Print
           if (v.type != null) 
           {
             add(":");
-            complexTypeStr1(v.type, buf, indent, indentStr);
+            complexType1(v.type, buf, indent, indentStr);
           }
           if (v.expr != null) 
           {
@@ -208,7 +208,7 @@ class Print
         }
         buf;
       case EFunction( name, f):
-        functionStr1(f, buf, indent, indentStr, name);
+        func1(f, buf, indent, indentStr, name);
         
       case EBlock( exprs ):
         if (exprs.length == 0) 
@@ -326,7 +326,7 @@ class Print
           add("catch (");
           add(c.name);
           add(":");
-          complexTypeStr1(c.type, buf, indent, indentStr);
+          complexType1(c.type, buf, indent, indentStr);
           add(") ");
           expr(c.expr);
         }
@@ -357,7 +357,7 @@ class Print
           add("cast(");
           expr(e);
           add(", ");
-          complexTypeStr1(t, buf, indent, indentStr);
+          complexType1(t, buf, indent, indentStr);
           add(")");
         }
       case EDisplay( e, isCall ):
@@ -380,7 +380,7 @@ class Print
     }
   }
   
-  static function unopStr1 (op:Unop, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
+  static function unop1 (op:Unop, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
   {
     #if scutsDebug
     if (buf == null || op == null) throw "assert";
@@ -398,7 +398,7 @@ class Print
   }
   
   
-  static function complexTypeStr1 (c:ComplexType, buf:StringBuf, indent:Int, indentStr:String, ?cl:Array<TypeParam>):StringBuf
+  static function complexType1 (c:ComplexType, buf:StringBuf, indent:Int, indentStr:String, ?cl:Array<TypeParam>):StringBuf
   {
     var add = function (str) { buf.add(str); return buf; }
     
@@ -434,35 +434,35 @@ class Print
           p.pack.join(".") + (p.pack.length > 0 ? "." : "") + p.name + ((p.sub == null || p.sub == p.name) ? "" : "." + p.sub);
         }
         add(str);
-        typeParamValuesStr1(p.params, buf, indent, indentStr, p.params);
+        typeParamValues1(p.params, buf, indent, indentStr, p.params);
       case TFunction( args , ret ):
         if (args.length == 0) add("Void")
         else 
           for (a in args) 
           {
-            complexTypeStr1(a, buf, indent, indentStr);
+            complexType1(a, buf, indent, indentStr);
             add("->");
           }
-        complexTypeStr1(ret, buf, indent, indentStr);
+        complexType1(ret, buf, indent, indentStr);
       case TAnonymous( fields ):
         add("{");
-        for (f in fields) fieldStr1(f, buf, indent, indentStr);
+        for (f in fields) field1(f, buf, indent, indentStr);
         add("}");
       case TParent( t ):
         add("(");
-        complexTypeStr1(t, buf, indent, indentStr, cl);
+        complexType1(t, buf, indent, indentStr, cl);
         add(")");
       case TExtend( p, fields ):
         add("{");
         add(">");
         typePathStr1(p, buf, indent, indentStr);
         for (f in fields) {
-          fieldStr1(f, buf, indent, indentStr);
+          field1(f, buf, indent, indentStr);
         }
         add("}");
       case TOptional(t):
         buf.add("?");
-        complexTypeStr1(c, buf, indent, indentStr, cl);
+        complexType1(c, buf, indent, indentStr, cl);
     }
   }
   
@@ -473,7 +473,7 @@ class Print
     add(tp.pack.length > 0 ? "." : "");
     add(tp.name);
     add(tp.sub == null ? "" : "." + tp.sub);
-    return typeParamValuesStr1(tp.params, buf, indent, indentStr, tp.params);
+    return typeParamValues1(tp.params, buf, indent, indentStr, tp.params);
   }
   
   static private function accessStr1 (a:Access, buf:StringBuf):StringBuf
@@ -490,7 +490,7 @@ class Print
     }
   }
   
-  static private function fieldStr1(f:Field, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
+  static private function field1(f:Field, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
   {
     var add = function (str) { buf.add(str); return buf; }
     for (m in f.meta) 
@@ -525,7 +525,7 @@ class Print
         if (t != null) 
         {
           add(":");
-          complexTypeStr1(t, buf, indent, indentStr);
+          complexType1(t, buf, indent, indentStr);
         }
         if (e != null) 
         {
@@ -534,7 +534,7 @@ class Print
         }
         add(";");
       case FFun( fn ):
-        functionStr1(fn, buf, indent, indentStr, f.name);
+        func1(fn, buf, indent, indentStr, f.name);
         add(";");
       case FProp( get , set , t, pExpr ):
         add("var ");
@@ -545,7 +545,7 @@ class Print
         add(set);
         add(")");
         add(":");
-        complexTypeStr1(t, buf, indent, indentStr);
+        complexType1(t, buf, indent, indentStr);
         if (pExpr != null) {
           add("=");
           expr1(pExpr, buf, 0, indentStr);
@@ -555,7 +555,7 @@ class Print
     return buf;
   }
     
-  static private function functionStr1(f:Function, buf:StringBuf, indent:Int, indentStr:String, ?functionName:String = "", ?onlySignature:Bool = false):StringBuf 
+  static private function func1(f:Function, buf:StringBuf, indent:Int, indentStr:String, ?functionName:String = "", ?onlySignature:Bool = false):StringBuf 
   {
     var add = function (str) { buf.add(str); return buf; }
     
@@ -575,7 +575,7 @@ class Print
       if (a.type != null) 
       {
         add(":");
-        complexTypeStr1(a.type, buf, indent, indentStr);
+        complexType1(a.type, buf, indent, indentStr);
       }
 
       if (a.value != null) 
@@ -589,7 +589,7 @@ class Print
     if (f.ret != null) 
     { 
       add(":"); 
-      complexTypeStr1(f.ret, buf, indent, indentStr);
+      complexType1(f.ret, buf, indent, indentStr);
     }
     
     if (!onlySignature && f.expr != null) 
@@ -631,7 +631,7 @@ class Print
       for (c in contraints) 
       {
         if (first) first = false else add(",");
-        complexTypeStr1(c, buf, indent, indentStr);
+        complexType1(c, buf, indent, indentStr);
       }
       if (contraints.length > 1) add(")");
     }
@@ -657,12 +657,12 @@ class Print
     return buf;
   }
     
-  static function typeParamValueStr1(typeParam:TypeParam, buf:StringBuf, indent:Int, indentStr:String, cl:Array<TypeParam>):StringBuf 
+  static function typeParamValue1(typeParam:TypeParam, buf:StringBuf, indent:Int, indentStr:String, cl:Array<TypeParam>):StringBuf 
   {
     switch (typeParam) 
     {
       case TPType(ct): 
-        complexTypeStr1(ct, buf, indent, indentStr, cl);
+        complexType1(ct, buf, indent, indentStr, cl);
       case TPExpr(e):
         expr1(e, buf, indent, indentStr);
     }
@@ -683,7 +683,7 @@ class Print
     }
   }
   
-  static function typeParamValuesStr1(typeParams:Array<TypeParam>, buf:StringBuf, indent:Int, indentStr:String, cl:Array<TypeParam>):StringBuf 
+  static function typeParamValues1(typeParams:Array<TypeParam>, buf:StringBuf, indent:Int, indentStr:String, cl:Array<TypeParam>):StringBuf 
   {
     var add = function (str) { buf.add(str); return buf; }
     
@@ -694,14 +694,14 @@ class Print
       for (tp in typeParams) 
       {
         if (first) first = false else add(", ");
-        typeParamValueStr1(tp, buf, indent, indentStr, cl);
+        typeParamValue1(tp, buf, indent, indentStr, cl);
       }
       add(">");
     }
     return buf;
   }
   
-  static function binopStr1 (op:Binop, buf:StringBuf, surroundSpaces:Bool = true ):StringBuf 
+  static function binop1 (op:Binop, buf:StringBuf, surroundSpaces:Bool = true ):StringBuf 
   {
     #if scutsDebug
     if (buf == null || op == null) throw "assert";
@@ -736,7 +736,7 @@ class Print
       case OpInterval: add("...");
       case OpAssignOp(op): 
         if (surroundSpaces) buf.add(" ");
-        binopStr1(op, buf, false);
+        binop1(op, buf, false);
         buf.add("="); 
         if (surroundSpaces) buf.add(" ");
         buf;
@@ -744,7 +744,7 @@ class Print
   }
   
   
-  static function constStr1 (c:Constant, buf:StringBuf):StringBuf 
+  static function const1 (c:Constant, buf:StringBuf):StringBuf 
   {
     #if scutsDebug
     if (buf == null || c == null) throw "assert";

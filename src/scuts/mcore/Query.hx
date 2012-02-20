@@ -8,7 +8,7 @@ import scuts.core.extensions.DynamicExt;
 import scuts.core.extensions.OptionExt;
 import scuts.CoreTypes;
 
-using scuts.core.extensions.ArrayOptions;
+//using scuts.core.extensions.ArrayOptions;
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.IterableExt;
 using scuts.core.extensions.DynamicExt;
@@ -19,7 +19,7 @@ typedef QSelection<U> = Array<Option<U>>;
 
 using scuts.mcore.Query;
 
-using scuts.core.lifting.ArrayLifting;
+//using scuts.core.lifting.ArrayLifting;
 
 
 
@@ -43,9 +43,6 @@ class ExprNodes {
     return if (hasParent(n)) getRoot(getParent(n)) else n;
   }
 }
-
-
-
 
 class QueryNode {
   
