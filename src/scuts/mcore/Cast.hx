@@ -24,7 +24,7 @@ class Cast
     Context.getType(clName);
     FileSystem.deleteFile(clName + ".hx");
     
-    var field = Make.mkFieldExpr(Make.mkConstExpr(CType(clName), pos), "doCast", pos);
+    var field = Make.field(Make.const(CType(clName), pos), "doCast", pos);
     var call = Make.mkExpr(ECall(field, [expr]), pos);
     return call;
   }

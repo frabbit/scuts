@@ -257,19 +257,19 @@ class Parse
           for (p in tp.pack) 
             cur = switch (cur) 
             {
-              case Some(v): Some(Make.mkFieldExpr(v, p));
-              case None:    Some(Make.mkConstExpr(CIdent(p)));
+              case Some(v): Some(Make.field(v, p));
+              case None:    Some(Make.const(CIdent(p)));
             }
         if (tp.sub != null) 
           cur = switch (cur) 
           {
-            case Some(v): Some(Make.mkFieldExpr(v, tp.sub));
-            case None:    Some(Make.mkConstExpr(CType(tp.sub)));
+            case Some(v): Some(Make.field(v, tp.sub));
+            case None:    Some(Make.const(CType(tp.sub)));
           }
         switch (cur) 
         {
-          case Some(v): Make.mkFieldExpr(v, tp.name);
-          case None: Make.mkConstExpr(CType(tp.name));
+          case Some(v): Make.field(v, tp.name);
+          case None: Make.const(CType(tp.name));
         }
         
       default: 
@@ -290,14 +290,14 @@ class Parse
       if (Check.isExpr(a)) 
         cast a;
       else if (Std.is(a, haxe.macro.Type)) 
-        Make.mkConstExpr(CType(Print.typeStr(cast a, true)), pos);
+        Make.const(CType(Print.typeStr(cast a, true)), pos);
       else if (Std.is(a, ComplexType)) 
       {
         var ct:ComplexType = cast a;
         return complexTypeToExpr(ct);
       }
       else if (Std.is(a, Int)) 
-        Make.mkConstExpr(CInt(Std.string(a)), pos);
+        Make.const(CInt(Std.string(a)), pos);
       else 
         Context.makeExpr(a, pos);
   }

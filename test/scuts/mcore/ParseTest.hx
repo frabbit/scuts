@@ -165,7 +165,7 @@ class ParseTest
   {
     var s = "switch ($0) { case A: $1; case B: $2;}";
     
-    var e = Parse.parse(s, [Make.mkIdentConstExpr("a"), 0, 5]);
+    var e = Parse.parse(s, [Make.constIdent("a"), 0, 5]);
     
     var actual = Print.exprStr(e);
     var expected = 

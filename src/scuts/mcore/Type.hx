@@ -12,11 +12,10 @@ import haxe.macro.Expr;
 import haxe.macro.Type.BaseType;
 import haxe.macro.Type.ClassField;
 import haxe.macro.Context;
+
+
 private typedef MType = haxe.macro.Type;
 
-
-//using Lambda;
-//using scuts.ArrayTools;
 
 class Type 
 {
