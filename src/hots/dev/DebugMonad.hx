@@ -17,7 +17,7 @@ class DebugMonad
   @:macro public static function printType (m:Expr ) 
   {
     
-    var toPrint = Print.typeStr(Context.follow(Context.typeof(m),false));
+    var toPrint = Print.type(Context.follow(Context.typeof(m),false));
     
     toPrint = toPrint.split("__monadic_marker_dont_use_me_internal_1__").join("F1");
     toPrint = toPrint.split("__monadic_marker_dont_use_me_internal_2__").join("F2");
@@ -26,17 +26,17 @@ class DebugMonad
     
     trace(toPrint);
     
-    return Make.mkEmptyBlock();
+    return Make.emptyBlock();
   }
   
   @:macro public static function printTypeLocal (m:Expr ) 
   {
     
-    var toPrint = Print.typeStr(Context.typeof(m));
+    var toPrint = Print.type(Context.typeof(m));
     
     trace(toPrint);
     
-    return Make.mkEmptyBlock();
+    return Make.emptyBlock();
   }
   
 }
