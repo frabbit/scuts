@@ -26,9 +26,29 @@ class Strings
     return StringTools.endsWith(s, end);
   }
   
-  public static inline function replace(s:String, what:String, with:String):String 
+  public static inline function replace(s:String, what:String, by:String):String 
   {
-    return s.split(what).join(with);
+    return s.split(what).join(by);
+  }
+  
+  public static inline function replaceEReg(s:String, ereg:EReg, by:String):String 
+  {
+    return ereg.replace(s, by);
+  }
+  
+  public static inline function countSub(s:String, sub:String):Int 
+  {
+    var i = 0;
+    var count = 0;
+    while (true) {
+      var i = s.indexOf(sub, i);
+      if (i != -1) {
+        count++;
+      } else {
+        break;
+      }
+    }
+    return count;
   }
   
 }
