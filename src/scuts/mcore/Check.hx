@@ -161,13 +161,13 @@ class Check
         false;
     };
     return hasReturnVoidType || !hasNonVoidReturn(f.expr);
-    
   }
   
 	public static function isExpr (o:Dynamic) {
 		return Reflect.isObject(o) && Reflect.hasField(o, "expr") 
 			&& Reflect.hasField(o, "pos") 
 			&& Std.is(Reflect.field(o, "expr"), ExprDef);
+      // && Std.is(Reflect.field(o, "pos"), Position); // cannot be checked
 	}
   
   public static function isArrayDecl (e:Expr):Bool {
