@@ -1,5 +1,6 @@
 package scuts.core.extensions;
 
+import scuts.core.macros.Lazy;
 import scuts.core.types.Option;
 import scuts.core.types.Ordering;
 import scuts.core.types.Tup2;
@@ -233,6 +234,21 @@ class ArrayExt
     return acc;
   }
   
+  public static function equals <T>(a1:Array<T>, a2:Array<T>, eqT:T->T->Bool) {
+    var equalsElements = Lazy.expr({
+      var eq = true;
+      for (i in 0...a1.length) {
+        if (!eqT(a1[i], a2[i])) {
+          eq = false;
+          break;
+        }
+      }
+      eq;
+    });
+    
+    return a1.length == a2.length
+      && equalsElements();
+  }
   
   public static function some <T>(arr:Array<T>, e:T->Bool):Option<T> {
     for (i in arr) {
@@ -243,12 +259,29 @@ class ArrayExt
   
   public static function reduceRight <T,S>(a:Array<T>, f:T->S->S, first:T->S):S
   {
-    return reduceLeft(a, f.flip(), first);
+    if (a.length == 0) throw "Cannot reduce an empty Array";
+    
+    var a1 = reverseCopy(a);
+    
+    var acc = first(a1[0]);
+    for (i in 1...a1.length) {
+      acc = f(a1[i], acc);
+    }
+    return acc;
+    
   }
   
   public static function reduceRightWithIndex <T,S>(a:Array<T>, f:T->S->Int->S, first:T->S):S
   {
-    return reduceLeftWithIndex(a, f.flip(), first);
+    if (a.length == 0) throw "Cannot reduce an empty Array";
+    
+    var a1 = reverseCopy(a);
+    
+    var acc = first(a1[0]);
+    for (i in 1...a1.length) {
+      acc = f(a1[i], acc, a1.length - i);
+    }
+    return acc;
   }
   
   public static function reverseCopy <A> (a:Array<A>):Array<A>
