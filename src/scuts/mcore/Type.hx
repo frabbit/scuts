@@ -20,8 +20,17 @@ private typedef MType = haxe.macro.Type;
 
 class Type 
 {
-
-  public static function isSubtypeOf (subType:ComplexType, superType:ComplexType):Bool 
+  /*
+  public static function findOccurrences (type:Type, search:Type) {
+    switch (type) {
+      case MType.TInst(t, params):
+        
+      
+    }
+  }
+  */
+  
+  public static function isInstanceOf (subType:ComplexType, superType:ComplexType):Bool 
   {
     var test = '{
       var subType:$0 = null;
@@ -39,30 +48,34 @@ class Type
     }
   }
   
+  public static function isSubtypeOf (subType:ComplexType, superType:ComplexType):Bool 
+  {
+    return isInstanceOf(subType, superType) && !isInstanceOf(superType, subType);
+  }
+  
   public static function isSupertypeOf (superType:ComplexType, subType:ComplexType):Bool
   {
     return isSubtypeOf(subType, superType);
   }
   
 	public static inline function hasTypeParameters (type:BaseType) 
-    {
-      return type.params.length != 0;
-    }
+  {
+    return type.params.length != 0;
+  }
   
   public static function getClassId (type:BaseType):String 
-    {
-      return type.pack.join("_") + (if (type.pack.length > 0) "_" else "") + type.name;
-    }
+  {
+    return type.pack.join("_") + (if (type.pack.length > 0) "_" else "") + type.name;
+  }
   
   public static function getFullQualifiedTypeName (type:BaseType):String 
-    {
-      var module = getModule(type);
-      return type.pack.join(".") + (if (type.pack.length > 0) "." else "") + (module != type.name ? module + "." : "") + type.name;
-    }
+  {
+    var module = getModule(type);
+    return type.pack.join(".") + (if (type.pack.length > 0) "." else "") + (module != type.name ? module + "." : "") + type.name;
+  }
   
   public static function getFullQualifiedTypeNameWithParams (type:BaseType):String 
   {
-	  
     var typeName = getFullQualifiedTypeName(type);
 	  if (type.params.length > 0) 
     {
@@ -78,37 +91,36 @@ class Type
   }
   
   public static function getFullQualifiedImportName (type:BaseType):String 
-    {
-		return getFullQualifiedTypeName(type);
-    }
+  {
+    return getFullQualifiedTypeName(type);
+  }
   
   public static function getModule (type:BaseType):String 
-    {
-	  return type.module.split(".").last();
-    }
+  {
+    return type.module.split(".").last();
+  }
   
   public static function getType (s:String):MType
-    {
-		//trace(s);
-	  var parts = s.split(".");
-	  if (parts.length > 1) {
-		  var f1 = parts[parts.length-1].charAt(0);
-		  var f2 = parts[parts.length - 2].charAt(0);
-		  if (f1.toUpperCase() == f1 && f2.toUpperCase() == f2) {
-			  // Module
-			  
-			  if (f1 == f2) {
-				  parts.splice(parts.length - 2, 1);
-				  return try Context.getType(parts.join(".")) catch (e:Dynamic) null;
-				  
-			  } else {
-				  var typeName = parts.pop();
-				  return getTypeFromModule(parts.join("."), typeName);
-			  }
-		  } 
-	  }
-	  return try Context.getType(s) catch (e:Dynamic) null;
+  {
+    var parts = s.split(".");
+    if (parts.length > 1) {
+      var f1 = parts[parts.length-1].charAt(0);
+      var f2 = parts[parts.length - 2].charAt(0);
+      if (f1.toUpperCase() == f1 && f2.toUpperCase() == f2) {
+        // Module
+        
+        if (f1 == f2) {
+          parts.splice(parts.length - 2, 1);
+          return try Context.getType(parts.join(".")) catch (e:Dynamic) null;
+          
+        } else {
+          var typeName = parts.pop();
+          return getTypeFromModule(parts.join("."), typeName);
+        }
+      } 
     }
+    return try Context.getType(s) catch (e:Dynamic) null;
+  }
 	
 	public static function getTypeFromModule (module:String, typeName:String):MType {
     //trace("check if type from module" + typeName);
@@ -136,42 +148,42 @@ class Type
 	}
   
   public static function hasNoArgMethod (t:MType, methodName:String, ?isStatic:Bool = false) 
-      {
-        var filter = function (cf:ClassField) 
-          {
-            return cf.params.length == 0 
-              && cf.name == methodName 
-              && switch (cf.kind) 
-                { 
-                  case FieldKind.FMethod(_): true;
-                  case FieldKind.FVar(_, _): 
-                    return switch (cf.type) 
-                      {
-                        case TFun(args, _): args.length == 0;
-                        default: false;
-                      }
-                } 
-          };
-        
-        return switch (t) 
-          {
-            case TLazy(_): false;
-            case TMono(_), TFun(_,_), TDynamic(_), TEnum(_,_): false;
-            case TInst(t, _): 
-              if (isStatic)
-                t.get().statics.get().any(filter);
-              else 
+  {
+    var filter = function (cf:ClassField) 
+    {
+      return cf.params.length == 0 
+         && cf.name == methodName 
+         && switch (cf.kind) 
+            { 
+              case FieldKind.FMethod(_): true;
+              case FieldKind.FVar(_, _): 
+                switch (cf.type) 
                 {
-                  t.get().fields.get().any(filter) 
-                    || (t.get().superClass != null 
-                      && hasNoArgMethod(TInst(t.get().superClass.t, t.get().superClass.params), methodName));
+                  case TFun(args, _): args.length == 0;
+                  default: false;
                 }
-            case TType(t, _):
-              hasNoArgMethod(t.get().type, methodName, true);
-            case TAnonymous(a):
-              a.get().fields.any(filter);
-          }
-      }
+            } 
+    };
+    
+    return switch (t) 
+    {
+      case TLazy(_): false;
+      case TMono(_), TFun(_,_), TDynamic(_), TEnum(_,_): false;
+      case TInst(t, _): 
+        if (isStatic)
+          t.get().statics.get().any(filter);
+        else 
+        {
+          t.get().fields.get().any(filter) 
+            || (t.get().superClass != null 
+              && hasNoArgMethod(TInst(t.get().superClass.t, t.get().superClass.params), methodName));
+        }
+      case TType(t, _):
+        hasNoArgMethod(t.get().type, methodName, true);
+      case TAnonymous(a):
+        a.get().fields.any(filter);
+    }
+  }
 }
 
 #end
