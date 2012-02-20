@@ -12,6 +12,8 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Expr.Binop;
 import haxe.macro.Type;
+import scuts.Scuts;
+
 
 private typedef SType = scuts.mcore.Type;
 
@@ -21,66 +23,56 @@ class Print
 
 	//{ region public
   public static function unopStr (op:Unop, indent:Int = 0, indentStr = "\t"):String
-    {
-      
-      return unopStr1(op, new StringBuf(), indent, indentStr).toString();
-    }
-  
-    /*
-   public static function typeStr (type:Type):String
-    {
-      return typeStr1(type, new StringBuf()).toString();
-    }
-*/
+  {
+    return unopStr1(op, new StringBuf(), indent, indentStr).toString();
+  }
   
   public static function exprStr (expr:Expr, indent:Int = 0, indentStr = "\t"):String 
-    {
-      
-      var buf = new StringBuf();
-      addIndent(buf, indent, indentStr);
-      return exprStr1(expr, buf, indent, indentStr).toString();
-    }
+  {
+    var buf = new StringBuf();
+    addIndent(buf, indent, indentStr);
+    return exprStr1(expr, buf, indent, indentStr).toString();
+  }
   
   public static function binopStr (op:Binop):String 
-    {
-      return binopStr1(op, new StringBuf()).toString();
-    }
+  {
+    return binopStr1(op, new StringBuf()).toString();
+  }
   
   public static function constStr (c:Constant):String 
-    {
-      return constStr1(c, new StringBuf()).toString();
-    }
+  {
+    return constStr1(c, new StringBuf()).toString();
+  }
     
   public static function typeParamValueStr (typeParam:TypeParam, ?cl:Array<TypeParam>, indent:Int = 0, indentStr = "\t"):String 
-    {
-      return typeParamValueStr1(typeParam, new StringBuf(), indent, indentStr, cl).toString();
-    }
+  {
+    return typeParamValueStr1(typeParam, new StringBuf(), indent, indentStr, cl).toString();
+  }
   
   public static function typeParamValuesStr (typeParams:Array<TypeParam>, ?cl:Array<TypeParam>, indent:Int = 0, indentStr = "\t"):String 
-    {
-      return typeParamValuesStr1(typeParams, new StringBuf(), indent, indentStr, cl).toString();
-    }
+  {
+    return typeParamValuesStr1(typeParams, new StringBuf(), indent, indentStr, cl).toString();
+  }
   
   public static function complexTypeStr (c:ComplexType, indent:Int = 0, indentStr:String = "\t"):String
-    {
-      return complexTypeStr1(c, new StringBuf(), indent, indentStr).toString();
-      
-    }
+  {
+    return complexTypeStr1(c, new StringBuf(), indent, indentStr).toString();
+  }
     
   public static function functionStr(f:Function, functionName:String = "", indent:Int = 0, indentStr:String = "\t"):String
-    {
-      return functionStr1(f, new StringBuf(), indent, indentStr, functionName).toString();
-    }
+  {
+    return functionStr1(f, new StringBuf(), indent, indentStr, functionName).toString();
+  }
 	
   public static function fieldStr(f:Field, indent:Int = 0, indentStr:String = "\t"):String
-    {
-      return fieldStr1(f, new StringBuf(), indent, indentStr).toString();
-    }
+  {
+    return fieldStr1(f, new StringBuf(), indent, indentStr).toString();
+  }
 	
   public static function functionSignatureStr(f:Function, ?functionName:String = "", indent:Int = 0, indentStr:String = "\t"):StringBuf 
-    {
-      return functionStr1(f, new StringBuf(), indent, indentStr, functionName, true);
-    }
+  {
+    return functionStr1(f, new StringBuf(), indent, indentStr, functionName, true);
+  }
 
   //} region public
   
@@ -91,7 +83,6 @@ class Print
   static function newLine (buf:StringBuf, indent:Int,indentStr:String) 
   {
     buf.add("\n");
-    
     addIndent(buf, indent, indentStr);
     return buf;
   }
@@ -100,6 +91,7 @@ class Print
     while (indent-- > 0) {
       buf.add(indentStr);
     }
+    return buf;
   }
   
   static function exprStr1 (expr:Expr, buf:StringBuf, indent:Int, indentStr:String):StringBuf
@@ -129,186 +121,172 @@ class Print
 		
 		return switch(expr.expr) {
 		  case EConst( c ):
-        buf = constStr(c);
+        constStr(c);
 		  case EArray( e1, e2): 
-        buf = exprStr(e1);
-        buf = add("[");
-        buf = exprStr(e2);
-        buf = add("]");
-        //throw "not implemented (e1:" + e1 + ", e2:" + e2 + ")";
+        exprStr(e1);
+        add("[");
+        exprStr(e2);
+        add("]");
 		  case EBinop( op, e1, e2 ):
-        buf = exprStr(e1);
-        buf = binopStr(op);
-        buf = exprStr(e2);
+        exprStr(e1);
+        binopStr(op);
+        exprStr(e2);
 		  case EField( e, field): 
-        buf = exprStr(e);
-        buf = add(".");
-        buf = add(field);
+        exprStr(e);
+        add(".");
+        add(field);
 		  case EType( e, field): 
-        buf = exprStr(e);
-        buf = add(".");
-        buf = add(field);
-        // todo check this
+        exprStr(e);
+        add(".");
+        add(field);
 		  case EParenthesis( e ): 
-        buf = add("(");
-        buf = exprStr(e);
-        buf = add(")");
+        add("(");
+        exprStr(e);
+        add(")");
 		  case EObjectDecl( fields ):
-        buf = add("{");
-        buf = newLineInc();
-        
+        add("{");
+        newLineInc();
         for (i in 0...fields.length) 
         {
           var f = fields[i];
-          if (i != 0) {
-            buf = add(",");
-          }
-          buf = add(f.field);
-          buf = add(":");
-          buf = exprStr(f.expr);
-          
+          if (i != 0) add(",");
+          add(f.field);
+          add(":");
+          exprStr(f.expr);
         }
-        buf = newLineDec();
-        buf = buf = add("}");
+        newLineDec();
+        add("}");
 		  case EArrayDecl( values ):
-        buf = add("[");
+        add("[");
         for (i in 0...values.length) 
-          {
-            buf = if (i == 0) buf else add(",");
-            buf = exprStr(values[i]);
-          }
-        buf = add("]");
-		  case ECall( e, params ):
-        buf = exprStr(e);
-        buf = add("(");
-        
-        for (i in 0...params.length) 
-          {
-            buf = if (i == 0) buf else add(", ");
-            buf = exprStr(params[i]);
-          }
-        buf = add(")");
-        buf;
-		  case ENew( t, params ):
-			
-        buf = add("new ");
-        buf = typePathStr1(t, buf, indent, indentStr);
-        buf = add("(");
-        for (i in 0...params.length) {
-          buf = if (i == 0) buf else add(", ");
-          buf = exprStr(params[i]);
+        {
+          if (i != 0) add(",");
+          exprStr(values[i]);
         }
-        buf = add(")");
-			
-			
+        add("]");
+		  case ECall( e, params ):
+        exprStr(e);
+        add("(");
+        for (i in 0...params.length) 
+        {
+          if (i != 0) add(", ");
+          exprStr(params[i]);
+        }
+        add(")");
+		  case ENew( t, params ):
+        add("new ");
+        typePathStr1(t, buf, indent, indentStr);
+        add("(");
+        for (i in 0...params.length) 
+        {
+          if (i != 0) add(", ");
+          exprStr(params[i]);
+        }
+        add(")");
 		  case EUnop( op , postFix, e ):
-        buf = if (!postFix) unopStr(op) else buf;
-        buf = exprStr(e);
-        buf = if (postFix) unopStr(op) else buf;
+        if (!postFix) unopStr(op);
+        exprStr(e);
+        if (postFix) unopStr(op);
+        buf;
 		  case EVars( vars ):
-        buf = add("var ");
+        add("var ");
         for (i in 0...vars.length) 
+        {
+          var v = vars[i];
+          if (i != 0) add(", ");
+          add(v.name);
+          if (v.type != null) 
           {
-            var v = vars[i];
-            buf = if (i == 0) buf else add(", ");
-            buf = add(v.name);
-            if (v.type != null) 
-            {
-              buf = add(":");
-              
-              buf = complexTypeStr1(v.type, buf, indent, indentStr);
-            }
-            
-            if (v.expr != null) 
-            {
-              
-              buf = add(" = ");
-              buf = exprStr(v.expr);
-            }
+            add(":");
+            complexTypeStr1(v.type, buf, indent, indentStr);
           }
+          if (v.expr != null) 
+          {
+            add(" = ");
+            exprStr(v.expr);
+          }
+        }
         buf;
 		  case EFunction( name, f):
-			  buf = functionStr1(f, buf, indent, indentStr, name);
+			  functionStr1(f, buf, indent, indentStr, name);
         
 		  case EBlock( exprs ):
-        if (exprs.length == 0) {
+        if (exprs.length == 0) 
+        {
           add("{}");
-        } else {
-          buf = add("{");
+        } 
+        else 
+        {
+          add("{");
           newLineInc();
           var first = true;
           for (e in exprs) 
           {
             if (first) first = false else newLine();
             if (e == null) throw "assert";
-            buf = exprStr(e);
-            buf = add(";");
+            exprStr(e);
+            add(";");
             
           }
           newLineDec();
-          buf = add("}");
+          add("}");
         }
 		  case EFor( eIn, expr ):
-        buf = add("for (");
-		buf = exprStr(eIn);
-        
-		
-        buf = add(") ");
-        buf = exprStr(expr);
-	      case EIn(v, it):
-			buf = exprStr(v);
-			buf = add(" in ");
-			buf = exprStr(it);  
-		  
+        add("for (");
+        exprStr(eIn);
+        add(") ");
+        exprStr(expr);
+      case EIn(v, it):
+        exprStr(v);
+        add(" in ");
+        exprStr(it);  
 		  case EIf( econd, eif, eelse ):
-        buf = add("if (");
-        buf = exprStr(econd);
-        buf = add(") ");
-        buf = exprStr(eif);
+        add("if (");
+        exprStr(econd);
+        add(") ");
+        exprStr(eif);
         if (eelse != null) 
         {
-          buf = add(" else ");
-          buf = exprStr(eelse);
+          add(" else ");
+          exprStr(eelse);
         }
         buf;
 		  case EWhile( econd, e, normalWhile ):
         if (normalWhile) 
-          {
-            buf = add("while (");
-            buf = exprStr(econd);
-            buf = add(")");
-          } 
-        else
-          buf = add("do");
+        {
+          add("while (");
+          exprStr(econd);
+          add(")");
+        } 
+        else add("do");
         
-        buf = add(" ");
-        buf = exprStr(e);
+        add(" ");
+        exprStr(e);
         
         if (!normalWhile) 
-          {
-            buf = add(" while (");
-            buf = exprStr(econd);
-            buf = add(")");
-          }
+        {
+          add(" while (");
+          exprStr(econd);
+          add(")");
+        }
         buf;
-			
 		  case ESwitch( e, cases, edef ):
         // switch expr is by default EParenthesis, so we don't need to print them
-        buf = add("switch ");
-        buf = exprStr(e);
-        buf = add(" {");
+        add("switch ");
+        exprStr(e);
+        add(" {");
         newLineInc();
         for (i in 0...cases.length) 
         {
           var c = cases[i];
           if (i > 0) newLine();
-          buf = add("case ");
+          add("case ");
           for (i in 0...c.values.length) 
             {
-              buf = if (i == 0) buf else add(",");
-              buf = exprStr(c.values[i]);
+              if (i != 0) add(",");
+              exprStr(c.values[i]);
             }
-          buf = add(":");
+          add(":");
           
           // case expression is always a block, but we don't need to print the outer parenthesis in this case
           var allExprs = switch (c.expr.expr) {
@@ -317,93 +295,90 @@ class Print
           }
           if (allExprs.length > 0) newLineInc();
           for (e in allExprs) {
-            buf = exprStr(e);
-            buf = add(";");
+            exprStr(e);
+            add(";");
           }
           if (allExprs.length > 0) indent--;
-          //newLineDec();
         }
         if (edef != null) {
           if (cases.length > 0) newLine();
-          buf = add("default:");
+          add("default:");
           var allExprs = switch (edef.expr) {
             case EBlock(exprs): exprs;
             default: throw "assert";
           }
           if (allExprs.length > 0) newLineInc();
           for (e in allExprs) {
-            buf = exprStr(e);
-            buf = add(";");
+            exprStr(e);
+            add(";");
           }
         }
         indent--;
         newLineDec();
-        buf = add("}");
+        add("}");
 		  case ETry( e, catches ):
-        buf = add("try ");
-        buf = exprStr(e);
-        buf = add(" ");
+        add("try ");
+        exprStr(e);
+        add(" ");
         var first = true;
         for (c in catches) {
-          buf = if (first) { first = false; buf; } else add(" ");
-          buf = add("catch (");
-          buf = add(c.name);
-          buf = add(":");
-          buf = complexTypeStr1(c.type, buf, indent, indentStr);
-          buf = add(") ");
-          buf = exprStr(c.expr);
+          if (first) { first = false; } else add(" ");
+          add("catch (");
+          add(c.name);
+          add(":");
+          complexTypeStr1(c.type, buf, indent, indentStr);
+          add(") ");
+          exprStr(c.expr);
         }
         buf;
-        
-        
+
 		  case EReturn( e ):
-        buf = add("return");
+        add("return");
         if (e != null) {
-          buf = add(" ");
-          buf = exprStr(e);
+          add(" ");
+          exprStr(e);
         }
         buf;
 		  case EBreak:
-        buf = add("break");
+        add("break");
 		  case EContinue:
-        buf = add("continue");
+        add("continue");
 		  case EUntyped( e ):
-        buf = add("untyped ");
-        buf = exprStr(e);
+        add("untyped ");
+        exprStr(e);
 		  case EThrow( e ):
-        buf = add("throw ");
-        buf = exprStr(e);
+        add("throw ");
+        exprStr(e);
 		  case ECast( e, t  ):
         if (t == null) {
-          buf = add("cast ");
-          buf = exprStr(e);
+          add("cast ");
+          exprStr(e);
         } else {
-          buf = add("cast(");
-          buf = exprStr(e);
-          buf = add(", ");
-          buf = complexTypeStr1(t, buf, indent, indentStr);
-          buf = add(")");
+          add("cast(");
+          exprStr(e);
+          add(", ");
+          complexTypeStr1(t, buf, indent, indentStr);
+          add(")");
         }
 		  case EDisplay( e, isCall ):
 			  buf;
-			//throw "not implemented yet";
-		  case EDisplayNew( t ):
-			  buf;
         //throw "not implemented yet";
+		  case EDisplayNew( t ):
+			  
+        //throw "not implemented yet";
+        buf;
 		  case ETernary( econd, eif, eelse ):
 			
-        buf = exprStr(econd);
-        buf = add(" ? ");
-        buf = exprStr(eif);
-        buf = add(" : ");
-        buf = exprStr(eelse);
+        exprStr(econd);
+        add(" ? ");
+        exprStr(eif);
+        add(" : ");
+        exprStr(eelse);
       case ECheckType(e, t):
         // TODO what is this exactly
         exprStr(e);
     }
   }
-  
-  
   
   static function unopStr1 (op:Unop, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
   {
@@ -414,389 +389,317 @@ class Print
     var add = function (str) { buf.add(str); return buf;}
     
     return switch (op) {
-      case OpIncrement:   add("++");
-      case OpDecrement:   add("--");
-      case OpNot:      add("!");
-      case OpNeg:      add("-");
-      case OpNegBits:    add("~");
+      case OpIncrement: add("++");
+      case OpDecrement: add("--");
+      case OpNot:       add("!");
+      case OpNeg:       add("-");
+      case OpNegBits:   add("~");
     }
   }
   
-  /*
-   *  enum ComplexType {
-        TPath( p : TypePath );
-        TFunction( args : Array<ComplexType>, ret : ComplexType );
-        TAnonymous( fields : Array<Field> );
-        TParent( t : ComplexType );
-        TExtend( p : TypePath, fields : Array<Field> );
-      }
-  */
+  
   static function complexTypeStr1 (c:ComplexType, buf:StringBuf, indent:Int, indentStr:String, ?cl:Array<TypeParam>):StringBuf
   {
     var add = function (str) { buf.add(str); return buf; }
     
-    return switch (c) {
+    return switch (c) 
+    {
       case TPath( p ): 
         //trace("---------");
         var typeParams = if (cl != null) cl else [];
         
         var params = new Hash();
-        for (tp in typeParams) {
-          switch (tp) {
+        for (tp in typeParams) 
+        {
+          switch (tp) 
+          {
             case TypeParam.TPExpr(e):
             case TypeParam.TPType(ct):
-              switch(ct) {
+              switch(ct) 
+              {
                 case TPath(p):
-                  
                   params.set(p.name + "." + p.sub, true);
                 default:
-                   trace(ct);
+                  Scuts.macroError("Not implemented");
               }
           }
         }
         
         var str = {
           var module = p.pack.join(".") + (p.pack.length > 0 ? "." : "") + p.name;
-          var name = if (p.sub == null) {
-            p.name;
-          }else {
-            //trace("we have a sub: " + p.sub);
-            if (p.sub != p.name) p.sub else p.name;
-          }
-          //var typeExists = SType.getTypeFromModule(module, name) != null;
-          
+          var name = 
+            if (p.sub == null) p.name
+            else if (p.sub != p.name) p.sub else p.name;
+            
           p.pack.join(".") + (p.pack.length > 0 ? "." : "") + p.name + ((p.sub == null || p.sub == p.name) ? "" : "." + p.sub);
         }
-        
-       
-        buf = add(str);
-            
-
+        add(str);
         typeParamValuesStr1(p.params, buf, indent, indentStr, p.params);
-        
       case TFunction( args , ret ):
-        buf = 
-          if (args.length == 0) 
-            {
-              buf = add("Void");
-            } 
-          else 
-            {
-              for (a in args) 
-                {
-                  buf = complexTypeStr1(a, buf, indent, indentStr);
-                  buf = add("->");
-                }
-              buf;
-            }
+        if (args.length == 0) add("Void")
+        else 
+          for (a in args) 
+          {
+            complexTypeStr1(a, buf, indent, indentStr);
+            add("->");
+          }
         complexTypeStr1(ret, buf, indent, indentStr);
       case TAnonymous( fields ):
-        buf = add("{");
-        for (f in fields) 
-          {
-            
-            buf = fieldStr1(f, buf, indent, indentStr);
-            
-          }
+        add("{");
+        for (f in fields) fieldStr1(f, buf, indent, indentStr);
         add("}");
-        
       case TParent( t ):
-        // todo TParent, What is this?
-        throw "ERROR TParent not implemented";
+        add("(");
+        complexTypeStr1(t, buf, indent, indentStr, cl);
+        add(")");
       case TExtend( p, fields ):
-        buf = add("{");
-        buf = add(">");
+        add("{");
+        add(">");
         typePathStr1(p, buf, indent, indentStr);
         for (f in fields) {
-          buf = fieldStr1(f, buf, indent, indentStr);
-          
+          fieldStr1(f, buf, indent, indentStr);
         }
         add("}");
-       case TOptional(t):
-         buf.add("?");
-         complexTypeStr1(c, buf, indent, indentStr, cl);
+      case TOptional(t):
+        buf.add("?");
+        complexTypeStr1(c, buf, indent, indentStr, cl);
     }
   }
   
   static private function typePathStr1(tp:TypePath, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
-    {
-      var add = function (str) { buf.add(str); return buf; }
-      buf = add(tp.pack.join("."));
-      buf = add((tp.pack.length > 0 ? "." : ""));
-      buf = add(tp.name);
-      buf = add(tp.sub == null ? "" : "." + tp.sub);
-      return typeParamValuesStr1(tp.params, buf, indent, indentStr, tp.params);
-    }
+  {
+    var add = function (str) { buf.add(str); return buf; }
+    add(tp.pack.join("."));
+    add(tp.pack.length > 0 ? "." : "");
+    add(tp.name);
+    add(tp.sub == null ? "" : "." + tp.sub);
+    return typeParamValuesStr1(tp.params, buf, indent, indentStr, tp.params);
+  }
   
   static private function accessStr1 (a:Access, buf:StringBuf):StringBuf
   {
     var add = function (str) { buf.add(str); return buf; }
     return switch (a) 
-      {
-        case APublic: add("public ");
-        case APrivate: add("private ");
-        case AStatic: add("static ");
-        case AOverride: add("override ");
-        case ADynamic: add("dynamic ");
-        case AInline: add("inline ");
-      }
+    {
+      case APublic:   add("public ");
+      case APrivate:  add("private ");
+      case AStatic:   add("static ");
+      case AOverride: add("override ");
+      case ADynamic:  add("dynamic ");
+      case AInline:   add("inline ");
+    }
   }
   
   static private function fieldStr1(f:Field, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
+  {
+    var add = function (str) { buf.add(str); return buf; }
+    for (m in f.meta) 
     {
-      var add = function (str) { buf.add(str); return buf; }
+      buf.add("@");
+      buf.add(m.name);
       
-      
-      
-      for (a in f.access) 
+      var len = m.params.length;
+      if (len > 0) 
+      {
+        buf.add("(");
+        exprStr1(m.params[0], buf, indent, indentStr);
+        for (i in 1...len) 
         {
-          buf = accessStr1(a, buf);
+          exprStr1(m.params[i], buf, indent, indentStr);
         }
-      
-      
-      return switch (f.kind) 
-        {
-          case FVar( t , e  ):
-            buf = add("var ");
-            buf = add(f.name);
-            if (t != null) 
-            {
-              buf = add(":");
-              buf = complexTypeStr1(t, buf, indent, indentStr);
-            }
-            if (e != null) 
-            {
-              buf = add(":");
-              exprStr1(e, buf, 0, indentStr);
-            }
-            buf = add(";");
-            buf;
-          case FFun( fn ):
-            
-            functionStr1(fn, buf, indent, indentStr, f.name);
-            buf = add(";");
-          case FProp( get , set , t, pExpr ):
-            buf = add("var ");
-            buf = add(f.name);
-            buf = add("(");
-            buf = add(get);
-            buf = add(",");
-            buf = add(set);
-            buf = add(")");
-            buf = add(":");
-            complexTypeStr1(t, buf, indent, indentStr);
-            if (pExpr != null) {
-              buf = add("=");
-              buf = exprStr1(pExpr, buf, 0, indentStr);
-            }
-            buf = add(";");
-        }
+        buf.add(")");
+      }
+      buf.add(" ");
     }
+    
+    for (a in f.access) 
+    {
+      accessStr1(a, buf);
+    }
+    
+    switch (f.kind) 
+    {
+      case FVar( t , e  ):
+        add("var ");
+        add(f.name);
+        if (t != null) 
+        {
+          add(":");
+          complexTypeStr1(t, buf, indent, indentStr);
+        }
+        if (e != null) 
+        {
+          add(":");
+          exprStr1(e, buf, 0, indentStr);
+        }
+        add(";");
+      case FFun( fn ):
+        functionStr1(fn, buf, indent, indentStr, f.name);
+        add(";");
+      case FProp( get , set , t, pExpr ):
+        add("var ");
+        add(f.name);
+        add("(");
+        add(get);
+        add(",");
+        add(set);
+        add(")");
+        add(":");
+        complexTypeStr1(t, buf, indent, indentStr);
+        if (pExpr != null) {
+          add("=");
+          exprStr1(pExpr, buf, 0, indentStr);
+        }
+        add(";");
+    }
+    return buf;
+  }
     
   static private function functionStr1(f:Function, buf:StringBuf, indent:Int, indentStr:String, ?functionName:String = "", ?onlySignature:Bool = false):StringBuf 
+  {
+    var add = function (str) { buf.add(str); return buf; }
+    
+    add("function ");
+    add(functionName);
+    add(functionName != "" ? " " : "");
+    typeParamsStr1(f.params, buf, indent, indentStr);
+    add("(");
+    
+    var first = true;
+    for (a in f.args) 
     {
-      var add = function (str) { buf.add(str); return buf; }
+      if (first) first = false else add(", ");
+      if (a.opt) add("?");
+      add(a.name);
       
-      buf = add("function ");
-      buf = add(functionName);
-      buf = add(functionName != "" ? " " : "");
-      typeParamsStr1(f.params, buf, indent, indentStr);
-      buf = add("(");
-      
-      var first = true;
-      for (a in f.args) 
-        {
-          buf = if (first) { first = false; buf; } else add(", ");
-          buf = if (a.opt) add("?") else buf;
-          buf = add(a.name);
-          buf = 
-            if (a.type != null) 
-              {
-                
-                buf = add(":");
-                complexTypeStr1(a.type, buf, indent, indentStr);
-              }
-            else 
-              buf;
-          buf = 
-            if (a.value != null) 
-              {
-                buf = add(" = ");
-                buf = exprStr1(a.value, buf, 0, indentStr);
-              }
-            else 
-              buf;
-        }
-      buf = add(")");
-      
-      buf = if (f.ret != null) { buf = add(":"); complexTypeStr1(f.ret, buf, indent, indentStr);} else buf;
-      
-      return if (!onlySignature && f.expr != null) { add(" "); exprStr1(f.expr, buf, 0, indentStr); } else buf;
-      
+      if (a.type != null) 
+      {
+        add(":");
+        complexTypeStr1(a.type, buf, indent, indentStr);
+      }
+
+      if (a.value != null) 
+      {
+        add(" = ");
+        exprStr1(a.value, buf, 0, indentStr);
+      }
     }
+    add(")");
+    
+    if (f.ret != null) 
+    { 
+      add(":"); 
+      complexTypeStr1(f.ret, buf, indent, indentStr);
+    }
+    
+    if (!onlySignature && f.expr != null) 
+    { 
+      add(" "); 
+      exprStr1(f.expr, buf, 0, indentStr); 
+    }
+    return buf;
+    
+  }
     
   static private function typeParamsStr1(params:Array<{ name : String, constraints : Array<ComplexType> }>, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
+  {
+    var add = function (str) { buf.add(str); return buf; }
+    if (params.length > 0) 
     {
-      var add = function (str) { buf.add(str); return buf; }
-      
-      return 
-        if (params.length > 0) 
-          {
-            buf = add("<");
-            var first = true;
-            for (p in params) 
-              {
-                buf = if (first) { first = false; buf; } else add(",");
-                buf = add(p.name);
-                typeParamConstraintsStr1(p.constraints, buf, indent, indentStr);
-              }
-            buf = add("> ");
-          }
-        else 
-          buf;
+      add("<");
+      var first = true;
+      for (p in params) 
+      {
+        if (first) first = false else add(",");
+        add(p.name);
+        typeParamConstraintsStr1(p.constraints, buf, indent, indentStr);
+      }
+      add("> ");
     }
+    return buf;
+  }
     
   static private function typeParamConstraintsStr1(contraints:Array<ComplexType>,  buf:StringBuf, indent:Int, indentStr:String):StringBuf
+  {
+    var add = function (str) { buf.add(str); return buf; }
+
+    if (contraints.length > 0) 
     {
-      var add = function (str) { buf.add(str); return buf; }
-      
-      return 
-        if (contraints.length > 0) 
-          {
-            buf = add(":");
-            buf = if (contraints.length > 1) add("(") else buf;
-            var first = true;
-            for (c in contraints) 
-              {
-                buf = if (first) { first = false; buf; } else add(",");
-                buf = complexTypeStr1(c, buf, indent, indentStr);
-              }
-            buf = if (contraints.length > 1) add(")") else buf;
-          }
-        else
-          buf;
+      add(":");
+      if (contraints.length > 1) add("(");
+      var first = true;
+      for (c in contraints) 
+      {
+        if (first) first = false else add(",");
+        complexTypeStr1(c, buf, indent, indentStr);
+      }
+      if (contraints.length > 1) add(")");
     }
+    
+    return buf;
+  }
   
     
   static private function varAccessStr1 (access:VarAccess, buf:StringBuf):StringBuf 
+  {
+    var add = function (str) { buf.add(str); return buf; }
+    
+    switch (access) 
     {
-      var add = function (str) { buf.add(str); return buf; }
-      
-      return switch (access) {
-        case AccNormal: add("default");
-        case AccNo: add("null");
-        case AccNever: add("never");
-        case AccResolve: add("dynamic");
-        case AccCall( m  ): add(m);
-        case AccInline: buf; // should be resolved through access modifiers
-        case AccRequire( r): buf; // TODO what is this
-      }
+      case AccNormal:       add("default");
+      case AccNo:           add("null");
+      case AccNever:        add("never");
+      case AccResolve:      add("dynamic");
+      case AccCall( m ):    add(m);
+      case AccInline:       // should be resolved through access modifiers
+      case AccRequire( r ): // TODO what is this
     }
-    
-  /**
-   * APublic;
-	APrivate;
-	AStatic;
-	AOverride;
-	ADynamic;
-	AInline;
-   
-   */
-  
-    
-    
-  /*
-  enum TypeParam {
-    TPType( t : ComplexType );
-    TPConst( c : Constant );
+    return buf;
   }
-  */
-  
+    
   static function typeParamValueStr1(typeParam:TypeParam, buf:StringBuf, indent:Int, indentStr:String, cl:Array<TypeParam>):StringBuf 
   {
-    
     switch (typeParam) 
-      {
-        case TPType(ct): 
-          buf = complexTypeStr1(ct, buf, indent, indentStr, cl);
-        //case TPConst(c):
-        //  buf = constantStr1(c, buf);
-		case TPExpr(e):
-			buf = exprStr1(e, buf, indent, indentStr);
-      }
+    {
+      case TPType(ct): 
+        complexTypeStr1(ct, buf, indent, indentStr, cl);
+      case TPExpr(e):
+        exprStr1(e, buf, indent, indentStr);
+    }
     return buf;
   }
   
   static function constantStr1 (c:Constant, buf:StringBuf):StringBuf
   {
     var add = function (str) { buf.add(str); return buf; }
-    
     return switch (c) 
-      {
-        case CInt( v ): 
-          add(v);
-        case CFloat( f ):
-          add(f);
-        case CString( s ):
-          add('"' + s + '"');
-        case CIdent( s ):
-          add(s);
-        case CType( s ):
-          add(s);
-        case CRegexp( r , opt ):
-          add("~/" + r + "/" + opt);
-      }
+    {
+      case CInt( v ):          add(v);
+      case CFloat( f ):        add(f);
+      case CString( s ):       add('"' + s + '"');
+      case CIdent( s ):        add(s);
+      case CType( s ):         add(s);
+      case CRegexp( r , opt ): add("~/" + r + "/" + opt);
+    }
   }
   
   static function typeParamValuesStr1(typeParams:Array<TypeParam>, buf:StringBuf, indent:Int, indentStr:String, cl:Array<TypeParam>):StringBuf 
   {
     var add = function (str) { buf.add(str); return buf; }
     
-    return 
-      if (typeParams.length > 0) 
-        {
-          buf = add("<");
-          var first = true;
-          for (tp in typeParams) 
-            {
-              buf = if (first) { first = false; buf; } else add(", ");
-              buf = typeParamValueStr1(tp, buf, indent, indentStr, cl);
-            }
-          buf = add(">");
-        }
-      else 
-        buf;
-  }
-  
-  /**
-   * enum Type {
-        TMono;
-        TEnum( t : Ref<EnumType>, params : Array<Type> );
-        TInst( t : Ref<ClassType>, params : Array<Type> );
-        TType( t : Ref<DefType>, params : Array<Type> );
-        TFun( args : Array<{ name : String, opt : Bool, t : Type }>, ret : Type );
-        TAnonymous( a : Ref<AnonType> );
-        TDynamic( t : Null<Type> );
-     }
-   * 
-   */
-    /*
-  static function typeStr1 (type:Type, buf:StringBuf):StringBuf {
-    
-    var add = function (str) { buf.add(str); return buf; }
-    
-    switch (t) {
-      case TMono:
-        add(
-      case TEnum( t, params):
-      case TInst( t, params ):
-      case TType( t , params ):
-      case TFun( args , ret ):
-      case TAnonymous( a  ):
-      case TDynamic( t  ):
+    if (typeParams.length > 0) 
+    {
+      add("<");
+      var first = true;
+      for (tp in typeParams) 
+      {
+        if (first) first = false else add(", ");
+        typeParamValueStr1(tp, buf, indent, indentStr, cl);
+      }
+      add(">");
     }
+    return buf;
   }
-  */
   
   static function binopStr1 (op:Binop, buf:StringBuf, surroundSpaces:Bool = true ):StringBuf 
   {
@@ -804,36 +707,39 @@ class Print
     if (buf == null || op == null) throw "assert";
     #end
     
-    var add = function (str) { buf.add(if (surroundSpaces) " " + str + " " else str); return buf;}
+    var add = function (str) 
+    { 
+      buf.add(if (surroundSpaces) " " + str + " " else str); return buf;
+    }
     
     return switch (op) {
-      case OpAdd:   add("+");
-      case OpMult:   add("*");
-      case OpDiv:   add("/");
-      case OpSub:   add("-");
+      case OpAdd:      add("+");
+      case OpMult:     add("*");
+      case OpDiv:      add("/");
+      case OpSub:      add("-");
       case OpAssign:   add("=");
-      case OpEq:     add("==");
-      case OpNotEq:   add("!=");
-      case OpGt:     add(">");
-      case OpGte:   add(">=");
-      case OpLt:     add("<");
-      case OpLte:   add("<=");
-      case OpAnd:   add("&");
-      case OpOr:    add("|");
-      case OpXor:   add("^");
-      case OpBoolAnd: add("&&");
+      case OpEq:       add("==");
+      case OpNotEq:    add("!=");
+      case OpGt:       add(">");
+      case OpGte:      add(">=");
+      case OpLt:       add("<");
+      case OpLte:      add("<=");
+      case OpAnd:      add("&");
+      case OpOr:       add("|");
+      case OpXor:      add("^");
+      case OpBoolAnd:  add("&&");
       case OpBoolOr:   add("||");
-      case OpShl:   add("<<");
-      case OpShr:   add(">>");
-      case OpUShr:   add(">>>");
-      case OpMod:   add("%");
-      case OpAssignOp(op): 
-              if (surroundSpaces) buf.add(" ");
-              buf = binopStr1(op, buf, false);
-              buf.add("="); 
-              if (surroundSpaces) buf.add(" ");
-              buf;
+      case OpShl:      add("<<");
+      case OpShr:      add(">>");
+      case OpUShr:     add(">>>");
+      case OpMod:      add("%");
       case OpInterval: add("...");
+      case OpAssignOp(op): 
+        if (surroundSpaces) buf.add(" ");
+        binopStr1(op, buf, false);
+        buf.add("="); 
+        if (surroundSpaces) buf.add(" ");
+        buf;
     }
   }
   
@@ -847,24 +753,23 @@ class Print
     var add = function (str) { buf.add(str); return buf; }
     
     return switch(c) {
-      case CInt( v ): add(v);
-      case CFloat( f ): add(f);
-      case CString( s ): add('"' + s + '"');
-      case CIdent( s ): add(s);
-      case CType( s ): add(s);
+      case CInt( v ):          add(v);
+      case CFloat( f ):        add(f);
+      case CString( s ):       add('"' + s + '"');
+      case CIdent( s ):        add(s);
+      case CType( s ):         add(s);
       case CRegexp( r , opt ): add("~/" + r + "/" + opt);
     }
   }
   
-  /* ######################## from TypePrinter ####################### */
-  public static function typeStr (t:Type, ?simpleFunctionSignatures:Bool = false, ?typeParam:BaseType = null) {
+  public static function typeStr (t:Type, ?simpleFunctionSignatures:Bool = false, ?typeParam:BaseType = null) 
+  {
 		var isTypeParam = typeParam != null;
 		var paramsHash = new Hash();
 		if (typeParam != null) {
 		for (tp in typeParam.params) {
 			paramsHash.set(tp.name, tp.t);
 		}
-		//trace(paramsHash);
 		}
 		var str = switch (t) {
       case TLazy(f):
@@ -873,110 +778,98 @@ class Print
 				"Unknown";
 					
 			case TEnum( t, params ): 
-				var s = t.get().module + "." + t.get().name + 
-				    if (params.length > 0) { 
-              
-              var paramsReduced = ( "<" + 
-                params.reduceRight(
-                  function (v, a) {
-                    var res = typeStr(v, t.get()) + "," + a;
-                    
-                    return res;
-                  }, function (v) return typeStr(v, t.get())
-                )
-                + ">"
-              );
-              paramsReduced;
-            } else "";
-        s;
-			case TInst( t, params ): 
-
-				//var isTypeP = paramsHash.exists(tName);
-				var realType = SType.getTypeFromModule(t.get().module, t.get().name) != null;
-        //trace("REALTYPE : " + realType + " for " + 
-				var tName = if (realType) {
-          var moduleName = if (t.get().pack.length > 0) t.get().module.substr(t.get().pack.join(".").length + 1) else t.get().module;
-          if (moduleName == t.get().name) {
-            t.get().module;
-          } else {
-            //trace("real type: " + t.get().module + "." + t.get().name);
-            t.get().module + "." + t.get().name;
+        var paramsReduced = 
+          if (params.length > 0) 
+          {
+            var r = params.reduceRight(
+              function (v, a) return typeStr(v, t.get()) + "," + a,
+              function (v) return typeStr(v, t.get())
+            );
+            "<" + r + ">";
           }
-        } else {
-          t.get().name;
-        }
-				var pack = t.get().pack.copy();
-				if (realType) pack = [];
+          else "";
+        t.get().module + "." + t.get().name + paramsReduced;
+			case TInst( t, params ): 
+        var ct = t.get();
+        var module = ct.module;
+        var pack = ct.pack;
+        var name = ct.name;
+        
+				var realType = SType.getTypeFromModule(module, name) != null;
+				var tName = 
+          if (realType) 
+          {
+            var moduleName = 
+              if (pack.length > 0) 
+                module.substr(pack.join(".").length + 1) 
+              else module;
+            module + if (moduleName == name) "" else "." + name;
+          }
+          else name;
+				var packCopy = if (realType) [] else pack;
         
         var foldPack = function (v, a) return v + "." + a;
-        var reduceParams = function (v, a) return typeStr(v, t.get()) + "," + a;
-        var reduceFirst = function (v) return typeStr(v, t.get());
+        var reduceParams = function (v, a) return typeStr(v, ct) + "," + a;
+        var reduceFirst = function (v) return typeStr(v, ct);
 				var res = 
-          pack.foldRight(foldPack, tName) + 
-      		if (params.length > 0) 
-            "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
-          else "";
-        
-        if (tName == "T") {
-          
-          trace("----------------------");
-          trace("HAVE TINST " + res + " - tName " + tName);
-          trace("MODULE: " + t.get().module);
-          trace("----------------------");
-          
-        }
+          packCopy.foldRight(foldPack, tName) 
+      		+ if (params.length > 0) 
+              "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
+            else "";
         res;
 			case TType( t , params ): 
         
-        var foldPack = function (v, a) return v + "." + a;
-        var foldParams = function (v, a,i) return typeStr(v, t.get()) + (if (i > 0) "," else "") + a;
-				
+        var dt = t.get();
         
-        var typeStr = t.get().pack.foldRight(foldPack, t.get().name);
+        var foldPack = function (v, a) return v + "." + a;
+        var foldParams = function (v, a,i) return typeStr(v, dt) + (if (i > 0) "," else "") + a;
+				
+        var typeStr = dt.pack.foldRight(foldPack, dt.name);
         var paramsStr = if (params.length > 0) "<" + params.foldRightWithIndex(foldParams, ">") else "";
-       
-        var res = typeStr + paramsStr;
-        res;
+        
+        typeStr + paramsStr;
 			case TFun( args , ret ):
         
-        var reduceArgs = function (acc, val) {
-          return acc + " -> " + funArgStr(val, simpleFunctionSignatures);
-        }
-        var reduceFirst = function (val) {
-          return funArgStr(val, simpleFunctionSignatures);
-        }
-        
-        var argumentsStr = 
+        var argumentsStr =
           if (args.length == 0) "Void" 
-          else args.reduceLeft(reduceArgs, reduceFirst);
-        
-				var returnTypeStr = typeStr(ret);
-        argumentsStr + " -> " + returnTypeStr;
-			
+          else 
+          {
+            var reduceArgs = function (acc, val) return acc + " -> " + funArgStr(val, simpleFunctionSignatures);
+            var reduceFirst = function (val) return funArgStr(val, simpleFunctionSignatures);
+            args.reduceLeft(reduceArgs, reduceFirst);
+          }
+        argumentsStr + " -> " + typeStr(ret);
       case TAnonymous( a ): 
-        var reduceFields = function (acc, val) 
-          return acc + ", " + anonFieldStr(val);
-        
-        var reduceFirst = function (val) 
-          return anonFieldStr(val);
-        
-				"{ " + a.get().fields.reduceLeft(reduceFields, reduceFirst) + " }";
+        var reduced = 
+        {
+          var reduceFields = function (acc, val) return acc + ", " + anonFieldStr(val);
+          var reduceFirst = function (val) return anonFieldStr(val);
+          a.get().fields.reduceLeft(reduceFields, reduceFirst);
+        }
+        "{ " + reduced + " }";
 			case TDynamic( t ): 
-        if (t != null) "Dynamic<" + typeStr(t) + ">" else "Dynamic";
+        "Dynamic" + if (t != null) "<" + typeStr(t) + ">" else "";
 		}
 		return str;
 	}
 	
-	public static function anonFieldStr (c:ClassField):String {
+	public static function anonFieldStr (c:ClassField):String 
+  {
 		return c.name + " : " + typeStr(c.type);
 	}
 	
-	public static function funArgStr (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool):String {
-    trace("simple: " + simpleFunctionSignatures);
-    trace("arg.name: " + (arg.name == ""));
-		return (if (arg.opt && !simpleFunctionSignatures) "?" else "") + 
-		  (if ((arg.name != null && arg.name != "") && !simpleFunctionSignatures) (arg.name + (if (arg.t != null && arg.name != null) " :   " else "")) else "") + 
-		  (if (arg.t != null) typeStr(arg.t) else "");
+	public static function funArgStr (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool):String 
+  {
+		var optPrefix = if (arg.opt && !simpleFunctionSignatures) "?" else "";
+    var argName = 
+      if ((arg.name != null && arg.name != "") && !simpleFunctionSignatures) 
+        arg.name 
+        + if (arg.t != null && arg.name != null) " :   " 
+          else ""
+      else "";
+    var argType = if (arg.t != null) typeStr(arg.t) else "";
+    
+    return optPrefix + argName + argType;
 	}
 	
 }
