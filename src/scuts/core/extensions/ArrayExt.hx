@@ -16,6 +16,15 @@ using scuts.core.extensions.DynamicExt;
 class ArrayExt
 {
 
+  public static function eq <T>(a1:Array<T>, a2:Array<T>, eqT:T->T->Bool)
+  {
+    if (a1.length != a2.length) return false;
+    for ( i in 0...a1.length) {
+      if (!eqT(a1[i], a2[i])) return false;
+    }
+    return true;
+  }
+  
   public static function shuffle <T>(arr:Array<T>):Array<T> 
   {
     var res = [];
