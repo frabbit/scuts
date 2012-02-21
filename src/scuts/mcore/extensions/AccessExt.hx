@@ -1,4 +1,4 @@
-package src.scuts.mcore.extensions;
+package scuts.mcore.extensions;
 
 #if (!macro && !display)
 #error "Class can only be used inside of macros"

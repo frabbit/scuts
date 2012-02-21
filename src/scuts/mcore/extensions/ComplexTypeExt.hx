@@ -5,10 +5,47 @@ package scuts.mcore.extensions;
 #elseif (display || macro)
 import haxe.macro.Type;
 import haxe.macro.Expr;
+import scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.ArrayExt;
 
 class ComplexTypeExt 
 {
+  public static function eq (c1:ComplexType, c2:ComplexType):Bool {
+    return switch (c1) {
+      case TAnonymous(fields1):
+        switch (c2) {
+          case TAnonymous(fields2): ArrayExt.eq(fields1, fields2, FieldExt.eq);
+          default: false;
+        }
+      case TExtend(p1, fields1):
+        switch (c2) {
+          case TExtend(p2, fields2): TypePathExt.eq(p1, p2) && ArrayExt.eq(fields1, fields2, FieldExt.eq);
+          default: false;
+        }
+      case TFunction(args1, ret1):
+        switch (c2) {
+          case TFunction(args2, ret2):  ArrayExt.eq(args1, args2, ComplexTypeExt.eq) && ComplexTypeExt.eq(ret1, ret2);
+          default: false;
+        }
+      case TOptional(t1): 
+        switch (c2) {
+          case TOptional(t2): eq(t1,t2);
+          default: false;
+        }
+      case TParent(t1):
+        switch (c2) {
+          case TParent(t2): eq(t1,t2);
+          default: false;
+        }
+      case TPath(p1):
+        switch (c2) {
+          case TPath(p2): TypePathExt.eq(p1,p2);
+          default: false;
+        }
+    }
+  }
+  
+  /*
   public static function substituteTypeParam(ct:ComplexType, what:ComplexType, with:ComplexType) 
   {
     var sub = substituteTypeParam;
@@ -228,7 +265,7 @@ class ComplexTypeExt
         TPath(convTypePath(p));
     }
   }
-  
+  */
 }
 
 #end

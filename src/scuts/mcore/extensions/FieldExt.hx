@@ -4,7 +4,10 @@ package scuts.mcore.extensions;
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
 import haxe.macro.Expr;
+import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.StringExt;
 import scuts.core.types.Option;
+import scuts.mcore.extensions.AccessExt;
 using scuts.core.extensions.OptionExt;
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.IterableExt;
@@ -12,6 +15,17 @@ using scuts.core.extensions.IterableExt;
 class FieldExt 
 {
 
+  public static function eq (a:Field, b:Field):Bool 
+  {
+    return StringExt.eq(a.name,b.name)
+        && ((a.doc == null && b.doc == null) || StringExt.eq(a.doc, b.doc))
+        && ArrayExt.eq(a.access, b.access, AccessExt.eq)
+        && FieldTypeExt.eq(a.kind, b.kind)
+        && PositionExt.eq(a.pos, b.pos)
+        && MetadataExt.eq(a.meta, b.meta);
+        
+  }
+  
   public static function isStatic (f:Field):Bool {
     return f.access.elem(Access.AStatic);
   }
