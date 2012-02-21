@@ -4,7 +4,7 @@ import scuts.core.types.Option;
 import scuts.core.types.Either;
 import scuts.Scuts;
 
-class Eithers 
+class EitherExt
 {
 
   public static function left<A,B>(e:Either<A,B>):A 
