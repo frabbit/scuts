@@ -11,6 +11,21 @@ import scuts.Scuts;
 class Make
 {
   
+  //public static inline function func (args:Array<FunctionArg>, 
+  
+    
+  public static inline function whileExpr (cond:Expr, body:Expr, ?pos:Position):Expr
+    return expr(EWhile(cond, body, true), pos)
+    
+  public static inline function forIn (varName:String, iter:Expr, body:Expr, ?pos:Position):Expr
+    return expr(EFor(expr(EIn(constIdent(varName, pos), iter), pos), body), pos)
+  
+  public static inline function binop (left:Expr, right:Expr, op:Binop, ?pos:Position):Expr
+    return expr(EBinop(op,left, right), pos)
+    
+  public static inline function unop (e:Expr, op:Unop, ?postFix:Bool = false, ?pos:Position):Expr
+    return expr(EUnop(op, postFix, e), pos)
+  
   public static inline function field (obj:Expr, field:String, ?pos:Position):Expr
     return expr(EField(obj, field), pos)
     
@@ -38,7 +53,24 @@ class Make
   public static inline function ifExpr (econd:Expr, ethen:Expr, ?eelse:Expr = null, ?pos:Position):Expr
     return expr(EIf(econd, ethen, eelse), pos)
 	
-  static function fields (declarations:Array<String>, p) {
+  public static function anon (fields:Array<{ field : String, expr : Expr }>, ?pos:Position) 
+    return expr(EObjectDecl(fields), pos)
+  
+  public static function anonField (field:String, expr:Expr)
+    return { field: field, expr:expr}
+  
+  
+  public static function func (?args:Array<FunctionArg>, ?ret:ComplexType, ?expr:Expr, ?params:Array<{name:String, constraints:Array<ComplexType>}>) {
+    return {
+      args: args == null ? [] : args,
+      ret: ret,
+      expr: expr,
+      params: params = null ? [] : params,
+    }
+  }
+    
+  static function fields (declarations:Array<String>, p) 
+  {
 		var e = Context.parse( "{var x: {" + declarations.join("\n") + "}}", p);
 
 		return switch (e.expr) {
@@ -54,9 +86,9 @@ class Make
 		}
 	}
 	
-  public static function call (e:Expr, func:String, params:Array<Expr>, ?pos:Position) {
-    return expr(ECall(field(e, func, pos), params), pos);
-  }
+  public static function call (e:Expr, func:String, params:Array<Expr>, ?pos:Position)
+    return expr(ECall(field(e, func, pos), params), pos)
+  
   
   public static inline function expr (def:ExprDef, ?pos:Position):Expr
     return 
@@ -65,11 +97,10 @@ class Make
         pos: if (pos == null) Context.currentPos() else pos 
       }
     
-  public static inline function block (exprs:Array<Expr>, ?pos:Position):Expr 
-    return expr(EBlock(exprs), pos)
+  public static inline function block (?exprs:Array<Expr>, ?pos:Position):Expr 
+    return expr(EBlock(exprs == null ? [] : exprs), pos)
   
-  public static inline function emptyBlock (?pos:Position):Expr 
-    return expr(EBlock([]), pos)
+  public static inline function emptyBlock (?pos:Position):Expr return block()
   
   public static inline function varExpr (variableId:String, ?type:ComplexType, ?ex:Expr, ?pos:Position) 
   {
