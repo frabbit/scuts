@@ -21,7 +21,7 @@ private typedef Fut3<A,B,C> =   Tup3< Fut<A>, Fut<B>, Fut<C> >;
 private typedef Fut4<A,B,C,D> = Tup4< Fut<A>, Fut<B>, Fut<C>, Fut<D> >;
 */
  
-class Futures {
+class FutureExt {
   
   public static function flatMap < S,T > (w:Future<S>, f:S->Future<T>):Future<T>
   {
