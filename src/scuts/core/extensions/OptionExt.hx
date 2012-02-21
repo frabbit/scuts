@@ -5,6 +5,25 @@ import scuts.Scuts;
 
 class OptionExt {
 
+  public static function eq <T>(a:Option<T>, b:Option<T>, eqT:T->T->Bool):Bool 
+  {
+    return switch (a) 
+    {
+      case None: 
+        switch (b) 
+        {
+          case None: true;
+          case Some(_): false;
+        }
+      case Some(v1):
+        switch (b) 
+        {
+          case None: false;
+          case Some(v2): eqT(v1, v2);
+        }
+    }
+  }
+  
   public static inline function isSome (o:Option<Dynamic>):Bool {
     return switch (o) {
       case Some(_): true;
