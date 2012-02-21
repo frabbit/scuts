@@ -2,6 +2,7 @@ package hots.instances;
 
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
+import scuts.core.extensions.ArrayExt;
 
 
 class ArrayEqImpl<T> extends EqAbstract<Array<T>> {
@@ -13,12 +14,8 @@ class ArrayEqImpl<T> extends EqAbstract<Array<T>> {
     this.eqT = eqT;
   }
   
-  override public function eq  (a:Array<T>, b:Array<T>):Bool {
-    if (a.length != b.length) return false;
-    for ( i in 0...a.length) {
-      if (!eqT.eq(a[i], b[i])) return false;
-    }
-    return true;
+  override public inline function eq  (a:Array<T>, b:Array<T>):Bool {
+    return ArrayExt.eq(a,b, eqT.eq);
   }
   
 }
