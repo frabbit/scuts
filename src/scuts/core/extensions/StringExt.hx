@@ -2,8 +2,30 @@ package scuts.core.extensions;
 
 import scuts.Scuts;
 
-class Strings 
+class StringExt
 {
+ 
+  public static inline function trim (s:String) return StringTools.trim(s)
+  
+  public static inline function trimLeft (s:String) return StringTools.ltrim(s)
+  
+  public static inline function trimRight (s:String) return StringTools.rtrim(s)
+  
+  public static inline function padLeft (s:String, c:String, length:Int) return StringTools.lpad(s, c, length)
+  
+  public static inline function padRight (s:String, c:String, length:Int) return StringTools.rpad(s, c, length)
+  
+  public static inline function indent (s:String, indent:String) 
+  {
+    return indent + s.split("\n").join("\n" + indent);
+  }
+  
+  public static function unindent (s:String, indent:String) 
+  {
+    if (startsWith(s, indent)) s = s.substr(indent.length);
+    return s.split("\n" + indent).join("\n");
+  }
+  
   public static inline function toInt(s:String):Int 
   {
     var i = Std.parseInt(s);
@@ -26,9 +48,9 @@ class Strings
     return StringTools.endsWith(s, end);
   }
   
-  public static inline function replace(s:String, what:String, by:String):String 
+  public static inline function replace(s:String, sub:String, by:String):String 
   {
-    return s.split(what).join(by);
+    return StringTools.replace(s, sub, by);
   }
   
   public static inline function replaceEReg(s:String, ereg:EReg, by:String):String 
@@ -50,5 +72,10 @@ class Strings
     }
     return count;
   }
+  
+  public static inline function eq(s1:String, s2:String):Bool {
+    return s1 == s2;
+  }
+  
   
 }
