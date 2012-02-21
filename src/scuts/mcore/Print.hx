@@ -87,7 +87,7 @@ class Print
     return buf;
   }
   
-  public static function addIndent (buf:StringBuf, indent:Int, indentStr:String) {
+  static function addIndent (buf:StringBuf, indent:Int, indentStr:String) {
     while (indent-- > 0) {
       buf.add(indentStr);
     }
@@ -405,7 +405,6 @@ class Print
     return switch (c) 
     {
       case TPath( p ): 
-        //trace("---------");
         var typeParams = if (cl != null) cl else [];
         
         var params = new Hash();
@@ -414,13 +413,14 @@ class Print
           switch (tp) 
           {
             case TypeParam.TPExpr(e):
+              Scuts.notImplemented();
             case TypeParam.TPType(ct):
               switch(ct) 
               {
                 case TPath(p):
                   params.set(p.name + "." + p.sub, true);
                 default:
-                  Scuts.macroError("Not implemented");
+                  Scuts.notImplemented();
               }
           }
         }
@@ -466,7 +466,7 @@ class Print
     }
   }
   
-  static private function typePathStr1(tp:TypePath, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
+  static function typePathStr1(tp:TypePath, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
   {
     var add = function (str) { buf.add(str); return buf; }
     add(tp.pack.join("."));
@@ -476,7 +476,7 @@ class Print
     return typeParamValues1(tp.params, buf, indent, indentStr, tp.params);
   }
   
-  static private function accessStr1 (a:Access, buf:StringBuf):StringBuf
+  static function accessStr1 (a:Access, buf:StringBuf):StringBuf
   {
     var add = function (str) { buf.add(str); return buf; }
     return switch (a) 
@@ -490,7 +490,7 @@ class Print
     }
   }
   
-  static private function field1(f:Field, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
+  static function field1(f:Field, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
   {
     var add = function (str) { buf.add(str); return buf; }
     for (m in f.meta) 
@@ -555,7 +555,7 @@ class Print
     return buf;
   }
     
-  static private function func1(f:Function, buf:StringBuf, indent:Int, indentStr:String, ?functionName:String = "", ?onlySignature:Bool = false):StringBuf 
+  static function func1(f:Function, buf:StringBuf, indent:Int, indentStr:String, ?functionName:String = "", ?onlySignature:Bool = false):StringBuf 
   {
     var add = function (str) { buf.add(str); return buf; }
     
@@ -601,7 +601,7 @@ class Print
     
   }
     
-  static private function typeParamsStr1(params:Array<{ name : String, constraints : Array<ComplexType> }>, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
+  static function typeParamsStr1(params:Array<{ name : String, constraints : Array<ComplexType> }>, buf:StringBuf, indent:Int, indentStr:String):StringBuf 
   {
     var add = function (str) { buf.add(str); return buf; }
     if (params.length > 0) 
@@ -619,7 +619,7 @@ class Print
     return buf;
   }
     
-  static private function typeParamConstraintsStr1(contraints:Array<ComplexType>,  buf:StringBuf, indent:Int, indentStr:String):StringBuf
+  static function typeParamConstraintsStr1(contraints:Array<ComplexType>,  buf:StringBuf, indent:Int, indentStr:String):StringBuf
   {
     var add = function (str) { buf.add(str); return buf; }
 
@@ -640,7 +640,7 @@ class Print
   }
   
     
-  static private function varAccessStr1 (access:VarAccess, buf:StringBuf):StringBuf 
+  static function varAccessStr1 (access:VarAccess, buf:StringBuf):StringBuf 
   {
     var add = function (str) { buf.add(str); return buf; }
     
@@ -762,14 +762,20 @@ class Print
     }
   }
   
-  public static function type (t:Type, ?simpleFunctionSignatures:Bool = false, ?typeParam:BaseType = null) 
+  public static function type (t:Type, ?simpleFunctionSignatures:Bool = false, ?typeParam:BaseType = null) {
+    return type1(t, simpleFunctionSignatures, typeParam);
+  }
+  
+  public static function type1 (t:Type, ?simpleFunctionSignatures:Bool = false, ?typeParam:BaseType = null):String
   {
     var isTypeParam = typeParam != null;
     var paramsHash = new Hash();
-    if (typeParam != null) {
-    for (tp in typeParam.params) {
-      paramsHash.set(tp.name, tp.t);
-    }
+    if (typeParam != null) 
+    {
+      for (tp in typeParam.params) 
+      {
+        paramsHash.set(tp.name, tp.t);
+      }
     }
     var str = switch (t) {
       case TLazy(f):
