@@ -3,6 +3,7 @@ package hots.instances;
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
 import hots.macros.TypeClasses;
+import scuts.core.extensions.StringExt;
 
 
 
@@ -10,9 +11,7 @@ class StringEqImpl extends EqAbstract<String>
 {
   public function new () {}
   
-  override public inline function eq (a:String, b:String):Bool {
-    return a == b;
-  }
+  override public inline function eq (a:String, b:String):Bool return StringExt.eq(a,b)
 }
 
 
