@@ -5,6 +5,13 @@ import scuts.Scuts;
 class StringExt
 {
  
+  public static function times (s:String, t:Int) 
+  {
+    var b = new StringBuf();
+    while (t-- > 0) b.add(s);
+    return b.toString();
+  }
+  
   public static inline function trim (s:String) return StringTools.trim(s)
   
   public static inline function trimLeft (s:String) return StringTools.ltrim(s)
@@ -58,17 +65,17 @@ class StringExt
     return ereg.replace(s, by);
   }
   
-  public static inline function countSub(s:String, sub:String):Int 
+  public static function countSub(s:String, sub:String):Int 
   {
     var i = 0;
     var count = 0;
-    while (true) {
+    while (true) 
+    {
       var i = s.indexOf(sub, i);
-      if (i != -1) {
+      if (i != -1)
         count++;
-      } else {
+      else
         break;
-      }
     }
     return count;
   }
