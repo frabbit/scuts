@@ -31,8 +31,6 @@ class ExprDefExt
     var eqBool = BoolExt.eq;
     var eqObjFields = function (a, b) return ArrayExt.eq(a,b, AnonFieldExt.eq);
     
-    // haxe really needs pattern matching as a language feature :(
-    
     return switch (a) {
       case EConst(c1):                       switch (b) { case EConst(c2):                       ConstantExt.eq(c1, c2);     default: false; };   
       case EArray(e1a, e2a):                 switch (b) { case EArray(e1b, e2b):                 eeq(e1a, e1b) && eeq(e2a, e2b);     default: false; };

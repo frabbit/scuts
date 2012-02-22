@@ -1,5 +1,6 @@
 package scuts.mcore.extensions;
 import scuts.mcore.Make;
+import haxe.macro.Expr;
 
 private typedef Var = {name:String, ?type:ComplexType, ?expr:Expr};
 
@@ -7,7 +8,7 @@ class VarExt {
   public static function next (varDef:Var, name:String, ?type:ComplexType, ?expr:Expr) 
     return [varDef, {name:name, type:type, expr:expr}]
   
-  public static function after (vars:Array<Var>, name:String, ?type:ComplexType, ?expr:Expr) 
+  public static function after (varDef:Var, name:String, ?type:ComplexType, ?expr:Expr) 
     return [{name:name, type:type, expr:expr}, varDef]
 }
 

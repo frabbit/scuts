@@ -11,7 +11,7 @@ private typedef M = Make;
 
 class ExprExt 
 {
-  public static inline function eq (e1:Expr, e2:Expr):Bool 
+  public static function eq (e1:Expr, e2:Expr):Bool 
   {
     return PositionExt.eq(e1.pos, e2.pos)
       && ExprDefExt.eq(e1.expr, e2.expr);
