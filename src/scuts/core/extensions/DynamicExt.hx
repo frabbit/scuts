@@ -14,14 +14,26 @@ import scuts.core.types.Either;
 class DynamicExt
 {
 
+  /*
   public static function toArrayOption <T>(a:T):Array<Option<T>> 
   {
     return if (a == null) [] else [Some(a)];
   }
+  */
   
-  public static inline function toOption < T > (v:T):Option<T> {
+  public static inline function nullToOption < T > (v:T):Option<T> {
     return v != null ? Some(v) : None;
   }
+  
+  public static inline function nullToLeft < A > (v:A, right:B):Either<A,B> {
+    return v != null ? Left(v) : Right(right);
+  }
+  
+  
+  public static inline function nullGetOrElse < T > (v:T, elseValue:T):T {
+    return v != null ? v : elseValue;
+  }
+  
   
   public static inline function toEitherLeft < A,B > (v:A):Either<A,B> {
     return Left(v);
@@ -56,10 +68,12 @@ class DynamicExt
     return res;
   }
   
+  /*
   public static function getOrElse <T>(o:T, elseValue:T):T
   {
     return if (o == null) elseValue else o;
   }
+  */
   
   public static function lazyConstant<T>(value:T):Void->T 
   {
