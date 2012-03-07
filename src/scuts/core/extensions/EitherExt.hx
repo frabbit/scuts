@@ -76,7 +76,7 @@ class EitherExt
     }
   }
   
-   public static function mapLeft < A,B,C > (e:Either<A,B>, f:A->C):Either<C,B>
+  public static function mapLeft < A,B,C > (e:Either<A,B>, f:A->C):Either<C,B>
   {
     return switch (e) {
       case Left(l): Left(f(l));
