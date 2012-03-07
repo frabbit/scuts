@@ -25,7 +25,7 @@ class DynamicExt
     return v != null ? Some(v) : None;
   }
   
-  public static inline function nullToLeft < A > (v:A, right:B):Either<A,B> {
+  public static inline function nullToLeft < A,B > (v:A, right:B):Either<A,B> {
     return v != null ? Left(v) : Right(right);
   }
   
