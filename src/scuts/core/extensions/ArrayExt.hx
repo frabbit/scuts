@@ -153,7 +153,8 @@ class ArrayExt
       [];
     } else {
       var res = [a[0]];
-      for ( i in 1...a.length) {
+      for ( i in 1...a.length) 
+      {
         res.push(b);
         res.push(a[i]);
       }
@@ -164,25 +165,47 @@ class ArrayExt
   public static function foldRight<A,B>(arr:Array<A>, f:A->B->B, acc:B):B
 	{
     var rev = reverseCopy(arr);
-    for (i in 0...rev.length) {
+    for (i in 0...rev.length) 
+    {
 			acc = f(rev[i], acc);
+		}
+		return acc;
+	}
+  
+  public static function foldRightWithIndex<A,B>(arr:Array<A>, f:A->B->Int->B, acc:B):B
+	{
+    var rev = reverseCopy(arr);
+    for (i in 0...rev.length) 
+    {
+			acc = f(rev[i], acc, rev.length -1 -i);
 		}
 		return acc;
 	}
   
   public static function foldLeft<A,B>(arr:Array<A>, f:B->A->B, acc:B):B
 	{
-		for (i in 0...arr.length) {
+		for (i in 0...arr.length) 
+    {
 			acc = f(acc, arr[i]);
+		}
+		return acc;
+	}
+  
+  public static function foldLeftWithIndex<A,B>(arr:Array<A>, f:B->A->Int->B, acc:B):B
+	{
+		for (i in 0...arr.length) 
+    {
+			acc = f(acc, arr[i], i);
 		}
 		return acc;
 	}
   
   public static function last<T>(arr:Array<T>):T
   {
-    if (arr.length == 0) throw "cannot get last from empty array";
+    if (arr.length == 0) Scuts.error("cannot get last from empty array")
     return arr[arr.length - 1];
-  } 
+  }
+  
   public static function lastOption<T>(arr:Array<T>):Option<T>
   {
     return if (arr.length == 0) None else Some(arr[arr.length - 1]);
@@ -223,7 +246,7 @@ class ArrayExt
   
   public static function reduceLeft <T,S>(a:Array<T>, f:S->T->S, first:T->S):S
   {
-    if (a.length == 0) throw "Cannot reduce an empty Array";
+    if (a.length == 0) Scuts.error("Cannot reduce an empty Array");
     
     var acc = first(a[0]);
     for (i in 1...a.length) {
