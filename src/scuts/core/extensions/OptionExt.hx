@@ -1,10 +1,29 @@
 package scuts.core.extensions;
 
 import scuts.core.types.Option;
+import scuts.core.types.Either;
 import scuts.Scuts;
 
 class OptionExt {
 
+  public static function getOrElse <T>(o:Option<T>, elseValue:T):T
+  {
+    return switch (o) 
+    {
+      case Some(v): v;
+      case None: elseValue;
+    }
+  }
+  
+  public static function toLeft <A,B>(o:Option<A>, right:B):Either<A,B>
+  {
+    return switch (o) 
+    {
+      case Some(v): Left(v);
+      case None: Right(right);
+    }
+  }
+  
   public static function eq <T>(a:Option<T>, b:Option<T>, eqT:T->T->Bool):Bool 
   {
     return switch (a) 
@@ -62,10 +81,6 @@ class OptionExt {
     }
   }
   
-  public static function getOrElse <T>(o:Option<T>, elseValue:T):T
-  {
-    return if (isSome(o)) value(o) else elseValue;
-  }
   
   public static inline function map < S, T > (o:Option<S>, f:S->T):Option<T> {
     return switch (o) {
