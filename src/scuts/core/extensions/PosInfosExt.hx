@@ -11,7 +11,7 @@ class PosInfosExt
 
   public static function toString(p:PosInfos) 
   {
-    return p.fileName + "#" + p.lineNumber + " | " + p.className + "::" + p.methodName;
+    return p.fileName + "(line " + p.lineNumber + ") - " + p.className + "." + p.methodName;
   }
   
 }
