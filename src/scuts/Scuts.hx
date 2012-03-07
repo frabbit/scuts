@@ -45,9 +45,14 @@ class Scuts
   #if (macro || display)
   public static function macroError <T>(msg:String, ?p:Position, ?posInfos:PosInfos):T 
   {
-    var p1 = p.getOrElse(Context.currentPos());
-    throw new Error(posInfos.toString() + ": " + msg,p1);
+    var p1 = p.nullGetOrElse(Context.currentPos());
+    throw new Error(msg + "\n@" + posInfos.toString(),p1);
     return null;
+  }
+  
+  public static function macroErrors <T>(msg:Array<String>, ?p:Position, ?posInfos:PosInfos):T 
+  {
+    return macroError(msg.join("\n"), p, posInfos);
   }
   
  
