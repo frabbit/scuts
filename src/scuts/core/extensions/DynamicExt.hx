@@ -14,6 +14,12 @@ import scuts.core.types.Either;
 class DynamicExt
 {
 
+  /**
+   * Converts v into a Some Option.
+   */
+  public static inline function toOption < T > (v:T):Option<T> {
+    return Some(v);
+  }
   
   /**
    * Converts v into an Option, based on the nulliness of v.
