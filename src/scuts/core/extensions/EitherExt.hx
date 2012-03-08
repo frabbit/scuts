@@ -8,7 +8,10 @@ class EitherExt
 {
   
   /**
-   * Returns the left value of e or throws an error.
+   * Returns the left value of e or throws an error if it's a right Either.
+   * 
+   * @param e Either Instance
+   * @return the left Side of e 
    */
   public static function left<A,B>(e:Either<A,B>):A 
   {
@@ -19,7 +22,7 @@ class EitherExt
   }
   
   /**
-   * Returns the right value of e or throws an error.
+   * Returns the right value of e or throws an error if it's a left Either.
    */
   public static function right<A,B>(e:Either<A,B>):B 
   {
@@ -40,6 +43,8 @@ class EitherExt
     }
   }
   
+  
+  
   /**
    * Converts the right value of e into an Option.
    */
@@ -50,6 +55,11 @@ class EitherExt
       case Right(r): Some(r);
     }
   }
+  
+  /**
+   * Alias for isLeft.
+   */
+  public static function isSuccess <A,B>(e:Either<A,B>):Bool return isLeft(e)
   
   /**
    * Returns true if e is Left Either.
@@ -63,9 +73,14 @@ class EitherExt
   }
   
   /**
+   * Alias for isRight.
+   */
+  public static function isFailure<A,B>(e:Either<A,B>):Bool return isRight(e)
+  
+  /**
    * Returns if e is Right Either.
    */
-  public static function isRight<A,B>(e:Either<A,B>):Bool
+  public static inline function isRight<A,B>(e:Either<A,B>):Bool
   {
     return !isLeft(e);
   }
