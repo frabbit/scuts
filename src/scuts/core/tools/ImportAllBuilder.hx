@@ -25,7 +25,7 @@ class ImportAllBuilder
           var fullPath = folder + "/" + f;
           if (FileSystem.isDirectory(fullPath)) 
           {
-            create1(packBase + f, classContent);
+            create1(packBase + f, buf);
           } 
           else if (fullPath.endsWith(".hx")) 
           {

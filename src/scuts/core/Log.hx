@@ -1,4 +1,4 @@
-package scuts;
+package scuts.core;
 import haxe.PosInfos;
 
 class Log 
