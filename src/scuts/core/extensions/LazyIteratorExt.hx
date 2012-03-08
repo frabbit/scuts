@@ -137,24 +137,24 @@ class LazyIteratorExt
   }
   
   public static function foldRight<A,B>(iter:LazyIterator<A>, f:A->B->B, acc:B):B
-	{
-		return IteratorExt.foldRight(iter(), f, acc);
-	}
-	
-	public static function foldRightWithIndex<A,B>(iter:LazyIterator<A>, f:A->B->Int->B, acc:B):B
-	{
-		return IteratorExt.foldRightWithIndex(iter(), f, acc);
-	}
-	/*
+  {
+    return IteratorExt.foldRight(iter(), f, acc);
+  }
+  
+  public static function foldRightWithIndex<A,B>(iter:LazyIterator<A>, f:A->B->Int->B, acc:B):B
+  {
+    return IteratorExt.foldRightWithIndex(iter(), f, acc);
+  }
+  /*
    * foldl<A,B>(iter:Iterator<A>, f:B->A->B, acc:B):B
    */
-	public static function foldLeft<A,B>(iter:LazyIterator<A>, f:B->A->B, acc:B):B
-	{
-		return IteratorExt.foldLeft(iter(), f, acc);
-		
-	}
-	
-	public static function foldLeftWithIndex < A, B > (iter:LazyIterator<A>, f:B->A->Int->B, acc:B):B
+  public static function foldLeft<A,B>(iter:LazyIterator<A>, f:B->A->B, acc:B):B
+  {
+    return IteratorExt.foldLeft(iter(), f, acc);
+    
+  }
+  
+  public static function foldLeftWithIndex < A, B > (iter:LazyIterator<A>, f:B->A->Int->B, acc:B):B
   {
     return IteratorExt.foldLeftWithIndex(iter(), f, acc);
   }
@@ -170,14 +170,14 @@ class LazyIteratorExt
   } 
   
   public static function map < A, B > (it:LazyIterator<A>, f:A->B):LazyIterator<B> 
-	{
+  {
     return function () return IteratorExt.map(it(), f);
-	}
+  }
   
   public static function mapWithIndex < A, B > (it:LazyIterator<A>, f:A->Int->B):LazyIterator<B> 
-	{
+  {
     return function () return IteratorExt.mapWithIndex(it(), f); 
-	}
+  }
   
   public static inline function maximumBy <T>(it:LazyIterator<T>, f:T->T->Ordering):T 
   {

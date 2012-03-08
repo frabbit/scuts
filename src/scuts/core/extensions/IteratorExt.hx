@@ -56,10 +56,10 @@ class IteratorExt
   }
   
   public static function filter <A> (it:Iterator<A>, filter:A->Bool):Iterator<A>
-	{
+  {
     // lazy
     var n = null;
-		return {
+    return {
       next : function () {
         var e = n;
         n = null;
@@ -77,28 +77,28 @@ class IteratorExt
         return n != null;
       }
     };
-	}
+  }
   
-	public static function filterToArray <A> (it:Iterator<A>, filter:A->Bool):Array<A>
-	{
-		var res = [];
-		// TODO cast can be solved with type parameter constraints
-		return cast doFilter(it, filter, res);
-	}
-	
-	static function doFilter < A > (it:Iterator<A>, filter:A->Bool, cont: { function push (a:A):Dynamic; } ) {
-		for (e in it) {
-			if (filter(e)) cont.push(e);
-		}
-		return cont;
-	}
-	
-	public static function filterToList <A> (it:Iterator<A>, filter:A->Bool):List<A>
-	{
-		var res = new List();
-		// TODO cast can be solved with type parameter constraints
-		return cast doFilter(it, filter, res); 
-	}
+  public static function filterToArray <A> (it:Iterator<A>, filter:A->Bool):Array<A>
+  {
+    var res = [];
+    // TODO cast can be solved with type parameter constraints
+    return cast doFilter(it, filter, res);
+  }
+  
+  static function doFilter < A > (it:Iterator<A>, filter:A->Bool, cont: { function push (a:A):Dynamic; } ) {
+    for (e in it) {
+      if (filter(e)) cont.push(e);
+    }
+    return cont;
+  }
+  
+  public static function filterToList <A> (it:Iterator<A>, filter:A->Bool):List<A>
+  {
+    var res = new List();
+    // TODO cast can be solved with type parameter constraints
+    return cast doFilter(it, filter, res); 
+  }
   public static function findIndex<T>(iter:Iterator<T>, f:T->Bool):Option<Int>
   {
     var z = 0;
@@ -146,29 +146,29 @@ class IteratorExt
   }
   
   public static function foldRight<A,B>(iter:Iterator<A>, f:A->B->B, acc:B):B
-	{
+  {
     return foldLeft(reverseCopy(iter), Function2Ext.flip(f), acc);
-	}
-	
-	public static function foldRightWithIndex<A,B>(iter:Iterator<A>, f:A->B->Int->B, acc:B):B
-	{
-    return foldLeftWithIndex(reverseCopy(iter), Function3Ext.flip(f), acc);
-	}
+  }
   
-	/*
+  public static function foldRightWithIndex<A,B>(iter:Iterator<A>, f:A->B->Int->B, acc:B):B
+  {
+    return foldLeftWithIndex(reverseCopy(iter), Function3Ext.flip(f), acc);
+  }
+  
+  /*
    * foldl<A,B>(iter:Iterator<A>, f:B->A->B, acc:B):B
    */
-	public static function foldLeft<A,B>(iter:Iterator<A>, f:B->A->B, acc:B):B
-	{
-		for (e in iter) {
-			acc = f(acc, e);
-		}
-		return acc;
-		
-	}
+  public static function foldLeft<A,B>(iter:Iterator<A>, f:B->A->B, acc:B):B
+  {
+    for (e in iter) {
+      acc = f(acc, e);
+    }
+    return acc;
+    
+  }
   #if (!macro && scuts_multithreaded)
   public static function foldLeftParallel<A,B>(iter:Iterator<A>, f:B->A->B, acc:B):B
-	{
+  {
     //var acc1 = acc.toFuture();
     //var mAcc = new MVar(acc1);
     var lifted = f.liftWithFuture();
@@ -176,26 +176,26 @@ class IteratorExt
     var task:TaskA<B> = new AtomicTask(function () return acc);
     Tasks.runTaskAAsync(task);
     var fut = null;
-		for (e in iter) {
+    for (e in iter) {
       var a = new AtomicTask(function () return e);
       task = new BinaryTask(f, task, a);
       Tasks.runTaskAAsync( a );
       fut = Tasks.runTaskAAsync( task );
-			
-		}
-		return fut.value(true);
-		
-	}
+      
+    }
+    return fut.value(true);
+    
+  }
   #end
-	
-	public static function foldLeftWithIndex<A,B>(iter:Iterator<A>, f:B->A->Int->B, acc:B):B
-	{
-		var i = 0;
-		for (e in iter) {
-			acc = f(acc, e, i++);
-		}
-		return acc;
-	}
+  
+  public static function foldLeftWithIndex<A,B>(iter:Iterator<A>, f:B->A->Int->B, acc:B):B
+  {
+    var i = 0;
+    for (e in iter) {
+      acc = f(acc, e, i++);
+    }
+    return acc;
+  }
   
   public static function forEach <T>(a:Iterator<T>, f:T->Void):Void 
   {
@@ -232,7 +232,7 @@ class IteratorExt
   } 
   
   public static function map < A, B > (it:Iterator<A>, f:A->B):Iterator<B> 
-	{
+  {
     return {
       hasNext : function () {
         return it.hasNext();
@@ -241,10 +241,10 @@ class IteratorExt
         return f(it.next());
       }
     }
-	}
+  }
   
   public static function mapWithIndex < A, B > (it:Iterator<A>, f:A->Int->B):Iterator<B> 
-	{
+  {
     var index = 0;
     return {
       hasNext : function () {
@@ -254,49 +254,49 @@ class IteratorExt
         return f(it.next(), index++);
       }
     }
-	}
+  }
   
-	public static function mapToList < A, B > (it:Iterator<A>, f:A->B):List<B> 
-	{
-		var r = new List();
-		for (e in it) 
-		{
-			r.push(f(e));
-		}
-		return r;
-	}
-	
-	public static function mapToListWithIndex < A, B > (it:Iterator<A>, f:A->Int->B):List<B> 
-	{
-		var r = new List();
-		var i = 0;
-		for (e in it) 
-		{
-			r.push(f(e, i++));
-		}
-		return r;
-	}
-	
-	public static function mapToArray < A, B > (it:Iterator<A>, f:A->B):Array<B> 
-	{
-		var r = [];
-		for (e in it) 
-		{
-			r.push(f(e));
-		}
-		return r;
-	}
-	
-	public static function mapToArrayWithIndex < A, B > (it:Iterator<A>, f:A->Int->B):Array<B> 
-	{
-		var r = [];
-		var i = 0;
-		for (e in it) 
-		{
-			r.push(f(e, i++));
-		}
-		return r;
-	}
+  public static function mapToList < A, B > (it:Iterator<A>, f:A->B):List<B> 
+  {
+    var r = new List();
+    for (e in it) 
+    {
+      r.push(f(e));
+    }
+    return r;
+  }
+  
+  public static function mapToListWithIndex < A, B > (it:Iterator<A>, f:A->Int->B):List<B> 
+  {
+    var r = new List();
+    var i = 0;
+    for (e in it) 
+    {
+      r.push(f(e, i++));
+    }
+    return r;
+  }
+  
+  public static function mapToArray < A, B > (it:Iterator<A>, f:A->B):Array<B> 
+  {
+    var r = [];
+    for (e in it) 
+    {
+      r.push(f(e));
+    }
+    return r;
+  }
+  
+  public static function mapToArrayWithIndex < A, B > (it:Iterator<A>, f:A->Int->B):Array<B> 
+  {
+    var r = [];
+    var i = 0;
+    for (e in it) 
+    {
+      r.push(f(e, i++));
+    }
+    return r;
+  }
   
   public static function maximumBy <T>(it:Iterator<T>, f:T->T->Ordering):T 
   {
@@ -382,19 +382,19 @@ class IteratorExt
   
   // reverse on IteratorExt is slow, because it builds up a new 
   // iterable
-	public static inline function reverseCopy <A> (a:Iterator<A>):Iterator<A>
-	{
+  public static inline function reverseCopy <A> (a:Iterator<A>):Iterator<A>
+  {
     return reverseCopyToArray(a).iterator();
-	}
+  }
   
   public static function reverseCopyToArray <A> (a:Iterator<A>):Array<A>
-	{
+  {
     var res = [];
     for (e in a) {
       res.push(e);
     }
     return ArrayExt.reverseCopy(res);
-	}
+  }
   
   public static function size<T>(iter:Iterator<T>):Int
   {
@@ -406,13 +406,13 @@ class IteratorExt
   } 
   
   public static function sum <A>(iter:Iterator<A>, f:A->Int):Int
-	{
-		return IteratorExt.foldLeft(iter, function(a,v) return a + f(v), 0);
-	}
-	public static function sumFloat <A>(iter:Iterator<A>, f:A->Float):Float
-	{
-		return IteratorExt.foldLeft(iter, function(a,v) return a + f(v), 0);
-	}
+  {
+    return IteratorExt.foldLeft(iter, function(a,v) return a + f(v), 0);
+  }
+  public static function sumFloat <A>(iter:Iterator<A>, f:A->Float):Float
+  {
+    return IteratorExt.foldLeft(iter, function(a,v) return a + f(v), 0);
+  }
   
   public static function take<T>(iter:Iterator<T>, numElements:Int):Iterator<T>
   {
