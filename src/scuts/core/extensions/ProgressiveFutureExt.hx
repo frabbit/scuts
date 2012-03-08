@@ -1,5 +1,5 @@
 package scuts.core.extensions;
-import scuts.core.Assert;
+import scuts.Assert;
 import scuts.core.types.Future;
 import scuts.core.types.ProgressiveFuture;
 
