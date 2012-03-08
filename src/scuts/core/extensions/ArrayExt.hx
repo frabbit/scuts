@@ -16,15 +16,20 @@ using scuts.core.extensions.DynamicExt;
 class ArrayExt
 {
 
-  public static function eq <T>(a1:Array<T>, a2:Array<T>, eqT:T->T->Bool)
+  /**
+   * Checks if a1 and a2 are equal, the elements are compared by eqElem.
+   */
+  public static function eq <T>(a1:Array<T>, a2:Array<T>, eqElem:T->T->Bool)
   {
     if (a1.length != a2.length) return false;
     for ( i in 0...a1.length) {
-      if (!eqT(a1[i], a2[i])) return false;
+      if (!eqElem(a1[i], a2[i])) return false;
     }
     return true;
   }
-  
+  /**
+   * Checks if a1 and a2 are equal, the elements are compared by eqElem.
+   */
   public static function shuffle <T>(arr:Array<T>):Array<T> 
   {
     var res = [];
@@ -48,6 +53,10 @@ class ArrayExt
   public static inline function dropToArray<T>(a:Array<T>, num:Int):Array<T> {
     return drop(a, num);
   }
+  
+  /**
+   * Returns a new Array containing all elements of a except the first num elements.
+   */
   public static function drop<T>(a:Array<T>, num:Int):Array<T>
   {
     var res = [];
@@ -62,7 +71,9 @@ class ArrayExt
     return res;
     
   }
-  
+  /**
+   * Returns a new array based on a, containing all elements of a starting from the first where the predicate f holds.
+   */
   public static function dropWhileWithIndex<T>(a:Array<T>, f:T->Int->Bool):Array<T>
   {
     var res = [];
@@ -202,8 +213,9 @@ class ArrayExt
   
   public static function last<T>(arr:Array<T>):T
   {
-    if (arr.length == 0) Scuts.error("cannot get last from empty array")
-    return arr[arr.length - 1];
+    return 
+      if (arr.length == 0) Scuts.error("cannot get last from empty array")
+      else arr[arr.length - 1];
   }
   
   public static function lastOption<T>(arr:Array<T>):Option<T>
@@ -401,7 +413,7 @@ class ArrayExt
 	}
   
   public static function removeElem <A> (a:Array<A>, e:A, ?equals:A->A->Bool):Array<A> {
-    equals = equals.getOrElse(function (x1, x2) return x1 == x2);
+    equals = equals.nullGetOrElse(function (x1, x2) return x1 == x2);
     var res = [];
     for (i in a) {
       if (!equals(i, e)) res.push(i);  
