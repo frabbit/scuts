@@ -14,35 +14,42 @@ import scuts.core.types.Either;
 class DynamicExt
 {
 
-  /*
-  public static function toArrayOption <T>(a:T):Array<Option<T>> 
-  {
-    return if (a == null) [] else [Some(a)];
-  }
-  */
   
+  /**
+   * Converts v into an Option, based on the nulliness of v.
+   */
   public static inline function nullToOption < T > (v:T):Option<T> {
     return v != null ? Some(v) : None;
   }
   
+  /**
+   * Converts v into an Either, based on the nulliness of v.
+   * If v is null, right is used as the Right value for the resulting Either.
+   */
   public static inline function nullToLeft < A,B > (v:A, right:B):Either<A,B> {
     return v != null ? Left(v) : Right(right);
   }
   
-  
+  /**
+   * Returns v or elseValue, based on the nulliness of v.
+   */
   public static inline function nullGetOrElse < T > (v:T, elseValue:T):T {
     return v != null ? v : elseValue;
   }
   
+  /**
+   * Converts v into a left Either.
+   */
+  public static inline function toEitherLeft < A,B > (v:A):Either<A,B> return Left(v)
   
-  public static inline function toEitherLeft < A,B > (v:A):Either<A,B> {
-    return Left(v);
-  }
+  /**
+   * Converts v into a right Either.
+   */
+  public static inline function toEitherRight < A,B > (v:B):Either<A,B> return Right(v)
   
-  public static inline function toEitherRight < A,B > (v:B):Either<A,B> {
-    return Right(v);
-  }
-  
+  /**
+   * Converts v into a Future and deliver it immediately.
+   */
   public static inline function toFuture<T>(val:T):Future<T> 
   {
     return new Future().deliver(val);
@@ -53,14 +60,18 @@ class DynamicExt
     return [toFuture(t)];
   }
   
-  
+  /**
+   * Checks if v is an Object.
+   */
   public static inline function isObject <T>(v:T):Bool {
     return Reflect.isObject(v);
   }
   
+  /**
+   * Creates an Array containing the elemen e num times.
+   */
   public static function replicateToArray<T>(e:T, num:Int):Array<T> 
   {
-    
     var res = [];
     for (_ in 0...num) {
       res.push(e);
@@ -68,24 +79,14 @@ class DynamicExt
     return res;
   }
   
-  /*
-  public static function getOrElse <T>(o:T, elseValue:T):T
-  {
-    return if (o == null) elseValue else o;
-  }
-  */
-  
+  /**
+   * Turns a constant value into a constant function.
+   */
   public static function lazyConstant<T>(value:T):Void->T 
   {
     return function () return value;
   }
   
-  public static function logMe<T>(v:T, ?msg:String, ?pos:PosInfos):T 
-  {
-    var m = (if (msg != null) msg + ":" else "") + Std.string(v);
-    Log.trace(m, pos);
-    return v;
-  }
 
   
 }
