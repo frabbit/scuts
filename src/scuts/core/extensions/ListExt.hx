@@ -12,8 +12,8 @@ class ListExt
   {
     return IterableExt.mapToList(list, f);
   }
-	
-	public static inline function mapWithIndex < A, B > (list:List<A>, f:A->Int->B):List<B> 
+  
+  public static inline function mapWithIndex < A, B > (list:List<A>, f:A->Int->B):List<B> 
   {
     return IterableExt.mapToListWithIndex(list, f);
   }
