@@ -840,8 +840,8 @@ class Print
           if (args.length == 0) "Void" 
           else 
           {
-            var reduceArgs = function (acc, val) return acc + " -> " + funArgStr(val, simpleFunctionSignatures);
-            var reduceFirst = function (val) return funArgStr(val, simpleFunctionSignatures);
+            var reduceArgs = function (acc, val) return acc + " -> " + funArg(val, simpleFunctionSignatures);
+            var reduceFirst = function (val) return funArg(val, simpleFunctionSignatures);
             args.reduceLeft(reduceArgs, reduceFirst);
           }
         argumentsStr + " -> " + P.type(ret);
@@ -850,8 +850,8 @@ class Print
         var fields = a.get().fields;
         var reduced = if (fields.length > 0) 
         {
-          var reduceFields = function (acc, val) return acc + " " + anonFieldStr(val);
-          var reduceFirst = function (val) return anonFieldStr(val);
+          var reduceFields = function (acc, val) return acc + " " + anonField(val);
+          var reduceFirst = function (val) return anonField(val);
           a.get().fields.reduceLeft(reduceFields, reduceFirst);
         } else "";
         
@@ -862,7 +862,7 @@ class Print
     return str;
   }
   
-  public static function anonFieldStr (c:ClassField):String 
+  public static function anonField (c:ClassField):String 
   {
     return switch (c.kind) {
       case FMethod(k):
@@ -889,7 +889,7 @@ class Print
     //return 
   }
   
-  public static function funArgStr (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool):String 
+  public static function funArg (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool):String 
   {
     var optPrefix = if (arg.opt && !simpleFunctionSignatures) "?" else "";
     var argName = 
