@@ -24,7 +24,7 @@ using hots.extensions.COfExt;
   
   public function second <B,C,D>(f:COf<AR,B, C>):COf<AR, Tup2<D,B>, Tup2<D,C>> 
   {
-    return arr(Tup2s.swap).next(first(f), c).next(arr(Tup2s.swap), c);
+    return arr(Tup2Ext.swap).next(first(f), c).next(arr(Tup2Ext.swap), c);
   }
   
   public function split <B,B1, C,C1,D >(f:COf<AR,B, C>, g:COf<AR, B1, C1>):COf<AR, Tup2<B,B1>, Tup2<C,C1>> 

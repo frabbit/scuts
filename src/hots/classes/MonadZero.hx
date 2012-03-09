@@ -4,7 +4,6 @@ import hots.Of;
 import scuts.Scuts;
 
 
-
 interface MonadZero<M> implements Monad<M>
 {
   // functions

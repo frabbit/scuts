@@ -15,17 +15,20 @@ import hots.instances.EndoMonoid;
 
 
 // minimal implementation foldRight or foldMap
-@:tcAbstract class FoldableAbstract<F> implements Foldable<F>
+@:tcAbstract 
+class FoldableAbstract<F> implements Foldable<F>
 {
   
-  public function fold <A>(mon:Monoid<A>, val:Of<F,A>):A {
+  public function fold <A>(mon:Monoid<A>, val:Of<F,A>):A 
+  {
     return foldMap(Scuts.id, mon, val);
   }
   
   /**
    * Haskell Signature: Monoid b => (a -> b) -> f a -> b
    */
-  public function foldMap <A,B>(f:A->B, mon:Monoid<B>, val:Of<F,A>):B {
+  public function foldMap <A,B>(f:A->B, mon:Monoid<B>, val:Of<F,A>):B 
+  {
     var newF = mon.append.curry().compose(f).uncurry();
     return foldRight(newF, mon.empty(), val);
   }
@@ -40,12 +43,11 @@ import hots.instances.EndoMonoid;
     var mon : Monoid<A->A>  = DualMonoid.get(EndoMonoid.get());
     
     return foldMap(f, mon, val)(b);
-    
   }
   
-  public function foldRight <A,B>(f:A->B->B, b:B, val:Of<F,A>):B {
+  public function foldRight <A,B>(f:A->B->B, b:B, val:Of<F,A>):B 
+  {
     //foldr f z t = appEndo (foldMap (Endo . f) t) z
-    
     var x = foldMap( f.curry(), EndoMonoid.get(), val);
     
     return x(b);
