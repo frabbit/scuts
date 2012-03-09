@@ -7,9 +7,11 @@ package;
 #if macro
 import neko.Lib;
 import neko.Sys;
+import scuts.mcore.extensions.ExprDefExtTest;
 import scuts.mcore.ParseTest;
 import scuts.mcore.CheckTest;
 import scuts.mcore.TypeTest;
+
 #else 
 import scuts.mcore.PrintTest;
 #end
@@ -33,6 +35,7 @@ class AllTests
       runner.addCase(new ParseTest());
       runner.addCase(new CheckTest());
       runner.addCase(new TypeTest());
+      runner.addCase(new ExprDefExtTest());
       #else
       runner.addCase(new PrintTest());
       #end

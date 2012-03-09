@@ -8,6 +8,9 @@ import scuts.core.extensions.StringExt;
 class PositionExt 
 {
 
+  public static inline function nullOrCurrent (p:Position) {
+    return p == null ? Context.currentPos() : p;
+  }
   public static function eq (a:Position, b:Position):Bool 
   {
     var infosA = Context.getPosInfos(a);

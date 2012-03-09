@@ -6,8 +6,11 @@ package scuts.mcore.extensions;
 
 import haxe.macro.Expr;
 import scuts.core.macros.Lazy;
+import scuts.mcore.Cast;
 import scuts.mcore.Make;
 
+
+using scuts.core.extensions.ArrayExt;
 private typedef M = Make;
 
 class ExprExt 
@@ -21,7 +24,9 @@ class ExprExt
   
   public static inline function field (def:Expr, field:String, ?pos:Position) return M.field(def, field, pos)
   
-  public static inline function call (def:Expr, func:String, params:Array<Expr>, ?pos:Position) return M.call(def, func, params, pos)
+  public static inline function fields (def:Expr, fields:Array<String>, ?pos:Position) return M.fields(def, fields, pos)
+  
+  public static inline function call (e:Expr, params:Array<Expr>, ?pos:Position) return M.call(e, params, pos)
   
   public static inline function toBlock (def:Expr, ?pos:Position) return M.block([def], pos)
   
@@ -53,6 +58,8 @@ class ExprExt
   
   public static inline function asForBody (body:Expr, varName:String, iter:Expr, ?pos:Position) return M.forIn(varName, iter, body, pos)
   
+  public static inline function asReturn (e:Expr, ?pos:Position) return M.returnExpr(e, pos)
+  
   public static inline function asWhileCondition (cond:Expr, body:Expr, ?pos:Position) return M.whileExpr(cond, body, pos)
   
   public static inline function asIfCondition (cond:Expr, ifExpr:Expr, ?elseExpr:Expr, ?pos:Position) return M.ifExpr(cond, ifExpr, elseExpr, pos)
@@ -62,6 +69,8 @@ class ExprExt
   public static inline function withParenthesis (e:Expr, ?pos:Position) return M.expr(EParenthesis(e), pos)
   
   public static inline function lazy (e:Expr, ?pos:Position) return Lazy.mkExpr(e)
+  
+  public static inline function unsafeCastTo (e:Expr, type:ComplexType, ?pos:Position) return Cast.inlinedUnsafeCastTo(e, type, pos)
 
 }
 
