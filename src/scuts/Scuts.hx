@@ -24,9 +24,9 @@ class Scuts
     return error("This method is not yet implemented", posInfos);
   }
   
-  public static function checkNotNull <T>(v:T):T {
+  public static function checkNotNull <T>(v:T, ?posInfos:PosInfos):T {
     #if debug
-    Assert.assertNotNull(v);
+    Assert.assertNotNull(v, posInfos);
     #end
     return error("This method is not yet implemented");
   }
@@ -45,7 +45,7 @@ class Scuts
   #if (macro || display)
   public static function macroError <T>(msg:String, ?p:Position, ?posInfos:PosInfos):T 
   {
-    var p1 = p.nullGetOrElse(Context.currentPos());
+    var p1 = p.nullGetOrElseConst(Context.currentPos());
     throw new Error(msg + "\n@" + posInfos.toString(),p1);
     return null;
   }

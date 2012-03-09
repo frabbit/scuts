@@ -1,11 +1,12 @@
 package scuts.core.extensions;
 
 
+
 import haxe.Log;
 import haxe.PosInfos;
 import scuts.core.types.Future;
 import scuts.core.types.Option;
-
+//import scuts.mcore.Make;
 
 
 import scuts.core.types.Either;
@@ -39,8 +40,16 @@ class DynamicExt
   /**
    * Returns v or elseValue, based on the nulliness of v.
    */
-  public static inline function nullGetOrElse < T > (v:T, elseValue:T):T {
+  public static inline function nullGetOrElseConst < T > (v:T, elseValue:T):T {
     return v != null ? v : elseValue;
+  }
+  
+  
+  /**
+   * Returns v or elseValue, based on the nulliness of v.
+   */
+  public static inline function nullGetOrElse < T > (v:T, elseValue:Void->T):T {
+    return v != null ? v : elseValue();
   }
   
   /**
@@ -85,6 +94,10 @@ class DynamicExt
     return res;
   }
   
+  @:macro public static function lazy <T>(e:haxe.macro.Expr.ExprRequire<T>):haxe.macro.Expr.ExprRequire<Void->T>
+  {
+    return scuts.core.macros.Lazy.mkExpr(e);
+  }
   /**
    * Turns a constant value into a constant function.
    */

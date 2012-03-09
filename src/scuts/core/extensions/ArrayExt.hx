@@ -16,6 +16,7 @@ using scuts.core.extensions.DynamicExt;
 class ArrayExt
 {
 
+  
   /**
    * Checks if a1 and a2 are equal, the elements are compared by eqElem.
    */
@@ -105,22 +106,22 @@ class ArrayExt
   }
   
   public static function filter <A> (a:Array<A>, filter:A->Bool):Array<A>
-	{
-		var res = [];
+  {
+    var res = [];
     for ( e in a) {
       if (filter(e)) res.push(e);
     }
     return res;
-	}
+  }
   public static function filterWithIndex <A> (a:Array<A>, filter:A->Int->Bool):Array<A>
-	{
-		var res = [];
+  {
+    var res = [];
     for ( i in 0...a.length) {
       var e = a[i];
       if (filter(e, i)) res.push(e);
     }
     return res;
-	}
+  }
   
   public static function firstOption<T>(a:Array<T>):Option<T> 
   {
@@ -174,42 +175,42 @@ class ArrayExt
   }
   
   public static function foldRight<A,B>(arr:Array<A>, f:A->B->B, acc:B):B
-	{
+  {
     var rev = reverseCopy(arr);
     for (i in 0...rev.length) 
     {
-			acc = f(rev[i], acc);
-		}
-		return acc;
-	}
+      acc = f(rev[i], acc);
+    }
+    return acc;
+  }
   
   public static function foldRightWithIndex<A,B>(arr:Array<A>, f:A->B->Int->B, acc:B):B
-	{
+  {
     var rev = reverseCopy(arr);
     for (i in 0...rev.length) 
     {
-			acc = f(rev[i], acc, rev.length -1 -i);
-		}
-		return acc;
-	}
+      acc = f(rev[i], acc, rev.length -1 -i);
+    }
+    return acc;
+  }
   
   public static function foldLeft<A,B>(arr:Array<A>, f:B->A->B, acc:B):B
-	{
-		for (i in 0...arr.length) 
+  {
+    for (i in 0...arr.length) 
     {
-			acc = f(acc, arr[i]);
-		}
-		return acc;
-	}
+      acc = f(acc, arr[i]);
+    }
+    return acc;
+  }
   
   public static function foldLeftWithIndex<A,B>(arr:Array<A>, f:B->A->Int->B, acc:B):B
-	{
-		for (i in 0...arr.length) 
+  {
+    for (i in 0...arr.length) 
     {
-			acc = f(acc, arr[i], i);
-		}
-		return acc;
-	}
+      acc = f(acc, arr[i], i);
+    }
+    return acc;
+  }
   
   public static function last<T>(arr:Array<T>):T
   {
@@ -223,18 +224,18 @@ class ArrayExt
     return if (arr.length == 0) None else Some(arr[arr.length - 1]);
   } 
   public static function map < A, B > (arr:Array<A>, f:A->B):Array<B> 
-	{
-		return IterableExt.mapToArray(arr, f);
-	}
-	
-	public static function mapWithIndex < A, B > (arr:Array<A>, f:A->Int->B):Array<B> 
-	{
-		var r = [];
-		for (i in 0...arr.length) {
-			r.push(f(arr[i], i));
-		}
-		return r;
-	}
+  {
+    return IterableExt.mapToArray(arr, f);
+  }
+  
+  public static function mapWithIndex < A, B > (arr:Array<A>, f:A->Int->B):Array<B> 
+  {
+    var r = [];
+    for (i in 0...arr.length) {
+      r.push(f(arr[i], i));
+    }
+    return r;
+  }
   
   public static function reduceLeftWithIndexToString <T>(a:Array<T>, f:String->T->Int->String):String
   {
@@ -294,6 +295,7 @@ class ArrayExt
       && equalsElements();
   }
   
+  
   public static function some <T>(arr:Array<T>, e:T->Bool):Option<T> {
     for (i in arr) {
       if (e(i)) return Some(i);
@@ -329,14 +331,14 @@ class ArrayExt
   }
   
   public static function reverseCopy <A> (a:Array<A>):Array<A>
-	{
-		var c = a.length;
-		var res = [];
-		for (e in a) {
-			res[--c] = e;
-		}
-		return res;
-	}
+  {
+    var c = a.length;
+    var res = [];
+    for (e in a) {
+      res[--c] = e;
+    }
+    return res;
+  }
   
   public static inline function size<T>(arr:Array<T>):Int
   {
@@ -356,15 +358,15 @@ class ArrayExt
   }
   
   public static function take<T> (it:Array<T>, numElements:Int):Array<T> 
-	{
-		var res = [];
-		
-		for (i in 0...it.length) {
-			if (i == numElements) break;
+  {
+    var res = [];
+    
+    for (i in 0...it.length) {
+      if (i == numElements) break;
       res.push(it[i]);
-		}
-		return res;
-	}
+    }
+    return res;
+  }
   
   public static function toArrayOption <T>(a:Array<T>):Array<Option<T>> 
   {
@@ -383,37 +385,37 @@ class ArrayExt
   }
   
   public static function zipWith < A, B, C > (arr1:Array<A>, arr2:Array<B>, f:A->B->C):Array<C>
-	{
-		var min = arr1.length.min(arr2.length);
-		var res = [];
-		for (i in 0...min) {
-			res.push(f(arr1[i], arr2[i]));
-		}
-		return res;
-	}
+  {
+    var min = arr1.length.min(arr2.length);
+    var res = [];
+    for (i in 0...min) {
+      res.push(f(arr1[i], arr2[i]));
+    }
+    return res;
+  }
   
   public static function zipWith2 < A, B, C, D > (arr1:Array<A>, arr2:Array<B>, arr3:Array<C>, f:A->B->C->D):Array<D>
-	{
-		var min = arr1.length.min(arr2.length).min(arr3.length);
-		var res = [];
-		for (i in 0...min) {
-			res.push(f(arr1[i], arr2[i], arr3[i]));
-		}
-		return res;
-	}
-	
-	public static function zip < A, B, C > (arr1:Array<A>, arr2:Array<B>):Array<Tup2<A,B>>
-	{
-		var min = arr1.length.min(arr2.length);
-		var res = [];
-		for (i in 0...min) {
-			res.push(Tup2.create(arr1[i], arr2[i]));
-		}
-		return res;
-	}
+  {
+    var min = arr1.length.min(arr2.length).min(arr3.length);
+    var res = [];
+    for (i in 0...min) {
+      res.push(f(arr1[i], arr2[i], arr3[i]));
+    }
+    return res;
+  }
+  
+  public static function zip < A, B, C > (arr1:Array<A>, arr2:Array<B>):Array<Tup2<A,B>>
+  {
+    var min = arr1.length.min(arr2.length);
+    var res = [];
+    for (i in 0...min) {
+      res.push(Tup2.create(arr1[i], arr2[i]));
+    }
+    return res;
+  }
   
   public static function removeElem <A> (a:Array<A>, e:A, ?equals:A->A->Bool):Array<A> {
-    equals = equals.nullGetOrElse(function (x1, x2) return x1 == x2);
+    equals = equals.nullGetOrElseConst(function (x1, x2) return x1 == x2);
     var res = [];
     for (i in a) {
       if (!equals(i, e)) res.push(i);  

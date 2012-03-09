@@ -7,9 +7,14 @@ import haxe.macro.Expr;
 class Lazy 
 {
 
-  @:macro public static function expr(expr:ExprRequire<Dynamic>):Expr 
+  @:macro public static function expr(ex:Expr):Expr 
   {
-    var p = expr.pos;
+    return mkExpr(ex);
+  }
+  
+  #if (macro || display)
+  public static function mkExpr (ex:Expr):Expr {
+    var p = ex.pos;
     var constR = { expr: EConst(CIdent("r")), pos: p};
     
     var vars = {
@@ -24,7 +29,7 @@ class Lazy
           var ifCond = { expr: EUnop(Unop.OpNot, false, { expr: EConst(CIdent("isSet")), pos:p}), pos:p};
           var ifBody = {
             var block = [
-              { expr : EBinop(Binop.OpAssign, constR, expr), pos:p},
+              { expr : EBinop(Binop.OpAssign, constR, ex), pos:p},
               { expr : EBinop(Binop.OpAssign, { expr: EConst(CIdent("isSet")), pos:p}, { expr:EConst(CIdent("true")), pos:p}), pos:p},
             ];
             
@@ -36,10 +41,11 @@ class Lazy
         
         {expr:EBlock([ifExpr, retExpr]), pos:p}
       }
-      { expr: EFunction(null, { args:[], ret:null, expr: functionBody, params:[]}), pos:expr.pos};
+      { expr: EFunction(null, { args:[], ret:null, expr: functionBody, params:[]}), pos:ex.pos};
     }
     
     return { expr: EBlock([vars, f]), pos:p};
   }
+  #end
   
 }

@@ -3,7 +3,7 @@ import haxe.PosInfos;
 
 class Log 
 {
-	public static function traced <T>(v:T, ?show:T->String, ?pos:PosInfos):T 
+  public static function traced <T>(v:T, ?show:T->String, ?pos:PosInfos):T 
   {
     #if debug
     var t = if (show != null) show(v) else Std.string(v);
@@ -11,5 +11,5 @@ class Log
     #end
     return v;
   }
-	
+  
 }

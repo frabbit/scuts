@@ -6,12 +6,21 @@ import scuts.Scuts;
 
 class OptionExt {
 
-  public static function getOrElse <T>(o:Option<T>, elseValue:T):T
+  public static function getOrElseConst <T>(o:Option<T>, elseValue:T):T
   {
     return switch (o) 
     {
       case Some(v): v;
       case None: elseValue;
+    }
+  }
+  
+  public static function getOrElse <T>(o:Option<T>, elseValue:Void->T):T
+  {
+    return switch (o) 
+    {
+      case Some(v): v;
+      case None: elseValue();
     }
   }
   
@@ -67,12 +76,12 @@ class OptionExt {
   }
   
   public static function filter <T> (o:Option<T>, filter:T->Bool):Option<T>
-	{
-		return switch (o) {
+  {
+    return switch (o) {
       case Some(v): filter(v) ? Some(v) : None;
       case None: None;
     }
-	}
+  }
   public static function flatMap < S, T > (o:Option<S>, f:S->Option<T>):Option<T>
   {
     return switch (o) {
