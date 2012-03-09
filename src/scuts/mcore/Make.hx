@@ -10,7 +10,6 @@ import scuts.Scuts;
 
 class Make
 {
-  
   //public static inline function func (args:Array<FunctionArg>, 
   
     
@@ -115,6 +114,11 @@ class Make
   public static inline function vars (vars:Array<{name:String, ?type:ComplexType, ?expr:Expr}>, ?pos:Position):Expr
   {
     return expr(EVars(vars), pos);
+  }
+  
+  public static inline function castExpr (e:Expr, ?type:ComplexType, ?pos:Position):Expr
+  {
+    return expr(ECast(e, type), pos);
   }
 
   public static function extractVarsFromBlock (block:Expr) 
