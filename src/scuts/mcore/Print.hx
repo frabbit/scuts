@@ -610,7 +610,7 @@ class Print
       var first = true;
       for (p in params) 
       {
-        if (first) first = false else add(",");
+        if (first) { first = false; } else add(",");
         add(p.name);
         typeParamConstraintsStr1(p.constraints, buf, indent, indentStr);
       }
@@ -693,7 +693,7 @@ class Print
       var first = true;
       for (tp in typeParams) 
       {
-        if (first) first = false else add(", ");
+        if (first) { first = false;} else add(", ");
         typeParamValue1(tp, buf, indent, indentStr, cl);
       }
       add(">");
@@ -828,7 +828,7 @@ class Print
         var dt = t.get();
         
         var foldPack = function (v, a) return v + "." + a;
-        var foldParams = function (v, a,i) return P.type(v, dt) + (if (i > 0) "," else "") + a;
+        var foldParams = function (v, a,i) return P.type(v, dt) + (if (i < params.length-1) "," else "") + a;
         
         var typeStr = dt.pack.foldRight(foldPack, dt.name);
         var paramsStr = if (params.length > 0) "<" + params.foldRightWithIndex(foldParams, ">") else "";
@@ -846,12 +846,15 @@ class Print
           }
         argumentsStr + " -> " + P.type(ret);
       case TAnonymous( a ): 
-        var reduced = 
+        
+        var fields = a.get().fields;
+        var reduced = if (fields.length > 0) 
         {
-          var reduceFields = function (acc, val) return acc + ", " + anonFieldStr(val);
+          var reduceFields = function (acc, val) return acc + " " + anonFieldStr(val);
           var reduceFirst = function (val) return anonFieldStr(val);
           a.get().fields.reduceLeft(reduceFields, reduceFirst);
-        }
+        } else "";
+        
         "{ " + reduced + " }";
       case TDynamic( t ): 
         "Dynamic" + if (t != null) "<" + P.type(t) + ">" else "";
@@ -861,7 +864,29 @@ class Print
   
   public static function anonFieldStr (c:ClassField):String 
   {
-    return c.name + " : " + P.type(c.type);
+    return switch (c.kind) {
+      case FMethod(k):
+        switch (k) {
+          case MethodKind.MethNormal:
+            //"function " + c.name + "(" + args + "):" + ret;
+            switch (c.type) {
+              case TFun(args, ret): 
+                var argStrings = args.map(function (a) return (a.opt ? "?" : "") + a.name + ":" + P.type(a.t));
+                "function " + c.name + " (" + argStrings.join(",") + ")" + ":" + P.type(ret) + ";";
+              default: Scuts.error("Assert");
+            }
+            
+          default: Scuts.notImplemented();
+        }
+      case FieldKind.FVar(read, write):
+        switch (read) {
+          case VarAccess.AccNo: c.name + " : " + P.type(c.type) + ",";
+          case VarAccess.AccNormal: "var " + c.name + " : " + P.type(c.type) + ";";
+          default: Scuts.notImplemented();
+        }
+        
+    }
+    //return 
   }
   
   public static function funArgStr (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool):String 
