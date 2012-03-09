@@ -7,7 +7,8 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 import scuts.core.types.Option;
 import scuts.Scuts;
-
+using scuts.core.extensions.DynamicExt;
+using scuts.core.extensions.ArrayExt;
 class Make
 {
   //public static inline function func (args:Array<FunctionArg>, 
@@ -25,11 +26,15 @@ class Make
   public static inline function unop (e:Expr, op:Unop, ?postFix:Bool = false, ?pos:Position):Expr
     return expr(EUnop(op, postFix, e), pos)
   
-  public static inline function field (obj:Expr, field:String, ?pos:Position):Expr
-    return expr(EField(obj, field), pos)
+  public static inline function field (e:Expr, field:String, ?pos:Position):Expr
+    return expr(EField(e, field), pos)
+    
+  public static function fields (e:Expr, fields:Array<String>, ?pos:Position):Expr
+    return fields.foldLeft(function (acc, cur) return field(acc, cur, pos), e)
     
   public static inline function const (const:Constant, ?pos:Position):Expr
     return expr(EConst(const), pos)
+    
     
   public static inline function constIdent (ident:String, ?pos:Position):Expr
     return const(CIdent(ident), pos)
@@ -59,16 +64,33 @@ class Make
     return { field: field, expr:expr}
   
   
+    
+  public static function funcExpr (
+    ?name:String, ?args:Array<FunctionArg>, ?ret:ComplexType, ?eexpr:Expr, 
+    ?params:Array<{name:String, constraints:Array<ComplexType>}>, ?pos:Position) 
+  {
+    return expr(EFunction(name, func(args, ret, eexpr, params)), pos);
+  }
+  
   public static function func (?args:Array<FunctionArg>, ?ret:ComplexType, ?expr:Expr, ?params:Array<{name:String, constraints:Array<ComplexType>}>) {
     return {
       args: args == null ? [] : args,
       ret: ret,
       expr: expr,
-      params: params = null ? [] : params,
+      params: params == null ? [] : params,
+    }
+  }
+  
+  public static function funcArg (name:String, opt:Bool, ?type:ComplexType, ?value:Expr) {
+    return {
+      name:name,
+      opt:opt,
+      type:type,
+      value:value
     }
   }
     
-  static function fields (declarations:Array<String>, p) 
+  static function anonFields (declarations:Array<String>, ?p:Position) 
   {
 		var e = Context.parse( "{var x: {" + declarations.join("\n") + "}}", p);
 
@@ -85,9 +107,9 @@ class Make
 		}
 	}
 	
-  public static function call (e:Expr, func:String, params:Array<Expr>, ?pos:Position)
-    return expr(ECall(field(e, func, pos), params), pos)
   
+  public static function call (e:Expr, params:Array<Expr>, ?pos:Position)
+    return expr(ECall(e, params), pos)
   
   public static inline function expr (def:ExprDef, ?pos:Position):Expr
     return 
@@ -120,7 +142,22 @@ class Make
   {
     return expr(ECast(e, type), pos);
   }
+  
+  public static inline function returnExpr (?e:Expr, ?pos:Position):Expr
+  {
+    return expr(EReturn(e), pos);
+  }
 
+  public static function typePath (pack:Array<String>, name:String, ?params:Array<TypeParam>, ?sub:String):TypePath
+  {
+    return {
+      pack : pack,
+      name : name,
+      params : params == null ? [] : params,
+      sub : sub
+    }
+  }
+  
   public static function extractVarsFromBlock (block:Expr) 
     return switch (block.expr) 
     {

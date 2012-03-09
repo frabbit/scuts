@@ -110,6 +110,8 @@ class Extract
     }
   }
   
+  
+  
   public static function extractConstString (e:Expr):Option<String> {
     return switch (e.expr) {
       case EConst(c): 

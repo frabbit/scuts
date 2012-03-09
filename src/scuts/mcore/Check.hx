@@ -179,7 +179,7 @@ class Check
   
   
   public static function isConstIdent (e:Expr, ?f:String->Bool) {
-    f = f.nullGetOrElse(function (s) return true);
+    f = f.nullGetOrElseConst(function (s) return true);
     return switch (e.expr) {
       case EConst(c):
         switch (c) {
@@ -281,7 +281,7 @@ class Check
   
   // EType( e : Expr, field : String );
   public static function isEType (e:Expr, ?fieldFilter:String->Bool):Bool {
-    var fieldFilter = fieldFilter.nullGetOrElse(function (_) return true);
+    var fieldFilter = fieldFilter.nullGetOrElseConst(function (_) return true);
     return switch (e.expr) {
       case EType(_, field): fieldFilter(field);
       default: false;
@@ -332,7 +332,7 @@ class Check
   
 	//EUnop( op : Unop, postFix : Bool, e : Expr );
   public static function isEUnop (e:Expr, ?unopFilter:Unop -> Bool):Bool {
-    unopFilter = unopFilter.nullGetOrElse(function (_) return true);
+    unopFilter = unopFilter.nullGetOrElseConst(function (_) return true);
     
     return switch (e.expr) {
       case EUnop(op, _, _): 

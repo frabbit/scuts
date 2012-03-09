@@ -9,11 +9,19 @@ import haxe.macro.Expr;
 import neko.FileSystem;
 import neko.io.File;
 
+using scuts.mcore.extensions.ExprExt;
+using scuts.mcore.extensions.StringExt;
+
 class Cast 
 {
   
+  public static function unsafeCastTo (expr:Expr, type:ComplexType, ?pos:Position):Expr
+  {
+    var f = Make.funcExpr([Make.funcArg("x", false, TPath(Make.typePath([], "Dynamic")))], type, "x".asConstIdent().asReturn());
+    return Make.call(f, [expr]);
+  }
   
-  public static function typedCast (expr:Expr, type:ComplexType, ?pos:Position):Expr
+  public static function inlinedUnsafeCastTo (expr:Expr, type:ComplexType, ?pos:Position):Expr
   {
     var id = Context.signature(type);
     var clName = "TypedCast__" + id;
@@ -29,7 +37,7 @@ class Cast
     var call = Make.expr(ECall(field, [expr]), pos);
     return call;
   }
-
+  
 }
 
 

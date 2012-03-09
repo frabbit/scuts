@@ -398,6 +398,17 @@ class Select
         }
   }
   
+  public static function selectEVarsVarAt (e:Expr, at:Int):Option<{ name : String, type : Null<ComplexType>, expr : Null<Expr> }> 
+  {
+      return 
+        switch (e.expr) {
+          case EVars(vars):
+            if (vars.length <= at) None else Some(vars[at]);
+          default:
+            None;
+        }
+  }
+  
   
   
   

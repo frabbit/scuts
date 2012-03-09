@@ -10,9 +10,11 @@ import haxe.macro.Type;
 import scuts.core.std.StdType;
 import scuts.Scuts;
 import scuts.core.types.Option;
-
+using scuts.core.extensions.Function0Ext;
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.StringExt;
+using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.DynamicExt;
 //using scuts.Core;
 
 private typedef ParseContext = Dynamic<Dynamic>;
@@ -50,10 +52,9 @@ class Parse
       s = ereg.replace(s, TYPE_PREFIX + "_$1$2"); 
       var ereg = ~/[$]([0-9]+)$/g;
       s = ereg.replace(s, TYPE_PREFIX + "_$1"); 
-    } 
+    }
     else 
     {
-      
       var ereg = ~/[$][{]([a-zA-Z_][a-zA-Z0-9]*)[}]/g;
       s = ereg.replace(s, TYPE_PREFIX + "$1");
       var ereg = ~/[$]([a-zA-Z_][a-zA-Z0-9]*)([^a-zA-Z0-9_])/g;
@@ -61,8 +62,20 @@ class Parse
       var ereg = ~/[$]([a-zA-Z_][a-zA-Z0-9]*)$/g;
       s = ereg.replace(s, TYPE_PREFIX + "$1"); 
     }
-		
     return s;
+  }
+  
+  public static function parseToType (s:String, ?context:Dynamic, ?pos:Position):Option<Type>
+  {
+    return (function () return Context.typeof(parse("{ var x : " + s + " = null; x;}", context, pos))).evalToOption();
+  }
+  
+  public static function parseToComplexType (s:String, ?context:Dynamic, ?pos:Position):Option<ComplexType>
+  {
+    var parsed = parse("{ var x : " + s + " = null; x;}", context, pos);
+    
+    return Select.selectEVarsVarAt(parsed, 0).flatMap(function (x) return x.type.nullToOption());
+    
   }
   
 	public static function parse (s:String, ?context:Dynamic, ?pos:Position):Expr 
