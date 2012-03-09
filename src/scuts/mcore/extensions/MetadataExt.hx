@@ -7,7 +7,7 @@ private typedef MetadataEntry = { name : String, params : Array<Expr>, pos : Pos
 
 class MetadataEntryExt 
 {
-  public static inline function eq (a:MetadataEntry, b:MetadataEntry):Bool 
+  public static function eq (a:MetadataEntry, b:MetadataEntry):Bool 
   {
     return StringExt.eq(a.name, b.name)
       && PositionExt.eq(a.pos, b.pos)
@@ -19,7 +19,7 @@ class MetadataEntryExt
 class MetadataExt 
 {
 
-  public static inline function eq (a:Metadata, b:Metadata):Bool 
+  public static function eq (a:Metadata, b:Metadata):Bool 
   {
     return ArrayExt.eq(a,b, MetadataEntryExt.eq);
   }
