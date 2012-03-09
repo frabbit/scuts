@@ -5,6 +5,7 @@ package scuts.mcore.extensions;
 #elseif (display || macro)
 
 import haxe.macro.Expr;
+import scuts.core.macros.Lazy;
 import scuts.mcore.Make;
 
 private typedef M = Make;
@@ -40,6 +41,10 @@ class ExprExt
   
   public static inline function binopBoolOr (left:Expr, right:Expr, ?pos:Position) return M.binop(left, right, Binop.OpBoolOr, pos)
   
+  public static inline function binopBoolEq (left:Expr, right:Expr, ?pos:Position) return M.binop(left, right, Binop.OpEq, pos)
+  
+  public static inline function binopBoolNotEq (left:Expr, right:Expr, ?pos:Position) return M.binop(left, right, Binop.OpNotEq, pos)
+  
   public static inline function binop (left:Expr, right:Expr, op:Binop, ?pos:Position) return M.binop(left, right, op, pos)
   
   public static inline function intervalTo (left:Expr, right:Expr, ?pos:Position) return M.binop(left, right, Binop.OpInterval, pos)
@@ -56,10 +61,8 @@ class ExprExt
   
   public static inline function withParenthesis (e:Expr, ?pos:Position) return M.expr(EParenthesis(e), pos)
   
-  
-  
-  
-  
+  public static inline function lazy (e:Expr, ?pos:Position) return Lazy.mkExpr(e)
+
 }
 
 #end
