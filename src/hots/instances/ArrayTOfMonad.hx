@@ -43,7 +43,7 @@ class ArrayTOfMonadImpl<M> extends MonadAbstract<Of<M,Array<In>>> {
             }
           },BT.unbox(e));
         }
-        return monadM.ret(res);//res;
+        return monadM.pure(res);//res;
       });
     return BT.box(fmapped);
   }

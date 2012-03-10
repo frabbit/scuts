@@ -6,7 +6,7 @@ import hots.In;
 
 using hots.instances.ArrayBox;
 
-class ArrayOfCollection extends CollectionAbstract<Array<In>>
+class ArrayOfCollectionImpl extends CollectionAbstract<Array<In>>
 {
   
   public function new () {}
@@ -42,3 +42,5 @@ class ArrayOfCollection extends CollectionAbstract<Array<In>>
   }
   
 }
+
+typedef ArrayOfCollection = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfCollectionImpl)]>;

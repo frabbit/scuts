@@ -21,9 +21,6 @@ class ArrayTOfFunctorImpl<M> extends FunctorAbstract<Of<M,Array<In>>> {
     this.functorM = functorM;
   }
 
-  /**
-   * @inheritDoc
-   */
   override public function map<A,B>(f:A->B, fa:ArrayTOf<M, A>):ArrayTOf<M, B> {
     return BT.box(functorM.map(function (x:Array<A>) {
       return B.unbox(ArrayOfFunctor.get().map(f, B.box(x)));

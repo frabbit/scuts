@@ -21,17 +21,12 @@ class ArrayTOfApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
 
   public function new (appM:Applicative<M>) 
   {
-    var f = ArrayTOfFunctor.get(appM);
+    var f = ArrayTOfPointed.get(appM);
     super(f);
     this.appM = appM;
   }
 
-  /**
-   * aka return, pure
-   */
-  override public function ret<A>(x:A):ArrayTOf<M,A> {
-    return B.box(appM.ret([x]));
-  }
+  
   /**
    * aka <*>
    */

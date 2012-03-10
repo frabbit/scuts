@@ -15,7 +15,7 @@ class ArrayOfMonadTransImpl<M> extends MonadTransAbstract<Array<In>> {
   
   public function new () {}
 
-  override public function lift <M, A>(val:Of<M, A>, monad:Monad<M>):ArrayOfT<M,A>
+  override public function lift <M, A>(val:Of<M, A>, monad:Monad<M>):ArrayTOf<M,A>
   {
     return BT.box(monad.map(function (x) return [x], val));
   }

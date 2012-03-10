@@ -24,6 +24,14 @@ class ArrayTBox
     return cast Assert.assertNotNull(v);
   }
   
+  public static inline function boxF <X,M,A>(v:X->Of<M, Array<A>>):X->ArrayTOf<M, A> {
+    return cast Assert.assertNotNull(v);
+  }
+  
+  public static inline function unboxF <X,M,A>(v:X->ArrayTOf<M, A>):X->Of<M, Array<A>> {
+    return cast Assert.assertNotNull(v);
+  }
+  
   public static inline function boxInner <M,A>(v:Of<M, Of<Array<In>, A>>):ArrayTOf<M, A> {
     return cast Assert.assertNotNull(v);
   }

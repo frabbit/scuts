@@ -8,7 +8,7 @@ import hots.extensions.ArrayOfExt;
 using hots.extensions.ArrayOfExt;
 
 
-private class ArrayOfMonoidImpl<T> extends MonoidAbstract<ArrayOf<T>>
+class ArrayOfMonoidImpl<T> extends MonoidAbstract<ArrayOf<T>>
 {
   public function new () {}
   
