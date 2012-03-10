@@ -30,16 +30,29 @@ using scuts.core.extensions.Function1Ext;
 
 using scuts.core.extensions.OptionExt;
 using scuts.core.extensions.DynamicExt;
+
+
+enum TypeConstructorInfo {
+  IsTypeConstructor(innerType:Type);
+  NoTypeConstructor;
+}
+
+
+
 #end
 class TypeClasses 
 {
 
   #if (macro || display)
   
+  static var HOTS_OF_FIELD_ID:String = "__internal_hots_Of__";
+  
+  static var hotsClassPathAdded = false;
+  
   static function templateProvider (className:String, constraintTypeGetters:String, getProviderClassOf:String, getProviderClass:String, getter:String):String
   {
     return Std.format(
-'class $className 
+'@:tcProvider class $className 
 {
   $constraintTypeGetters
   $getProviderClassOf
@@ -104,12 +117,13 @@ public static function get <$getParams>($getArgs) {
   static function createConstraintTypeGetters (allParams:Array<String>, paramStrings:Array<String>, usingType:String, usingTypeOf:String) {
     var s = "";
     for (i in 0...paramStrings.length) {
-      s+= '\tpublic static function get_constraint_'
+      s+= '\tpublic static inline function get_constraint_'
           + i + '_type<' + allParams.join(",") + '>(t:' + usingType + '):'
           + paramStrings[i] + ' return cast null\n';
-      s+= '\tpublic static function getOf_constraint_'
-          + i + '_type<' + allParams.join(",") + '>(t:' + usingTypeOf + '):'
-          + paramStrings[i] + ' return cast null\n';
+      // when the type was an Of we need to unbox the value
+      s+= '\tpublic static inline function getOf_constraint_'
+          + i + '_type<' + allParams.join(",") + '>(t:' + usingTypeOf + '):'  + paramStrings[i]
+           + ' return cast null\n';
     }
     return s;
   }
@@ -153,7 +167,7 @@ public static function get <$getParams>($getArgs) {
               privateEqArr.hash.set(id, e);
               e;
             } else {
-              trace(id + " from cache");
+              //trace(id + " from cache");
               // we need a safe cast here to match the type of the if expr
               cast privateEqArr.hash.get(id);
             }
@@ -177,7 +191,7 @@ public static function get <$getParams>($getArgs) {
       
       // must not have a superclass and implements a type class directly and must be marked with tcAbstract
       
-      var isAbstractClassMarker = Lazy.expr(lc.meta.has(":tcAbstract"));
+      var isAbstractClassMarker = lc.meta.has(":tcAbstract");
       
       if (!isAbstractClassMarker) {
         //trace("pre error");
@@ -241,7 +255,7 @@ public static function get <$getParams>($getArgs) {
   static function buildTypeClassInterface (lc:ClassType, fields:Array<Field>) {
     
     return if (!lc.meta.has(":tcClassInfo")) { 
-      trace("build type class " + lc.name);
+      #if debug trace("build type class " + lc.name); #end
       // how many constraints
       var constraints = lc.interfaces.filter(function (i) return i.t.get().name == "TC" && i.t.get().pack.join(".") == "hots");
       
@@ -312,13 +326,13 @@ public static function get <$getParams>($getArgs) {
 
     var superClass = typeRef.superClass;
     
-    var wrappedTypeStr = {
+    var wrappedTypeInfo = {
       // we need to find the wrapped type 
       //trace(superClass.params);
-      var wrappers = superClass.params.filter(function (p) return Print.type(p).indexOf("hots.In") >= 0);
+      var wrappers = superClass.params.filter(function (p) return Print.type(Context.follow(p)).indexOf("hots.In") >= 0);
       var wrappedType = if (wrappers.length == 1) {
         var p = wrappers[0];
-        Context.follow(p, false);
+        Context.follow(p);
       } else {
         if (superClass.params.length == 0) {
           Scuts.macroError("Every type class must have one free type parameter");
@@ -327,8 +341,23 @@ public static function get <$getParams>($getArgs) {
         }
       };
       
-      Print.type(wrappedType);
+      
+      
+      trace(wrappedType);
+      //trace(Print.type(wrappedType));
+      trace("wrapped type:" + Print.type(wrappedType));
+      {
+        info : getWrapperInfo(wrappedType),
+        type : wrappedType,
+        typeString: Print.type(wrappedType)
+      }
     };
+    
+    trace(wrappedTypeInfo.info);
+    
+    var wrappedTypeStr = wrappedTypeInfo.typeString;
+    
+    
     
     var usingResult = replaceInnerInTypes(wrappedTypeStr);
     
@@ -363,12 +392,12 @@ public static function get <$getParams>($getArgs) {
         }
         
       }));
-      switch (constraintsArr) {
-        case Some(a):a;
-        case None: [];
-      }
+      
+      constraintsArr.getOrElse([]);
+      
     }
-    
+    trace(c);
+    trace(usingType);
     tcConstraintUsings.set(className, c);
     
     var getProviderClass = {
@@ -409,7 +438,19 @@ public static function get <$getParams>($getArgs) {
     }
    
     var classStr = templateProvider(className, constraintTypeGetters, getProviderClassOf, getProviderClass, getter);
-    var file = File.write(className + ".hx");
+    
+    if (!hotsClassPathAdded) {
+      if (!FileSystem.exists("_hots_cache")) {
+        FileSystem.createDirectory("_hots_cache");
+      }
+      
+      haxe.macro.Compiler.addClassPath("_hots_cache/");
+      
+      hotsClassPathAdded = true;
+    }
+    
+    
+    var file = File.write("_hots_cache/" + className + ".hx");
     file.writeString(classStr);
     file.close();
     var ret = Context.getType(className);
@@ -431,6 +472,67 @@ public static function get <$getParams>($getArgs) {
     return {result:typeStr, replacements:replacements};
   }
   
+  /**
+   * Checks if the type type is a Type Constructor in the given context context.
+   * Examples: 
+   * M is a Type Constructor in Of<M, A> with the inner type A.
+   * M is no Type Constructor in M -> A
+   * @param	type the needle which is searched in context
+   * @param	context the context type in which type should be searched
+   * @return 
+   */
+  static function checkIfTypeIsTypeConstructorIn (type:Type, context:Type):TypeConstructorInfo
+  {
+    return switch (type) 
+    {
+      case TInst(_,params), TEnum(_, params), TType(_, params):
+        var res = Normal;
+        for (p in params) 
+        {
+          var r = checkIfTypeIsTypeConstructorIn(p);
+          switch (r) {
+            case IsTypeConstructor(_): res = r; break;
+            default: // continue
+          }
+        }
+        res;
+      case TAnonymous(a):
+        var fields = a.get().fields;
+        trace(fields);
+        var inner = Lazy.expr(switch (fields[0].type) 
+        {
+          case TAnonymous(a2):
+            var fields2 = a2.get().fields;
+            trace(fields2);
+            trace(fields2[0].type);
+            trace(type);
+            if (fields2.length == 2 
+               && fields2[0].name == "m"
+               && fields2[0].type == type) 
+              IsTypeConstructor(fields2[1].type) 
+            else NoTypeConstructor;
+          default: NoTypeConstructor;
+        });
+        if (fields.length == 1 && fields[0].name == HOTS_OF_FIELD_ID) // It's an Of Type
+          inner() // check if type is Type Constructor in Of Type
+        else 
+          NoTypeConstructor;
+      
+      case TDynamic(t): NoTypeConstructor;
+      case TFun(args, ret):
+        var res = NoTypeConstructor;
+        for (a in args) 
+        {
+          var r = checkIfTypeIsTypeConstructorIn(a.t);
+          switch (r) {
+            case IsTypeConstructor(_): res = r; break;
+            default: // continue
+          }
+        }
+        if (res == NoTypeConstructor) checkIfTypeIsTypeConstructorIn(ret) else res;
+      default: Scuts.macroError("Not Supported:" + type);
+    }
+  }
   
   
   static function replaceSelfClassTypeParams (type:String, clName:String ):String

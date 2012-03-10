@@ -18,7 +18,7 @@ class MonadExt
     return function (v1:Of<M, A1>, v2:Of<M, A2>) {
       return m.flatMap(v1, function (x1) {
         return m.flatMap(v2, function (x2) {
-          return m.ret(f(x1,x2));
+          return m.pure(f(x1,x2));
         });
       });
     };
@@ -41,14 +41,13 @@ class MonadExt
     var k = function (m1:Of<M,B>,m2:Of<M,Array<B>>) {
       return monad.flatMap(m1, function (x:B) {
         return monad.flatMap(m2, function (xs:Array<B>) {
-          return monad.ret([x].concat(xs));
+          return monad.pure([x].concat(xs));
         });
       });
       
     }
-    return ArrayExt.foldRight(arr, k, monad.ret([]));
+    return ArrayExt.foldRight(arr, k, monad.pure([]));
   }
-  
   
   public static inline function mapM <M,A,B>(mon:Monad<M>, f:A->Of<M,B>, a:Array<A>):Of<M,Array<B>>
   {
