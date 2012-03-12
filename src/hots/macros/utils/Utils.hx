@@ -290,7 +290,7 @@ class Utils
       });
       
     });
-    return t.getOrElseThunk(Lazy.expr(Scuts.macroError("Cannot flatten the type " + Print.type(ofType))));
+    return t.getOrElse(Lazy.expr(Scuts.macroError("Cannot flatten the type " + Print.type(ofType))));
   }
   
   public static function getOfContainerType (t:Type):Option<Type> {
