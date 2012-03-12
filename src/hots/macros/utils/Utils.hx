@@ -305,26 +305,13 @@ class Utils
    public static function replaceOfElemType(ofType:Type, newElemType:Type):Option<Type> {
     return switch (Context.follow(ofType)) 
     {
-      case TAnonymous(a):
-        
-        var fields = a.get().fields;
-        var inner = Lazy.expr(switch (fields[0].type) 
-        {
-          case TAnonymous(a2):
-            
-            
-            var fields2 = a2.get().fields;
-            if (fields2.length == 2 
-               && fields2[0].name == "m") {
-               "hots.Of<$0, $1>".parseToType([fields2[0].type, newElemType]);
-            }
-            else None;
-          default: None;
-        });
-        if (fields.length == 1 && fields[0].name == Constants.HOTS_OF_FIELD_ID) // It's an Of Type
-          inner() // check if type is Type Constructor in Of Type
-        else 
+      case TInst(t, params):
+        var tget = t.get();
+        if (tget.pack.length == 1 && tget.pack[0] == "hots" && tget.name == "Of") {
+          Some(TInst(t, [params[0], newElemType]));
+        } else {
           None;
+        }
       default: None;
     }
   }
@@ -341,25 +328,13 @@ class Utils
     
     return switch (Context.follow(type)) 
     {
-      
-      case TAnonymous(a):
-        
-        var fields = a.get().fields;
-        var inner = Lazy.expr(switch (fields[0].type) 
-        {
-          case TAnonymous(a2):
-            
-            var fields2 = a2.get().fields;
-            if (fields2.length == 2 
-               && fields2[0].name == "m") 
-              Some(Tup2.create(fields2[0].type, fields2[1].type)) 
-            else None;
-          default: None;
-        });
-        if (fields.length == 1 && fields[0].name == Constants.HOTS_OF_FIELD_ID) // It's an Of Type
-          inner() // check if type is Type Constructor in Of Type
-        else 
+      case TInst(t, params):
+        var tget = t.get();
+        if (tget.pack.length == 1 && tget.pack[0] == "hots" && tget.name == "Of") {
+          Some(Tup2.create(params[0], params[1]));
+        } else {
           None;
+        }
       default: None;
     }
   }

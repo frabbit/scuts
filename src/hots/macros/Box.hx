@@ -11,7 +11,9 @@ import scuts.Scuts;
 using scuts.core.extensions.OptionExt;
 using scuts.mcore.extensions.TypeExt;
 using scuts.mcore.extensions.ExprExt;
-
+using scuts.core.extensions.EitherExt;
+import scuts.core.types.Either;
+using scuts.core.extensions.DynamicExt;
 private typedef U = hots.macros.utils.Utils;
 #end
 /**
@@ -34,6 +36,11 @@ class Box
    
    */
   @:macro public static function box(e:Expr) 
+  {
+    return mkBox(e);
+  }
+  #if (macro || display)
+  public static function mkBox(e:Expr) 
   {
     
     var type = Context.typeof(e);
@@ -74,6 +81,8 @@ class Box
     
     return e.unsafeCastTo(newType.toComplexType());
   }
+  #end
+  
   /**
    * 
     Unboxing
@@ -85,44 +94,81 @@ class Box
     6: Convert Of<Of<A, D<In>>, E> into Of<A, D<E>>
     Success: Boxing successful
     Error: Error boxing not possible
-   
    */
   @:macro public static function unbox(e:Expr) {
-    var error = function () return Scuts.macroError("Cannot unbox expression " + Print.expr(e) + " because it's no Of type");
+    return mkUnbox(e);
+  }
+  
+  #if (macro || display)
+  public static function mkUnbox(e:Expr) 
+  {
+    
+    
+    
+    var error = function () return "Cannot unbox expression " + Print.expr(e) + " because it's no Of type";
     var type = Context.typeof(e);
-    var newType = if (U.isOfType(type)) {
+    
+    /**
+     * Do({
+     * var t <- U.getOfParts(type).toLeft(error)
+     * var container = t._1;
+     * var elemType = t._2;
+     * if (U.isOfType(container))
+     *    Do({
+     *      innerElemType <- U.getOfElemType(container).toLeft(error)
+            if (U.hasInnerInType(innerElemType)) {
+              Do({
+                elemType <- U.getOfElemType(type);
+                mapped <- U.replaceContainerElemType(innerElemType, elemType)
+                last <- U.replaceOfElemType(container, mapped)
+                last.toLeft(error);
+              })
+            else Right(error());
+          });
+     * else if (U.hasInnerInType(container))
+            U.replaceContainerElemType(container, elemType)).toLeft(error);
+       else Right(error());
+     * })
+     */
+    
+    var newType = U.getOfParts(type) // 1
+    .toLeft(error) 
+    .flatMapLeft(function (t) {
       // 2
-      var container = U.getOfContainerType(type);
-      if (container.isSome() && U.isOfType(container.extract())) {
-        // 5
-        var innerElemType = U.getOfElemType(container.extract());
-        if (innerElemType.isSome() && U.hasInnerInType(innerElemType.extract())) {
-          var elemType = U.getOfElemType(type);
-          elemType
-            .flatMap(function (x) return U.replaceContainerElemType(innerElemType.extract(), x)) // we have D<E>
-            .flatMap(function (x) return U.replaceOfElemType(container.extract(), x))
-            .getOrElseThunk(error);
-        } 
-        else 
-        {
-          error();
-        }
+      var container = t._1;
+      var elemType = t._2;
+      return if (U.isOfType(container)) 
+      {
+        //5
+        U.getOfElemType(container).toLeft(error)
+        .flatMapLeft(function (innerElemType) 
+          return if (U.hasInnerInType(innerElemType)) 
+          {
+            // 6
+            U.getOfElemType(type)
+              .flatMap(function (x) return U.replaceContainerElemType(innerElemType, x)) // we have D<E>
+              .flatMap(function (x) return U.replaceOfElemType(container, x))
+              .toLeft(error);
+          } 
+          else error().toEitherRight()
+        );
       } 
       else 
       {
         // 3
-        container
-          .filter(U.hasInnerInType)
-          .flatMap(function (x) {
-            return U.getOfElemType(type)
-              .flatMap(function (y) return U.replaceContainerElemType(x, y));
-          }).getOrElseThunk(error);
+        if (U.hasInnerInType(container)) 
+        {
+          // 4
+          U.replaceContainerElemType(container, elemType).toLeft(error);
+        }
+        else error().toEitherRight();
       }
-    } else {
-      error();
-    }
-    return e.unsafeCastTo(newType.toComplexType());
+    });
+      
+    
+    var t = newType.getOrElse(function (b) return Scuts.macroError(b));
+    return e.unsafeCastTo(t.toComplexType());
   }
-  
+  #end
   
 }
