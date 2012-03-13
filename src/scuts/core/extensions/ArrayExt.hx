@@ -414,6 +414,24 @@ class ArrayExt
     return res;
   }
   
+  public static function insertElemFront <A> (a:Array<A>, e:A):Array<A> {
+    var cp = a.copy();
+    cp.unshift(e);
+    return cp;
+  }
+  
+  public static function insertElemBack <A> (a:Array<A>, e:A):Array<A> {
+    var cp = a.copy();
+    cp.push(e);
+    return cp;
+  }
+  
+  public static function insertElemAt <A> (a:Array<A>, e:A, index:Int):Array<A> {
+    var cp = a.copy();
+    cp.insert(index, e);
+    return cp;
+  }
+  
   public static function removeElem <A> (a:Array<A>, e:A, ?equals:A->A->Bool):Array<A> {
     equals = equals.nullGetOrElseConst(function (x1, x2) return x1 == x2);
     var res = [];
@@ -429,6 +447,27 @@ class ArrayExt
       if (i != at) res.push(a[i]);
     }
     return res;
+  }
+  
+  public static function removeLast <A> (a:Array<A>):Array<A> 
+  {
+    return if (a.length > 0) {
+      var res = a.copy();
+      res.pop();
+      res;
+    } else {
+      a;
+    }
+  }
+  public static function removeFirst <A> (a:Array<A>):Array<A> 
+  {
+    return if (a.length > 0) {
+      var res = a.copy();
+      res.shift();
+      res;
+    } else {
+      a;
+    }
   }
   
   
