@@ -7,6 +7,14 @@ import scuts.Scuts;
 class EitherExt
 {
   
+  public static function getOrElse<A,B,X>(e:Either<A,B>, handler:B->A):A
+  {
+    return switch (e) {
+      case Left(l): l;
+      case Right(r): handler(r);
+    }
+  }
+  
   /**
    * Returns the left value of e or throws an error if it's a right Either.
    * 
