@@ -8,8 +8,8 @@ package scuts.mcore;
 import scuts.CoreTypes;
 
 
-
-
+using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.OptionExt;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
@@ -49,6 +49,41 @@ class ExtendedContext
 		}
 	}
 	
+  public static function getType( s:String ) : Option<Type> {
+    var parts = s.split(".");
+    return if (parts.length >= 2 
+      && parts[parts.length-2].charAt(0) == parts[parts.length-2].toUpperCase().charAt(0)) // in module resolution
+    {
+        
+        // type in module
+        var p = parts.copy();
+        var typeName = p.last();
+        var module = p.removeLast().join(".");
+        var types = try Some(Context.getModule(module)) catch (e:Dynamic) None;
+        types.flatMap(function (types) {
+          
+          var filtered = types.filter(function (t)
+            return switch (t) {
+              case TInst(t, _):
+                t.get().name == typeName;
+              case TEnum(t, _):
+                t.get().name == typeName;
+              case TType(t, _):
+                t.get().name == typeName;
+              default: false;
+            }
+          );
+          
+          return filtered.length == 1 ? Some(filtered[0]) : None;
+        });
+      
+    } 
+    else if (parts.length > 2) // normal resolution
+    {
+      try Some(Context.getType(s)) catch (e:Dynamic) None;
+    }
+  }
+  
 	public static function parse( expr : String, ?pos : Position ) : Expr {
 		var pos = pos == null ? Context.currentPos() : pos;
 		return try {
