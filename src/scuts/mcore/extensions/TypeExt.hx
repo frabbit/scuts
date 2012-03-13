@@ -2,7 +2,8 @@ package scuts.mcore.extensions;
 import haxe.macro.Type;
 import haxe.macro.Expr;
 import scuts.core.extensions.ArrayExt;
-
+import scuts.core.types.Tup2;
+import scuts.core.types.Option;
 
 using scuts.core.extensions.ArrayExt;
 using scuts.mcore.extensions.ClassTypeExt;
@@ -49,6 +50,14 @@ class TypeExt
       case TType(t1, params1):
         switch (t2) { case TType(t2, params2): t1.get().eq(t2.get()) && ArrayExt.eq(params1, params2, TypeExt.eq); default: false; }
         
+    }
+  }
+  
+  public static function asClassType (t:Type) {
+    return switch (t) {
+      case TInst(t, params):
+        Some(Tup2.create(t, params));
+      default: None;
     }
   }
   
