@@ -1,5 +1,6 @@
 package scuts.core.extensions;
 
+import haxe.PosInfos;
 import scuts.core.types.Option;
 import scuts.core.types.Either;
 import scuts.Scuts;
@@ -15,6 +16,24 @@ class OptionExt {
     }
   }
   
+  public static function orElse <T>(o:Option<T>, elseValue:Void->Option<T>):Option<T>
+  {
+    return switch (o) 
+    {
+      case Some(_): o;
+      case None: elseValue();
+    }
+  }
+  
+  public static function orNull <T>(o:Option<T>):Null<T>
+  {
+    return switch (o) 
+    {
+      case Some(_): cast o;
+      case None: null;
+    }
+  }
+  
   public static function getOrElse <T>(o:Option<T>, elseValue:Void->T):T
   {
     return switch (o) 
@@ -24,12 +43,30 @@ class OptionExt {
     }
   }
   
-  public static function toLeft <A,B>(o:Option<A>, right:B):Either<A,B>
+  public static function getOrError <T>(o:Option<T>, error:String, ?posInfos:PosInfos):T
+  {
+    return switch (o) 
+    {
+      case Some(v): v;
+      case None: cast Scuts.error(error,posInfos);
+    }
+  }
+  
+  public static function toLeftConst <A,B>(o:Option<A>, right:B):Either<A,B>
   {
     return switch (o) 
     {
       case Some(v): Left(v);
       case None: Right(right);
+    }
+  }
+  
+  public static function toLeft <A,B>(o:Option<A>, right:Void->B):Either<A,B>
+  {
+    return switch (o) 
+    {
+      case Some(v): Left(v);
+      case None: Right(right());
     }
   }
   
