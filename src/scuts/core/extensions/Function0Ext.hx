@@ -18,6 +18,9 @@ class Function0Ext
     return try Some(f()) catch (e:Dynamic) None;
   }
   
+  /*
+   * macro stuff
+   * 
   public static function tryToEither <T,X,Y>(f:Void->T, handler:X->Y):Void->Either<Y, T>
   {
     return function () return try Right(f()) catch (e:X) Left(handler(e));
@@ -27,5 +30,6 @@ class Function0Ext
   {
     return try Right(f()) catch (e:X) Left(handler(e));
   }
+  */
   
 }
