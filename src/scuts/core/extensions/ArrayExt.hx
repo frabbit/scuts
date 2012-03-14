@@ -16,6 +16,46 @@ using scuts.core.extensions.DynamicExt;
 class ArrayExt
 {
 
+  /**
+   * Returns an Array that contains all elements from a which are not elements of b.
+   * If a contains duplicates, the resulting Array contains duplicates.
+   */
+  public static function difference <T>(a:Array<T>, b:Array<T>, eq:T->T->Bool) {
+    var res = [];
+    for (e in a) {
+      if (!any(b, function (x) return eq(x, e))) res.push(e);
+    }
+    return res;
+  }
+  
+  /**
+   * Returns an Array that contains all elements from a which are also elements of b.
+   * If a contains duplicates, the resulting Array contains duplicates.
+   */
+  public static function intersect <T>(a:Array<T>, b:Array<T>, eq:T->T->Bool) 
+  {
+    var res = [];
+    for (e in a) {
+      if (any(b, function (x) return eq(x, e))) res.push(e);
+    }
+    return res;
+  }
+  
+  /**
+   * Returns an Array that contains all elements from a which are also elements of b.
+   * If a contains duplicates, so will the result.
+   */
+  public static function union <T>(a:Array<T>, b:Array<T>, eq:T->T->Bool) 
+  {
+    var res = [];
+    for (e in a) {
+      res.push(e);
+    }
+    for (e in b) {
+      if (!any(res, function (x) return eq(x, e))) res.push(e);
+    }
+    return res;
+  }
   
   /**
    * Checks if a1 and a2 are equal, the elements are compared by eqElem.
@@ -53,6 +93,34 @@ class ArrayExt
   // override Iterable for performance
   public static inline function dropToArray<T>(a:Array<T>, num:Int):Array<T> {
     return drop(a, num);
+  }
+  /**
+   * Returns true if all elements of a satisfy the predicate pred.
+   */
+  public static function all <T>(a:Array<T>, pred:T->Bool) 
+  {
+    var s = true;
+    for (e in a) if (!pred(e)) 
+    {
+      s = false;
+      break;
+    }
+    
+    return s;
+  }
+  
+  /**
+   * Returns true if any of the elements of a satisfy the predicate pred.
+   */
+  public static function any <T>(a:Array<T>, pred:T->Bool) 
+  {
+    var s = false;
+    for (e in a) if (pred(e)) 
+    {
+      s = true;
+      break;
+    }
+    return s;
   }
   
   /**
@@ -279,6 +347,8 @@ class ArrayExt
     return acc;
   }
   
+  
+  
   public static function equals <T>(a1:Array<T>, a2:Array<T>, eqT:T->T->Bool) {
     var equalsElements = Lazy.expr({
       var eq = true;
@@ -302,6 +372,15 @@ class ArrayExt
     }
     return None;
   }
+  
+  public static function someWithIndex <T>(arr:Array<T>, p:T->Bool):Option<Tup2<T, Int>> {
+    for (i in 0...arr.length) {
+      var elem = arr[i];
+      if (p(elem)) return Some(Tup2.create(elem, i));
+    }
+    return None;
+  }
+  
   
   public static function reduceRight <T,S>(a:Array<T>, f:T->S->S, first:T->S):S
   {
@@ -345,7 +424,16 @@ class ArrayExt
     return arr.length;
   } 
   
-    
+  
+  public static function nub <T> (a:Array<T>, eq:T->T->Bool) 
+  {
+    var r = [];
+    for (e in a) {
+      if (!any(r, function (x) return eq(x,e))) r.push(e);
+    }
+    return r;
+  }
+  
   public static function sortToBy<T>(a:Array<T>, ?f:T->T->Ordering):Array<T> 
   {
     var res = a.copy();
