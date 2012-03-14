@@ -28,7 +28,7 @@ class DynamicExt
   }
 
   public static inline function nullOrError < T,S > (v:T, err:String):T {
-    return if (v != null) v else cast Scuts.error(err);
+    return if (v != null) v else Scuts.error(err);
   }
   
   /**
