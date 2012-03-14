@@ -5,6 +5,7 @@ package scuts.mcore;
 #elseif (display || macro)
 
 //using scuts.Core;
+import scuts.core.extensions.IntExt;
 import scuts.CoreTypes;
 
 
@@ -16,9 +17,10 @@ import haxe.macro.Type;
 import haxe.Stack;
 import neko.FileSystem;
 import neko.io.File;
-
-
-
+using scuts.core.extensions.IntExt;
+using scuts.core.extensions.DynamicExt;
+using scuts.core.extensions.OptionExt;
+using scuts.core.Log;
 
 enum TypeType {
 	TClass;
@@ -29,7 +31,45 @@ enum TypeType {
  
 class ExtendedContext 
 {
+  /**
+   * Returns the method name in which the current macro is executed as a 'Some'
+   * or 'None' if the macro is not executed inside of a method.
+   * 
+   * @return 
+   */
+  public static function getLocalMethod ():Option<String> {
+    var lc = Context.getLocalClass().nullToOption();
+    return lc.flatMap(function (x) {
+      trace(x.get().module);
+      var types = Context.getModule(x.get().module);
+      var pos = Context.getPosInfos(Context.currentPos());
+      var min = pos.min;
+      return 
+        types.flatMap(function (t) {
+          return switch (t) {
+            case TInst(t1, params):
+              var tget = t1.get();
+              var tpos = Context.getPosInfos(tget.pos);
+              
+              if (min.inRange(tpos.min, tpos.max)) {
+                tget.constructor.nullToArray()
+                .map(function (x) return x.get())
+                .concat(tget.fields.get())
+                .concat(tget.statics.get());
 
+              } else [];
+            default: [];
+          }
+        })
+        .some(function (f) {
+          var fpos = Context.getPosInfos(f.pos);
+          return min.inRange(fpos.min, fpos.max);
+        })
+        .map(function (x) return x.name);
+    });
+  }
+  
+  
 	public static function error(msg:Dynamic, pos:Position) 
 	{
     
