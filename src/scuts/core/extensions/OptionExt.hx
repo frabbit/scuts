@@ -29,7 +29,7 @@ class OptionExt {
   {
     return switch (o) 
     {
-      case Some(_): cast o;
+      case Some(v): v;
       case None: null;
     }
   }
@@ -48,7 +48,7 @@ class OptionExt {
     return switch (o) 
     {
       case Some(v): v;
-      case None: cast Scuts.error(error,posInfos);
+      case None: Scuts.error(error,posInfos);
     }
   }
   
