@@ -9,6 +9,7 @@ class IntExt
   
   public static inline function min(a:Int, b:Int) return a < b ? a : b
   
+  public static inline function inRange(i:Int, min:Int, maxExcluded:Int) return i >= min && i < maxExcluded
   
   public static function toInfiniteIterator (start:Int) {
     var cur = start;
