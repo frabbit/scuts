@@ -4,6 +4,7 @@ package scuts.mcore.extensions;
 #elseif (display || macro)
 import haxe.macro.Expr;
 import scuts.core.extensions.StringExt;
+import scuts.core.types.Option;
 
 class FieldTypeExt 
 {
@@ -18,6 +19,16 @@ class FieldTypeExt
         
       case FVar(t, e): 
         FVar(t,e);
+    }
+  }
+  
+  public static function asFunction(f:FieldType):Option<Function>
+  {
+    return switch (f) {
+      case FProp(_,_,_,_), FVar(_, _): 
+        None;
+      case FFun(f):
+        Some(f);
     }
   }
   
