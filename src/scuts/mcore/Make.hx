@@ -147,6 +147,21 @@ class Make
   {
     return expr(EReturn(e), pos);
   }
+  
+  public static inline function type (pack:Array<String>, name:String, ?module:String, ?pos:Position):Expr
+  {
+    return if (pack.length == 0) {
+      if (module == null) const(CType(name), pos)
+      else expr(EType(expr(EConst(CType(module)), pos), name), pos);
+    } else {
+      var first = pack[0];
+      var e = constIdent(first);
+      for (i in 1...pack.length) e = field(e, pack[i], pos);
+      if (module != null) e = expr(EType(e, module), pos);
+      e = expr(EType(e, name));
+      e;
+    }
+  }
 
   public static function typePath (pack:Array<String>, name:String, ?params:Array<TypeParam>, ?sub:String):TypePath
   {
