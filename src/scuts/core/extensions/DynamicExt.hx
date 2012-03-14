@@ -6,6 +6,7 @@ import haxe.Log;
 import haxe.PosInfos;
 import scuts.core.types.Future;
 import scuts.core.types.Option;
+import scuts.Scuts;
 //import scuts.mcore.Make;
 
 
@@ -19,7 +20,15 @@ class DynamicExt
    * Converts v into a Some Option.
    */
   public static inline function toOption < T > (v:T):Option<T> {
+    #if debug
+    if (v == null) 
+      Scuts.error("Cannot wrap null into an Option, use nullToOption instead");
+    #end
     return Some(v);
+  }
+
+  public static inline function nullOrError < T,S > (v:T, err:String):T {
+    return if (v != null) v else cast Scuts.error(err);
   }
   
   /**
@@ -27,6 +36,10 @@ class DynamicExt
    */
   public static inline function nullToOption < T > (v:T):Option<T> {
     return v != null ? Some(v) : None;
+  }
+  
+  public static inline function nullToArray < T > (v:T):Array<T> {
+    return v != null ? [v] : [];
   }
   
   /**
