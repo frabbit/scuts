@@ -8,26 +8,54 @@ using scuts.core.extensions.IterableExt;
 
 
 
+
+
 import haxe.macro.Expr;
 import haxe.macro.Type.BaseType;
 import haxe.macro.Type.ClassField;
 import haxe.macro.Context;
+import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.StringExt;
+import scuts.core.types.Tup2;
+import scuts.Scuts;
 
+using scuts.core.extensions.OptionExt;
 
 private typedef MType = haxe.macro.Type;
 
 
 class Type 
 {
-  /*
-  public static function findOccurrences (type:Type, search:Type) {
-    switch (type) {
-      case MType.TInst(t, params):
-        
-      
-    }
+    
+  public static function isContextFunctionTypeParameter(type:MType):Bool
+  {
+    var meth = ExtendedContext.getLocalMethod();
+    
+    return meth.map(function (x) {
+      return switch (type) {
+        case TInst(t, _):
+          var p = t.get().pack;
+          p.length == 1 && p[0] == x;
+        default: false;
+      }
+    }).getOrElseConst(false);
   }
-  */
+  
+  public static function isContextClassTypeParameter(type:MType):Bool
+  {
+    
+    var ct = ExtendedContext.getLocalClassAsClassType();
+    
+    return ct.map(function (x) {
+      return switch (type) {
+        case TInst(t, _):
+          var pack = t.get().pack;
+          var cpack = x.pack.insertElemBack(x.name);
+          pack.length == cpack.length && ArrayExt.eq(pack, cpack, StringExt.eq);
+        default: false;
+      }
+    }).getOrElseConst(false);
+  }
   
   public static function isInstanceOf (subType:ComplexType, superType:ComplexType):Bool 
   {
