@@ -29,7 +29,7 @@ class Type
     
   public static function isContextFunctionTypeParameter(type:MType):Bool
   {
-    var meth = ExtendedContext.getLocalMethod();
+    var meth = MContext.getLocalMethod();
     
     return meth.map(function (x) {
       return switch (type) {
@@ -44,7 +44,7 @@ class Type
   public static function isContextClassTypeParameter(type:MType):Bool
   {
     
-    var ct = ExtendedContext.getLocalClassAsClassType();
+    var ct = MContext.getLocalClassAsClassType();
     
     return ct.map(function (x) {
       return switch (type) {

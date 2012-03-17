@@ -106,7 +106,7 @@ class TypeExt
       case TFun(args1, ret1): 
         switch (type2) {
           case TFun(args2, ret2): 
-            var argEq = function (a1:TFunArg, a2:TFunArg) 
+            function argEq(a1:TFunArg, a2:TFunArg) 
               return a1.name.eq(a2.name) && a1.opt.eq(a2.opt) && a1.t.eq(a2.t);
             ArrayExt.eq(args1, args2, argEq) && ret1.eq(ret2);
           default: false;

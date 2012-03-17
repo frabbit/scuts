@@ -19,7 +19,7 @@ class Convert
 		if (pos == null) pos = Context.currentPos();
 		s = "{ var a:" + s + ";}";
 		//trace(s);
-		var e = ExtendedContext.parse(s, pos).right();
+		var e = MContext.parse(s, pos).right();
     
 		return switch (e.expr) {
 			case EBlock(b):

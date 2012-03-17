@@ -6,11 +6,6 @@ package scuts.mcore;
 import haxe.macro.Expr;
 
 
-/**
- * ...
- * @author 
- */
-
 class Modify 
 {
 

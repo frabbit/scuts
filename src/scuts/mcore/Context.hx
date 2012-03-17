@@ -12,7 +12,7 @@ import scuts.Scuts;
 
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.OptionExt;
-import haxe.macro.Context;
+
 import haxe.macro.Expr;
 import haxe.macro.Type;
 import haxe.Stack;
@@ -23,6 +23,8 @@ using scuts.core.extensions.DynamicExt;
 using scuts.core.extensions.OptionExt;
 using scuts.core.Log;
 
+private typedef Ctx = haxe.macro.Context;
+
 enum TypeType {
 	TClass;
 	TTypedef;
@@ -30,23 +32,23 @@ enum TypeType {
   TInterface;
 }
  
-class ExtendedContext 
+class Context 
 {
   
   public static function getLocalClassAsType ():Option<Type>
   {
     
-    var lc = Context.getLocalClass().nullToOption();
+    var lc = Ctx.getLocalClass().nullToOption();
     return lc.flatMap(function (x) {
       
-      var types = Context.getModule(x.get().module);
-      var pos = Context.getPosInfos(Context.currentPos());
+      var types = Ctx.getModule(x.get().module);
+      var pos = Ctx.getPosInfos(Ctx.currentPos());
       var min = pos.min;
       return types.some(function (t) {
           return switch (t) {
             case TInst(t1, params):
               var tget = t1.get();
-              var tpos = Context.getPosInfos(tget.pos);
+              var tpos = Ctx.getPosInfos(tget.pos);
               
               min.inRange(tpos.min, tpos.max);
             default: false;
@@ -73,18 +75,18 @@ class ExtendedContext
    * @return 
    */
   public static function getLocalMethod ():Option<String> {
-    var lc = Context.getLocalClass().nullToOption();
+    var lc = Ctx.getLocalClass().nullToOption();
     return lc.flatMap(function (x) {
       trace(x.get().module);
-      var types = Context.getModule(x.get().module);
-      var pos = Context.getPosInfos(Context.currentPos());
+      var types = Ctx.getModule(x.get().module);
+      var pos = Ctx.getPosInfos(Ctx.currentPos());
       var min = pos.min;
       return 
         types.flatMap(function (t) {
           return switch (t) {
             case TInst(t1, params):
               var tget = t1.get();
-              var tpos = Context.getPosInfos(tget.pos);
+              var tpos = Ctx.getPosInfos(tget.pos);
               
               if (min.inRange(tpos.min, tpos.max)) {
                 tget.constructor.nullToArray()
@@ -97,7 +99,7 @@ class ExtendedContext
           }
         })
         .some(function (f) {
-          var fpos = Context.getPosInfos(f.pos);
+          var fpos = Ctx.getPosInfos(f.pos);
           return min.inRange(fpos.min, fpos.max);
         })
         .map(function (x) return x.name);
@@ -108,17 +110,17 @@ class ExtendedContext
 	public static function error(msg:Dynamic, pos:Position) 
 	{
     
-		if (Context.defined("display")) 
+		if (Ctx.defined("display")) 
 		{
 			throw msg;
 		}
-		Context.error(msg, pos);
+		Ctx.error(msg, pos);
 	}
 	
 	public static function typeof(expr:Expr):Option<Type>
 	{
 		return try {
-			Some(Context.typeof(expr));
+			Some(Ctx.typeof(expr));
 		} catch (e:Dynamic) {
 			None;
 		}
@@ -134,7 +136,7 @@ class ExtendedContext
         var p = parts.copy();
         var typeName = p.last();
         var module = p.removeLast().join(".");
-        var types = try Some(Context.getModule(module)) catch (e:Dynamic) None;
+        var types = try Some(Ctx.getModule(module)) catch (e:Dynamic) None;
         types.flatMap(function (types) {
           
           var filtered = types.filter(function (t)
@@ -155,15 +157,15 @@ class ExtendedContext
     } 
     else if (parts.length > 2) // normal resolution
     {
-      try Some(Context.getType(s)) catch (e:Dynamic) None;
+      try Some(Ctx.getType(s)) catch (e:Dynamic) None;
     }
   }
   
 	public static function parse( expr : String, ?pos : Position ) : Either<Error, Expr> {
-		var pos = pos == null ? Context.currentPos() : pos;
+		var pos = pos == null ? Ctx.currentPos() : pos;
 		return try {
 			//trace("try parse");
-			var r = Context.parse(expr, pos);
+			var r = Ctx.parse(expr, pos);
 			//trace("end parse");
 			Right(r);
 		} catch (e:Error) {
