@@ -16,15 +16,23 @@ class Scuts
   
   public static function id <T> (a:T):T return a
   
-  public static function abstractMethod <T>():T {
+  public static function abstractMethod <T>():T 
+  {
     return error("This method is abstract, you must override it");
   }
   
-  public static function notImplemented <T>(?posInfos:PosInfos):T {
+  public static function notImplemented <T>(?posInfos:PosInfos):T 
+  {
     return error("This method is not yet implemented", posInfos);
   }
   
-  public static function checkNotNull <T>(v:T, ?posInfos:PosInfos):T {
+  public static function unexpected <T>(?posInfos:PosInfos):T 
+  {
+    return error("This error shoud never occur, please inform the library author to fix this.", posInfos);
+  }
+  
+  public static function checkNotNull <T>(v:T, ?posInfos:PosInfos):T 
+  {
     #if debug
     Assert.assertNotNull(v, posInfos);
     #end
