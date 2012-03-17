@@ -12,7 +12,7 @@ import scuts.Scuts;
 
 #if (macro || display)
 import scuts.mcore.Parse;
-import scuts.mcore.ExtendedContext;
+import scuts.mcore.MContext;
 import haxe.macro.Context;
 import haxe.macro.Type;
 import haxe.macro.Expr;

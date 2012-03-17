@@ -7,7 +7,7 @@ import haxe.macro.Expr;
 import haxe.PosInfos;
 import hots.macros.utils.Utils;
 import scuts.mcore.Cast;
-import scuts.mcore.ExtendedContext;
+import scuts.mcore.MContext;
 import scuts.mcore.extensions.TypeExt;
 import scuts.mcore.Make;
 import scuts.mcore.Parse;
@@ -87,7 +87,7 @@ class Box
   public static function unboxF1 (e:Expr):Expr {
     var errorNoFunction = function () return Scuts.macroError("Argument " + Print.expr(e) + " must be a function with 1-arity");
     
-    var type = ExtendedContext.typeof(e).getOrElse(function () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos));
+    var type = MContext.typeof(e).getOrElse(function () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos));
     
     var fnParts = type.asFunction().getOrElse(errorNoFunction);
 
@@ -102,7 +102,7 @@ class Box
   public static function boxF1 (e:Expr) {
     var errorNoFunction = function () return Scuts.macroError("Argument " + Print.expr(e) + " must be a function with 1-arity");
     
-    var type = ExtendedContext.typeof(e).getOrElse(function () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos));
+    var type = MContext.typeof(e).getOrElse(function () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos));
     
     var fnParts = type.asFunction().getOrElse(errorNoFunction);
 

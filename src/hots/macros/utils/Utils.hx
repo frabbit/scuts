@@ -9,7 +9,7 @@ import scuts.core.extensions.StringExt;
 import scuts.core.macros.Lazy;
 import scuts.core.types.Option;
 import scuts.core.types.Tup2;
-import scuts.mcore.ExtendedContext;
+import scuts.mcore.MContext;
 import scuts.mcore.extensions.ClassTypeExt;
 import scuts.mcore.extensions.EnumTypeExt;
 import scuts.mcore.extensions.TypeExt;
@@ -180,7 +180,7 @@ class Utils
   {
     var m = classType.module;
     var s = (m != "" ? (m + ".") : "") + classType.name;
-    var res = ExtendedContext.getType(s);
+    var res = MContext.getType(s);
     return 
       res.flatMap(function (x) return switch (x) {
         case TInst(_, p), TType(_, p), TEnum(_, p): Some(p);
@@ -219,7 +219,7 @@ class Utils
   
   public static function getLocalClassTypeParameters (type:Type):Array<Type>
   {
-    return ExtendedContext.getLocalClassAsClassType()
+    return MContext.getLocalClassAsClassType()
       .map(function (x) return getClassTypeParameters(type, x.pack, x.name))
       .getOrElse(function () return []);
   }
@@ -232,7 +232,7 @@ class Utils
   
   public static function getLocalMethodTypeParameters (type:Type):Array<Type>
   {
-    return ExtendedContext.getLocalMethod()
+    return MContext.getLocalMethod()
       .map(function (x) return getFunctionTypeParameters(type, x))
       .getOrElse(function () return []);
   }
@@ -390,12 +390,23 @@ class Utils
     return loop(from, to, []);
   }
   
-  
-  public static function typeIsCompatibleTo ( t:Type, to:Type, openTypes:Array<Type> ) {
-    return typeIsCompatibleTo1(t, to, openTypes, []);
+  /**
+   * Checks if type t is compatible to type given the free type parameters in wildcards.
+   * It returns a type mapping from types in t to wildcards if compatible, otherwise None.
+   * 
+   * 
+   * Examples:
+   * t = Array<Int>, to = Array<T>, wildcards = [T] => Some([(T, Int)])
+   * t = Array<Int>, to = Array<Int>, wildcards = [] => Some([])
+   * t = Array<String>, to = Array<Int>, wildcards = [] => None
+   * t = Array<Int, Option<String>>, to = Array<T, S>, wildcards = [T, S] => Some([(T, Int), (S, Option<String>)])
+   * 
+   */
+  public static function typeIsCompatibleTo ( t:Type, to:Type, wildcards:Array<Type>):Option<Mapping> {
+    return typeIsCompatibleTo1(t, to, wildcards, []);
   }
   
-  public static function typeIsCompatibleTo1 ( t:Type, to:Type, openTypes:Array<Type>, mapping:Mapping ):Option<Mapping> 
+  public static function typeIsCompatibleTo1 ( t:Type, to:Type, wildcards:Array<Type>, mapping:Mapping ):Option<Mapping> 
   {
     // expand both types first
     var t = Context.follow(t);
@@ -409,14 +420,14 @@ class Utils
         {
           paramsT.zipFoldLeftWhile(
             paramsTo,
-            function (m:Option<Mapping>, t1:Type,t2:Type) return comp(t1, t2, openTypes, m.extract()),
+            function (m:Option<Mapping>, t1:Type,t2:Type) return comp(t1, t2, wildcards, m.extract()),
             function (c:Option<Mapping>) return c.isSome(),
             Some(mapping)
           );
         }
         else None;
     }
-    var some = openTypes.some(function (x) return to.eq(x));
+    var some = wildcards.some(function (x) return to.eq(x));
     
     return some.flatMap(function (v)
       return  
@@ -428,7 +439,7 @@ class Utils
       return switch (to) {
         case TLazy(f2): switch (t) 
         {
-          case TLazy(f1): comp(f1(), f2(), openTypes,mapping);
+          case TLazy(f1): comp(f1(), f2(), wildcards, mapping);
           default: None;
         }
         case TAnonymous(a2): switch (t) 
@@ -440,7 +451,7 @@ class Utils
         {
           case TDynamic(t1):
             if (t1 == null && t2 == null) Some(mapping)
-            else if (t1 != null && t2 != null) comp(t1,t2, openTypes, mapping)
+            else if (t1 != null && t2 != null) comp(t1,t2, wildcards, mapping)
             else None;
           default: None;
         }
@@ -456,7 +467,7 @@ class Utils
             var t1 = t1Ref.get();
             var t2 = t2Ref.get();
             if (t1 == null && t2 == null) Some(mapping)
-            else if (t1 != null && t2 != null) comp(t1,t2, openTypes, mapping)
+            else if (t1 != null && t2 != null) comp(t1,t2, wildcards, mapping)
             else None;
           default: None;
         }
@@ -480,7 +491,7 @@ class Utils
               function foldArgs (m:Option<Mapping>, a1,a2) 
               {
                 return if (a1.name == a2.name && a1.opt == a2.opt) 
-                  comp(a1.t, a2.t, openTypes, mapping)
+                  comp(a1.t, a2.t, wildcards, mapping)
                 else None;
               }
               args1.zipFoldLeftWhile(
@@ -489,7 +500,7 @@ class Utils
                 function (c:Option<Mapping>) return c.isSome(),
                 Some(mapping)
               )
-              .flatMap(function (m) return comp(ret1, ret2, openTypes,m));
+              .flatMap(function (m) return comp(ret1, ret2, wildcards,m));
             }
             else None;
           default:None;

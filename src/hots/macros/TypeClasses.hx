@@ -22,7 +22,7 @@ import scuts.macros.Lazy;
 import scuts.mcore.cache.DiskCache;
 import scuts.mcore.cache.ExprCache;
 import scuts.mcore.Convert;
-import scuts.mcore.ExtendedContext;
+import scuts.mcore.MContext;
 import scuts.mcore.extensions.ComplexTypeExt;
 import scuts.mcore.extensions.TypeExt;
 import scuts.mcore.Print;
@@ -75,7 +75,7 @@ class TypeClasses
         var p = tp.pack;
         var s = (p.length > 0 ? p.join(".") + "." : "") + tp.name;
         trace(s);
-        var type = ExtendedContext.getType(s);
+        var type = MContext.getType(s);
         type.map( isTypeTypeClass).getOrElseConst(false);
       default:
         false;
