@@ -9,7 +9,7 @@ import haxe.macro.Context;
 import scuts.Scuts;
 
 using scuts.core.extensions.ArrayExt;
-
+using scuts.core.extensions.EitherExt;
 
 class Convert 
 {
@@ -19,7 +19,7 @@ class Convert
 		if (pos == null) pos = Context.currentPos();
 		s = "{ var a:" + s + ";}";
 		//trace(s);
-		var e = ExtendedContext.parse(s, pos);
+		var e = ExtendedContext.parse(s, pos).right();
     
 		return switch (e.expr) {
 			case EBlock(b):
