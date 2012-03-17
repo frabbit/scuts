@@ -1,7 +1,9 @@
 package hots;
 
-import haxe.macro.Expr;
+
 #if (macro || display)
+import haxe.macro.Expr;
+import haxe.PosInfos;
 import hots.macros.Box;
 #end
 
@@ -9,7 +11,13 @@ import hots.macros.Box;
 @:native('Dynamic')
 class Of<M,A>
 {
+  // tries to create an Of type of val
+  @:macro public static function box (val:Expr):Expr
+  {
+    return Box.box1(val);
+  }
+  
   @:macro public function unbox (ethis):Expr {
-    return Box.mkUnbox(ethis);
+    return Box.unbox1(ethis);
   }
 }
