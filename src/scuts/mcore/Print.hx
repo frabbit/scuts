@@ -12,8 +12,12 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Expr.Binop;
 import haxe.macro.Type;
+import scuts.mcore.extensions.TypeExt;
 import scuts.Scuts;
 
+
+using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.DynamicExt;
 
 private typedef SType = scuts.mcore.Type;
 
@@ -425,6 +429,7 @@ class Print
           }
         }
         
+        
         var str = {
           var module = p.pack.join(".") + (p.pack.length > 0 ? "." : "") + p.name;
           var name = 
@@ -762,21 +767,14 @@ class Print
     }
   }
   
-  public static function type (t:Type, ?simpleFunctionSignatures:Bool = false, ?typeParam:BaseType = null) {
-    return type1(t, simpleFunctionSignatures, typeParam);
+  public static function type (t:Type, ?simpleFunctionSignatures:Bool = false, ?wildcards:Array<Type>) {
+    var wildcards = wildcards.nullGetOrElse(function () return []);
+    return type1(t, simpleFunctionSignatures, wildcards);
   }
   
-  public static function type1 (t:Type, ?simpleFunctionSignatures:Bool = false, ?typeParam:BaseType = null):String
+  public static function type1 (t:Type, simpleFunctionSignatures:Bool, wildcards:Array<Type>):String
   {
-    var isTypeParam = typeParam != null;
-    var paramsHash = new Hash();
-    if (typeParam != null) 
-    {
-      for (tp in typeParam.params) 
-      {
-        paramsHash.set(tp.name, tp.t);
-      }
-    }
+    
     var str = switch (t) {
       case TLazy(f):
         "TLazy";
@@ -788,47 +786,65 @@ class Print
           if (params.length > 0) 
           {
             var r = params.reduceRight(
-              function (v, a) return P.type(v, t.get()) + "," + a,
-              function (v) return P.type(v, t.get())
+              function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards) + "," + a,
+              function (v) return P.type1(v, simpleFunctionSignatures, wildcards)
             );
             "<" + r + ">";
           }
           else "";
         t.get().module + "." + t.get().name + paramsReduced;
-      case TInst( t, params ): 
-        var ct = t.get();
+      case TInst( t1, params ): 
+        var ct = t1.get();
         var module = ct.module;
         var pack = ct.pack;
         var name = ct.name;
         
-        var realType = SType.getTypeFromModule(module, name) != null;
-        var tName = 
-          if (realType) 
-          {
+        var isWildcard = wildcards.any(function (x) return TypeExt.eq(x, t));
+        
+        
+        
+        //SType.isTypeParameter(t);
+        
+        //var realType = SType.getTypeFromModule(module, name) != null;
+        if (isWildcard) {
+          name;
+        } else {
+          var isFunctionTypeParam = module.indexOf(pack.join(".")) == -1;
+          
+          if (isFunctionTypeParam) {
+            name;
+          } else {
+          
             var moduleName = 
               if (pack.length > 0) 
                 module.substr(pack.join(".").length + 1) 
               else module;
-            module + if (moduleName == name) "" else "." + name;
+            
+
+            var tName = moduleName + (if (moduleName == name) "" else "." + name);
+            
+
+            var foldPack = function (v, a) return v + "." + a;
+            var reduceParams = function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards) + "," + a;
+            var reduceFirst = function (v) return P.type1(v, simpleFunctionSignatures, wildcards);
+            var res = 
+              pack.foldRight(foldPack, tName) 
+              + if (params.length > 0) 
+                  "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
+                else "";
+            trace(res);
+            res;
           }
-          else name;
-        var packCopy = if (realType) [] else pack;
+        }
+          
         
-        var foldPack = function (v, a) return v + "." + a;
-        var reduceParams = function (v, a) return P.type(v, ct) + "," + a;
-        var reduceFirst = function (v) return P.type(v, ct);
-        var res = 
-          packCopy.foldRight(foldPack, tName) 
-          + if (params.length > 0) 
-              "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
-            else "";
-        res;
+        
       case TType( t , params ): 
         
         var dt = t.get();
         
         var foldPack = function (v, a) return v + "." + a;
-        var foldParams = function (v, a,i) return P.type(v, dt) + (if (i < params.length-1) "," else "") + a;
+        var foldParams = function (v, a,i) return P.type(v, wildcards) + (if (i < params.length-1) "," else "") + a;
         
         var typeStr = dt.pack.foldRight(foldPack, dt.name);
         var paramsStr = if (params.length > 0) "<" + params.foldRightWithIndex(foldParams, ">") else "";
@@ -840,11 +856,11 @@ class Print
           if (args.length == 0) "Void" 
           else 
           {
-            var reduceArgs = function (acc, val) return acc + " -> " + funArg(val, simpleFunctionSignatures);
-            var reduceFirst = function (val) return funArg(val, simpleFunctionSignatures);
+            var reduceArgs = function (acc, val) return acc + " -> " + funArg(val, simpleFunctionSignatures, wildcards);
+            var reduceFirst = function (val) return funArg(val, simpleFunctionSignatures, wildcards);
             args.reduceLeft(reduceArgs, reduceFirst);
           }
-        argumentsStr + " -> " + P.type(ret);
+        argumentsStr + " -> " + P.type1(ret,simpleFunctionSignatures, wildcards);
       case TAnonymous( a ): 
         
         var fields = a.get().fields;
@@ -857,7 +873,7 @@ class Print
         
         "{ " + reduced + " }";
       case TDynamic( t ): 
-        "Dynamic" + if (t != null) "<" + P.type(t) + ">" else "";
+        "Dynamic" + if (t != null) "<" + P.type1(t, simpleFunctionSignatures, wildcards) + ">" else "";
     }
     return str;
   }
@@ -868,7 +884,6 @@ class Print
       case FMethod(k):
         switch (k) {
           case MethodKind.MethNormal:
-            //"function " + c.name + "(" + args + "):" + ret;
             switch (c.type) {
               case TFun(args, ret): 
                 var argStrings = args.map(function (a) return (a.opt ? "?" : "") + a.name + ":" + P.type(a.t));
@@ -889,7 +904,7 @@ class Print
     //return 
   }
   
-  public static function funArg (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool):String 
+  public static function funArg (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool, wildcards:Array<Type>):String 
   {
     var optPrefix = if (arg.opt && !simpleFunctionSignatures) "?" else "";
     var argName = 
@@ -898,7 +913,7 @@ class Print
         + if (arg.t != null && arg.name != null) " :   " 
           else ""
       else "";
-    var argType = if (arg.t != null) P.type(arg.t) else "";
+    var argType = if (arg.t != null) P.type1(arg.t, simpleFunctionSignatures, wildcards) else "";
     
     return optPrefix + argName + argType;
   }
