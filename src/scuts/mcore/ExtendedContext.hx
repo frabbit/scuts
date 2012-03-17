@@ -7,6 +7,7 @@ package scuts.mcore;
 //using scuts.Core;
 import scuts.core.extensions.IntExt;
 import scuts.CoreTypes;
+import scuts.Scuts;
 
 
 using scuts.core.extensions.ArrayExt;
@@ -31,6 +32,40 @@ enum TypeType {
  
 class ExtendedContext 
 {
+  
+  public static function getLocalClassAsType ():Option<Type>
+  {
+    
+    var lc = Context.getLocalClass().nullToOption();
+    return lc.flatMap(function (x) {
+      
+      var types = Context.getModule(x.get().module);
+      var pos = Context.getPosInfos(Context.currentPos());
+      var min = pos.min;
+      return types.some(function (t) {
+          return switch (t) {
+            case TInst(t1, params):
+              var tget = t1.get();
+              var tpos = Context.getPosInfos(tget.pos);
+              
+              min.inRange(tpos.min, tpos.max);
+            default: false;
+          };
+      });
+    });
+  }
+  
+  public static function getLocalClassAsClassType ():Option<ClassType> 
+  {
+    return getLocalClassAsType().map(function (x) {
+      return switch (x) {
+        case TInst(t1,_):
+          t1.get();
+        default: Scuts.unexpected();
+      }
+    });
+  }
+  
   /**
    * Returns the method name in which the current macro is executed as a 'Some'
    * or 'None' if the macro is not executed inside of a method.
@@ -124,18 +159,16 @@ class ExtendedContext
     }
   }
   
-	public static function parse( expr : String, ?pos : Position ) : Expr {
+	public static function parse( expr : String, ?pos : Position ) : Either<Error, Expr> {
 		var pos = pos == null ? Context.currentPos() : pos;
 		return try {
 			//trace("try parse");
 			var r = Context.parse(expr, pos);
 			//trace("end parse");
-			r;
-		} catch (e:Dynamic) {
-			if (Context.defined("debug")) {
-				trace(Stack.toString(Stack.callStack()));
-			}
-			throw e;
+			Right(r);
+		} catch (e:Error) {
+      Left(e);
+			
 		}
 	}
 	
