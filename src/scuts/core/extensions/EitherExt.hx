@@ -7,11 +7,11 @@ import scuts.Scuts;
 class EitherExt
 {
   
-  public static function getOrElse<A,B,X>(e:Either<A,B>, handler:B->A):A
+  public static function getOrElse<A,B>(e:Either<A,B>, handler:A->B):B
   {
     return switch (e) {
-      case Left(l): l;
-      case Right(r): handler(r);
+      case Left(l): handler(l);
+      case Right(r): r;
     }
   }
   

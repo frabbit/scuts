@@ -119,6 +119,11 @@ class DynamicExt
     return function () return value;
   }
   
+  public static inline function nullEq <T> (v1:T, v2:T, eq:T->T->Bool):Bool {
+    return (v1 == null && v2 == null)
+      || (v1 != null && v2 != null && eq(v1,v2));
+  }
+  
 
   
 }

@@ -482,6 +482,49 @@ class ArrayExt
     return res;
   }
   
+  
+  
+  public static function zipWithWhileC < A, B, C > (arr1:Array<A>, arr2:Array<B>, f:A->B->C, cond:C->Bool):Array<C>
+  {
+    var min = arr1.length.min(arr2.length);
+    var res = [];
+    
+    for (i in 0...min) 
+    {
+      var v = f(arr1[i], arr2[i]);
+      if (cond(v))
+        res.push(f(arr1[i], arr2[i]));
+      else
+        break;
+    } 
+    return res;
+  }
+  
+  public static function zipFoldLeftWhile<A,B,C> (arr1:Array<A>, arr2:Array<B>, f:C->A->B->C, cond:C->Bool, init:C):C
+  {
+    var min = arr1.length.min(arr2.length);
+    
+    var res = init;
+    for (i in 0...min) {
+      if (cond(res))
+        res = f(res, arr1[i], arr2[i])
+      else 
+        break;
+    }
+    return res;
+  }
+  
+  public static function zipFoldLeft<A,B,C> (arr1:Array<A>, arr2:Array<B>, f:C->A->B->C, init:C):C
+  {
+    var min = arr1.length.min(arr2.length);
+    
+    var res = init;
+    for (i in 0...min) {
+      res = f(res, arr1[i], arr2[i]);
+    }
+    return res;
+  }
+  
   public static function zipWith2 < A, B, C, D > (arr1:Array<A>, arr2:Array<B>, arr3:Array<C>, f:A->B->C->D):Array<D>
   {
     var min = arr1.length.min(arr2.length).min(arr3.length);

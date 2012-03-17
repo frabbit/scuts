@@ -70,6 +70,24 @@ class OptionExt {
     }
   }
   
+  public static function toRight <A,B>(o:Option<A>, left:Void->B):Either<B,A>
+  {
+    return switch (o) 
+    {
+      case Some(v): Right(v);
+      case None: Left(left());
+    }
+  }
+  
+  public static function toRightConst <A,B>(o:Option<A>, left:B):Either<B,A>
+  {
+    return switch (o) 
+    {
+      case Some(v): Right(v);
+      case None: Left(left);
+    }
+  }
+  
   public static function eq <T>(a:Option<T>, b:Option<T>, eqT:T->T->Bool):Bool 
   {
     return switch (a) 
