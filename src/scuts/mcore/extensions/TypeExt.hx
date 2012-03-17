@@ -14,6 +14,12 @@ using scuts.mcore.extensions.AnonTypeExt;
 
 using scuts.core.extensions.DynamicExt;
 using scuts.mcore.extensions.TypeExt;
+
+using scuts.core.extensions.StringExt;
+using scuts.core.extensions.BoolExt;
+
+private typedef TFunArg = {t:Type, name:String, opt:Bool};
+
 class TypeExt 
 {
 
@@ -97,9 +103,26 @@ class TypeExt
           case TDynamic(t2): t1.nullEq(t2, eq);
           default : false; 
         }
-      case TFun(args, ret): Scuts.notImplemented();
-      case TMono(t): Scuts.notImplemented();
-      case TLazy(f): Scuts.notImplemented();
+      case TFun(args1, ret1): 
+        switch (type2) {
+          case TFun(args2, ret2): 
+            var argEq = function (a1:TFunArg, a2:TFunArg) 
+              return a1.name.eq(a2.name) && a1.opt.eq(a2.opt) && a1.t.eq(a2.t);
+            ArrayExt.eq(args1, args2, argEq) && ret1.eq(ret2);
+          default: false;
+        }
+      case TMono(t1): 
+        switch (type2) 
+        { 
+          case TMono(t2): t1.get().eq(t2.get());
+          default : false; 
+        }
+      case TLazy(f1): 
+        switch (type2) 
+        { 
+          case TLazy(f2): f1().eq(f2());
+          default : false; 
+        }
       
     }
   }
