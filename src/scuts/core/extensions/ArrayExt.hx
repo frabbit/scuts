@@ -117,10 +117,9 @@ class ArrayExt
     var s = false;
     for (e in a) if (pred(e)) 
     {
-      s = true;
-      break;
+      return true;
     }
-    return s;
+    return false;
   }
   
   /**
@@ -381,6 +380,16 @@ class ArrayExt
     return None;
   }
   
+  public static function someMappedWithIndex <A,B>(arr:Array<A>, map:A->B, p:B->Bool):Option<Tup2<B, Int>> {
+    for (i in 0...arr.length) {
+      var elem = arr[i];
+      var mapped = map(elem);
+      
+      if (p(mapped)) return Some(Tup2.create(mapped, i));
+    }
+    return None;
+  }
+  
   
   public static function reduceRight <T,S>(a:Array<T>, f:T->S->S, first:T->S):S
   {
@@ -545,22 +554,35 @@ class ArrayExt
     return res;
   }
   
-  public static function insertElemFront <A> (a:Array<A>, e:A):Array<A> {
+  public static function insertElemFront <A> (a:Array<A>, e:A):Array<A> 
+  {
     var cp = a.copy();
     cp.unshift(e);
     return cp;
   }
   
-  public static function insertElemBack <A> (a:Array<A>, e:A):Array<A> {
+  public static function insertElemBack <A> (a:Array<A>, e:A):Array<A> 
+  {
     var cp = a.copy();
     cp.push(e);
     return cp;
   }
   
-  public static function insertElemAt <A> (a:Array<A>, e:A, index:Int):Array<A> {
+  public static function insertElemAt <A> (a:Array<A>, e:A, index:Int):Array<A> 
+  {
     var cp = a.copy();
     cp.insert(index, e);
     return cp;
+  }
+  
+  public static function replaceElemAt <A> (a:Array<A>, e:A, index:Int):Array<A> 
+  {
+    var res = [];
+    for (i in 0...a.length) {
+      if (i == index) res.push(e)
+      else res.push(a[i]);
+    }
+    return res;
   }
   
   public static function removeElem <A> (a:Array<A>, e:A, ?equals:A->A->Bool):Array<A> {
