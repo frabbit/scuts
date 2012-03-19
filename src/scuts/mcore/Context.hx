@@ -77,7 +77,7 @@ class Context
   public static function getLocalMethod ():Option<String> {
     var lc = Ctx.getLocalClass().nullToOption();
     return lc.flatMap(function (x) {
-      trace(x.get().module);
+      
       var types = Ctx.getModule(x.get().module);
       var pos = Ctx.getPosInfos(Ctx.currentPos());
       var min = pos.min;

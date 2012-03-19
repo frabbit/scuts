@@ -429,7 +429,6 @@ class Print
           }
         }
         
-        
         var str = {
           var module = p.pack.join(".") + (p.pack.length > 0 ? "." : "") + p.name;
           var name = 
@@ -809,21 +808,23 @@ class Print
         if (isWildcard) {
           name;
         } else {
-          var isFunctionTypeParam = module.indexOf(pack.join(".")) == -1;
           
-          if (isFunctionTypeParam) {
+          var moduleName =
+            if (pack.length > 0) 
+              module.substr(pack.join(".").length + 1) 
+            else module;
+          
+          var isFunctionTypeParam = module.indexOf(pack.join(".")) == -1;
+          var isClassTypeParam = moduleName == "";
+          
+          if (isFunctionTypeParam || isClassTypeParam) {
             name;
           } else {
-          
-            var moduleName = 
-              if (pack.length > 0) 
-                module.substr(pack.join(".").length + 1) 
-              else module;
+            var hasModule = moduleName != "";
+            var hasPack = pack.length > 0;
             
-
-            var tName = moduleName + (if (moduleName == name) "" else "." + name);
+            var tName = moduleName + (if (moduleName == name) "" else ("." + name));
             
-
             var foldPack = function (v, a) return v + "." + a;
             var reduceParams = function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards) + "," + a;
             var reduceFirst = function (v) return P.type1(v, simpleFunctionSignatures, wildcards);
@@ -832,7 +833,6 @@ class Print
               + if (params.length > 0) 
                   "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
                 else "";
-            trace(res);
             res;
           }
         }
@@ -848,7 +848,6 @@ class Print
         
         var typeStr = dt.pack.foldRight(foldPack, dt.name);
         var paramsStr = if (params.length > 0) "<" + params.foldRightWithIndex(foldParams, ">") else "";
-        
         typeStr + paramsStr;
       case TFun( args , ret ):
         
