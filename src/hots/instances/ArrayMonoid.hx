@@ -19,4 +19,4 @@ class ArrayMonoidImpl<T> extends MonoidAbstract<Array<T>>
 
 }
 
-typedef ArrayMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayMonoidImpl)]>;
+//typedef ArrayMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayMonoidImpl)]>;

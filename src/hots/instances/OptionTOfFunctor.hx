@@ -11,7 +11,7 @@ private typedef B = OptionBox;
 private typedef BT = OptionTBox;
 
 
-class OptionTOfFunctorImpl<M> extends FunctorAbstract<Of<M, Option<In>>> {
+class OptionTOfFunctor<M> extends FunctorAbstract<Of<M, Option<In>>> {
   
   var functorM:Functor<M>;
   
@@ -27,5 +27,3 @@ class OptionTOfFunctorImpl<M> extends FunctorAbstract<Of<M, Option<In>>> {
     },BT.unbox(fa)));
   }
 }
-
-typedef OptionTOfFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionTOfFunctorImpl)]>;

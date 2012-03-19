@@ -8,7 +8,7 @@ import hots.In;
 import hots.Of;
 
 
-class KleisliCategoryImpl<M> extends CategoryAbstract<In->Of<M,In>> {
+class KleisliCategory<M> extends CategoryAbstract<In->Of<M,In>> {
   
   private var m:Monad<M>;
   
@@ -35,4 +35,4 @@ class KleisliCategoryImpl<M> extends CategoryAbstract<In->Of<M,In>> {
   }
 }
 
-typedef KleisliCategory = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(KleisliCategoryImpl)]>;
+//typedef KleisliCategory = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(KleisliCategoryImpl)]>;

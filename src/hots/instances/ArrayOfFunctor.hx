@@ -7,8 +7,7 @@ import hots.classes.Functor;
 
 using hots.instances.ArrayBox;
 
-
-class ArrayOfFunctorImpl extends FunctorAbstract<Array<In>>
+class ArrayOfFunctor extends FunctorAbstract<Array<In>>
 {
   public function new () {}
   
@@ -16,5 +15,3 @@ class ArrayOfFunctorImpl extends FunctorAbstract<Array<In>>
     return ArrayExt.map(fa.unbox(), f).box();
   }
 }
-
-typedef ArrayOfFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfFunctorImpl)]>;

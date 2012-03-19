@@ -10,7 +10,7 @@ import scuts.core.types.Either;
 
 private typedef B = EitherBox;
 
-class EitherFunctorImpl<L> extends FunctorAbstract<Either<L,In>> {
+class EitherFunctor<L> extends FunctorAbstract<Either<L,In>> {
   
   public function new () {}
   
@@ -26,4 +26,4 @@ class EitherFunctorImpl<L> extends FunctorAbstract<Either<L,In>> {
  }
 }
 
-typedef EitherFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EitherFunctorImpl)]>;
+//typedef EitherFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EitherFunctorImpl)]>;

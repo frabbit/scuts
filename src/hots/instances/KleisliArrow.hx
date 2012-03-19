@@ -4,6 +4,7 @@ import hots.classes.Arrow;
 import hots.classes.ArrowAbstract;
 import hots.classes.Monad;
 import hots.In;
+import hots.instances.KleisliCategory;
 import hots.Of;
 
 import scuts.core.types.Tup2;
@@ -13,7 +14,7 @@ using scuts.core.extensions.Function1Ext;
 
 private typedef B = hots.instances.KleisliBox;
 
-class KleisliArrowImpl<M> extends ArrowAbstract<In->Of<M,In>>
+class KleisliArrow<M> extends ArrowAbstract<In->Of<M,In>>
 {
   var m:Monad<M>;
   
@@ -39,4 +40,4 @@ class KleisliArrowImpl<M> extends ArrowAbstract<In->Of<M,In>>
   }
 }
 
-typedef KleisliArrow = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(KleisliArrowImpl)]>;
+//typedef KleisliArrow = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(KleisliArrowImpl)]>;

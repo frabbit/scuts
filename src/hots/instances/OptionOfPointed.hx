@@ -7,7 +7,7 @@ import scuts.core.types.Option;
 
 using hots.instances.OptionBox;
 
-class OptionOfPointedImpl extends PointedAbstract<Option<In>>
+class OptionOfPointed extends PointedAbstract<Option<In>>
 {
   public function new () {
     super(OptionOfFunctor.get());
@@ -19,5 +19,3 @@ class OptionOfPointedImpl extends PointedAbstract<Option<In>>
   }
   
 }
-
-typedef OptionOfPointed = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionOfPointedImpl)]>;

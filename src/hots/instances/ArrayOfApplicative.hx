@@ -7,7 +7,7 @@ import scuts.core.types.Option;
 
 using hots.instances.ArrayBox;
 
-class ArrayOfApplicativeImpl extends ApplicativeAbstract<Array<In>>
+class ArrayOfApplicative extends ApplicativeAbstract<Array<In>>
 {
   public function new () super(ArrayOfPointed.get())
   
@@ -23,4 +23,4 @@ class ArrayOfApplicativeImpl extends ApplicativeAbstract<Array<In>>
   }
 }
 
-typedef ArrayOfApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfApplicativeImpl)]>;
+//typedef ArrayOfApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfApplicativeImpl)]>;

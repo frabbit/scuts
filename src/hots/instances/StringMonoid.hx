@@ -15,4 +15,4 @@ class StringMonoidImpl extends MonoidAbstract<String>
   }
 }
 
-typedef StringMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(StringMonoidImpl)]>;
+//typedef StringMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(StringMonoidImpl)]>;

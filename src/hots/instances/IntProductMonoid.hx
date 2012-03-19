@@ -3,7 +3,7 @@ package hots.instances;
 import hots.classes.MonoidAbstract;
 
 
-class IntProductMonoidImpl extends MonoidAbstract<Int>
+class IntProductMonoid extends MonoidAbstract<Int>
 {
   public function new () {}
   
@@ -15,4 +15,4 @@ class IntProductMonoidImpl extends MonoidAbstract<Int>
   }
 }
 
-typedef IntProductMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IntProductMonoidImpl)]>;
+//typedef IntProductMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IntProductMonoidImpl)]>;

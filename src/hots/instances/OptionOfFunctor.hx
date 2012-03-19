@@ -7,7 +7,7 @@ import scuts.core.types.Option;
 
 using hots.instances.OptionBox;
 
-class OptionOfFunctorImpl extends FunctorAbstract<Option<In>>
+class OptionOfFunctor extends FunctorAbstract<Option<In>>
 {
   public function new () {}
   
@@ -16,4 +16,4 @@ class OptionOfFunctorImpl extends FunctorAbstract<Option<In>>
   }
 }
 
-typedef OptionOfFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionOfFunctorImpl)]>;
+//typedef OptionOfFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionOfFunctorImpl)]>;

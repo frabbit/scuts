@@ -6,7 +6,7 @@ import scuts.core.extensions.Tup2Ext;
 import scuts.core.types.Tup2;
 import scuts.Scuts;
 
-using hots.extensions.COfExt;
+using hots.extensions.OfOfArrowExt;
 
 @:tcAbstract class ArrowAbstract<AR> implements Arrow<AR>
 {

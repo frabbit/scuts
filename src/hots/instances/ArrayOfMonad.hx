@@ -6,7 +6,7 @@ import scuts.core.extensions.ArrayExt;
 
 using hots.instances.ArrayBox;
 
-class ArrayOfMonadImpl extends MonadAbstract<Array<In>>
+class ArrayOfMonad extends MonadAbstract<Array<In>>
 {
   
   public function new () super(ArrayOfApplicative.get())
@@ -18,4 +18,4 @@ class ArrayOfMonadImpl extends MonadAbstract<Array<In>>
     
 }
 
-typedef ArrayOfMonad = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfMonadImpl)]>;
+//typedef ArrayOfMonad = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfMonadImpl)]>;
