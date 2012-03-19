@@ -1,8 +1,5 @@
 package hots.macros;
 
-
-
-
 #if (macro || display)
 
 
@@ -13,6 +10,7 @@ import haxe.macro.Format;
 import haxe.macro.Type;
 import haxe.macro.Expr;
 import haxe.macro.Context;
+import haxe.Stack;
 import hots.macros.utils.Constants;
 import hots.macros.utils.Utils;
 import neko.FileSystem;
@@ -50,7 +48,8 @@ typedef TypeClassInstanceInfo = {
   dependencies : Array<Tup2<Type, Array<Type>>>,
   freeParameters: Array<Type>,
   allParameters:Array<Type>,
-  tcParamTypes:Array<Type>
+  tcParamTypes:Array<Type>,
+  usingCall:String
 }
 
 
@@ -179,17 +178,15 @@ class TypeClasses
         
         var tcParamTypes = tcParams.map(function (x) return Utils.remap(x, reverseMapping));
         
-        trace("free:"+ freeParams);
-        trace("used:" + allParamsUsedInConstructorArgs);
-        trace("all:" + typeParams);
-        
+       
         
         
         var tcId = SType.getFullQualifiedTypeName(tc);
         var instanceId = SType.getFullQualifiedTypeName(lc);
         var typeParamBaseId = (lc.pack.length > 0 ? lc.pack.join(".") + "." : "") + lc.name;
-        trace(instanceId);
         var tcInstances = registry.get(tcId);
+        
+        var usingCall = "using_" + lc.pack.join("_") + "_" + lc.name;
         
         var info = {
           instance:lc,
@@ -198,15 +195,24 @@ class TypeClasses
           dependencies : constructorArgsWithUsedTypeParams,
           freeParameters: freeParams,
           allParameters:typeParams,
+          usingCall : usingCall,
           tcParamTypes : tcParamTypes
         }
         registry.get(tcId).push(info);
         
+        
         var printableArgs = constructorArgsWithUsedTypeParams.map(
           function (x) return Utils.remap(x._1, x._2.map(
-            function (x) return Tup2.create(x, switch (x) { case TInst(t, _): var t = Parse.parseToType(t.get().name).extract(); trace(t); t; default:Scuts.macroError("Invalid");}))));
+            function (x) return Tup2.create(x, switch (x) { 
+              case TInst(t, _): 
+                Parse.parseToType(t.get().name).extract(); 
+              default:Scuts.macroError("Invalid");
+            })
+          ))
+        );
         
         
+            
         // mark as ready, processed
         lc.meta.add(Constants.INSTANCE_TYPE_CLASS_READY, [], Context.currentPos());
         
@@ -215,25 +221,39 @@ class TypeClasses
         var getTypeParams = (typeParamStrings.length > 0) ? ("<" + typeParamStrings.join(",") + ">") : "";
         var args = printableArgs.mapWithIndex(function (x,i) return "a" + i + ":" + Print.type(x).split(typeParamBaseId + ".").join(""));
         var callArgs = printableArgs.mapWithIndex(function (x,i) return "a" + i);
-        trace(args);
         
         
         
-        var s = "function get " + getTypeParams + "(" + args.join(",") + ") return new " + instanceId + "(" + callArgs.join(",") + ")";
+        var s = "function " + getTypeParams + "(" + args.join(",") + ") return new " + instanceId + "(" + callArgs.join(",") + ")";
+        
+        
+        
         var fExpr = Parse.parse(s);
         
-        var f = {
+        var f1 = {
           name: "get",
           kind:FieldType.FFun(Select.selectEFunctionFunction(fExpr).extract()),
           pos:Context.currentPos(),
           access: [Access.AStatic, Access.APublic],
           doc:null,
           meta:[]
-        }
+        };
+        
+        var s2 = "function (p:Class<hots.macros.internal.UsingScope>):Void {}";
+        
+        var f2Expr = Parse.parse(s2);
+        var f2 = {
+          name: usingCall,
+          kind:FieldType.FFun(Select.selectEFunctionFunction(f2Expr).extract()),
+          pos:Context.currentPos(),
+          access: [Access.AStatic, Access.APublic],
+          doc:null,
+          meta:[]
+        };
         
         
         
-        fields.concat([f]);
+        fields.concat([f1,f2]);
       }
     } else {
       fields;
@@ -276,7 +296,6 @@ class TypeClasses
     return try {
       var fields = Context.getBuildFields();
       var lc = Context.getLocalClass().get();
-      
       return if (lc.isInterface) {
         // it's a type class interface
         buildTypeClassInterface(lc, fields);
@@ -285,9 +304,11 @@ class TypeClasses
         buildTypeClassAbstract(lc, fields);
       } else {
         // it's an instance
-        buildTypeClassInstance(lc, fields);
+        var r = buildTypeClassInstance(lc, fields);
+        r;
       }
     } catch (e:Error) {
+      trace(Stack.exceptionStack());
       Scuts.macroError(e.message, e.pos);
     }
     

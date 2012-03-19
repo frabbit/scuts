@@ -3,6 +3,7 @@ package hots.macros;
 
 import hots.macros.utils.Utils;
 import hots.TC;
+import scuts.core.Log;
 import scuts.core.types.Tup2;
 
 
@@ -21,80 +22,54 @@ import scuts.core.types.Option;
 import scuts.mcore.Print;
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.OptionExt;
+import hots.macros.TypeClasses;
 
 
+using scuts.core.Log;
 using scuts.mcore.extensions.TypeExt;
 using scuts.mcore.extensions.ExprExt;
+using scuts.core.extensions.StringExt;
 private typedef SType = scuts.mcore.Type;
 
-enum CheckAmbiguity {
-  Using(cl:String);
-  UsingOf(cl:String);
-  No;
+enum ResolveError {
+  InvalidTypeClass(t:Type);
+  NoInstanceFound(tcId:String, exprType:Type);
+  MultipleInstancesNoneInScope(tcId:String, exprType:Type);
+  MultipleInstancesWithScope(tcId:String, exprType:Type);
 }
 
 #end
 
 
+
+
 class TcContext 
 {
 
-  #if (macro || display)
-  private static function callTimes (expr:Expr, fn:String, params:Array<Expr>, times:Int) {
-    for (i in 0...times) {
-      expr = Make.call(Make.field(expr, fn), params, expr.pos);
-    }
-    return expr;
-  }
-  #end
-  
-  @:macro public static function box2(expr:Expr) {
     
-    return try {
-      var call = callTimes(expr, "box", [], 2);
-      Context.typeof(call);
-      call;
-    } catch (e:Dynamic) {
-      Scuts.macroError("Cannot box the expression " + Print.expr(expr) + " into an hots.Of 2 times");
-    }
+  @:macro public static function box2(expr:Expr) 
+  {
+    return Box.box1(Box.box1(expr));
   }
   
   @:macro public static function box3(expr:Expr) {
-    return try {
-      var call = callTimes(expr, "box", [], 3);
-      Context.typeof(call);
-      call;
-    } catch (e:Dynamic) {
-      Scuts.macroError("Cannot box the expression " + Print.expr(expr) + " into an hots.Of 3 times");
-    }
+    return Box.box1(Box.box1(Box.box1(expr)));
   }
   
   @:macro public static function boxF2(expr:Expr) {
     
-    return try {
-      var call = callTimes(expr, "boxF", [], 2);
-      Context.typeof(call);
-      call;
-    } catch (e:Dynamic) {
-      Scuts.macroError("Cannot box the expression " + Print.expr(expr) + " into an hots.Of 2 times");
-    }
+    return Box.boxF1(Box.boxF1(expr));
   }
   
   @:macro public static function boxF3(expr:Expr) {
-    return try {
-      var call = callTimes(expr, "boxF", [], 3);
-      Context.typeof(call);
-      call;
-    } catch (e:Dynamic) {
-      Scuts.macroError("Cannot box the expression " + Print.expr(expr) + " into an hots.Of 3 times");
-    }
+    return Box.boxF1(Box.boxF1(Box.boxF1(expr)));
   }
   @:macro public static function unbox2<M,A,B>(expr:ExprRequire<hots.Of<hots.Of<M, B>,A>>) {
-    return callTimes(expr, "unbox", [], 2);
+    return Box.unbox1(Box.unbox1(expr));
   }
   
   @:macro public static function unbox3<M,A,B,C>(expr:ExprRequire<hots.Of<hots.Of<hots.Of<M,C>, B>,A>>) {
-    return callTimes(expr, "unbox", [], 3);
+    return Box.unbox1(Box.unbox1(Box.unbox1(expr)));
   }
   
   @:macro public static function tc(expr:Expr, tc:ExprRequire<Class<TC>>) 
@@ -104,7 +79,7 @@ class TcContext
     var expr = switch (exprType) {
       case TType(t, p):
         var dt = t.get();
-        if (dt.name.indexOf("#") != -1) 
+        if (dt.name.indexOf("#") == 0) 
         {
           if (dt.params.length > 0) 
           {
@@ -114,7 +89,7 @@ class TcContext
           {
             // make a complex type
             var ct = {
-              var typePath = Make.typePath(dt.pack, dt.name.split("#").join(""),[]);
+              var typePath = Make.typePath(dt.pack, dt.name.substr(1),[]);
               ComplexType.TPath(typePath);
             }
             Make.block([Make.varExpr("a", ct), Make.constIdent("a")]);
@@ -126,9 +101,7 @@ class TcContext
         }
       default: expr;
     }
-    
-    
-    
+
     var tcType = switch (Context.typeof(tc)) {
       case TType(dt, params):
         var p = dt.get().pack;
@@ -136,21 +109,39 @@ class TcContext
       default: Scuts.macroError("Invalid type");
     }
     return resolve(exprType, tcType);
-    
-    
   }
+  
   #if (macro || display)
-  public static function resolve (exprType:Type, tcType:Type) {
+  
+  public static function handleResolveError <T>(e:ResolveError):T 
+  {
+    var msg = switch (e) 
+    {
+      case InvalidTypeClass(t): 
+        "Invalid Type Class";
+      case NoInstanceFound(tcId, exprType): 
+        "Cannot find Type class Instance of " + tcId + " for type " + Print.type(exprType);
+      case MultipleInstancesNoneInScope(tcId, exprType): 
+        "Cannot resolve Type Class " + tcId + " for type " + 
+            Print.type(exprType) + ".\nMultiple type classes were found and none of them is in scope.";
+      case MultipleInstancesWithScope(tcId, exprType):
+        "Cannot resolve Type Class " + tcId + " for type " + 
+            Print.type(exprType) + ". Multiple type classes were found and more than one is in scope.";
+    }
+    return Scuts.macroError(msg);
+  }
+  
+  public static function resolve (exprType:Type, tcType:Type, level:Int = 0) 
+  {
     var type = tcType.asClassType().getOrError("Invalid Type Class");
     
     var ct = type._1;
     
     var tcId = SType.getFullQualifiedTypeName(ct.get());
+    [].debugObj("  ".times(level) + "resolve: " + tcId + " for " + Print.type(exprType));
     
     var info = TypeClasses.registry.get(tcId);
     
-    
-    //trace(exprType);
     var filtered = info.map(
       function (x) {
         return Tup2.create(x, Utils.typeIsCompatibleTo(exprType, x.tcParamTypes[0], x.allParameters));
@@ -158,43 +149,75 @@ class TcContext
     ).filter(function (x) return x._2.isSome());
     
     
-    return switch (filtered.length) {
-      case 0: Scuts.macroError("Cannot find Type class Instance of " + tcId + " for type " + Print.type(exprType));
+    
+    return (switch (filtered.length) {
+      case 0: 
+        Utils.getOfContainerType(exprType)
+        .map( function (x) return resolve(x, tcType, level+1))
+        .getOrElse(function () return Scuts.macroError("Cannot find Type class Instance of " + tcId + " for type " + Print.type(exprType)));
       case 1: 
         var info = filtered[0]._1;
         
         var mapping = filtered[0]._2.extract();
-        var deps = info.dependencies;
-        
-        var callArgs = 
-          deps.map(function (x) return Utils.remap(x._1, mapping))
-          .map(function (x) return switch (x) {
-            case TInst(t, params):
-              resolve(params[0], x);
-            default: Scuts.error("Invalid");
-          });
-        
-        var pack = info.instance.pack;
-        var module = SType.getModule(info.instance);
-        var name = info.instance.name;
+        makeInstanceExpr(info, mapping, level);
         
         
         
-        var e = Make.type(pack, name, module).field("get").call(callArgs);
-        
-        //var e = Make.type(Make.constIdent(first).fields(parts.drop(1).removeLast()), parts.last()).field("get").call(callArgs);
-        
-        trace(Print.expr(e));
+      default: 
+        // we've got multiple type classes, check if only one of them is in using scope
+        var inScope = filtered.filter(function (x) return isInstanceInUsingScope(x._1));
         
         
-        
-        Make.emptyBlock();
-        e;
-        
-      default: Scuts.macroError("Found multiple type classes, not yet possible.");
-    }
-    
+        if (inScope.length == 0) 
+        {
+          Scuts.macroError("Cannot resolve Type Class " + tcId + " for type " + 
+            Print.type(exprType) + ".\nMultiple type classes were found and none of them is in scope.");
+        }
+        else if (inScope.length > 1) 
+        {
+          Scuts.macroError("Cannot resolve Type Class " + tcId + " for type " + 
+            Print.type(exprType) + ". Multiple type classes were found and more than one is in scope.");
+        } 
+        else 
+        {
+          var tc = inScope[0];
+          makeInstanceExpr(tc._1, tc._2.extract(), level);
+        }
+    }).debug(function (x) return "  ".times(level) + "generated: " + Print.expr(x));
   }
+  
+  
+  public static function makeInstanceExpr (info:TypeClassInstanceInfo, mapping:Mapping, level:Int):Expr {
+   
+    var deps = info.dependencies;
+    
+    var callArgs = 
+      deps.map(function (x) return Utils.remap(x._1, mapping))
+      .map(function (x) return switch (x) {
+        case TInst(t, params):
+          resolve(params[0], x, level+1);
+
+        default: Scuts.unexpected();
+      });
+    
+    var pack = info.instance.pack;
+    var module = SType.getModule(info.instance);
+    var name = info.instance.name;
+    
+    
+    
+    return Make.type(pack, name, module).field("get").call(callArgs);
+  }
+  
+  public static function isInstanceInUsingScope (instanceInfo:TypeClassInstanceInfo) 
+  {
+    var callField = instanceInfo.usingCall;
+      var doCall = 
+        Make.type(["hots", "macros", "internal"], "UsingScope").field(callField).call([]);
+        
+      return MContext.typeof(doCall).isSome();
+  }
+  
   #end
   /*
   public static function ofConstract (t:Type, once:Bool = true) {

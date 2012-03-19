@@ -140,7 +140,6 @@ class Box
     
     return (if (Utils.isOfType(type)) 
     {
-      trace("isOfType");
       var innerType = U.getOfElemType(type).extract();
       
       if (U.isContainerType(innerType)) 
@@ -179,6 +178,11 @@ class Box
    */
   public static function unboxOfTypeToType (type:Type):Either<UnboxError, Type> 
   {
+    //trace("type before:" + Print.type(type));
+    //var type = U.normalizeOfTypes(type);
+    
+    //trace("type after:" + Print.type(type));
+    
     var err = function () return TypeIsNoOfType(type);
     return U.getOfParts(type) // 1
     .toRight(err) 
@@ -190,22 +194,34 @@ class Box
       {
         U.getOfElemType(container)
         .toRight(err)
-        .flatMapRight(function (innerElemType) 
+        .flatMapRight(function (innerElemType) {
           return if (U.hasInnerInType(innerElemType)) // 6
           {
+            
             U.getOfElemType(type)
-              .flatMap(function (x) return U.replaceContainerElemType(innerElemType, x)) // we have D<E>
-              .flatMap(function (x) return U.replaceOfElemType(container, x))
-              .toRight(err);
+            .flatMap(function (x) return U.replaceFirstInType(innerElemType, x)) // we have D<E>
+            .flatMap(function (x) return U.replaceOfElemType(container, x))
+            .toRight(err);
           } 
-          else Left(err())
-        );
+          else {
+            // the current Of container type must have more than one In Type, which means a higher category.
+            // We need to unbox the container type first and then we can unbox actual type.
+            
+            unboxOfTypeToType(container)
+            .flatMapRight(function (x) {
+              var of = U.makeOfType(x, elemType);
+              return unboxOfTypeToType(of);
+            });
+            //Left(err())
+          }
+        });
       } 
       else // 3
       {
+        
         if (U.hasInnerInType(container)) // 4
         {
-          U.replaceContainerElemType(container, elemType)
+          U.replaceFirstInType(container, elemType)
           .toRight(function () return Scuts.unexpected());
         }
         else Left(InvalidOfType(type));

@@ -91,6 +91,30 @@ typedef Mapping = Array<Tup2<Type, Type>>;
 
 class Utils 
 {
+  public static function normalizeOfTypes (type:Type):Type {
+    
+    return switch (Context.follow(type)) {
+      case TInst(ctRef, params):
+        var ct = ctRef.get();
+        
+        getOfParts(type).map(function (t) {
+          return if (TypeExt.eq(hotsInType(), t._2)) 
+          {
+            
+            getContainerElemType(t._1)
+            .map(function (x) return if (TypeExt.eq(x, hotsInType())) t._1 else type)
+            .getOrElseConst(type);
+          } else
+            makeOfType(normalizeOfTypes(t._1), normalizeOfTypes(t._2));
+        }).getOrElseConst(type);
+      case TEnum(eRef, params):
+        TEnum(eRef, params.map(normalizeOfTypes));
+      case TFun(args, ret):
+        TFun(args.map(function (a) return { name:a.name, opt:a.opt, t:normalizeOfTypes(a.t)}), normalizeOfTypes(ret));
+      default: Scuts.notImplemented();
+    }
+  }
+  
   public static function getConstructorArgumentTypes (fields:Array<Field>):Option<Array<ComplexType>> 
   {
     return 
@@ -551,6 +575,15 @@ class Utils
     }
   }
   
+  public static function getContainerElemTypes(container:Type):Option<Array<Type>> 
+  {
+    return switch (container) 
+    {
+      case TInst(_, params), TEnum(_,params): Some(params);
+      default: None;
+    }
+  }
+  
   public static function replaceContainerElemType(container:Type, newElemType:Type):Option<Type> 
   {
     return switch (container) 
@@ -559,6 +592,60 @@ class Utils
       case TEnum(t, params): if (params.length == 1) Some(TEnum(t, [newElemType])) else None;
       default: None;
     }
+  }
+  
+  public static function replaceFirstInType(type:Type, replacement:Type):Option<Type> 
+  {
+    var inType = hotsInType();
+    
+    function loop (t:Type) {
+      return if (TypeExt.eq(t, inType)) Some(replacement)
+      else switch (t) {
+        case TInst(ct, params): 
+          // Special care for Of types, check always the right side first (reverse parameters).
+          // Of<Array<hots.In>, hots.In> should be replaced by Of<Array<hots.In>, X> and not by Of<Array<X>, hots.In>
+          // for the replacement type X.
+          
+          var isOf = isOfType(t);
+          
+          var p = if (isOf) params.reverseCopy() else params;
+
+          p.someMappedWithIndex(function (p) return loop(p), function (x:Option<Type>) return x.isSome())
+          .map( function (x) {
+            var replaced = p.replaceElemAt(x._1.getOrError("Unexpected"),x._2);
+            var maybeReversed = if (isOf) replaced.reverseCopy() else replaced;
+            return TInst(ct, maybeReversed);
+          });
+          
+          
+          
+        case TEnum(et, params): 
+          var found = params.someMappedWithIndex(function (p) return loop(p), function (x:Option<Type>) return x.isSome());
+          found.map( function (x) {
+            return TEnum(et, params.replaceElemAt(x._1.getOrError("Unexpected"), x._2));
+          });
+        
+        case TFun(args, ret):
+          args.someMappedWithIndex(function (a) return loop(a.t), function (x:Option<Type>) return x.isSome())
+          .map( function (x) {
+            var oldArg = args[x._2];
+            var newArg = { name : oldArg.name, opt: oldArg.opt, t : x._1.getOrError("Unexpected")};
+            return TFun(args.replaceElemAt(newArg, x._2), ret);
+          })
+          .orElse(function () 
+            return loop(ret)
+              .map(function (x) return TFun(args, x))
+          );
+          
+        default:Scuts.notImplemented();
+      }
+      
+      
+      
+    }
+    return loop(type);
+    
+    
   }
 
   public static function flattenOfType (ofType:Type):Type 
@@ -606,11 +693,24 @@ class Utils
     }
   }
   
+  
+  
   public static function hasInnerInType (type:Type):Bool
   {
-    return getContainerElemType(type).traced()
-      .filter(function (x) return TypeExt.eq(x, hotsInType())).traced()
-      .isSome().traced();
+    var inType = hotsInType;
+    
+    function loop(t:Type) 
+    {
+      return TypeExt.eq(t, inType()) || switch (t) 
+      {
+        case TInst(_, params), TEnum(_, params):
+          params.any(function (p) return loop(p));
+        case TFun(args, ret):
+          args.any(function (a) return loop(a.t)) || loop(ret);
+        default: Scuts.notImplemented();
+      }
+    }
+    return loop(type);
   }
   
   public static function getOfParts (type:Type):Option<Tup2<Type, Type>>
