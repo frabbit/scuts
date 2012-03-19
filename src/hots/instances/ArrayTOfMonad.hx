@@ -13,12 +13,11 @@ import hots.classes.Functor;
 import scuts.core.extensions.Function1Ext;
 import scuts.core.extensions.Function2Ext;
 
-private typedef BT = ArrayTBox;
-private typedef B = ArrayBox;
+private typedef B = hots.macros.Box;
 
 using hots.extensions.MonadExt;
 
-class ArrayTOfMonadImpl<M> extends MonadAbstract<Of<M,Array<In>>> {
+class ArrayTOfMonad<M> extends MonadAbstract<Of<M,Array<In>>> {
   
   var monadM:Monad<M>;
 
@@ -30,7 +29,7 @@ class ArrayTOfMonadImpl<M> extends MonadAbstract<Of<M,Array<In>>> {
 
   override public function flatMap<A,B>(val:ArrayTOf<M,A>, f: A->ArrayTOf<M,B>):ArrayTOf<M,B> 
   {
-    var fmapped = monadM.flatMap(BT.unbox(val), 
+    var fmapped = monadM.flatMap(B.unbox(val), 
       function (a) {
         var mapped = ArrayOfFunctor.get().map(f, B.box(a));
         var unboxed = B.unbox(mapped);
@@ -41,12 +40,10 @@ class ArrayTOfMonadImpl<M> extends MonadAbstract<Of<M,Array<In>>> {
             for (a in x) {
               res.push(a);
             }
-          },BT.unbox(e));
+          },B.unbox(e));
         }
         return monadM.pure(res);//res;
       });
-    return BT.box(fmapped);
+    return B.box(fmapped);
   }
 }
-
-typedef ArrayTOfMonad = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayTOfMonadImpl)]>;

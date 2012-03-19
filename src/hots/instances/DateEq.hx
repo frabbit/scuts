@@ -4,7 +4,7 @@ import hots.classes.Eq;
 import hots.classes.EqAbstract;
 import hots.instances.FloatEq;
 
-class DateEqImpl extends EqAbstract<Date> {
+class DateEq extends EqAbstract<Date> {
   
   public function new () {}
 
@@ -16,5 +16,3 @@ class DateEqImpl extends EqAbstract<Date> {
     return FloatEq.get().notEq(a.getTime(), b.getTime());
   }
 }
-
-typedef DateEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(DateEqImpl)]>;

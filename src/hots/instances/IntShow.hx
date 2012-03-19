@@ -2,7 +2,7 @@ package hots.instances;
 import hots.classes.ShowAbstract;
 
 
-class IntShowImpl extends ShowAbstract<Int> 
+class IntShow extends ShowAbstract<Int> 
 {
   public function new () {}
   
@@ -10,5 +10,3 @@ class IntShowImpl extends ShowAbstract<Int>
     return Std.string(v);
   }
 }
-
-typedef IntShow = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IntShowImpl)]>;

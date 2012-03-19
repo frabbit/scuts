@@ -7,7 +7,7 @@ import scuts.core.types.Either;
 
 typedef B = EitherBox;
 
-class EitherMonadImpl<L> extends MonadAbstract<Either<L,In>> {
+class EitherMonad<L> extends MonadAbstract<Either<L,In>> {
   
   public function new () {
     super(EitherApplicative.get());
@@ -22,5 +22,3 @@ class EitherMonadImpl<L> extends MonadAbstract<Either<L,In>> {
     };
   }
 }
-
-typedef EitherMonad = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EitherMonadImpl)]>;

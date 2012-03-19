@@ -4,7 +4,7 @@ import hots.classes.MonadAbstract;
 import hots.In;
 import scuts.core.extensions.ArrayExt;
 
-using hots.instances.ArrayBox;
+using hots.macros.Box;
 
 class ArrayOfMonad extends MonadAbstract<Array<In>>
 {
@@ -17,5 +17,3 @@ class ArrayOfMonad extends MonadAbstract<Array<In>>
   }
     
 }
-
-//typedef ArrayOfMonad = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfMonadImpl)]>;

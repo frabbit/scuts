@@ -5,17 +5,15 @@ import hots.In;
 import scuts.core.types.Option;
 
 
-using hots.instances.OptionBox;
+using hots.macros.Box;
 
-
-class OptionOfMonadZeroImpl extends MonadZeroAbstract<Option<In>>
+class OptionOfMonadZero extends MonadZeroAbstract<Option<In>>
 {
   public function new () super(OptionOfMonad.get())
   
   override public inline function zero <A>():OptionOf<A> {
-    return None.box();
+    var v:Option<A> = None;
+    return v.box();
   }
   
 }
-
-typedef OptionOfMonadZero = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionOfMonadZeroImpl)]>;

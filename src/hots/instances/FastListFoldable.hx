@@ -8,7 +8,7 @@ import scuts.core.extensions.IterableExt;
 
 using hots.instances.FastListBox;
 
-class FastListFoldableImpl extends FoldableAbstract<FastList<In>>
+class FastListFoldable extends FoldableAbstract<FastList<In>>
 {
   public function new () {}
   
@@ -21,5 +21,3 @@ class FastListFoldableImpl extends FoldableAbstract<FastList<In>>
   }
   
 }
-
-typedef FastListFoldable = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(FastListFoldableImpl)]>;

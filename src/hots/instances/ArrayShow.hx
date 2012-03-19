@@ -4,7 +4,7 @@ import hots.classes.ShowAbstract;
 
 using scuts.core.extensions.ArrayExt;
 
-class ArrayShowImpl<T> extends ShowAbstract<Array<T>> {
+class ArrayShow<T> extends ShowAbstract<Array<T>> {
 
   private var showT:Show<T>;
   
@@ -16,5 +16,3 @@ class ArrayShowImpl<T> extends ShowAbstract<Array<T>> {
     return "[" + v.map(function (x) return showT.show(x)).join(", ") + "]";
   }
 }
-
-typedef ArrayShow = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayShowImpl)]>;

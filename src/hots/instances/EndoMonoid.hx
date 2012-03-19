@@ -6,7 +6,7 @@ import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
 import scuts.Scuts;
 
-class EndoMonoidImpl<T> extends MonoidAbstract<T->T>
+class EndoMonoid<T> extends MonoidAbstract<T->T>
 {
   public function new () {}
   
@@ -17,5 +17,3 @@ class EndoMonoidImpl<T> extends MonoidAbstract<T->T>
     return Scuts.id;
   }
 }
-
-typedef EndoMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EndoMonoidImpl)]>;

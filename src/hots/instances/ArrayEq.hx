@@ -5,7 +5,7 @@ import hots.classes.EqAbstract;
 import scuts.core.extensions.ArrayExt;
 
 
-class ArrayEqImpl<T> extends EqAbstract<Array<T>> {
+class ArrayEq<T> extends EqAbstract<Array<T>> {
   
   var eqT:Eq<T>;
   
@@ -19,5 +19,3 @@ class ArrayEqImpl<T> extends EqAbstract<Array<T>> {
   }
   
 }
-
-typedef ArrayEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayEqImpl)]>;

@@ -12,11 +12,11 @@ import scuts.core.types.Option;
 import scuts.core.extensions.Function1Ext;
 import scuts.core.extensions.Function2Ext;
 
-private typedef B = OptionTBox;
+private typedef B = hots.macros.Box;
 
 
 
-class OptionTOfPointedImpl<M> extends PointedAbstract<Of<M,Option<In>>> {
+class OptionTOfPointed<M> extends PointedAbstract<Of<M,Option<In>>> {
   
   var pointedM:Pointed<M>;
 
@@ -35,5 +35,3 @@ class OptionTOfPointedImpl<M> extends PointedAbstract<Of<M,Option<In>>> {
   
 
 }
-
-typedef OptionTOfPointed = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionTOfPointedImpl)]>;

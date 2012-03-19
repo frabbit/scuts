@@ -5,7 +5,7 @@ import hots.In;
 import scuts.core.extensions.OptionExt;
 import scuts.core.types.Option;
 
-using hots.instances.OptionBox;
+using hots.macros.Box;
 
 class OptionOfApplicative extends ApplicativeAbstract<Option<In>>
 {
@@ -21,5 +21,3 @@ class OptionOfApplicative extends ApplicativeAbstract<Option<In>>
     }
   }
 }
-
-//typedef OptionOfApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionOfApplicativeImpl)]>;

@@ -4,7 +4,7 @@ import hots.classes.Ord;
 import hots.classes.OrdAbstract;
 import scuts.core.types.Ordering;
 
-class FloatOrdImpl extends OrdAbstract<Float> {
+class FloatOrd extends OrdAbstract<Float> {
   
   public function new () { super(FloatEq.get()); }
   
@@ -39,5 +39,3 @@ class FloatOrdImpl extends OrdAbstract<Float> {
     return if (a < b) -1 else if (a > b) 1 else 0;
   }
 }
-
-typedef FloatOrd = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(FloatOrdImpl)]>;

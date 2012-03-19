@@ -4,7 +4,7 @@ import hots.classes.MonoidAbstract;
 
 
 
-class IntSumMonoidImpl extends MonoidAbstract<Int>
+class IntSumMonoid extends MonoidAbstract<Int>
 {
   public function new () {}
   
@@ -15,5 +15,3 @@ class IntSumMonoidImpl extends MonoidAbstract<Int>
     return 0;
   }
 }
-
-//typedef IntSumMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IntSumMonoidImpl)]>;

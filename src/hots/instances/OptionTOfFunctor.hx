@@ -7,8 +7,7 @@ import hots.Of;
 
 import scuts.core.types.Option;
 
-private typedef B = OptionBox;
-private typedef BT = OptionTBox;
+private typedef B = hots.macros.Box;
 
 
 class OptionTOfFunctor<M> extends FunctorAbstract<Of<M, Option<In>>> {
@@ -20,10 +19,11 @@ class OptionTOfFunctor<M> extends FunctorAbstract<Of<M, Option<In>>> {
     this.functorM = functorM;
   }
 
-  override public function map<A,B>(f:A->B, fa:OptionTOf<M, A>):OptionTOf<M, B> {
-    
-    return BT.box(functorM.map(function (x) {
+  override public function map<A,B>(f:A->B, fa:OptionTOf<M, A>):OptionTOf<M, B> 
+  {
+    return B.box(functorM.map(function (x:Option<A>) {
       return B.unbox(OptionOfFunctor.get().map(f, B.box(x)));
-    },BT.unbox(fa)));
+    },B.unbox(fa)));
   }
+  
 }

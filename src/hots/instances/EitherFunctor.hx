@@ -25,5 +25,3 @@ class EitherFunctor<L> extends FunctorAbstract<Either<L,In>> {
     );
  }
 }
-
-//typedef EitherFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EitherFunctorImpl)]>;

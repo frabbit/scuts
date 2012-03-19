@@ -5,7 +5,7 @@ import hots.In;
 import scuts.core.extensions.ArrayExt;
 import hots.classes.Functor;
 
-using hots.instances.ArrayBox;
+using hots.macros.Box;
 
 class ArrayOfFunctor extends FunctorAbstract<Array<In>>
 {

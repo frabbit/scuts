@@ -13,11 +13,11 @@ import hots.classes.Functor;
 import scuts.core.extensions.Function1Ext;
 import scuts.core.extensions.Function2Ext;
 
-private typedef B = ArrayTBox;
+private typedef B = hots.macros.Box;
 
 
 
-class ArrayTOfPointedImpl<M> extends PointedAbstract<Of<M,Array<In>>> {
+class ArrayTOfPointed<M> extends PointedAbstract<Of<M,Array<In>>> {
   
   var pointedM:Pointed<M>;
 
@@ -36,5 +36,3 @@ class ArrayTOfPointedImpl<M> extends PointedAbstract<Of<M,Array<In>>> {
   
 
 }
-
-typedef ArrayTOfPointed = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayTOfPointedImpl)]>;

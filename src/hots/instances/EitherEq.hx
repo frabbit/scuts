@@ -4,7 +4,7 @@ import hots.classes.Eq;
 import hots.classes.EqAbstract;
 import scuts.core.types.Either;
 
-class EitherEqImpl<A,B> extends EqAbstract<Either<A,B>> {
+class EitherEq<A,B> extends EqAbstract<Either<A,B>> {
 
   var eqA:Eq<A>;
   var eqB:Eq<B>;
@@ -26,5 +26,3 @@ class EitherEqImpl<A,B> extends EqAbstract<Either<A,B>> {
   }
   
 }
-
-typedef EitherEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EitherEqImpl)]>;

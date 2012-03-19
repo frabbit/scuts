@@ -11,11 +11,11 @@ import hots.classes.Functor;
 import scuts.core.extensions.Function1Ext;
 import scuts.core.extensions.Function2Ext;
 
-private typedef B = ArrayTBox;
+private typedef B = hots.macros.Box;
 
 
 
-class ArrayTOfApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
+class ArrayTOfApplicative<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
   
   var appM:Applicative<M>;
 
@@ -26,7 +26,6 @@ class ArrayTOfApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
     this.appM = appM;
   }
 
-  
   /**
    * aka <*>
    */
@@ -51,5 +50,3 @@ class ArrayTOfApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
   }
 
 }
-
-typedef ArrayTOfApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayTOfApplicativeImpl)]>;

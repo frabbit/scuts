@@ -5,9 +5,9 @@ import hots.classes.Eq;
 import hots.In;
 
 
-using hots.instances.ListBox;
+using hots.macros.Box;
 
-class ListOfCollectionImpl extends CollectionAbstract<List<In>>
+class ListOfCollection extends CollectionAbstract<List<In>>
 {
   
   public function new () {}
@@ -45,5 +45,3 @@ class ListOfCollectionImpl extends CollectionAbstract<List<In>>
     return a.box();
   }
 }
-
-typedef ListOfCollection = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ListOfCollectionImpl)]>;

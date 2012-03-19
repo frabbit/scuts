@@ -10,11 +10,11 @@ import scuts.core.types.Option;
 import scuts.core.extensions.Function1Ext;
 import scuts.core.extensions.Function2Ext;
 
-private typedef B = OptionTBox;
+private typedef B = hots.macros.Box;
 
 
 
-class OptionTOfApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Option<In>>> {
+class OptionTOfApplicative<M> extends ApplicativeAbstract<Of<M,Option<In>>> {
   
   var applicativeM:Applicative<M>;
 
@@ -47,5 +47,3 @@ class OptionTOfApplicativeImpl<M> extends ApplicativeAbstract<Of<M,Option<In>>> 
   }
 
 }
-
-typedef OptionTOfApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionTOfApplicativeImpl)]>;

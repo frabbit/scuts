@@ -6,7 +6,7 @@ using scuts.core.extensions.Function1Ext;
 
 private typedef B = FunctionBox;
 
-class FunctionCategoryImpl extends CategoryAbstract<In->In>
+class FunctionCategory extends CategoryAbstract<In->In>
 {
 
   public function new() {}
@@ -24,5 +24,3 @@ class FunctionCategoryImpl extends CategoryAbstract<In->In>
   }
   
 }
-
-typedef FunctionCategory = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(FunctionCategoryImpl)]>;

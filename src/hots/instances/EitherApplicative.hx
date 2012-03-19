@@ -6,7 +6,7 @@ import scuts.core.types.Either;
 
 private typedef B = EitherBox;
 
-class EitherApplicativeImpl<L> extends ApplicativeAbstract<Either<L,In>> {
+class EitherApplicative<L> extends ApplicativeAbstract<Either<L,In>> {
   
   public function new () {
     super(EitherPointed.get());
@@ -29,5 +29,3 @@ class EitherApplicativeImpl<L> extends ApplicativeAbstract<Either<L,In>> {
     return B.box(res);
   }
 }
-
-typedef EitherApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EitherApplicativeImpl)]>;

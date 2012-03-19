@@ -7,7 +7,7 @@ import scuts.core.types.Ordering;
 
 
 
-class BoolOrdImpl extends OrdAbstract<Bool> {
+class BoolOrd extends OrdAbstract<Bool> {
   
   public function new () super(BoolEq.get())
   
@@ -26,5 +26,3 @@ class BoolOrdImpl extends OrdAbstract<Bool> {
   
   
 }
-
-typedef BoolOrd = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(BoolOrdImpl)]>;

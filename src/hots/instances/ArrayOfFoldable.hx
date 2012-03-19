@@ -4,10 +4,10 @@ import hots.In;
 import scuts.core.extensions.ArrayExt;
 import hots.classes.Foldable;
 
-using hots.instances.ArrayBox;
+using hots.macros.Box;
 
 
-class ArrayOfFoldableImpl extends FoldableAbstract<Array<In>> 
+class ArrayOfFoldable extends FoldableAbstract<Array<In>> 
 {
   public function new () {}
   
@@ -20,5 +20,3 @@ class ArrayOfFoldableImpl extends FoldableAbstract<Array<In>>
   }
   
 }
-
-typedef ArrayOfFoldable = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfFoldableImpl)]>;

@@ -4,7 +4,7 @@ import hots.classes.ReadAbstract;
 
 import scuts.Scuts;
 
-class ArrayReadImpl<T> extends ReadAbstract<Array<T>> {
+class ArrayRead<T> extends ReadAbstract<Array<T>> {
   
   public var readT:Read<T>;
   
@@ -16,5 +16,3 @@ class ArrayReadImpl<T> extends ReadAbstract<Array<T>> {
     return Scuts.notImplemented();
   }
 }
-
-typedef ArrayRead = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayReadImpl)]>;

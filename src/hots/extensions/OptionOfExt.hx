@@ -1,12 +1,11 @@
 package hots.extensions;
 
 import hots.classes.Monoid;
-import hots.instances.OptionBox;
 import hots.instances.OptionOfFunctor;
 import hots.instances.OptionOf;
 import scuts.core.types.Option;
 
-private typedef B = OptionBox;
+private typedef B = hots.macros.Box;
 
 extern class OptionOfExt 
 {

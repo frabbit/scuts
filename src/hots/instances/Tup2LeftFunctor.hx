@@ -6,7 +6,7 @@ import scuts.core.types.Tup2;
 
 using hots.instances.Tup2LeftBox;
 
-class Tup2LeftFunctorImpl<R> extends FunctorAbstract<Tup2<In, R>>
+class Tup2LeftFunctor<R> extends FunctorAbstract<Tup2<In, R>>
 {
 
   public function new() {}
@@ -17,5 +17,3 @@ class Tup2LeftFunctorImpl<R> extends FunctorAbstract<Tup2<In, R>>
   }
   
 }
-
-typedef Tup2LeftFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(Tup2LeftFunctorImpl)]>;

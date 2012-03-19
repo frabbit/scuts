@@ -34,5 +34,3 @@ class KleisliCategory<M> extends CategoryAbstract<In->Of<M,In>> {
     return KleisliBox.box(h);
   }
 }
-
-//typedef KleisliCategory = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(KleisliCategoryImpl)]>;

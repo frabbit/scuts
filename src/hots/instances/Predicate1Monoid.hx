@@ -4,7 +4,7 @@ import hots.classes.MonoidAbstract;
 
 using scuts.core.extensions.Predicate1Ext;
 
-class Predicate1MonoidImpl<X> extends MonoidAbstract<X->Bool>
+class Predicate1Monoid<X> extends MonoidAbstract<X->Bool>
 {
   public function new () {}
   
@@ -15,5 +15,3 @@ class Predicate1MonoidImpl<X> extends MonoidAbstract<X->Bool>
     return function (x) return true;
   }
 }
-
-typedef Predicate1Monoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(hots.instances.Predicate1MonoidImpl)]>;

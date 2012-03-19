@@ -4,7 +4,7 @@ import hots.classes.Ord;
 import hots.classes.OrdAbstract;
 import scuts.core.types.Ordering;
 
-class IntOrdImpl extends OrdAbstract<Int> {
+class IntOrd extends OrdAbstract<Int> {
   
   public function new () super(IntEq.get())
   
@@ -39,5 +39,3 @@ class IntOrdImpl extends OrdAbstract<Int> {
     return if (a < b) -1 else if (a > b) 1 else 0;
   }
 }
-
-typedef IntOrd = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IntOrdImpl)]>;

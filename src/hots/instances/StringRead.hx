@@ -4,7 +4,7 @@ import hots.classes.ReadAbstract;
 
 
 
-class StringReadImpl extends ReadAbstract<String> {
+class StringRead extends ReadAbstract<String> {
   
   public function new () {}
   
@@ -12,5 +12,3 @@ class StringReadImpl extends ReadAbstract<String> {
     return v;
   }
 }
-
-typedef StringRead = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(StringReadImpl)]>;

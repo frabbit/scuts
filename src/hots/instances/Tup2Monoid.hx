@@ -6,7 +6,7 @@ import hots.classes.MonoidAbstract;
 
 import scuts.core.types.Tup2;
 
-class Tup2MonoidImpl<A,B> extends MonoidAbstract<Tup2<A,B>>
+class Tup2Monoid<A,B> extends MonoidAbstract<Tup2<A,B>>
 {
   private var m1:Monoid<A>;
   private var m2:Monoid<B>;
@@ -26,5 +26,3 @@ class Tup2MonoidImpl<A,B> extends MonoidAbstract<Tup2<A,B>>
     return Tup2.create(m1.empty(), m2.empty());
   }
 }
-
-typedef Tup2Monoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(Tup2MonoidImpl)]>;

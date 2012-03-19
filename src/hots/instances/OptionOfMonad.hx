@@ -4,10 +4,6 @@ import hots.classes.MonadAbstract;
 import hots.In;
 import scuts.core.extensions.OptionExt;
 import scuts.core.types.Option;
-import hots.classes.Monad;
-import scuts.Scuts;
-
-using scuts.core.extensions.OptionExt;
 
 using hots.macros.Box;
 

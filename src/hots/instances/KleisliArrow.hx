@@ -39,5 +39,3 @@ class KleisliArrow<M> extends ArrowAbstract<In->Of<M,In>>
     return B.box(f);
   }
 }
-
-//typedef KleisliArrow = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(KleisliArrowImpl)]>;

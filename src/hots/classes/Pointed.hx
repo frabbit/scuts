@@ -1,11 +1,8 @@
 package hots.classes;
+import hots.TC;
 
-/**
- * ...
- * @author 
- */
 
-interface Pointed<F> implements Functor<F>
+interface Pointed<F> implements Functor<F>, implements TC
 {
   public function pure <A>(v:A):Of<F,A>;
 }

@@ -4,7 +4,7 @@ import hots.classes.Eq;
 import hots.classes.EqAbstract;
 import hots.instances.IntEq;
 
-class EnumByIndexEqImpl extends EqAbstract<Enum<Dynamic>> {
+class EnumByIndexEq extends EqAbstract<Enum<Dynamic>> {
   
   public function new () {}
 
@@ -12,5 +12,3 @@ class EnumByIndexEqImpl extends EqAbstract<Enum<Dynamic>> {
     return IntEq.get().eq(Type.enumIndex(a),Type.enumIndex(b));
   }
 }
-
-typedef EnumByIndexEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EnumByIndexEqImpl)]>;

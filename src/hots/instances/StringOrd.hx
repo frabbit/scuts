@@ -4,7 +4,7 @@ import hots.classes.Ord;
 import hots.classes.OrdAbstract;
 import hots.instances.StringEq;
 
-class StringOrdImpl extends OrdAbstract<String> {
+class StringOrd extends OrdAbstract<String> {
   
   public function new () super(StringEq.get())
   
@@ -12,5 +12,3 @@ class StringOrdImpl extends OrdAbstract<String> {
     return a <= b;
   }
 }
-
-typedef StringOrd = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(StringOrdImpl)]>;

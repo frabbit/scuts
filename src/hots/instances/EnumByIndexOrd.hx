@@ -5,7 +5,7 @@ import hots.classes.OrdAbstract;
 
 
 
-class EnumByIndexOrdImpl extends OrdAbstract<Enum<Dynamic>> {
+class EnumByIndexOrd extends OrdAbstract<Enum<Dynamic>> {
   
   public function new () super(EnumByIndexEq.get())
 
@@ -13,5 +13,3 @@ class EnumByIndexOrdImpl extends OrdAbstract<Enum<Dynamic>> {
     return Type.enumIndex(a) <= Type.enumIndex(b);
   }
 }
-
-typedef EnumByIndexOrd = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EnumByIndexOrdImpl)]>;

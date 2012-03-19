@@ -27,5 +27,3 @@ class ArrayTOfFunctor<M> extends FunctorAbstract<Of<M,Array<In>>> {
     },B.unbox(fa)));
   }
 }
-
-//typedef ArrayTOfFunctor = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayTOfFunctorImpl)]>;

@@ -1,7 +1,7 @@
 package hots.instances;
-import hots.classes.Enumeration;
+import hots.classes.EnumerationAbstract;
 
-class IntEnumerationImpl extends Enumeration<Int>{
+class IntEnumeration extends EnumerationAbstract<Int>{
   
   public function new () {}
   
@@ -13,5 +13,3 @@ class IntEnumerationImpl extends Enumeration<Int>{
     return i;
   }
 }
-
-typedef IntEnumeration = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IntEnumerationImpl)]>;

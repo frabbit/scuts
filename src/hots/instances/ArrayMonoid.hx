@@ -6,7 +6,7 @@ import hots.classes.MonoidAbstract;
 
 
 
-class ArrayMonoidImpl<T> extends MonoidAbstract<Array<T>>
+class ArrayMonoid<T> extends MonoidAbstract<Array<T>>
 {
   public function new () {}
   
@@ -18,5 +18,3 @@ class ArrayMonoidImpl<T> extends MonoidAbstract<Array<T>>
   }
 
 }
-
-//typedef ArrayMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayMonoidImpl)]>;

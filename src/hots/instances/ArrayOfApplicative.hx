@@ -5,7 +5,7 @@ import hots.In;
 import hots.classes.Applicative;
 import scuts.core.types.Option;
 
-using hots.instances.ArrayBox;
+using hots.macros.Box;
 
 class ArrayOfApplicative extends ApplicativeAbstract<Array<In>>
 {
@@ -22,5 +22,3 @@ class ArrayOfApplicative extends ApplicativeAbstract<Array<In>>
     return res.box();
   }
 }
-
-//typedef ArrayOfApplicative = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfApplicativeImpl)]>;

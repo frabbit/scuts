@@ -3,7 +3,7 @@ import hots.classes.Show;
 import hots.classes.ShowAbstract;
 
 
-class BoolShowImpl extends ShowAbstract<Bool> 
+class BoolShow extends ShowAbstract<Bool> 
 {
   public function new () {}
 
@@ -11,5 +11,3 @@ class BoolShowImpl extends ShowAbstract<Bool>
     return Std.string(v);
   }
 }
-
-typedef BoolShow = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(BoolShowImpl)]>;

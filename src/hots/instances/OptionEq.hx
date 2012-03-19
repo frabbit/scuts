@@ -6,7 +6,7 @@ import scuts.core.types.Option;
 import hots.classes.Eq;
 
 
-class OptionEqImpl<T> extends EqAbstract<Option<T>> {
+class OptionEq<T> extends EqAbstract<Option<T>> {
   
   var equals:Eq<T>;
 
@@ -17,5 +17,3 @@ class OptionEqImpl<T> extends EqAbstract<Option<T>> {
   override public function eq  (a:Option<T>, b:Option<T>):Bool return OptionExt.eq(a,b, equals.eq)
   
 }
-
-typedef OptionEq = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionEqImpl)]>;

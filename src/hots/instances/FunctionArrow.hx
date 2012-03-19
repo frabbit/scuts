@@ -9,7 +9,7 @@ using scuts.core.extensions.Function1Ext;
 private typedef B = FunctionBox;
  
 // Arrow of Functions
-class FunctionArrowImpl extends ArrowAbstract<In->In>
+class FunctionArrow extends ArrowAbstract<In->In>
 {
   public function new () {
     super(FunctionCategory.get());
@@ -25,5 +25,3 @@ class FunctionArrowImpl extends ArrowAbstract<In->In>
   
   
 }
-
-typedef FunctionArrow = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(FunctionArrowImpl)]>;

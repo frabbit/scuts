@@ -3,7 +3,7 @@ import hots.classes.Read;
 import hots.classes.ReadAbstract;
 import scuts.Scuts;
 
-class IntReadImpl extends ReadAbstract<Int> {
+class IntRead extends ReadAbstract<Int> {
   
   public function new () {}
   
@@ -16,5 +16,3 @@ class IntReadImpl extends ReadAbstract<Int> {
     }
   }
 }
-
-typedef IntRead = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(IntReadImpl)]>;

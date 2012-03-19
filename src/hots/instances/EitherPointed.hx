@@ -7,7 +7,7 @@ import scuts.core.types.Either;
 
 private typedef B = EitherBox;
 
-class EitherPointedImpl<L> extends PointedAbstract<Either<L,In>> {
+class EitherPointed<L> extends PointedAbstract<Either<L,In>> {
   
   public function new () {
     super(EitherFunctor.get());
@@ -16,5 +16,3 @@ class EitherPointedImpl<L> extends PointedAbstract<Either<L,In>> {
   override public function pure<A>(x:A):EitherOf<L,A> return B.box(Right(x))
 
 }
-
-typedef EitherPointed = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(EitherPointedImpl)]>;

@@ -6,7 +6,7 @@ import hots.instances.StringShow;
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.IteratorExt;
 
-class HashShowImpl<T> extends ShowAbstract<Hash<T>> {
+class HashShow<T> extends ShowAbstract<Hash<T>> {
 
   private var showT:Show<T>;
   
@@ -20,4 +20,3 @@ class HashShowImpl<T> extends ShowAbstract<Hash<T>> {
     return "{ " + elems.join(", ") + " }";
   }
 }
-typedef HashShow = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(HashShowImpl)]>;

@@ -4,9 +4,9 @@ import hots.classes.Eq;
 import hots.In;
 
 
-using hots.instances.ArrayBox;
+using hots.macros.Box;
 
-class ArrayOfCollectionImpl extends CollectionAbstract<Array<In>>
+class ArrayOfCollection extends CollectionAbstract<Array<In>>
 {
   
   public function new () {}
@@ -42,5 +42,3 @@ class ArrayOfCollectionImpl extends CollectionAbstract<Array<In>>
   }
   
 }
-
-typedef ArrayOfCollection = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(ArrayOfCollectionImpl)]>;

@@ -5,7 +5,7 @@ import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
 
 
-class DualMonoidImpl<T> extends MonoidAbstract<T>
+class DualMonoid<T> extends MonoidAbstract<T>
 {
   var monoid:Monoid<T>;
   
@@ -20,5 +20,3 @@ class DualMonoidImpl<T> extends MonoidAbstract<T>
     return monoid.empty();
   }
 }
-
-typedef DualMonoid = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(DualMonoidImpl)]>;

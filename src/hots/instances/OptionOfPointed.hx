@@ -5,7 +5,7 @@ import hots.In;
 import scuts.core.extensions.OptionExt;
 import scuts.core.types.Option;
 
-using hots.instances.OptionBox;
+using hots.macros.Box;
 
 class OptionOfPointed extends PointedAbstract<Option<In>>
 {
