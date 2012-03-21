@@ -25,14 +25,12 @@ extern class OptionOfExt
     return B.box(None);
   }
   
-  public static inline function concat<A>(a:OptionOf<A>, b:OptionOf<A>, m:Monoid<A>):OptionOf<A> 
+  public static function concat<A>(a:OptionOf<A>, b:OptionOf<A>, m:Monoid<A>):OptionOf<A> 
   {
-    var a1 = B.unbox(a);
-    var b1 = B.unbox(b);
     
-    return B.box(switch (a1) {
+    return B.box(switch (B.unbox(a)) {
       case Some(v1):
-        switch (b1) {
+        switch (B.unbox(b)) {
           case Some(v2): Some(m.append(v1,v2));
           case None: None;
         }

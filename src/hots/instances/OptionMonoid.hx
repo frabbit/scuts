@@ -17,7 +17,8 @@ class OptionMonoid<X> extends MonoidAbstract<Option<X>>
   
   public function new (monoid:Monoid<X>) this.monoid = monoid
   
-  override public inline function append (a:Option<X>, b:Option<X>):Option<X> {
+  override public inline function append (a:Option<X>, b:Option<X>):Option<X> 
+  {
     return OptionOfExt.concat(a.box(), b.box(), monoid).unbox();
   }
   override public inline function empty ():Option<X> {
