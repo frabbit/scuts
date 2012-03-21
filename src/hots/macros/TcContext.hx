@@ -1,8 +1,11 @@
 package hots.macros;
 
 
-import hots.macros.utils.Utils;
+#if !macro
 import hots.TC;
+#end
+import hots.macros.utils.Utils;
+
 import scuts.core.Log;
 import scuts.core.types.Tup2;
 
@@ -12,6 +15,7 @@ import scuts.Scuts;
 
 
 #if (macro || display)
+
 import scuts.mcore.Parse;
 import scuts.mcore.MContext;
 import haxe.macro.Context;
@@ -40,37 +44,11 @@ enum ResolveError {
 
 #end
 
-
-
-
 class TcContext 
 {
 
     
-  @:macro public static function box2(expr:Expr) 
-  {
-    return Box.box1(Box.box1(expr));
-  }
   
-  @:macro public static function box3(expr:Expr) {
-    return Box.box1(Box.box1(Box.box1(expr)));
-  }
-  
-  @:macro public static function boxF2(expr:Expr) {
-    
-    return Box.boxF1(Box.boxF1(expr));
-  }
-  
-  @:macro public static function boxF3(expr:Expr) {
-    return Box.boxF1(Box.boxF1(Box.boxF1(expr)));
-  }
-  @:macro public static function unbox2<M,A,B>(expr:ExprRequire<hots.Of<hots.Of<M, B>,A>>) {
-    return Box.unbox1(Box.unbox1(expr));
-  }
-  
-  @:macro public static function unbox3<M,A,B,C>(expr:ExprRequire<hots.Of<hots.Of<hots.Of<M,C>, B>,A>>) {
-    return Box.unbox1(Box.unbox1(Box.unbox1(expr)));
-  }
   
   @:macro public static function tc(expr:Expr, tc:ExprRequire<Class<TC>>) 
   {
@@ -219,28 +197,6 @@ class TcContext
   }
   
   #end
-  /*
-  public static function ofConstract (t:Type, once:Bool = true) {
-    
-  }
   
-  
-  
-  public static function ofExpand (t:Type, once:Bool = true):Option<Type> {
-    
-    var ofType = switch (Context.getType("hots.Of")) {
-      case Type.TAnonymous(ref): ref;
-      default: Scuts.macroError("hots.Of not available");
-    }
-    switch (t) {
-      case Type.TInst(t, params): 
-        if (params.length > 0) {
-          Type.TAnonymous(ofType);
-        } else {
-          None;
-        }
-    }
-  }
-  */
   
 }

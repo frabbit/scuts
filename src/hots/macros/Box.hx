@@ -23,6 +23,7 @@ using scuts.core.extensions.EitherExt;
 import scuts.core.types.Either;
 using scuts.core.extensions.DynamicExt;
 using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.IteratorExt;
 using scuts.core.Log;
 private typedef U = hots.macros.utils.Utils;
 
@@ -59,68 +60,90 @@ class Box
     8. Error boxing not possible
    
    */
-  @:macro public static function box(e:Expr) {
-    return cache.call(function () return box1(e), e);
+  @:macro public static function box(e:Expr, ?times:Int = 1) {
+    return (0...times).foldLeft(function (acc, c) return box1(acc), e);
   }
   
-  @:macro public static function boxF(e:Expr) return boxF1(e)
+    
+  @:macro public static function boxF(e:Expr, ?times:Int = 1) 
+    return (0...times).foldLeft(function (acc, c) return boxF1(acc), e)
   
-  @:macro public static function unboxF(e:Expr) return unboxF1(e)
   
-  @:macro public static function unbox(e:Expr) return cache.call(function () return unbox1(e), e)
+  @:macro public static function unboxF(e:Expr, ?times:Int = 1) 
+    return (0...times).foldLeft(function (acc, c) return unboxF1(acc), e)
+  
+  @:macro public static function unbox(e:Expr, ?times:Int = 1) 
+    return (0...times).foldLeft(function (acc, c) return unbox1(acc), e)
   
   
   #if (macro || display)
   
-   public static function unbox1(e:Expr):Expr 
+  public static function unbox1(e:Expr):Expr 
   {
-    var type = Context.follow(Context.typeof(e));
+    function f() 
+    {
+      var type = Context.follow(Context.typeof(e));
 
-    return unboxOfTypeToType(type)
-      .mapRight(function (x) return unsafeCast(e, type, x))
-      .getOrElse(function (err) return handleUnboxError(err, e));
+      return unboxOfTypeToType(type)
+        .mapRight(function (x) return unsafeCast(e, type, x))
+        .getOrElse(function (err) return handleUnboxError(err, e));
+    }
+    return cache.call(f, e);
   }
   
   public static function box1(e:Expr):Expr 
   {
-    var type = Context.follow(Context.typeof(e));
-    var newType = boxTypeToOfType(type);
+    function f() 
+    {
+      var type = Context.follow(Context.typeof(e));
+      var newType = boxTypeToOfType(type);
     
-    return newType
-      .mapRight(function (x) return unsafeCast(e, type,x))
-      .getOrElse(function (err) return handleBoxError(err, e));
+      return newType
+        .mapRight(function (x) return unsafeCast(e, type,x))
+        .getOrElse(function (err) return handleBoxError(err, e));
+    }
+    return cache.call(f, e);
   }
   
   public static function unboxF1 (e:Expr):Expr 
   {
-    var errorNoFunction = function () return Scuts.macroError("Argument " + Print.expr(e) + " must be a function with 1-arity");
-    
-    var type = MContext.typeof(e).getOrElse(function () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos));
-    
-    var fnParts = type.asFunction().getOrElse(errorNoFunction);
+    function f() 
+    {
+      var errorNoFunction = function () return Scuts.macroError("Argument " + Print.expr(e) + " must be a function with 1-arity");
+      
+      var type = MContext.typeof(e).getOrElse(function () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos));
+      
+      var fnParts = type.asFunction().getOrElse(errorNoFunction);
 
-    var retBoxed = unboxOfTypeToType(fnParts._2);
-     
-    return switch (retBoxed) {
-      case Left(error): handleUnboxError(error, e);
-      case Right(type): unsafeCast(e, type, TFun(fnParts._1, type));
-    };
+      var retBoxed = unboxOfTypeToType(fnParts._2);
+       
+      return switch (retBoxed) 
+      {
+        case Left(error): handleUnboxError(error, e);
+        case Right(type): unsafeCast(e, type, TFun(fnParts._1, type));
+      };
+    }
+    return cache.call(f, e);
   }
   
   public static function boxF1 (e:Expr) 
   {
-    var errorNoFunction = function () return Scuts.macroError("Argument " + Print.expr(e) + " must be a function with 1-arity");
-    
-    var type = MContext.typeof(e).getOrElse(function () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos));
-    
-    var fnParts = type.asFunction().getOrElse(errorNoFunction);
+    function f() 
+    {
+      var errorNoFunction = function () return Scuts.macroError("Argument " + Print.expr(e) + " must be a function with 1-arity");
+      
+      var type = MContext.typeof(e).getOrElse(function () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos));
+      
+      var fnParts = type.asFunction().getOrElse(errorNoFunction);
 
-    var retBoxed = boxTypeToOfType(fnParts._2);
-     
-    return switch (retBoxed) {
-      case Left(error): handleBoxError(error, e);
-      case Right(type): unsafeCast(e, type, TFun(fnParts._1, type));
-    };
+      var retBoxed = boxTypeToOfType(fnParts._2);
+       
+      return switch (retBoxed) {
+        case Left(error): handleBoxError(error, e);
+        case Right(type): unsafeCast(e, type, TFun(fnParts._1, type));
+      };
+    }
+    return cache.call(f, e);
   }
   
   static function handleBoxError <T>(error:BoxError, expr:Expr):T
