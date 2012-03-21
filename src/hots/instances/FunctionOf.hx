@@ -3,5 +3,5 @@ package hots.instances;
 
 import hots.In;
 import hots.Of;
-import hots.COf;
-typedef FunctionOf<A,B> = COf<In->In, A, B>
+import hots.OfOf;
+typedef FunctionOf<A,B> = OfOf<In->In, A, B>

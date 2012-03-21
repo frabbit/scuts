@@ -2,7 +2,7 @@ package hots.instances;
 
 import hots.Of;
 import hots.In;
-import hots.COf;
+import hots.OfOf;
 
 
-typedef ArrayTOf<M, A> = COf<M, Array<In>, A>
+typedef ArrayTOf<M, A> = OfOf<M, Array<In>, A>

@@ -1,5 +1,5 @@
 package hots.classes;
-import hots.COf;
+import hots.OfOf;
 import hots.Of;
 import hots.classes.Foldable;
 import scuts.Scuts;

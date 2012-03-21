@@ -1,5 +1,5 @@
 package hots.classes;
-import hots.COf;
+import hots.OfOf;
 import hots.TC;
 import scuts.Scuts;
 
@@ -7,20 +7,20 @@ import scuts.Scuts;
 
 interface Category<Cat> implements TC
 {
-  public function id <A>(a:A):COf<Cat, A, A>;
+  public function id <A>(a:A):OfOf<Cat, A, A>;
   /**
    * aka (.)
    */
-  public function dot <A,B,C>(g:COf<Cat, B, C>, f:COf<Cat, A, B>):COf<Cat, A, C>;
+  public function dot <A,B,C>(g:OfOf<Cat, B, C>, f:OfOf<Cat, A, B>):OfOf<Cat, A, C>;
   
   /**
    * aka >>>
    */
-  public function next <A,B,C>(f:COf<Cat, A, B>, g:COf<Cat, B, C>):COf<Cat,A, C>;
+  public function next <A,B,C>(f:OfOf<Cat, A, B>, g:OfOf<Cat, B, C>):OfOf<Cat,A, C>;
   
   /**
    * aka <<<
    */
-  public function back <A,B,C>(g:COf<Cat, B, C>, f:COf<Cat, A, B>):COf<Cat,A, C>;
+  public function back <A,B,C>(g:OfOf<Cat, B, C>, f:OfOf<Cat, A, B>):OfOf<Cat,A, C>;
   
 }
