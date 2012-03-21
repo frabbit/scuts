@@ -6,9 +6,12 @@ package scuts.mcore;
 
 //using scuts.Core;
 import haxe.macro.Compiler;
+import scuts.core.extensions.ArrayExt;
 import scuts.core.extensions.IntExt;
+import scuts.core.extensions.StringExt;
 import scuts.core.Log;
 import scuts.CoreTypes;
+import scuts.mcore.extensions.TypeExt;
 import scuts.Scuts;
 
 
@@ -24,6 +27,9 @@ using scuts.core.extensions.IntExt;
 using scuts.core.extensions.DynamicExt;
 using scuts.core.extensions.OptionExt;
 using scuts.core.Log;
+using scuts.mcore.extensions.TypeExt;
+using scuts.core.extensions.StringExt;
+
 
 private typedef Ctx = haxe.macro.Context;
 
@@ -40,23 +46,108 @@ class Context
   
   public static function setupCache ():Bool 
   {
-    return if (!cacheEnabled) {
-      if (!FileSystem.exists(Constants.SCUTS_CACHE_FOLDER)) {
+    return if (!cacheEnabled) 
+    {
+      if (!FileSystem.exists(Constants.SCUTS_CACHE_FOLDER)) 
+      {
         FileSystem.createDirectory(Constants.SCUTS_CACHE_FOLDER);
       }
       Compiler.addClassPath(Constants.SCUTS_CACHE_FOLDER + "/");
       cacheEnabled = true;
-    } else {
-      false;
-    }
+    } 
+    else false;
   }
   public static function getCacheFolder ():String 
   {
     setupCache();
     return Constants.SCUTS_CACHE_FOLDER;
-    
   }
   
+  
+  public static function getFunctionTypeParameters (type:Type, functionName:String):Array<Type>
+  {
+    function loop (type:Type, found:Array<Type>) 
+    {
+      return switch (type) 
+      {
+        case TInst(t, params):
+          var tget = t.get();
+          if (tget.pack.length == 1 && tget.pack[0] == functionName 
+              && !found.any(function (x) return TypeExt.eq(x, type))) 
+            found.concat([type]);
+          else 
+            params.foldLeft(function (acc, cur) return loop(cur, acc), found);
+        case TEnum(t, params):
+          params.foldLeft(function (acc, cur) return loop(cur, acc), found);
+        case TFun(args, ret):
+          var res = args.foldLeft(function (acc, cur) return loop(cur.t, acc), found);
+          loop(ret, res);
+        case TAnonymous(a):
+          a.get().fields.foldLeft(function (acc, cur) return loop(cur.type, acc), found);
+        case TType(t, params):
+          params.foldLeft(function (acc, cur) return loop(cur, acc), found);
+        case TDynamic(t): loop(t, found);
+        case TLazy(t): loop(t(), found);
+        case TMono(t): found;
+      }
+    }
+    return loop(type, []);
+  }
+  
+  public static function getLocalClassTypeParameters (type:Type):Array<Type>
+  {
+    return getLocalClassAsClassType()
+      .map(function (x) return getClassTypeParameters(type, x.pack, x.name))
+      .getOrElse(function () return []);
+  }
+  
+  public static function getLocalTypeParameters (type:Type):Array<Type>
+  {
+    return getLocalClassTypeParameters(type)
+      .union(getLocalMethodTypeParameters(type), TypeExt.eq);
+  }
+  
+  public static function getLocalMethodTypeParameters (type:Type):Array<Type>
+  {
+    return getLocalMethod()
+      .map(function (x) return getFunctionTypeParameters(type, x))
+      .getOrElse(function () return []);
+  }
+  
+  public static function getClassTypeParameters (type:Type, pack:Array<String>, name:String):Array<Type>
+  {
+    var cpack = pack.insertElemBack(name);
+    function loop (type:Type, found:Array<Type>) 
+    {
+      return switch (type) 
+      {
+        case TInst(t, params):
+          var tget = t.get();
+          if (tget.pack.length == cpack.length 
+              && ArrayExt.eq(tget.pack, cpack, StringExt.eq) 
+              && !found.any(function (x) return TypeExt.eq(x, type)))
+            found.concat([type]);
+          else
+            params.foldLeft(function (acc, cur) return loop(cur, acc), found);
+        case TEnum(t, params):
+          params.foldLeft(function (acc, cur) return loop(cur, acc), found);
+        case TFun(args, ret):
+          var r = args.foldLeft(function (acc, cur) return loop(cur.t, acc), found);
+          loop(ret, r);
+        case TAnonymous(a):
+          a.get().fields.foldLeft(function (acc, cur) return loop(cur.type, acc), found);
+        case TType(t, params):
+          params.foldLeft(function (acc, cur) return loop(cur, acc), found);
+        case TDynamic(t):
+          loop(t, found);
+        case TLazy(t):
+          loop(t(), found);
+        case TMono(t):
+          found;
+      }
+    }
+    return loop(type, []);
+  }
   
   public static function getLocalClassAsType ():Option<Type>
   {
