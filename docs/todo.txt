@@ -1,0 +1,10 @@
+- clean up code in TcContext, Box ( refactor runtime errors to eithers)
+- move generic Utils methods to scutsMcore module
+- allow tc resolver to resolve passed type class instances (IntSumMonoid f.e. with 1.tc(IntSumMonoid)
+- clean up type class instances
+- add context class that should provide everything with one import
+- how to handle special boxing functions (for kleisli, either, tuples)
+- resolved instances of type classes should be reused through static methods of generated classes
+
+- auto create type classes for record types ( needs type classes for all constructor arguments as dependencies )
+- auto create type classes for enums ( needs type classes for all fields as dependencies )
