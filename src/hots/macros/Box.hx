@@ -239,7 +239,7 @@ class Box
 
   static function unsafeCast (e:Expr, fromType:Type, toType:Type) 
   {
-    var wildcards = Utils.getLocalTypeParameters(toType);
+    var wildcards = MContext.getLocalTypeParameters(toType);
     return Cast.inlinedUnsafeCastTo2(e, fromType, toType, wildcards);
   }
 
