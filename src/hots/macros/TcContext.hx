@@ -49,13 +49,10 @@ enum ResolveError {
 class TcContext 
 {
 
-    
-  
-  
-  @:macro public static function tc(expr:Expr, tc:ExprRequire<Class<TC>>) 
+  @:macro public static function tc(exprOrType:Expr, tc:ExprRequire<Class<TC>>) 
   {
     // expr can be a value or a type
-    var exprType = Context.typeof(expr);
+    var exprType = Context.typeof(exprOrType);
     var expr = switch (exprType) {
       case TType(t, p):
         var dt = t.get();
@@ -63,7 +60,7 @@ class TcContext
         {
           if (dt.params.length > 0) 
           {
-            Scuts.macroError("Types with parameters are not supported as first parameter.", expr.pos);
+            Scuts.macroError("Types with parameters are not supported as first parameter.", exprOrType.pos);
           } 
           else 
           {
@@ -77,9 +74,9 @@ class TcContext
         }
         else 
         {
-          expr;
+          exprOrType;
         }
-      default: expr;
+      default: exprOrType;
     }
 
     var tcType = switch (Context.typeof(tc)) {
@@ -117,20 +114,37 @@ class TcContext
   
   public static function resolve (exprType:Type, tcType:Type, level:Int = 0):Either<ResolveError, Expr>
   {
+    function handleMultipleInstances (tcId, filtered:Array<Tup2<TypeClassInstanceInfo, Mapping>>)
+    {
+      var inScope = filtered.filter(function (x) return isInstanceInUsingScope(x._1));
+      return switch (inScope.length) 
+      {
+        case 0: Left(MultipleInstancesNoneInScope(tcId, exprType));
+        default:
+          if (inScope.length > 1) 
+            Left(MultipleInstancesWithScope(tcId, exprType));
+          else 
+          {
+            var tc = inScope[0];
+            makeInstanceExpr(tc._1, tc._2, level);
+          }
+      }
+    }
     function f (type): Either<ResolveError, Expr>
     {
       var ct = type._1;
       
       var tcId = SType.getFullQualifiedTypeName(ct.get());
-      [].debugObj("  ".times(level) + "resolve: " + tcId + " for " + Print.type(exprType));
       
       var info = TypeClasses.registry.get(tcId);
       
       var filtered = info.map(
         function (x) {
-          return Tup2.create(x, Utils.typeIsCompatibleTo(exprType, x.tcParamTypes[0], x.allParameters));
+          return 
+            Utils.typeIsCompatibleTo(exprType, x.tcParamTypes[0], x.allParameters)
+            .map(function (m) return Tup2.create(x, m));
         }
-      ).filter(function (x) return x._2.isSome());
+      ).catOptions();
       
       return (switch (filtered.length) {
         case 0: 
@@ -140,32 +154,17 @@ class TcContext
         case 1: 
           var info = filtered[0]._1;
           
-          var mapping = filtered[0]._2.extract();
+          var mapping = filtered[0]._2;
           makeInstanceExpr(info, mapping, level);
 
         default: 
           // we've got multiple type classes, check if only one of them is in using scope
-          var inScope = filtered.filter(function (x) return isInstanceInUsingScope(x._1));
-          
-          switch (inScope.length) 
-          {
-            case 0: Left(MultipleInstancesNoneInScope(tcId, exprType));
-            default:
-              if (inScope.length > 1) 
-                Left(MultipleInstancesWithScope(tcId, exprType));
-              else 
-              {
-                var tc = inScope[0];
-                makeInstanceExpr(tc._1, tc._2.extract(), level);
-              }
-          }
-          
+          handleMultipleInstances(tcId, filtered);
       });
     }
     
     var a = tcType.asClassType()
     .toRight(function () return ResolveError.InvalidTypeClass(tcType));
-    type(a);
     return a.flatMapRight(f);
   }
   
@@ -182,17 +181,17 @@ class TcContext
 
         default: Scuts.unexpected();
       });
-    type(callArgs);
     
-    var acc = callArgs.foldLeft(
-      function (acc:Tup2<Array<ResolveError>, Array<Expr>>, c) 
-        return switch (c) { 
-          case Left(l): Tup2.create(acc._1.insertElemBack(l), acc._2);
-          case Right(r): Tup2.create(acc._1, acc._2.insertElemBack(r));
-        }, 
-      Tup2.create([], [])
-    );
-    type(acc);
+    var acc = 
+      callArgs.foldLeft(
+        function (acc:Tup2<Array<ResolveError>, Array<Expr>>, c) 
+          return switch (c) { 
+            case Left(l): Tup2.create(acc._1.insertElemBack(l), acc._2);
+            case Right(r): Tup2.create(acc._1, acc._2.insertElemBack(r));
+          }, 
+        Tup2.create([], [])
+      );
+
     return 
       if (acc._1.length > 0) 
         Left(DependencyErrors(acc._1)) // has errors
