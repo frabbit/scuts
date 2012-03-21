@@ -9,8 +9,10 @@ package scuts.mcore.cache;
 #elseif (display || macro)
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.PosInfos;
 import haxe.Timer;
 import neko.Lib;
+import scuts.core.extensions.PosInfosExt;
 import scuts.mcore.Print;
 
 using StringTools;
@@ -24,25 +26,41 @@ class ExprCache
   
   var measureTimes:Bool;
   
+  var enabled:Bool;
   public function new (measureTimes:Bool) 
-    {
-      cache = new Hash();
-      times = new Hash();
-      this.measureTimes = measureTimes;
-    }
+  {
+    enabled = #if scutsCache true #else false #end;
+    cache = new Hash();
+    times = new Hash();
+    this.measureTimes = measureTimes;
+  }
   
+  public function enableCache (b:Bool):ExprCache 
+  {
+    enabled = b;
+    return this;
+  }
+    
   function addTime (id:String, time:Float):Void 
+  {
+    if (!times.exists(id)) 
     {
-      if (!times.exists(id)) 
-        {
-          times.set(id, { time: time, calls:1 } );
-        }
-      else 
-        {
-          var t = times.get(id);
-          t.time += time;
-          t.calls++;
-        }
+      times.set(id, { time: time, calls:1 } );
+    }
+    else 
+    {
+      var t = times.get(id);
+      t.time += time;
+      t.calls++;
+    }
+  }
+  
+    public function printOnGenerate (title:String):ExprCache
+    {
+      if (measureTimes) {
+        Context.onGenerate(function (_) traceTimes(title));
+      }
+      return this;
     }
   /**
    * Prints stats and times for all calls to expression generators, signature calls and cache calls.
@@ -50,60 +68,66 @@ class ExprCache
    * @param  title Stats Title which is prited to the console.
    */
   public function traceTimes (title:String):Void 
+  {
+    var t = "\n" + title + ":\n------------------------------------\n";
+    // sort keys
+    var a:Array<String> = []; 
+    for (k in times.keys()) a.push(k);
+    a.sort(function (x, y) return x < y ? -1 : x > y ? 1 : 0);
+    // create output
+    for (k in a) 
     {
-      var t = "\n" + title + ":\n------------------------------------\n";
-      // sort keys
-      var a:Array<String> = []; 
-      for (k in times.keys()) a.push(k);
-      a.sort(function (x, y) return x < y ? -1 : x > y ? 1 : 0);
-      // create output
-      for (k in a) 
-        {
-          var o = times.get(k);
-          var perCall = o.time / o.calls;
-          
-          t += 
-            "  " + k.rpad(" ", 20) + " - total time: " + 
-            Std.string(o.time).rpad("0", 15) + ", calls: " + 
-            Std.string(o.calls).lpad(" ", 3) + ", time per call: " + 
-            Std.string(perCall).rpad("0", 15) + "\n";
-        }
-      Lib.print(t + "\n");
+      var o = times.get(k);
+      var perCall = o.time / o.calls;
+      
+      var perCallStr = if (perCall == 0) "0." + Std.string(perCall) else Std.string(perCall);
+      
+      t += 
+        "  " + k.rpad(" ", 55) + " calls: " + 
+        Std.string(o.calls).lpad(" ", 3) + " | total time: " + 
+        Std.string(o.time).rpad("0", 15) + " | time per call: " + 
+        perCallStr.rpad("0", 18) + "\n";
     }
+    Lib.print(t + "\n");
+  }
   
-  public function call (builder:Void->Expr, key:Dynamic, callId:String, ?keyPrinter:Void->String)
+  public function call (builder:Void->Expr, key:Dynamic, ?callId:String, ?keyPrinter:Void->String, ?posInfos:PosInfos)
+  {
+    
+    callId = callId != null ? callId : (posInfos.className + "." + posInfos.methodName + "@" + posInfos.lineNumber + "");
+    //trace(callId);
+    var t = Timer.stamp();
+    var id = Context.signature([key, posInfos]);
+    if (measureTimes) 
+      addTime(callId + "(signature)", Timer.stamp() - t);
+    var tc = Timer.stamp();
+    // get expression from cache or generate it
+    return if (enabled && cache.exists(id)) 
     {
-      var t = Timer.stamp();
-      var id = Context.signature([key, callId]);
-      if (measureTimes) 
-        addTime(callId + "(signature)", Timer.stamp() - t);
-      var t = Timer.stamp();
-      // get expression from cache or generate it
-      return 
-        if (cache.exists(id)) 
-          {
-            var c = cache.get(id);
-            if (measureTimes) addTime(callId + "(cache)", Timer.stamp() - t);
-            c;
-          } 
-        else 
-          {
-            var expr = builder();
-            if (measureTimes) addTime(callId, Timer.stamp() - t);
-            // print the generated expression if a keyPrinter is passed
-            if (keyPrinter != null) 
-              {
-                Lib.println("-----------------------------");
-                Lib.println(callId + ": " +  keyPrinter() + "\n");
-                Lib.println("--->\n");
-                Lib.println(Print.expr(expr).toString());
-                Lib.println("-----------------------------");
-              }
-            cache.set(id, expr);
-            expr;
-          }
-
+      var c = cache.get(id);
+      if (measureTimes) addTime(callId + "(cache)", Timer.stamp() - tc);
+      c;
+    } 
+    else 
+    {
+      var t1 = Timer.stamp();
+      var expr = builder();
+      var t2 = Timer.stamp() - t1;
+      if (measureTimes) addTime(callId, t2);
+      // print the generated expression if a keyPrinter is passed
+      if (keyPrinter != null) 
+      {
+        Lib.println("-----------------------------");
+        Lib.println(callId + ": " +  keyPrinter() + "\n");
+        Lib.println("--->\n");
+        Lib.println(Print.expr(expr).toString());
+        Lib.println("-----------------------------");
+      }
+      cache.set(id, expr);
+      expr;
     }
+  }
+  
 }
 
 #end

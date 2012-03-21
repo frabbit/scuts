@@ -292,10 +292,9 @@ class Print
             }
           add(":");
           
-          // case expression is always a block, but we don't need to print the outer parenthesis in this case
           var allExprs = switch (c.expr.expr) {
             case EBlock(exprs): exprs;
-            default: throw "assert";
+            default: [c.expr];
           }
           if (allExprs.length > 0) newLineInc();
           for (e in allExprs) {
@@ -776,9 +775,9 @@ class Print
     
     var str = switch (t) {
       case TLazy(f):
-        "TLazy";
+        type1(f(), simpleFunctionSignatures, wildcards);
       case TMono(t): 
-        "Unknown";
+        Constants.UNKNOWN_T_MONO;
           
       case TEnum( t, params ): 
         var paramsReduced = 

@@ -5,7 +5,9 @@ package scuts.mcore;
 #elseif (display || macro)
 
 //using scuts.Core;
+import haxe.macro.Compiler;
 import scuts.core.extensions.IntExt;
+import scuts.core.Log;
 import scuts.CoreTypes;
 import scuts.Scuts;
 
@@ -34,10 +36,32 @@ enum TypeType {
  
 class Context 
 {
+  static var cacheEnabled:Bool = false;
+  
+  public static function setupCache ():Bool 
+  {
+    return if (!cacheEnabled) {
+      if (!FileSystem.exists(Constants.SCUTS_CACHE_FOLDER)) {
+        FileSystem.createDirectory(Constants.SCUTS_CACHE_FOLDER);
+      }
+      Compiler.addClassPath(Constants.SCUTS_CACHE_FOLDER + "/");
+      cacheEnabled = true;
+    } else {
+      false;
+    }
+  }
+  public static function getCacheFolder ():String 
+  {
+    setupCache();
+    return Constants.SCUTS_CACHE_FOLDER;
+    
+  }
+  
   
   public static function getLocalClassAsType ():Option<Type>
   {
     
+    // TODO this is a hack because getLocalClass returns the Main Type of a Module not the actual class the macro is called in (report issue).
     var lc = Ctx.getLocalClass().nullToOption();
     return lc.flatMap(function (x) {
       
@@ -87,8 +111,8 @@ class Context
             case TInst(t1, params):
               var tget = t1.get();
               var tpos = Ctx.getPosInfos(tget.pos);
-              
-              if (min.inRange(tpos.min, tpos.max)) {
+              // TODO this is a hack because in display mode the min and max positions of the current class are wrong (report issue), so we don't filter anything out here
+              if (#if display true #else min.inRange(tpos.min, tpos.max) #end) {
                 tget.constructor.nullToArray()
                 .map(function (x) return x.get())
                 .concat(tget.fields.get())

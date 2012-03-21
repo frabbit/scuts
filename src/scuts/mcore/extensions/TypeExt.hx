@@ -45,7 +45,8 @@ class TypeExt
         default: Scuts.unexpected();
       }
     } else {
-      return switch (t) {
+      return switch (t) 
+      {
         case TEnum(t, params): BaseTypeExt.toComplexType(t.get(), params, wildcards);
         case TInst(t, params): BaseTypeExt.toComplexType(t.get(), params, wildcards);
         case TType(t, params): BaseTypeExt.toComplexType(t.get(), params, wildcards);
