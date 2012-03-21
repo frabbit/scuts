@@ -17,6 +17,22 @@ class ArrayExt
 {
 
   /**
+   * Concatenates all Some X values in a and returns a new list containing only X values.
+   */
+  public static function catOptions <X>(a:Array<Option<X>>):Array<X>
+  {
+    var res = [];
+    for (e in a) 
+    {
+      switch (e) {
+        case Some(v): res.push(v);
+        case None:
+      }
+    }
+    return res;
+  }
+  
+  /**
    * Returns an Array that contains all elements from a which are not elements of b.
    * If a contains duplicates, the resulting Array contains duplicates.
    */
