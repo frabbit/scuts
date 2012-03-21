@@ -28,10 +28,6 @@ using scuts.core.Log;
 private typedef U = hots.macros.utils.Utils;
 
 #end
-/**
- * ...
- * @author 
- */
 
 enum BoxError {
   TypeIsNoContainer(t:Type);
@@ -60,20 +56,18 @@ class Box
     8. Error boxing not possible
    
    */
-  @:macro public static function box(e:Expr, ?times:Int = 1) {
-    return (0...times).foldLeft(function (acc, c) return box1(acc), e);
-  }
+  @:macro public static function box(e:Expr, ?times:Int = 1)
+    return (0...times).foldLeft(function (acc, _) return box1(acc), e)
   
-    
+  
   @:macro public static function boxF(e:Expr, ?times:Int = 1) 
-    return (0...times).foldLeft(function (acc, c) return boxF1(acc), e)
-  
+    return (0...times).foldLeft(function (acc, _) return boxF1(acc), e)
   
   @:macro public static function unboxF(e:Expr, ?times:Int = 1) 
-    return (0...times).foldLeft(function (acc, c) return unboxF1(acc), e)
+    return (0...times).foldLeft(function (acc, _) return unboxF1(acc), e)
   
   @:macro public static function unbox(e:Expr, ?times:Int = 1) 
-    return (0...times).foldLeft(function (acc, c) return unbox1(acc), e)
+    return (0...times).foldLeft(function (acc, _) return unbox1(acc), e)
   
   
   #if (macro || display)
@@ -148,23 +142,27 @@ class Box
   
   static function handleBoxError <T>(error:BoxError, expr:Expr):T
   {
-    return Scuts.macroError(switch (error) {
+    var msg = switch (error) 
+    {
       case InnerTypeIsNoContainer(t, inner): 
         "Cannot box expression " + Print.expr(expr) + " of type " + Print.type(t)
         + " because it's inner type '" + Print.type(inner) + "' is not a container type like 'Container<X>'";
       case TypeIsNoContainer(t): 
         "Cannot box expression " + Print.expr(expr) + " of type " + Print.type(t) 
         + " because it's not a container type like 'Container<X>'";
-    }, expr.pos);
+    }
+    return Scuts.macroError(msg, expr.pos);
   }
   
   static function handleUnboxError <T>(error:UnboxError, expr:Expr):T 
   {
-    return Scuts.macroError(switch (error) {
+    var msg = switch (error) 
+    {
       case TypeIsNoOfType(t): "Cannot unbox expression " + Print.expr(expr) + " because it's no Of type";
       case InvalidOfType(t): "Cannot unbox expression " + Print.expr(expr) + " because it's no Of type";
       case ConversionError(t):
-    }, expr.pos);
+    }
+    return Scuts.macroError(msg, expr.pos);
   }
   
   public static function boxTypeToOfType (type:Type):Either<BoxError, Type> 
@@ -195,9 +193,7 @@ class Box
       Left(TypeIsNoContainer(type));
     });
   }
-  
-  
- 
+
   
   /**
    * 
@@ -235,7 +231,7 @@ class Box
             .toRight(err);
           } 
           else {
-            // the current Of container type must have more than one In Type, which means a higher category.
+            // the current Of container type must have more than one In Type, which means a higher category (Arrow instances f.e.).
             // We need to unbox the container type first and then we can unbox actual type.
             
             unboxOfTypeToType(container)
@@ -243,7 +239,6 @@ class Box
               var of = U.makeOfType(x, elemType);
               return unboxOfTypeToType(of);
             });
-            //Left(err())
           }
         });
       } 
