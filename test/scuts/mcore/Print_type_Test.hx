@@ -92,6 +92,15 @@ class Print_type_Test<Z>
     Assert.equals(expected, actual);
   }
   
+  public function test_with_functions_and_parenthesis_around_return_type() 
+  {
+    var a:String -> (String -> String);
+    
+    var expected = "String -> (String -> String)";
+    var actual = Helper.getStringType( a );
+    Assert.equals(expected, actual);
+  }
+  
   public function test_with_functions2_simple_signatures() 
   {
     function a (hi:String):Void {};

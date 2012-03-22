@@ -848,7 +848,9 @@ class Print
             var reduceFirst = function (val) return funArg(val, simpleFunctionSignatures, wildcards);
             args.reduceLeft(reduceArgs, reduceFirst);
           }
-        argumentsStr + " -> " + P.type1(ret,simpleFunctionSignatures, wildcards);
+        var retIsFun = SType.isFunction(ret);
+        var retStr = (retIsFun ? "(" : "") + P.type1(ret,simpleFunctionSignatures, wildcards) + (retIsFun ? ")" : "");
+        argumentsStr + " -> " + retStr;
       case TAnonymous( a ): 
         
         var fields = a.get().fields;
