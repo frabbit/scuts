@@ -315,22 +315,34 @@ class Select
     return 
       switch (e.expr) {
         case ECall(_, params):
-          if (i < 0 || i > params.length-1) None;
-          params[i].toOption();
+          if (i < 0 || i > params.length-1) None
+          else params[i].toOption();
         default:
           None;
       }
 
   }
   
-  public static function selectECallParams (e:Expr):Array<Expr> {
+  public static function selectECallParams (e:Expr):Option<Array<Expr>> {
 
     return 
       switch (e.expr) {
         case ECall(_, params):
-          params;
+          params.toOption();
         default:
-          [];
+          None;
+      }
+
+  }
+  
+  public static function selectECall (e:Expr):Option<Tup2<Expr, Array<Expr>>> {
+
+    return 
+      switch (e.expr) {
+        case ECall(call , params):
+          Tup2.create(call, params).toOption();
+        default:
+          None;
       }
 
   }
@@ -414,12 +426,22 @@ class Select
   
 	//EFunction( name : Null<String>, f : Function );
 	
- 
+  public static function selectEFunctionNamedFunction (e:Expr):Option<Tup2<String, Function>> {
+      return 
+        switch (e.expr) {
+          case EFunction(name, f):
+            if (name == null) None
+            else Tup2.create(name, f).toOption();
+          default:
+            None;
+        }
+  }
+  
   public static function selectEFunctionName (e:Expr):Option<String> {
       return 
         switch (e.expr) {
           case EFunction(name, _):
-            name.toOption();
+            name.nullToOption();
           default:
             None;
         }
@@ -438,8 +460,7 @@ class Select
   
 	//EFor( it : Expr, expr : Expr );
   
- 
-  
+
   public static function selectEForIterator (e:Expr):Option<Expr> {
    
       return switch (e.expr) {
