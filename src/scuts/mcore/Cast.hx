@@ -62,7 +62,7 @@ class Cast
         + ">";
       
       Log.debugObj(null,wildcardsStr);
-      var cl = "class " + clName + " { public static inline function doCast " + wildcardsStr + "(e:" + fromTypeStr + "):" + ct + " return cast e }";
+      var cl = "extern class " + clName + " { public static inline function doCast " + wildcardsStr + "(e:" + fromTypeStr + "):" + ct + " return cast e }";
       var out = File.write(MContext.getCacheFolder() + "/" + clName + ".hx", false);
       out.writeString(cl);
       out.close();
