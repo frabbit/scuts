@@ -2,6 +2,7 @@ package scuts.mcore;
 
 #if macro
 import haxe.macro.Expr;
+import scuts.Scuts;
 #end
 
 @:macro private class Helper {
@@ -14,7 +15,7 @@ import haxe.macro.Expr;
 
 import utest.Assert;
 
-class PrintTest
+class Print_expr_Test
 {
 
   public function new() {}
@@ -540,6 +541,7 @@ class PrintTest
     var actual = Helper.getStringExpr( switch (a) { case C1: case C2: default: } );
     Assert.equals(expected, actual);
   }
+  
   
   
 }

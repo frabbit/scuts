@@ -13,7 +13,8 @@ import scuts.mcore.CheckTest;
 import scuts.mcore.TypeTest;
 
 #else 
-import scuts.mcore.PrintTest;
+import scuts.mcore.Print_expr_Test;
+import scuts.mcore.Print_type_Test;
 #end
 
 
@@ -37,7 +38,8 @@ class AllTests
       runner.addCase(new TypeTest());
       runner.addCase(new ExprDefExtTest());
       #else
-      runner.addCase(new PrintTest());
+      runner.addCase(new Print_expr_Test());
+      runner.addCase(new Print_type_Test());
       #end
       
       Report.create(runner);

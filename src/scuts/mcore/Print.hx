@@ -773,7 +773,9 @@ class Print
   public static function type1 (t:Type, simpleFunctionSignatures:Bool, wildcards:Array<Type>):String
   {
     
-    var str = switch (t) {
+    var str = switch (t) 
+    {
+      
       case TLazy(f):
         type1(f(), simpleFunctionSignatures, wildcards);
       case TMono(t): 
@@ -799,44 +801,32 @@ class Print
         
         var isWildcard = wildcards.any(function (x) return TypeExt.eq(x, t));
         
-        
-        
-        //SType.isTypeParameter(t);
-        
-        //var realType = SType.getTypeFromModule(module, name) != null;
         if (isWildcard) {
           name;
         } else {
-          
-          var moduleName =
-            if (pack.length > 0) 
-              module.substr(pack.join(".").length + 1) 
-            else module;
-          
-          var isFunctionTypeParam = module.indexOf(pack.join(".")) == -1;
-          var isClassTypeParam = moduleName == "";
-          
-          if (isFunctionTypeParam || isClassTypeParam) {
-            name;
-          } else {
-            var hasModule = moduleName != "";
-            var hasPack = pack.length > 0;
-            
-            var tName = moduleName + (if (moduleName == name) "" else ("." + name));
-            
-            var foldPack = function (v, a) return v + "." + a;
-            var reduceParams = function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards) + "," + a;
-            var reduceFirst = function (v) return P.type1(v, simpleFunctionSignatures, wildcards);
-            var res = 
-              pack.foldRight(foldPack, tName) 
-              + if (params.length > 0) 
-                  "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
-                else "";
-            res;
+          switch (SType.getInstType(ct)) {
+            case ITRegular:
+              var moduleName =
+                if (pack.length > 0) 
+                  module.substr(pack.join(".").length + 1) 
+                else module;
+              var hasModule = moduleName != "";
+              var hasPack = pack.length > 0;
+              
+              var tName = moduleName + (if (moduleName == name) "" else ("." + name));
+              
+              var foldPack = function (v, a) return v + "." + a;
+              var reduceParams = function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards) + "," + a;
+              var reduceFirst = function (v) return P.type1(v, simpleFunctionSignatures, wildcards);
+              var res = 
+                pack.foldRight(foldPack, tName) 
+                + if (params.length > 0) 
+                    "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
+                  else "";
+              res;
+            case ITFunctionParam, ITClassParam: name;
           }
         }
-          
-        
         
       case TType( t , params ): 
         
@@ -908,12 +898,17 @@ class Print
     var argName = 
       if ((arg.name != null && arg.name != "") && !simpleFunctionSignatures) 
         arg.name 
-        + if (arg.t != null && arg.name != null) " :   " 
+        + if (arg.t != null && arg.name != null) " : " 
           else ""
       else "";
+    
+    
     var argType = if (arg.t != null) P.type1(arg.t, simpleFunctionSignatures, wildcards) else "";
     
-    return optPrefix + argName + argType;
+    // arguments that are functions must be surrounded with parenthesis
+    var isArgFunction = if (arg.t != null) SType.isFunction(arg.t) else false;
+    
+    return (isArgFunction ? "(" : "") + optPrefix + argName + argType + (isArgFunction ? ")" : "");
   }
   
 }
