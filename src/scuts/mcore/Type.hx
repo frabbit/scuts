@@ -13,20 +13,48 @@ using scuts.core.extensions.IterableExt;
 import haxe.macro.Expr;
 import haxe.macro.Type.BaseType;
 import haxe.macro.Type.ClassField;
+import haxe.macro.Type.ClassType;
+import scuts.mcore.types.InstType;
+
+import haxe.macro.Type.Ref;
 import haxe.macro.Context;
 import scuts.core.extensions.ArrayExt;
 import scuts.core.extensions.StringExt;
 import scuts.core.types.Tup2;
 import scuts.Scuts;
-
+import scuts.core.types.Option;
 using scuts.core.extensions.OptionExt;
 
 private typedef MType = haxe.macro.Type;
 
 
+
+
+
 class Type 
 {
+  
+  public static function isFunction (t:MType):Bool 
+  {
+    return switch (t) {
+      case TFun(_,_): true;
+      default: false;
+    }
+  }
+  
+  public static function getInstType (c:ClassType):InstType
+  {
+    var pack = c.pack;
+    var module = c.module;
+    var packJoined = pack.join(".");
     
+    return 
+      if (packJoined == module)                  ITClassParam
+      else if (module.indexOf(packJoined) == -1) ITFunctionParam
+      else                                       ITRegular;
+    
+  }
+  
   public static function isContextFunctionTypeParameter(type:MType):Bool
   {
     var meth = MContext.getLocalMethod();

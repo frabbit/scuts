@@ -4,6 +4,8 @@ import haxe.macro.Expr;
 import scuts.core.extensions.ArrayExt;
 import scuts.core.types.Tup2;
 import scuts.core.types.Option;
+import scuts.mcore.MType;
+import scuts.mcore.types.InstType;
 import scuts.Scuts;
 
 using scuts.core.extensions.ArrayExt;
@@ -23,10 +25,19 @@ private typedef TFunArg = {t:Type, name:String, opt:Bool};
 class TypeExt 
 {
 
-  public static inline function isTInst (t:Type):Bool {
+  public static inline function isTInst (t:Type):Bool 
+  {
     return switch (t) {
       case TInst(_,_): true;
       default: false;
+    }
+  }
+  
+  public static inline function getInstType (t:Type):Option<InstType> 
+  {
+    return switch (t) {
+      case TInst(c,_): Some(MType.getInstType(c.get()));
+      default: None;
     }
   }
   
@@ -128,7 +139,7 @@ class TypeExt
     }
   }
   
-  public static function asClassType (t:Type) {
+  public static function asClassType (t:Type):Option<Tup2<Ref<ClassType>, Array<Type>>> {
     return switch (t) {
       case TInst(t, params):
         Some(Tup2.create(t, params));
