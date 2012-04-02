@@ -1,13 +1,7 @@
 package scuts.core.types;
 
-
-
 import scuts.Assert;
-
-
 import scuts.core.types.Option;
-
-
 
 // based on stax version of future https://github.com/jdegoes/stax
 

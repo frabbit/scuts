@@ -10,6 +10,9 @@ using scuts.core.extensions.ArrayExt;
 
 //using scuts.core.lifting.FutureLifting;
 using scuts.core.extensions.FunctionExt;
+
+using scuts.core.lifting.FutureLifting;
+using scuts.core.extensions.FutureExt;
 /**
  * ...
  * @author 
@@ -20,7 +23,7 @@ private typedef Fut2<A,B> =     Tup2< Fut<A>, Fut<B> >;
 private typedef Fut3<A,B,C> =   Tup3< Fut<A>, Fut<B>, Fut<C> >;
 private typedef Fut4<A,B,C,D> = Tup4< Fut<A>, Fut<B>, Fut<C>, Fut<D> >;
 */
- 
+
 class FutureExt {
   
   public static function flatMap < S,T > (w:Future<S>, f:S->Future<T>):Future<T>
@@ -52,20 +55,53 @@ class FutureExt {
     return f;
   }
   
-  public static inline function map < S, T > (w:Future<S>, f:S->T):Future<T>
+  public static function map < S, T > (future:Future<S>, f:S->T):Future<T>
   {
-    var f1 = function (f:Future<S>) {
-      
-      var fut = new Future();
-      
-      fut.deliverTo(function (v) fut.deliver(v))
-         .ifCanceled(function () fut.cancel());
-      
-      return fut;
-    }
+    var res = new Future();
+    future
+      .deliverTo(function (x) res.deliver(f(x)))
+      .ifCanceled(function () res.cancel());
     
-    return f1(w);
+    
+    return res;
   }
+  
+  
+  public static function then<A,B> (a:Future<A>, b:Future<B>):Future<B>
+  {
+    return a.flatMap(function (_) return b);
+  }
+  
+  public static function zip<A,B>(a:Future<A>, b:Future<B>):Future<Tup2<A,B>>
+  {
+    return Tup2.create.liftWithFuture()(a,b);
+  }
+  
+  public static function zip2<A,B,C>(a:Future<A>, b:Future<B>, c:Future<C>):Future<Tup3<A,B,C>>
+  {
+    return Tup3.create.liftWithFuture()(a,b,c);
+  }
+  
+  public static function zip3<A,B,C,D>(a:Future<A>, b:Future<B>, c:Future<C>, d:Future<D>):Future<Tup4<A,B,C,D>>
+  {
+    return Tup4.create.liftWithFuture()(a,b,c,d);
+  }
+  
+  public static function zipWith<A,B,C>(a:Future<A>, b:Future<B>, f:A->B->C):Future<C>
+  {
+    return f.liftWithFuture()(a,b);
+  }
+  
+  public static function zip2With<A,B,C,D>(a:Future<A>, b:Future<B>, c:Future<C>, f:A->B->C->D):Future<D>
+  {
+    return f.liftWithFuture()(a,b,c);
+  }
+  
+  public static function zip3With<A,B,C,D,E>(a:Future<A>, b:Future<B>, c:Future<C>, d:Future<D>, f:A->B->C->D->E):Future<E>
+  {
+    return f.liftWithFuture()(a,b,c,d);
+  }
+  
   /*
   public static inline function map2 < S1, S2, T> (a:Future<S1>, f:S1->S2->T, b:Future<S2>):Future<T>
   {
