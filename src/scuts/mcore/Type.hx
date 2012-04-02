@@ -92,7 +92,9 @@ class Type
       var superType:$1 = subType;
       superType;
     }';
+    
     var e = Parse.parse(test, [subType, superType]);
+
     // get type of expression, should work when subType is a SubType of superType
     // and throws an exception if not
     return try {

@@ -200,6 +200,9 @@ class Check
   public static inline function isConstString (e:Expr) {
     return Extract.extractConstString(e).isSome();
   }
+  public static function isConstNull (e:Expr) {
+    return isConstIdent(e, function (x) return x == "null");
+  }
   
   public static function isType (e:Expr) {
     return switch (e.expr) {

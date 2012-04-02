@@ -69,26 +69,32 @@ class ExprCache
    */
   public function traceTimes (title:String):Void 
   {
+    
     var t = "\n" + title + ":\n------------------------------------\n";
     // sort keys
     var a:Array<String> = []; 
     for (k in times.keys()) a.push(k);
     a.sort(function (x, y) return x < y ? -1 : x > y ? 1 : 0);
+    
     // create output
+    
     for (k in a) 
     {
+      
       var o = times.get(k);
       var perCall = o.time / o.calls;
-      
+       
       var perCallStr = if (perCall == 0) "0." + Std.string(perCall) else Std.string(perCall);
-      
+       
       t += 
         "  " + k.rpad(" ", 55) + " calls: " + 
         Std.string(o.calls).lpad(" ", 3) + " | total time: " + 
         Std.string(o.time).rpad("0", 15) + " | time per call: " + 
         perCallStr.rpad("0", 18) + "\n";
     }
-    Lib.print(t + "\n");
+    
+    Lib.print(t);
+   
   }
   
   public function call (builder:Void->Expr, key:Dynamic, ?callId:String, ?keyPrinter:Void->String, ?posInfos:PosInfos)

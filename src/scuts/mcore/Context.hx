@@ -151,8 +151,9 @@ class Context
   
   public static function getLocalClassAsType ():Option<Type>
   {
-    
-    // TODO this is a hack because getLocalClass returns the Main Type of a Module not the actual class the macro is called in (report issue).
+    return Ctx.getLocalType().nullToOption();
+    // TODO this was a hack because getLocalClass was returning the Main Type of a Module in a case, but i can't reproduce now.
+    /*
     var lc = Ctx.getLocalClass().nullToOption();
     return lc.flatMap(function (x) {
       
@@ -170,10 +171,17 @@ class Context
           };
       });
     });
+    */
   }
   
   public static function getLocalClassAsClassType ():Option<ClassType> 
   {
+    return Ctx.getLocalClass()
+      .nullToOption()
+      .map(function (x) return x.get());
+      
+    // related to the hack i cannot reproduce anymore, see getLocalClassAsType
+    /*
     return getLocalClassAsType().map(function (x) {
       return switch (x) {
         case TInst(t1,_):
@@ -181,6 +189,7 @@ class Context
         default: Scuts.unexpected();
       }
     });
+    */
   }
   
   /**
@@ -241,6 +250,14 @@ class Context
 		}
 	}
 	
+  public static function getType2( pack:Array<String>, module:String, name:String ):Option<Type> {
+    return 
+      if (module.length > 0) 
+        getType(module + "." + name)
+      else
+        getType(name);
+  }
+  
   public static function getType( s:String ) : Option<Type> {
     var parts = s.split(".");
     return if (parts.length >= 2 
@@ -270,7 +287,7 @@ class Context
         });
       
     } 
-    else if (parts.length > 2) // normal resolution
+    else // normal resolution
     {
       try Some(Ctx.getType(s)) catch (e:Dynamic) None;
     }
