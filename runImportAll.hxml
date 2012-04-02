@@ -1,4 +1,5 @@
 -cp src 
 -cp test 
 -cp .
---macro ImportAll.main()
+-neko ImportAll.n
+-main ImportAll
