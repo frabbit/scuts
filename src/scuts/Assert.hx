@@ -30,7 +30,7 @@ class Assert
   /**
    * throws an assertion error in debug mode if expr is not true
    */
-  public static inline function assertIsObject <T>(val:T, ?message:String, ?posInfos:PosInfos):T 
+  public static function assertIsObject <T>(val:T, ?message:String, ?posInfos:PosInfos):T 
   {
     #if debug
     doAssert(Reflect.isObject(val), "assertIsObject", message, posInfos);
