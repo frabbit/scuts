@@ -1,20 +1,21 @@
 package hots.macros;
 
 
-#if !macro
-import hots.TC;
-#end
-import hots.macros.utils.Utils;
-
-import scuts.core.Log;
-import scuts.core.types.Tup2;
-
-
-import scuts.Scuts;
 
 
 
 #if (macro || display)
+import hots.TC;
+import hots.macros.utils.Utils;
+import scuts.core.Log;
+import scuts.core.macros.Lazy;
+import scuts.core.types.Tup2;
+import scuts.core.types.Tup3;
+import scuts.mcore.Check;
+import scuts.mcore.extensions.TypeExt;
+import scuts.mcore.MType;
+import scuts.mcore.Select;
+import scuts.Scuts;
 import scuts.core.types.Either;
 import scuts.mcore.Parse;
 import scuts.mcore.MContext;
@@ -24,34 +25,55 @@ import haxe.macro.Expr;
 import scuts.mcore.Make;
 import scuts.core.types.Option;
 import scuts.mcore.Print;
+import hots.macros.TcRegistry;
+import hots.macros.Data;
+
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.OptionExt;
-import hots.macros.TypeClasses;
-
-
 using scuts.core.Log;
 using scuts.mcore.extensions.TypeExt;
 using scuts.mcore.extensions.ExprExt;
 using scuts.core.extensions.StringExt;
 using scuts.core.extensions.EitherExt;
+using scuts.mcore.extensions.TypeExt;
+using scuts.core.extensions.FunctionExt;
+
 private typedef SType = scuts.mcore.Type;
 
-enum ResolveError {
-  InvalidTypeClass(t:Type);
-  NoInstanceFound(tcId:String, exprType:Type);
-  MultipleInstancesNoneInScope(tcId:String, exprType:Type);
-  MultipleInstancesWithScope(tcId:String, exprType:Type);
-  DependencyErrors(arr:Array<ResolveError>);
-}
+
 
 #end
 
 class TcContext 
 {
-
-  @:macro public static function tc(exprOrType:Expr, tc:ExprRequire<Class<TC>>) 
+  
+  @:macro public static function forInstance (typeClass:ExprRequire<Class<TC>>, exprOrType:Expr) {
+    return tc1(exprOrType, typeClass);
+  }
+  
+  @:macro public static function tc(exprOrType:Expr, typeClass:ExprRequire<Class<TC>>, ?contextClasses:ExprRequire<Array<TC>>) 
   {
-    // expr can be a value or a type
+    return tc1(exprOrType, typeClass, contextClasses);
+  }
+  
+  #if (macro || display)
+  public static function tc1 (exprOrType:Expr, tc:Expr, ?context:Expr) {
+    
+    
+    
+    var contextClasses = Check.isConstNull(context) 
+      ? []
+      : Select.selectEArrayDeclValues(context)
+        .map(function (x) {
+          return x.map(function (e) return {
+            var type = MContext.typeof(e).getOrError("Context must be a constant Array of Expressions");
+            
+            return Tup2.create(type, e);
+          });
+        }).getOrElseConst([]);
+    //trace(contextClasses);
+
+  // expr can be a value or a type
     var exprType = Context.typeof(exprOrType);
     var expr = switch (exprType) {
       case TType(t, p):
@@ -85,11 +107,9 @@ class TcContext
         Context.getType((p.length > 0 ? p.join(".") + "." : "") + dt.get().name.substr(1));
       default: Scuts.macroError("Invalid type");
     }
-    return resolve(exprType, tcType)
+    return resolve(exprType, tcType, contextClasses)
       .getOrElse(handleResolveError);
   }
-  
-  #if (macro || display)
   
   public static function handleResolveError <T>(e:ResolveError):T 
   {
@@ -112,22 +132,22 @@ class TcContext
   }
   
   
-  public static function resolve (exprType:Type, tcType:Type, level:Int = 0):Either<ResolveError, Expr>
+  public static function resolve (exprType:Type, tcType:Type, contextClasses:Array<Tup2<Type, Expr>>, level:Int = 0):Either<ResolveError, Expr>
   {
     function handleMultipleInstances (tcId, filtered:Array<Tup2<TypeClassInstanceInfo, Mapping>>)
     {
+      // we have multiple compatible instances in the registry, check if one of them is in using scope
       var inScope = filtered.filter(function (x) return isInstanceInUsingScope(x._1));
       return switch (inScope.length) 
       {
-        case 0: Left(MultipleInstancesNoneInScope(tcId, exprType));
-        default:
-          if (inScope.length > 1) 
-            Left(MultipleInstancesWithScope(tcId, exprType));
-          else 
-          {
-            var tc = inScope[0];
-            makeInstanceExpr(tc._1, tc._2, level);
-          }
+        case 0: // None in scope -> Error
+          Left(MultipleInstancesNoneInScope(tcId, exprType));
+        case 1: // only one in scope, fine 
+          var tc = inScope[0];
+          makeInstanceExpr(tc._1, tc._2, contextClasses, level);
+        default: 
+          // More than one in scope -> Error
+          Left(MultipleInstancesWithScope(tcId, exprType));
       }
     }
     function f (type): Either<ResolveError, Expr>
@@ -136,9 +156,10 @@ class TcContext
       
       var tcId = SType.getFullQualifiedTypeName(ct.get());
       
-      var info = TypeClasses.registry.get(tcId);
+      var info = TcRegistry.registry.get(tcId);
       
-      var filtered = info.map(
+      
+      var compatibleTcInstances = info.map(
         function (x) {
           return 
             Utils.typeIsCompatibleTo(exprType, x.tcParamTypes[0], x.allParameters)
@@ -146,30 +167,52 @@ class TcContext
         }
       ).catOptions();
       
-      return (switch (filtered.length) {
+      return (switch (compatibleTcInstances.length) {
         case 0: 
           Utils.getOfContainerType(exprType)
           .toRight(function () return NoInstanceFound(tcId, exprType))
-          .flatMapRight( function (x) return resolve(x, tcType, level+1));
+          .flatMapRight( function (x) return resolve(x, tcType, contextClasses, level+1));
         case 1: 
-          var info = filtered[0]._1;
+          var info = compatibleTcInstances[0]._1;
           
-          var mapping = filtered[0]._2;
-          makeInstanceExpr(info, mapping, level);
+          var mapping = compatibleTcInstances[0]._2;
+          makeInstanceExpr(info, mapping, contextClasses, level);
 
         default: 
           // we've got multiple type classes, check if only one of them is in using scope
-          handleMultipleInstances(tcId, filtered);
+          handleMultipleInstances(tcId, compatibleTcInstances);
       });
     }
     
-    var a = tcType.asClassType()
-    .toRight(function () return ResolveError.InvalidTypeClass(tcType));
-    return a.flatMapRight(f);
+    // type classes passed as context expressions are always preferred, check if there's a matching type class passed as context
+    var classTypeToSearch = Utils.replaceContainerElemType(tcType, exprType);
+    var tcInContextFound = classTypeToSearch.flatMap(function (x) {
+      var wildcards1 = (function () return MContext.getLocalTypeParameters(x)).lazyThunk();
+      return contextClasses.some(function (c) {
+        
+        var cType = c._1;
+        var wildcards2 = MContext.getLocalTypeParameters(cType);
+        var allWildcards = wildcards1().union(wildcards2, TypeExt.eq);
+        return MType.isInstanceOf (cType.toComplexType(allWildcards), x.toComplexType(allWildcards));
+      });
+    });
+    
+    return switch (tcInContextFound) 
+    {
+      // the type class is passed as a context parameter
+      case Some(x): Right(x._2);
+      // we need to resolve the type class based on registry and using scope
+      case None:
+        tcType.asClassType()
+        .toRight(function () return ResolveError.InvalidTypeClass(tcType))
+        .flatMapRight(f);
+    }
+    
+
   }
   
   
-  public static function makeInstanceExpr (info:TypeClassInstanceInfo, mapping:Mapping, level:Int):Either<ResolveError, Expr> {
+  public static function makeInstanceExpr (info:TypeClassInstanceInfo, mapping:Mapping, contextClasses:Array<Tup2<Type, Expr>>,level:Int):Either<ResolveError, Expr> {
    
     var deps = info.dependencies;
     
@@ -177,7 +220,7 @@ class TcContext
       deps.map(function (x) return Utils.remap(x._1, mapping))
       .map(function (x) return switch (x) {
         case TInst(t, params):
-          resolve(params[0], x, level+1);
+          resolve(params[0], x, contextClasses, level+1);
 
         default: Scuts.unexpected();
       });
@@ -213,6 +256,8 @@ class TcContext
         
       return MContext.typeof(doCall).isSome();
   }
+  
+  
   
   #end
   

@@ -7,6 +7,7 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.PosInfos;
 import hots.macros.utils.Utils;
+import hots.Of;
 import scuts.mcore.cache.ExprCache;
 import scuts.mcore.Cast;
 import scuts.mcore.MContext;
@@ -39,10 +40,12 @@ enum UnboxError {
   InvalidOfType(t:Type);
   ConversionError(t:Type);
 }
+
 class Box 
 {
-  #if macro
-  static var cache = new ExprCache(true).enableCache(true).printOnGenerate("Box Times");  
+  
+  #if (macro || display)
+  static var cache = new ExprCache(true).enableCache(true) #if !display .printOnGenerate("Box Times") #end;
   #end
   /**
     
@@ -60,13 +63,13 @@ class Box
     return (0...times).foldLeft(function (acc, _) return box1(acc), e)
   
   
-  @:macro public static function boxF(e:Expr, ?times:Int = 1) 
+  @:macro public static function boxF<A,B>(e:ExprRequire<A->B>, ?times:Int = 1) 
     return (0...times).foldLeft(function (acc, _) return boxF1(acc), e)
   
-  @:macro public static function unboxF(e:Expr, ?times:Int = 1) 
+  @:macro public static function unboxF<A,B,C>(e:ExprRequire<A->Of<B,C>>, ?times:Int = 1) 
     return (0...times).foldLeft(function (acc, _) return unboxF1(acc), e)
   
-  @:macro public static function unbox(e:Expr, ?times:Int = 1) 
+  @:macro public static function unbox<A,B>(e:ExprRequire<Of<A,B>>, ?times:Int = 1) 
     return (0...times).foldLeft(function (acc, _) return unbox1(acc), e)
   
   

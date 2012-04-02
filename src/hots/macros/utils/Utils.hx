@@ -70,17 +70,21 @@ private typedef D = DynamicExt;
 import haxe.macro.Expr;
 
 typedef Path = Array<PathNode>;
-   
-enum PathNode {
+
+enum PathNode 
+{
   SuperClass;
   InterfaceAt(index:Int);
 }
 
-class PathNodeExt {
-  public static function eq (a:PathNode, b:PathNode) {
-    return switch (a) {
-      case SuperClass: switch (b) { case SuperClass:true; default:false;};
-      case InterfaceAt(i1): switch (b) { case InterfaceAt(i2):return IntExt.eq(i1, i2); default:false;};
+class PathNodeExt 
+{
+  public static function eq (a:PathNode, b:PathNode) 
+  {
+    return switch (a) 
+    {
+      case SuperClass:      switch (b) { case SuperClass:true; default:false;};
+      case InterfaceAt(i1): switch (b) { case InterfaceAt(i2): IntExt.eq(i1, i2); default:false;};
     }
   }
 }
