@@ -26,6 +26,7 @@ import utest.ui.Report;
 
 class AllTests 
 {
+  
   public static function main() 
     {
       var runner = new Runner();
