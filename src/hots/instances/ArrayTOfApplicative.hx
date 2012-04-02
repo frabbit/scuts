@@ -11,7 +11,7 @@ import hots.classes.Functor;
 import scuts.core.extensions.Function1Ext;
 import scuts.core.extensions.Function2Ext;
 
-private typedef B = hots.macros.Box;
+using hots.macros.Box;
 
 
 
@@ -21,31 +21,29 @@ class ArrayTOfApplicative<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
 
   public function new (appM:Applicative<M>) 
   {
-    var f = ArrayTOfPointed.get(appM);
-    super(f);
+    super(ArrayTOfPointed.get(appM));
     this.appM = appM;
   }
 
   /**
    * aka <*>
    */
-  override public function apply<A,B>(f:ArrayTOf<M,A->B>, val:ArrayTOf<M,A>):ArrayTOf<M,B> {
-    var f1:Of<M, Array<A->B>> = B.unbox(f);
-    var val1:Of<M, Array<A>> = B.unbox(val);
-    
-    var f2 = appM.map(function (f:Array<A->B>) {
+  override public function apply<A,B>(f:ArrayTOf<M,A->B>, val:ArrayTOf<M,A>):ArrayTOf<M,B> 
+  {
+    var f2 = appM.map(function (x:Array<A->B>) 
+    {
       return function (a:Array<A>) {
         var res = [];
         for (a1 in a) {
-          for (f1 in f) {
+          for (f1 in x) {
             res.push(f1(a1));
           }
         }
         return res;
       }
-    }, f1);
+    }, f.unbox());
     
-    return B.box(appM.apply(f2, val1));
+    return appM.apply(f2, val.unbox()).box();
 
   }
 

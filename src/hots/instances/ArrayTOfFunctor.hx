@@ -10,7 +10,7 @@ import hots.classes.Functor;
 import scuts.core.extensions.Function1Ext;
 import scuts.core.extensions.Function2Ext;
 
-private typedef B = Box;
+using hots.macros.Box;
 
 class ArrayTOfFunctor<M> extends FunctorAbstract<Of<M,Array<In>>> {
   
@@ -22,8 +22,13 @@ class ArrayTOfFunctor<M> extends FunctorAbstract<Of<M,Array<In>>> {
   }
 
   override public function map<A,B>(f:A->B, fa:ArrayTOf<M, A>):ArrayTOf<M, B> {
-    return B.box(functorM.map(function (x:Array<A>) {
-      return B.unbox(ArrayOfFunctor.get().map(f, B.box(x)));
-    },B.unbox(fa)));
+    return 
+      functorM
+      .map(
+        function (x:Array<A>) 
+          return ArrayOfFunctor.get().map(f, x.box()).unbox(), 
+        fa.unbox()
+      )
+      .box();
   }
 }

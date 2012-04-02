@@ -7,7 +7,7 @@ import hots.Of;
 
 using scuts.core.extensions.Function1Ext;
 
-private typedef B = hots.macros.Box;
+using hots.macros.Box;
 
 
 class ArrayOfMonadTrans<M> extends MonadTransAbstract<Array<In>> {
@@ -16,6 +16,6 @@ class ArrayOfMonadTrans<M> extends MonadTransAbstract<Array<In>> {
 
   override public function lift <M, A>(val:Of<M, A>, monad:Monad<M>):ArrayTOf<M,A>
   {
-    return B.box(monad.map(function (x) return [x], val));
+    return monad.map(function (x) return [x], val).box();
   }
 }

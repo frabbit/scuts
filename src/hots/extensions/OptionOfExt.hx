@@ -7,7 +7,7 @@ import scuts.core.types.Option;
 
 private typedef B = hots.macros.Box;
 
-extern class OptionOfExt 
+class OptionOfExt 
 {
 
   public static inline function box<A>(a:Option<A>):OptionOf<A> return B.box(a)

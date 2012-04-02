@@ -8,7 +8,6 @@ import hots.classes.Foldable;
 
 interface Traversable<T> implements Functor<T>, implements Foldable<T>
 {
-
   // functions
   public function sequence <M,A> (val:Of<T, Of<M,A>>, monad:Monad<M>):Of<M, Of<T,A>>;
   

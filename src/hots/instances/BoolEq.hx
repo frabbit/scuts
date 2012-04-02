@@ -7,8 +7,5 @@ class BoolEq extends EqAbstract<Bool> {
   
   public function new () {}
 
-  override public function eq (a:Bool, b:Bool):Bool {
-    return a == b;
-  }
-  
+  override public inline function eq (a:Bool, b:Bool):Bool return a == b
 }

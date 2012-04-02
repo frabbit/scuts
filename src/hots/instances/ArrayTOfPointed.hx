@@ -13,12 +13,10 @@ import hots.classes.Functor;
 import scuts.core.extensions.Function1Ext;
 import scuts.core.extensions.Function2Ext;
 
-private typedef B = hots.macros.Box;
+using hots.macros.Box;
 
-
-
-class ArrayTOfPointed<M> extends PointedAbstract<Of<M,Array<In>>> {
-  
+class ArrayTOfPointed<M> extends PointedAbstract<Of<M,Array<In>>> 
+{
   var pointedM:Pointed<M>;
 
   public function new (pointedM:Pointed<M>) 
@@ -30,8 +28,9 @@ class ArrayTOfPointed<M> extends PointedAbstract<Of<M,Array<In>>> {
   /**
    * aka return, pure
    */
-  override public function pure<A>(x:A):ArrayTOf<M,A> {
-    return B.box(pointedM.pure([x]));
+  override public function pure<A>(x:A):ArrayTOf<M,A> 
+  {
+    return pointedM.pure([x]).box();
   }
   
 

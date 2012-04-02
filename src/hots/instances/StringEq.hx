@@ -2,7 +2,7 @@ package hots.instances;
 
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
-import hots.macros.TypeClasses;
+
 import scuts.core.extensions.StringExt;
 
 

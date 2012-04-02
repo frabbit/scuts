@@ -3,7 +3,7 @@ package hots.instances;
 import hots.classes.MonoidAbstract;
 
 
-class IntProduct extends MonoidAbstract<Int>
+class IntProductMonoid extends MonoidAbstract<Int>
 {
   public function new () {}
   

@@ -13,6 +13,8 @@ import hots.classes.Monad;
 class MonadExt 
 {
   
+  
+  
   public static function lift2 <M, A1, A2, R>(m:Monad<M>, f:A1->A2->R ):Of<M, A1>->Of<M, A2>->Of<M, R>
   {
     return function (v1:Of<M, A1>, v2:Of<M, A2>) {
