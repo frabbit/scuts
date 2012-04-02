@@ -3,15 +3,38 @@ package scuts.core.extensions;
 import scuts.core.types.Option;
 import scuts.core.types.Either;
 import scuts.Scuts;
+import scuts.core.types.Validation;
 
 class EitherExt
 {
+  
+  public static function toValidation<A,B>(e:Either<A,B>):Validation<A,B> {
+    return switch (e) {
+      case Left(f): Failure(f);
+      case Right(s): Success(s);
+    }
+  }
+  
+  public static function toBool<A,B>(e:Either<A,B>):Bool {
+    return switch (e) {
+      case Left(_): false;
+      case Right(_):true;
+    }
+  }
   
   public static function getOrElse<A,B>(e:Either<A,B>, handler:A->B):B
   {
     return switch (e) {
       case Left(l): handler(l);
       case Right(r): r;
+    }
+  }
+  
+  public static function orElse<A,B>(e:Either<A,B>, left:Void->Either<A,B>):Either<A,B>
+  {
+    return switch (e) {
+      case Left(_): left();
+      case Right(_): e;
     }
   }
   
@@ -51,6 +74,21 @@ class EitherExt
     }
   }
   
+  public static function ifLeft<A,B,C>(e:Either<A,B>, f:Void->Either<C,B>):Either<C,B>
+  {
+    return switch (e) {
+      case Left(_): f();
+      case Right(_): cast e;
+    }
+  }
+  
+  public static function ifRight<A,B,C>(e:Either<A,B>, f:Void->Either<A,C>):Either<A,C>
+  {
+    return switch (e) {
+      case Left(_): cast e;
+      case Right(_): f();
+    }
+  }
   
   
   /**
@@ -64,10 +102,7 @@ class EitherExt
     }
   }
   
-  /**
-   * Alias for isLeft.
-   */
-  public static function isSuccess <A,B>(e:Either<A,B>):Bool return isLeft(e)
+ 
   
   /**
    * Returns true if e is Left Either.
@@ -79,11 +114,7 @@ class EitherExt
       case Right(_): false;
     }
   }
-  
-  /**
-   * Alias for isRight.
-   */
-  public static function isFailure<A,B>(e:Either<A,B>):Bool return isRight(e)
+
   
   /**
    * Returns if e is Right Either.
@@ -173,7 +204,7 @@ class EitherExt
   public static function flattenLeft <A,B> (e:Either<Either<A,B>, B>):Either<A,B> {
     return switch (e) {
       case Left(l): l;
-      case Right(r): cast r;
+      case Right(r): cast e;
     }
   }
   
@@ -186,7 +217,7 @@ class EitherExt
    */
   public static function flattenRight <A,B> (e:Either<A, Either<A,B>>):Either<A,B> {
     return switch (e) {
-      case Left(l): cast l;
+      case Left(l): cast e;
       case Right(r): r;
     }
   }
@@ -222,6 +253,8 @@ class EitherExt
       case Right(r): Right(f(r));
     }
   }
+  
+ 
   
   /**
    * Maps an Either into a new one based on the mapping functions left and right.
