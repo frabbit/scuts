@@ -3,6 +3,8 @@ package scuts.core.macros;
 #if (macro || display)
 import haxe.macro.Expr.ExprRequire;
 import haxe.macro.Expr;
+import haxe.macro.Type;
+import scuts.core.types.Option;
 #end
 class Lazy 
 {
@@ -17,8 +19,35 @@ class Lazy
     var p = ex.pos;
     var constR = { expr: EConst(CIdent("r")), pos: p};
     
+    var type = #if (display && !flash) None #else try Some(haxe.macro.Context.typeof(ex)) catch (e:Dynamic) None #end;
+
     var vars = {
-      var r = { type: null, name: "r" , expr:{ expr: EConst(CIdent("null")), pos:p}};
+      var r = {
+        var e = switch (type) {
+          case Some(t):
+            switch (t) {
+              case TInst(ct, _): 
+                var cget = ct.get();
+                var n = cget.name;
+                var m = cget.module;
+                if (n == "Int" && m == "StdTypes") EConst(CInt("0"))
+                else if (n == "Float" && m == "StdTypes") EConst(CFloat("0.0"))
+                else if (n == "String" && m == "StdTypes") EConst(CString(""))
+                else EConst(CIdent("null"));
+              case TEnum(et, _):
+                var eget = et.get();
+                var n = eget.name;
+                var m = eget.module;
+                if (n == "Bool" && m == "StdTypes") EConst(CIdent("false"))
+                else EConst(CIdent("null"));
+                
+              default: EConst(CIdent("null"));
+            }
+          case None: EConst(CIdent("null"));
+        }
+        { type: null, name: "r" , expr:{ expr: e, pos:p}};
+      };
+      
       var isSet = { type:null, name: "isSet", expr: { expr: EConst(CIdent("false")), pos: p}};
       { expr: EVars([r, isSet]), pos: p};
     }

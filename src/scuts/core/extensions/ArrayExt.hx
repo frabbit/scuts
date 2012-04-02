@@ -22,6 +22,7 @@ class ArrayExt
   public static function catOptions <X>(a:Array<Option<X>>):Array<X>
   {
     var res = [];
+    
     for (e in a) 
     {
       switch (e) {
@@ -130,7 +131,6 @@ class ArrayExt
    */
   public static function any <T>(a:Array<T>, pred:T->Bool) 
   {
-    var s = false;
     for (e in a) if (pred(e)) 
     {
       return true;
@@ -188,7 +188,7 @@ class ArrayExt
     
   }
   
-  public static function filter <A> (a:Array<A>, filter:A->Bool):Array<A>
+  public static inline function filter <A> (a:Array<A>, filter:A->Bool):Array<A>
   {
     var res = [];
     for ( e in a) {
@@ -235,7 +235,7 @@ class ArrayExt
     }
     return res;
   }
-  public static function forEach<T>(a:Array<T>, f:T->Void):Void 
+  public static inline function forEach<T>(a:Array<T>, f:T->Void):Void 
   {
     for (e in a) {
       f(e);
@@ -306,7 +306,7 @@ class ArrayExt
   {
     return if (arr.length == 0) None else Some(arr[arr.length - 1]);
   } 
-  public static function map < A, B > (arr:Array<A>, f:A->B):Array<B> 
+  public static inline function map < A, B > (arr:Array<A>, f:A->B):Array<B> 
   {
     return IterableExt.mapToArray(arr, f);
   }
@@ -405,6 +405,8 @@ class ArrayExt
     }
     return None;
   }
+  
+  
   
   
   public static function reduceRight <T,S>(a:Array<T>, f:T->S->S, first:T->S):S

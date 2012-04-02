@@ -21,9 +21,9 @@ class Log
     return v;
   }
   
-  public static inline function debugObj <T,X> (e:T, msg:X, ?p:PosInfos) 
+  public static function debugObj <T,X> (e:T, msg:X, ?p:PosInfos) 
   {
-    #if (debug)
+    #if debug
     #if scutsDebug
     haxe.Log.trace(msg, p);
     #elseif (macro && scutsLog)

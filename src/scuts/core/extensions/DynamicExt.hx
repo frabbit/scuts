@@ -46,8 +46,8 @@ class DynamicExt
    * Converts v into an Either, based on the nulliness of v.
    * If v is null, right is used as the Right value for the resulting Either.
    */
-  public static inline function nullToLeft < A,B > (v:A, right:B):Either<A,B> {
-    return v != null ? Left(v) : Right(right);
+  public static inline function nullToRightConst < A,B > (v:B, left:A):Either<A,B> {
+    return v == null ? Left(left) : Right(v);
   }
   
   /**

@@ -57,6 +57,12 @@ class Function1Ext
     
     return compose(f1, f2Curried);
   }
+  
+  public static function toEffect <T,X>(f:X->T):X->Void
+  {
+    return function (x) f(x);
+  }
+  
   /*
   public static function compose2 < A, B, C, D > (f2:C->D, f1:A->B->C):A->B->D
   {
