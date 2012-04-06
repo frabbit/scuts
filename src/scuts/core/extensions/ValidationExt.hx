@@ -84,6 +84,19 @@ class ValidationExt
     }
   }
   
+  public static function each < A, B> (e:Validation< A, B> , f:B->Void):Void {
+    switch (e) {
+      case Failure(_):
+      case Success(s): f(s);
+    }
+  }
+  
+  public static function eachFailure < A, B> (e:Validation< A, B> , f:A->Void):Void {
+    switch (e) {
+      case Failure(fe):f(fe);
+      case Success(_):
+    }
+  }
   
   
   /**
@@ -287,5 +300,7 @@ class ValidationExt
       case Success(r): Success(onSuccess(r));
     }
   }
+  
+  
   
 }

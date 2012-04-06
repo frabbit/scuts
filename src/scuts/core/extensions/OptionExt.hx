@@ -154,4 +154,11 @@ class OptionExt {
     
   }
   
+  public static function each < A> (o:Option<A> , f:A->Void):Void {
+    switch (o) {
+      case None:
+      case Some(s): f(s);
+    }
+  }
+  
 }

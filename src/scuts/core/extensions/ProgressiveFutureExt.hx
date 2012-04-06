@@ -126,19 +126,15 @@ class ProgressiveFutureExt
     return res;
   }
   
-  public static inline function map < S, T > (w:ProgressiveFuture<S>, f:S->T):ProgressiveFuture<T>
+  public static inline function map < S, T > (fut:ProgressiveFuture<S>, f:S->T):ProgressiveFuture<T>
   {
-    var f1 = function (f:ProgressiveFuture<S>) {
+    var res = new ProgressiveFuture();
       
-      var fut = new ProgressiveFuture();
+    fut.deliverTo(function (v) res.deliver(v))
+     .ifCanceled(function () res.cancel())
+     .onProgress(function (p) res.setProgress(p));
       
-      fut.deliverTo(function (v) fut.deliver(v))
-         .ifCanceled(function () fut.cancel());
-      
-      return fut;
-    }
-    
-    return f1(w);
+    return res;
   }
   /*
   public static inline function map2 < S1, S2, T> (a:ProgressiveFuture<S1>, f:S1->S2->T, b:ProgressiveFuture<S2>):ProgressiveFuture<T>
