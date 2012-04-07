@@ -4,9 +4,6 @@ import hots.instances.ArrayOfMonad;
 import hots.Of;
 import scuts.core.extensions.ArrayExt;
 import hots.classes.Monad;
-
-
-
 #end
 
 #if macro
@@ -55,8 +52,7 @@ class MonadExt
         return flatMapCall;
         
       }, Make.field(m, "pure").call([last]));
-    
-    trace(Print.expr(res));
+
     return res;
   }
   
