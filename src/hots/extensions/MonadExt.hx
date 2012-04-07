@@ -46,7 +46,7 @@ class MonadExt
     var res = head.foldRightWithIndex(
       function (x, acc, index) {
         var tup = Select.selectEBinopExprsWithOpFilter(x, function (op) return op == OpLte)
-        .map(function (t) return Tup2.create(Select.selectEConstCIdentValue(t._1).getOrError("Unsupported"), t._2))
+        .map(function (t) return Tup2.create(Select.selectEConstCIdentValue(t._1).getOrError("Left side of <= must be an ident"), t._2))
         .getOrElse(function () return Tup2.create("_", x));
         
         var f = Make.funcExpr([Make.funcArg(tup._1, false)], Make.returnExpr(acc));
