@@ -8,7 +8,7 @@ using scuts.core.extensions.StringExt;
 class ImportAllBuilder
 {
 
-  public static function build(pack:String, target:String) 
+  public static function build(packs:Array<String>, target:String) 
   {
     var classPaths = Context.getClassPath();
     function create1 (pack:String, buf:StringBuf) 
@@ -40,7 +40,9 @@ class ImportAllBuilder
       }
     }
     var buf = new StringBuf();
-    create1(pack, buf);
+    for (p in packs)
+      create1(p, buf);
+    
     buf.add("class ");
     buf.add(target);
     buf.add(" { static function main () {} }");

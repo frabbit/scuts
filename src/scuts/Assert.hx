@@ -63,7 +63,7 @@ class Assert
   /**
    * throws an assertion error in debug mode if a is null.
    */
-  public static inline function assertNotNull <T>(a:T, ?message:String = null, ?posInfos:PosInfos):T 
+  public static function assertNotNull <T>(a:T, ?message:String = null, ?posInfos:PosInfos):T 
   {
     #if debug
     doAssert(a != null, "assertNotNull", message, posInfos);

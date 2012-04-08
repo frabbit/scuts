@@ -16,39 +16,19 @@ import scuts.core.types.Either;
 class DynamicExt
 {
 
-  /**
-   * Converts v into a Some Option.
-   */
-  public static inline function toOption < T > (v:T):Option<T> {
-    #if debug
-    if (v == null) 
-      Scuts.error("Cannot wrap null into an Option, use nullToOption instead");
-    #end
-    return Some(v);
-  }
+  
 
   public static inline function nullOrError < T,S > (v:T, err:String):T {
     return if (v != null) v else Scuts.error(err);
   }
   
-  /**
-   * Converts v into an Option, based on the nulliness of v.
-   */
-  public static inline function nullToOption < T > (v:T):Option<T> {
-    return v != null ? Some(v) : None;
-  }
+  
   
   public static inline function nullToArray < T > (v:T):Array<T> {
     return v != null ? [v] : [];
   }
   
-  /**
-   * Converts v into an Either, based on the nulliness of v.
-   * If v is null, right is used as the Right value for the resulting Either.
-   */
-  public static inline function nullToRightConst < A,B > (v:B, left:A):Either<A,B> {
-    return v == null ? Left(left) : Right(v);
-  }
+  
   
   /**
    * Returns v or elseValue, based on the nulliness of v.
@@ -65,15 +45,7 @@ class DynamicExt
     return v != null ? v : elseValue();
   }
   
-  /**
-   * Converts v into a left Either.
-   */
-  public static inline function toEitherLeft < A,B > (v:A):Either<A,B> return Left(v)
   
-  /**
-   * Converts v into a right Either.
-   */
-  public static inline function toEitherRight < A,B > (v:B):Either<A,B> return Right(v)
   
   /**
    * Converts v into a Future and deliver it immediately.

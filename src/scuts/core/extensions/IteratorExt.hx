@@ -3,8 +3,9 @@ package scuts.core.extensions;
 import scuts.core.types.Ordering;
 import scuts.core.types.Option;
 
-using scuts.core.extensions.Function2Ext;
-using scuts.core.extensions.Function3Ext;
+import scuts.core.extensions.FunctionExt;
+using scuts.core.extensions.FunctionExt;
+
 
 
 

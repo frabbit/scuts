@@ -1,6 +1,7 @@
 package scuts;
 
 import haxe.PosInfos;
+import haxe.Stack;
 import scuts.core.extensions.PosInfosExt;
 
 #if (macro || display)
@@ -54,7 +55,8 @@ class Scuts
   public static function macroError <T>(msg:String, ?p:Position, ?posInfos:PosInfos):T 
   {
     var p1 = p.nullGetOrElseConst(Context.currentPos());
-    throw new Error(msg + "\n@" + posInfos.toString(),p1);
+    var stack = Stack.toString(Stack.callStack());
+    throw new Error(msg + "\n@" + posInfos.toString() + stack,p1);
     return null;
   }
   

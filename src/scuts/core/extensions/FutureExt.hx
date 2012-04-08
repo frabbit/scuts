@@ -43,6 +43,14 @@ class FutureExt {
     return res;
   }
   
+  public static function filter <T>(a:Future<T>, f:T->Bool):Future<T>
+  {
+    
+    var res = new Future();
+    a.deliverTo(function (v2) if (f(v2)) res.deliver(v2) else res.cancel());
+    a.ifCanceled(function () res.cancel());
+    return res;
+  }
   
   public static function flatten <T>(a:Future<Future<T>>):Future<T>
   {

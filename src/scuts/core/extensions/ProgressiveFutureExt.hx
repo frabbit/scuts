@@ -130,7 +130,7 @@ class ProgressiveFutureExt
   {
     var res = new ProgressiveFuture();
       
-    fut.deliverTo(function (v) res.deliver(v))
+    fut.deliverTo(function (v) res.deliver(f(v)))
      .ifCanceled(function () res.cancel())
      .onProgress(function (p) res.setProgress(p));
       

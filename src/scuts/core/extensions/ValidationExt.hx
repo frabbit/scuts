@@ -10,40 +10,40 @@ typedef ValidationArray<A,B> = Validation<Array<A>, B>;
 
 class ValidationExt
 {
-  public static function toEither<A,B>(e:Validation<A,B>):Either<A,B> {
-    return switch (e) {
+  public static function either<F,S>(v:Validation<F,S>):Either<F,S> {
+    return switch (v) {
       case Failure(f): Left(f);
       case Success(s): Right(s);
     }
   }
   
-  public static function toBool<A,B>(e:Validation<A,B>):Bool {
-    return switch (e) {
+  public static function bool<F,S>(v:Validation<F,S>):Bool {
+    return switch (v) {
       case Failure(_): false;
       case Success(_): true;
     }
   }
   
-  public static function getOrElse<A,B>(e:Validation<A,B>, handler:A->B):B
+  public static function getOrElse<F,S>(v:Validation<F,S>, withFailure:F->S):S
   {
-    return switch (e) {
-      case Failure(l): handler(l);
-      case Success(r): r;
+    return switch (v) {
+      case Failure(f): withFailure(f);
+      case Success(s): s;
     }
   }
   
-  public static function ifFailure<A,B,C>(e:Validation<A,B>, f:Void->Validation<C,B>):Validation<C,B>
+  public static function ifFailure<F,S,FF>(v:Validation<F,S>, f:Void->Validation<FF,S>):Validation<FF,S>
   {
-    return switch (e) {
+    return switch (v) {
       case Failure(_): f();
-      case Success(_): cast e;
+      case Success(_): cast v;
     }
   }
   
-  public static function ifSuccess<A,B,C>(e:Validation<A,B>, f:Void->Validation<A,C>):Validation<A,C>
+  public static function ifSuccess<F,S,SS>(v:Validation<F,S>, f:Void->Validation<F,SS>):Validation<F,SS>
   {
-    return switch (e) {
-      case Failure(_): cast e;
+    return switch (v) {
+      case Failure(_): cast v;
       case Success(_): f();
     }
   }
@@ -54,69 +54,67 @@ class ValidationExt
    * @param e Validation Instance
    * @return the left Side of e 
    */
-  public static function getSuccess<A,B>(e:Validation<A,B>):A 
+  public static function extract<F,S>(v:Validation<F,S>):S 
   {
-    return switch (e) {
-      case Failure(l): l;
-      case Success(_): Scuts.error("Validation has no left value");
+    return switch (v) {
+      case Failure(_): Scuts.error("Validation has no Success value");
+      case Success(s): s;
     }
   }
   
   /**
    * Returns the right value of e or throws an error if it's a left Validation.
    */
-  public static function getFailure<A,B>(e:Validation<A,B>):B 
+  public static function extractFailure<F,S>(v:Validation<F,S>):F 
   {
-    return switch (e) {
-      case Failure(_): Scuts.error("Validation has no right value");
-      case Success(r): r;
+    return switch (v) {
+      case Failure(f): f;
+      case Success(_): Scuts.error("Validation has no Failure value");
+    }
+  }
+  
+  /**
+   * Converts the right value of e into an Option.
+   */
+  public static function option<F,S>(v:Validation<F,S>):Option<S>
+  {
+    return switch (v) {
+      case Failure(_): None;
+      case Success(s): Some(s);
     }
   }
   
   /**
    * Converts the left value of e into an Option.
    */
-  public static function failureOption<A,B>(e:Validation<A,B>):Option<A> 
+  public static function optionFailure<F,S>(v:Validation<F,S>):Option<F> 
   {
-    return switch (e) {
-      case Failure(l): Some(l);
+    return switch (v) {
+      case Failure(f): Some(f);
       case Success(_): None;
     }
   }
   
-  public static function each < A, B> (e:Validation< A, B> , f:B->Void):Void {
-    switch (e) {
+  public static function each < A, B> (v:Validation< A, B> , f:B->Void):Void {
+    switch (v) {
       case Failure(_):
       case Success(s): f(s);
     }
   }
   
-  public static function eachFailure < A, B> (e:Validation< A, B> , f:A->Void):Void {
-    switch (e) {
+  public static function eachFailure < A, B> (v:Validation< A, B> , f:A->Void):Void {
+    switch (v) {
       case Failure(fe):f(fe);
       case Success(_):
     }
   }
-  
-  
-  /**
-   * Converts the right value of e into an Option.
-   */
-  public static function successOption<A,B>(e:Validation<A,B>):Option<B>
-  {
-    return switch (e) {
-      case Failure(_): None;
-      case Success(r): Some(r);
-    }
-  }
-  
- 
+
   /**
    * Returns true if e is Left Validation.
    */
-  public static function isSuccess<A,B>(e:Validation<A,B>):Bool
+  public static function isSuccess<F,S>(v:Validation<F,S>):Bool
   {
-    return switch (e) {
+    return switch (v) {
       case Failure(_): false;
       case Success(_): true;
     }
@@ -126,7 +124,7 @@ class ValidationExt
   /**
    * Returns if e is Right Validation.
    */
-  public static inline function isFailure<A,B>(e:Validation<A,B>):Bool
+  public static inline function isFailure<F,S>(e:Validation<F,S>):Bool
   {
     return !isSuccess(e);
   }
@@ -141,7 +139,8 @@ class ValidationExt
    * 
    * @return flatMapped Validation instance
    */
-  public static function flatMap < A,B,C,D > (o:Validation<A,B>, onFailure:A->Validation<C, D>, onSuccess:B->Validation<C,D>):Validation<C,D>
+  /*
+  public static function flatMapBoth < A,B,C,D > (o:Validation<A,B>, onFailure:A->Validation<C, D>, onSuccess:B->Validation<C,D>):Validation<C,D>
   {
     // this implementation performs better than flatten(map(o, leftF, rightF))
     
@@ -150,16 +149,18 @@ class ValidationExt
       case Success(v): onSuccess(v);
     }
   }
+  */
   
   public static function toVA <A,B> (o:Validation<A,B>):Validation<Array<A>, B>
   {
     return mapFailure(o, function (x) return [x]);
   }
-  
+  /*
   public static function failVA <A,B> (o:A):Validation<Array<A>, B>
   {
     return Failure([o]);
   }
+  */
   
   public static function concatArrays <A,B> (o1:Validation<Array<A>,B>, o2:Validation<Array<A>,B>):Validation<Array<A>, B>
   {
@@ -174,6 +175,23 @@ class ValidationExt
   }
   
   /**
+   * Maps the right side of an Validation with the function rightF and flattens the result. 
+   * 
+   * @param e Validation instance to flatMap
+   * @param rightF the Mapping function
+   * 
+   * @return flatMapped Validation instance
+   */
+  public static function flatMap <F,S,SS> (o:Validation<F,S>, f:S->Validation<F, SS>):Validation<F,SS>
+  {
+    // this implementation performs better than flattenRight(mapRight(o, rightF))
+    return switch (o) {
+      case Failure(_): cast o; // avoids creating a new object
+      case Success(v): f(v);
+    }
+  }
+  
+  /**
    * Maps the left side of an Validation with the function leftF and flattens the result. 
    * 
    * @param e Validation instance to flatMap
@@ -181,7 +199,7 @@ class ValidationExt
    * 
    * @return flatMapped Validation instance
    */
-  public static function flatMapFailure < A,B,C,D > (o:Validation<A,B>, f:A->Validation<C, B>):Validation<C,B>
+  public static function flatMapFailure < F,S,FF > (o:Validation<F,S>, f:F->Validation<FF, S>):Validation<FF,S>
   {
     // this implementation performs better than flattenLeft(mapLeft(o, rightF))
     return switch (o) {
@@ -191,23 +209,7 @@ class ValidationExt
   }
   
   
-  /**
-   * Maps the right side of an Validation with the function rightF and flattens the result. 
-   * 
-   * @param e Validation instance to flatMap
-   * @param rightF the Mapping function
-   * 
-   * @return flatMapped Validation instance
-   */
-  public static function flatMapSuccess < A,B,C,D > (o:Validation<A,B>, f:B->Validation<A, C>):Validation<A,C>
-  {
-    // this implementation performs better than flattenRight(mapRight(o, rightF))
-    return switch (o) {
-      case Failure(_): cast o; // avoids creating a new object
-      case Success(v): f(v);
-    }
-    
-  }
+  
   
   /**
    * Flattens both sides of an Validation.
@@ -216,10 +218,26 @@ class ValidationExt
    * 
    * @return flattened Validation instance
    */
-  public static function flatten <A,B> (e:Validation<Validation<A,B>, Validation<A,B>>):Validation<A,B> {
+  /*
+  public static function flattenBoth <A,B> (e:Validation<Validation<A,B>, Validation<A,B>>):Validation<A,B> {
     return switch (e) {
       case Failure(l): l;
       case Success(r): r;
+    }
+  }
+  */
+  
+  /**
+   * Flattens the right side of an Validation.
+   * 
+   * @param e Validation instance to flatten
+   * 
+   * @return flattened Validation instance
+   */
+  public static function flatten <F,S> (v:Validation<F, Validation<F,S>>):Validation<F,S> {
+    return switch (v) {
+      case Failure(_): cast v;
+      case Success(s): s;
     }
   }
   
@@ -230,40 +248,10 @@ class ValidationExt
    * 
    * @return flattened Validation instance
    */
-  public static function flattenFailure <A,B> (e:Validation<Validation<A,B>, B>):Validation<A,B> {
-    return switch (e) {
-      case Failure(l): l;
-      case Success(r): cast e;
-    }
-  }
-  
-  /**
-   * Flattens the right side of an Validation.
-   * 
-   * @param e Validation instance to flatten
-   * 
-   * @return flattened Validation instance
-   */
-  public static function flattenSuccess <A,B> (e:Validation<A, Validation<A,B>>):Validation<A,B> {
-    return switch (e) {
-      case Failure(l): cast e;
-      case Success(r): r;
-    }
-  }
-  
-  /**
-   * Maps the left side of an Validation and returns a new Validation based on the mapping function f.
-   * 
-   * @param e Validation instance to map
-   * @param f the mapping function if e is Left
-   * 
-   * @return mapped Validation instance
-   */
-  public static function mapFailure < A,B,C > (e:Validation<A,B>, f:A->C):Validation<C,B>
-  {
-    return switch (e) {
-      case Failure(l): Failure(f(l));
-      case Success(r): cast e; // avoids creating a new object
+  public static function flattenFailure <F,S> (v:Validation<Validation<F,S>, S>):Validation<F,S> {
+    return switch (v) {
+      case Failure(f): f;
+      case Success(_): cast v;
     }
   }
   
@@ -275,32 +263,121 @@ class ValidationExt
    * 
    * @return mapped Validation instance
    */
-  public static function mapSuccess < A,B,C > (e:Validation<A,B>, f:B->C):Validation<A,C>
+  public static function map < F,S,SS > (v:Validation<F,S>, f:S->SS):Validation<F,SS>
   {
-    return switch (e) {
-      case Failure(l): cast e; // avoids creating a new object
-      case Success(r): Success(f(r));
+    return switch (v) {
+      case Failure(_): cast v; // avoids creating a new object
+      case Success(s): Success(f(s));
     }
   }
   
- 
-  
   /**
-   * Maps an Validation into a new one based on the mapping functions left and right.
+   * Maps the left side of an Validation and returns a new Validation based on the mapping function f.
    * 
-   * @param left the mapping function if e is Left
-   * @param right the mapping function if e is Right
+   * @param e Validation instance to map
+   * @param f the mapping function if e is Left
    * 
    * @return mapped Validation instance
    */
-  public static function map < A,B,C,D > (e:Validation<A,B>, onFailure:A->C, onSuccess:B->D):Validation<C,D>
+  public static function mapFailure < F,S,FF > (v:Validation<F,S>, f:F->FF):Validation<FF,S>
   {
-    return switch (e) {
-      case Failure(l): Failure(onFailure(l));
-      case Success(r): Success(onSuccess(r));
+    return switch (v) {
+      case Failure(l): Failure(f(l));
+      case Success(_): cast v; // avoids creating a new object
     }
   }
   
   
+  public static inline function fail <A,B>(v:Validation<A,B>):FailProjection<A,B> return cast v
   
+}
+
+//private typedef V = ValidationExt;
+
+
+using scuts.core.extensions.ValidationExt;
+
+class FailProjectionExt 
+{
+  public static inline function success <F,S>(v:FailProjection<F,S>):Validation<F,S> return cast v
+  
+  public static inline function map <F,S,FF> (v:FailProjection<F,S> , f:F->FF):FailProjection<FF,S> 
+  {
+    return success(v).mapFailure(f).fail();
+  }
+  
+  public static inline function flatMap <F,S,FF> (v:FailProjection<F,S> , f:F->Validation<FF,S>):FailProjection<FF,S> 
+  {
+    return success(v).flatMapFailure(f).fail();
+  }
+  
+  public static inline function flatten <F,S> (v:FailProjection<Validation<F,S>, S>):FailProjection<F,S> 
+  {
+    return success(v).flattenFailure().fail();
+  }
+  
+  public static inline function isSuccess<F,S>(v:FailProjection<F,S>):Bool
+  {
+    return success(v).isSuccess();
+  }
+  
+  public static inline function isFailure<F,S>(v:FailProjection<F,S>):Bool
+  {
+    return success(v).isFailure();
+  }
+  
+  public static inline function option<F,S>(v:FailProjection<F,S>):Option<F>
+  {
+    return success(v).optionFailure();
+  }
+  
+  public static inline function each < F,S> (v:FailProjection< F,S> , f:F->Void):Void 
+  {
+    return success(v).eachFailure(f);
+  }
+  
+  public static inline function extract<F,S>(v:FailProjection<F,S>):F 
+  {
+    return success(v).extractFailure();
+  }
+}
+
+class ValidationEitherConversions 
+{
+  public static function validation<L,R>(e:Either<L,R>):Validation<L,R> 
+  {
+    return switch (e) {
+      case Left(l): Failure(l);
+      case Right(r): Success(r);
+    }
+  }
+}
+
+class ValidationOptionConversions 
+{
+  public static function validation<F,S>(o:Option<S>, f:Void->F):Validation<F,S> 
+  {
+    return switch (o) {
+      case Some(s): Success(s);
+      case None:    Failure(f());
+    }
+  }
+}
+
+class ValidationDynamicConversions 
+{
+  public static function toSuccess<F,S>(x:S):Validation<F,S> 
+  {
+    return Success(x);
+  }
+
+  public static function toFail<F,S>(x:F):Validation<F,S> 
+  {
+    return Failure(x);
+  }
+  
+  public static function nullToSuccess<F,S>(x:S, f:Void->F):Validation<F,S> 
+  {
+    return if (x != null) Success(x) else Failure(f());
+  }
 }

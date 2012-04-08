@@ -1,6 +1,5 @@
 package scuts.core.extensions;
 
-import scuts.core.macros.Lazy;
 import scuts.core.types.Option;
 import scuts.core.types.Ordering;
 import scuts.core.types.Tup2;
@@ -8,6 +7,7 @@ import scuts.Scuts;
 
 using scuts.core.extensions.FunctionExt;
 using scuts.core.extensions.IntExt;
+using scuts.core.extensions.OptionExt;
 using scuts.core.extensions.DynamicExt;
 
 
@@ -359,13 +359,15 @@ class ArrayExt
     for (i in 1...a.length) {
       acc = f(acc, a[i],i);
     }
+    
     return acc;
   }
   
   
   
-  public static function equals <T>(a1:Array<T>, a2:Array<T>, eqT:T->T->Bool) {
-    var equalsElements = Lazy.expr({
+  public static function equals <T>(a1:Array<T>, a2:Array<T>, eqT:T->T->Bool) 
+  {
+    var equalsElements = function () {
       var eq = true;
       for (i in 0...a1.length) {
         if (!eqT(a1[i], a2[i])) {
@@ -373,22 +375,24 @@ class ArrayExt
           break;
         }
       }
-      eq;
-    });
+      return eq;
+    };
     
     return a1.length == a2.length
       && equalsElements();
   }
   
   
-  public static function some <T>(arr:Array<T>, e:T->Bool):Option<T> {
+  public static function some <T>(arr:Array<T>, e:T->Bool):Option<T> 
+  {
     for (i in arr) {
       if (e(i)) return Some(i);
     }
     return None;
   }
   
-  public static function someWithIndex <T>(arr:Array<T>, p:T->Bool):Option<Tup2<T, Int>> {
+  public static function someWithIndex <T>(arr:Array<T>, p:T->Bool):Option<Tup2<T, Int>> 
+  {
     for (i in 0...arr.length) {
       var elem = arr[i];
       if (p(elem)) return Some(Tup2.create(elem, i));
@@ -396,12 +400,24 @@ class ArrayExt
     return None;
   }
   
-  public static function someMappedWithIndex <A,B>(arr:Array<A>, map:A->B, p:B->Bool):Option<Tup2<B, Int>> {
+  public static function someMappedWithIndex <A,B>(arr:Array<A>, map:A->B, p:B->Bool):Option<Tup2<B, Int>> 
+  {
     for (i in 0...arr.length) {
       var elem = arr[i];
       var mapped = map(elem);
       
       if (p(mapped)) return Some(Tup2.create(mapped, i));
+    }
+    return None;
+  }
+    
+  public static function someMapped <A,B>(arr:Array<A>, map:A->B, p:B->Bool):Option<B> 
+  {
+    for (i in 0...arr.length) {
+      var elem = arr[i];
+      var mapped = map(elem);
+      
+      if (p(mapped)) return Some(mapped);
     }
     return None;
   }
@@ -488,15 +504,10 @@ class ArrayExt
     var res = [];
     
     for (e in a) {
-      res.push(DynamicExt.toOption(e));
+      res.push(e.toOption());
     }
     
     return res;
-  }
-  
-  public static function toOption <T>(arr:Array<T>):Option<Array<T>> 
-  {
-    return if (arr.length == 0) None else Some(arr);
   }
   
   public static function zipWith < A, B, C > (arr1:Array<A>, arr2:Array<B>, f:A->B->C):Array<C>
@@ -603,7 +614,8 @@ class ArrayExt
     return res;
   }
   
-  public static function removeElem <A> (a:Array<A>, e:A, ?equals:A->A->Bool):Array<A> {
+  public static function removeElem <A> (a:Array<A>, e:A, ?equals:A->A->Bool):Array<A> 
+  {
     equals = equals.nullGetOrElseConst(function (x1, x2) return x1 == x2);
     var res = [];
     for (i in a) {
@@ -612,7 +624,8 @@ class ArrayExt
     return res;
   }
   
-  public static function removeElemAt <A> (a:Array<A>, at:Int):Array<A> {
+  public static function removeElemAt <A> (a:Array<A>, at:Int):Array<A> 
+  {
     var res = [];
     for (i in 0...a.length) {
       if (i != at) res.push(a[i]);
@@ -630,6 +643,7 @@ class ArrayExt
       a;
     }
   }
+  
   public static function removeFirst <A> (a:Array<A>):Array<A> 
   {
     return if (a.length > 0) {

@@ -107,14 +107,14 @@ class OptionExt {
     }
   }
   
-  public static inline function isSome (o:Option<Dynamic>):Bool {
+  public static inline function isSome <T>(o:Option<T>):Bool {
     return switch (o) {
       case Some(_): true;
       case None: false;
     }
   }
   
-  public static inline function isNone (o:Option<Dynamic>):Bool {
+  public static inline function isNone <T>(o:Option<T>):Bool {
     return !isSome(o);
   }
   
@@ -137,6 +137,15 @@ class OptionExt {
       case None: None;
     }
   }
+  
+  public static function flatten <T> (o:Option<Option<T>>):Option<T>
+  {
+    return switch (o) {
+      case Some(v): v;
+      case None: None;
+    }
+  }
+  
   public static function flatMap < S, T > (o:Option<S>, f:S->Option<T>):Option<T>
   {
     return switch (o) {
@@ -160,5 +169,24 @@ class OptionExt {
       case Some(s): f(s);
     }
   }
+}
+
+class OptionDynamicConversions {
+  /** 
+   * Converts v into a Some Option.
+   */
+  public static inline function toOption < T > (v:T):Option<T> {
+    #if debug
+    if (v == null) 
+      Scuts.error("Cannot wrap null into an Option, use nullToOption instead");
+    #end
+    return Some(v);
+  }
   
+  /**
+   * Converts v into an Option, based on the nulliness of v.
+   */
+  public static inline function nullToOption < T > (v:T):Option<T> {
+    return v != null ? Some(v) : None;
+  }
 }
