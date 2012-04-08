@@ -442,6 +442,23 @@ class Context
     
   }
 	
+  public static function followAliases (t:Type):Type
+  {
+    var c = t;
+    var next = t;
+    var isAlias = false;
+    do {
+      c = next;
+      next = Ctx.follow(c, true);
+      isAlias = switch (next) {
+        case TAnonymous(_), TFun(_): true;
+        default: false;
+      }
+    } while (!isAlias && !TypeExt.eq(c, next));
+    
+    return c;
+  }
+  
 }
 
 

@@ -558,6 +558,16 @@ class Select
         }
   }
   
+  public static function selectEReturn (e:Expr):Option<Expr> {
+    
+        return switch (e.expr) {
+          case EReturn(e):
+            e.toOption();
+          default:
+            None;
+        }
+  }
+  
 }
 
 #end

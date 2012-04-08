@@ -2,7 +2,9 @@ package scuts.mcore;
 
 #if (!macro && !display)
 #error "Class can only be used inside of macros"
-#elseif (display || macro)
+#elseif ((display || macro))
+#if false
+
 import haxe.macro.Expr;
 import scuts.core.extensions.DynamicExt;
 import scuts.core.extensions.OptionExt;
@@ -85,7 +87,7 @@ class QueryNode {
 
 class QueryArray {
   public static inline function createQuery <T>(c:Array<T>):QSelection<T> {
-    return c.map(DynamicExt.toOption);
+    return c.map(OptionExt.toOption);
   }
 }
 
@@ -414,5 +416,5 @@ class QueryExpr
   }
 }
 
-
+#end
 #end

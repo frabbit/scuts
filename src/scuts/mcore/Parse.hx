@@ -10,7 +10,7 @@ import haxe.macro.Type;
 import scuts.core.std.StdType;
 import scuts.Scuts;
 import scuts.core.types.Option;
-using scuts.core.extensions.Function0Ext;
+using scuts.core.extensions.FunctionExt;
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.StringExt;
 using scuts.core.extensions.OptionExt;

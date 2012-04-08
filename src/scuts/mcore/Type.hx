@@ -4,6 +4,7 @@ package scuts.mcore;
 #elseif (display || macro)
 
 using scuts.core.extensions.ArrayExt;
+
 using scuts.core.extensions.IterableExt;
 
 
@@ -157,7 +158,7 @@ class Type
     return type.module.split(".").last();
   }
   
-  public static function getType (s:String):MType
+  public static function getType (s:String):Option<MType>
   {
     var parts = s.split(".");
     if (parts.length > 1) {
@@ -168,7 +169,7 @@ class Type
         
         if (f1 == f2) {
           parts.splice(parts.length - 2, 1);
-          return try Context.getType(parts.join(".")) catch (e:Dynamic) null;
+          return try Some(Context.getType(parts.join("."))) catch (e:Dynamic) None;
           
         } else {
           var typeName = parts.pop();
@@ -176,10 +177,10 @@ class Type
         }
       } 
     }
-    return try Context.getType(s) catch (e:Dynamic) null;
+    return try Some(Context.getType(s)) catch (e:Dynamic) None;
   }
 	
-	public static function getTypeFromModule (module:String, typeName:String):MType {
+	public static function getTypeFromModule (module:String, typeName:String):Option<MType> {
     //trace("check if type from module" + typeName);
     
 		var types = try Context.getModule(module) catch (e:Dynamic) null;
@@ -187,20 +188,20 @@ class Type
       //trace("try from StdTypes for " + typeName);
       types = try Context.getModule("StdTypes") catch (e:Dynamic) null;
     }
-    if (types == null) {
+    return if (types == null) {
       // maybe from StdTypes
-      
-      return null;
-    }
-		for (t in types) {
-			switch (t) {
-				case TInst(r, _): if (r.get().name == typeName) return t;
-				case TEnum(r, _): if (r.get().name == typeName) return t;
-				case TType(r, _): if (r.get().name == typeName) return t;
-				default:
-			}
+      None;
+    } else {
+      types.someMapped(function (t) {
+        return switch (t) {
+          case TInst(r, _): if (r.get().name == typeName) Some(t) else None;
+          case TEnum(r, _): if (r.get().name == typeName) Some(t) else None;
+          case TType(r, _): if (r.get().name == typeName) Some(t) else None;
+          default: None;
+        }
+      }, function (t) return t.isSome()).flatten();
 		}
-		return null;
+		
 		
 	}
   

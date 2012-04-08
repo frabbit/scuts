@@ -63,7 +63,9 @@ class Make
   public static function anonField (field:String, expr:Expr)
     return { field: field, expr:expr}
   
-  
+  public static function parenthesis (e:Expr, ?pos:Position) {
+     return expr(EParenthesis(e), pos);
+  }
     
   public static function funcExpr (
     ?name:String, ?args:Array<FunctionArg>, ?ret:ComplexType, ?eexpr:Expr, 

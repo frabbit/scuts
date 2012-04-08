@@ -12,6 +12,7 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Expr.Binop;
 import haxe.macro.Type;
+import scuts.Assert;
 import scuts.mcore.extensions.TypeExt;
 import scuts.Scuts;
 
@@ -33,6 +34,7 @@ class Print
   
   public static function expr (ex:Expr, indent:Int = 0, indentStr = "\t"):String 
   {
+    Assert.assertNotNull(ex);
     var buf = new StringBuf();
     addIndent(buf, indent, indentStr);
     return expr1(ex, buf, indent, indentStr).toString();
@@ -60,16 +62,19 @@ class Print
   
   public static function complexType (c:ComplexType, indent:Int = 0, indentStr:String = "\t"):String
   {
+    Assert.assertNotNull(c);
     return complexType1(c, new StringBuf(), indent, indentStr).toString();
   }
     
   public static function func(f:Function, functionName:String = "", indent:Int = 0, indentStr:String = "\t"):String
   {
+    Assert.assertNotNull(f);
     return func1(f, new StringBuf(), indent, indentStr, functionName).toString();
   }
   
   public static function field(f:Field, indent:Int = 0, indentStr:String = "\t"):String
   {
+    Assert.assertNotNull(f);
     return field1(f, new StringBuf(), indent, indentStr).toString();
   }
   

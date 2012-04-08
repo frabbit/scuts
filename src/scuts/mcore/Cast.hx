@@ -7,6 +7,7 @@ package scuts.mcore;
 import haxe.macro.Type;
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.Timer;
 import neko.FileSystem;
 import neko.io.File;
 import scuts.core.Log;
@@ -44,7 +45,10 @@ class Cast
   public static function inlinedUnsafeCastTo2 (expr:Expr, fromType:Type, toType:Type, wildcards:Array<Type>, ?pos:Position):Expr
   {
     //var fromType = Print.type(Context.typeof(expr), true, wildcards);
-    var id = Context.signature([toType, fromType, wildcards]);
+    
+
+    var id = Context.signature( [Print.type(toType), Print.type(fromType), wildcards.map(function (x) return Print.type(x))] );
+
     
     
     
@@ -67,11 +71,6 @@ class Cast
       out.writeString(cl);
       out.close();
       
-      Context.getType(clName);
-      //FileSystem.deleteFile(clName + ".hx");
-    } else {
-      
-      Context.getType(clName);
     }
     
     var field = Make.field(Make.const(CType(clName), pos), "doCast", pos);

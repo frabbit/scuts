@@ -126,7 +126,12 @@ class TypeExt
       case TMono(t1): 
         switch (type2) 
         { 
-          case TMono(t2): t1.get().eq(t2.get());
+          case TMono(t2): 
+            var a = t1.get();
+            var b = t2.get();
+            
+            a.nullEq(b, eq);
+              
           default : false; 
         }
       case TLazy(f1): 

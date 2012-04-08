@@ -97,13 +97,13 @@ class ExprCache
    
   }
   
-  public function call (builder:Void->Expr, key:Dynamic, ?callId:String, ?keyPrinter:Void->String, ?posInfos:PosInfos)
+  public function call (builder:Void->Expr, key:Void->Dynamic, ?callId:String, ?keyPrinter:Void->String, ?posInfos:PosInfos)
   {
     
     callId = callId != null ? callId : (posInfos.className + "." + posInfos.methodName + "@" + posInfos.lineNumber + "");
     //trace(callId);
     var t = Timer.stamp();
-    var id = Context.signature([key, posInfos]);
+    var id = Context.signature([key(), posInfos]);
     if (measureTimes) 
       addTime(callId + "(signature)", Timer.stamp() - t);
     var tc = Timer.stamp();

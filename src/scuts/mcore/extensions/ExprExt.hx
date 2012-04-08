@@ -72,6 +72,7 @@ class ExprExt
   
   public static inline function unsafeCastTo (e:Expr, type:ComplexType, ?pos:Position) return Cast.inlinedUnsafeCastTo(e, type, pos)
 
+  public static inline function inParenthesis (e:Expr) return Make.parenthesis(e)
 }
 
 #end
