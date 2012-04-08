@@ -2,8 +2,7 @@ package hots.classes;
 import hots.TC;
 import scuts.core.types.LazyIterator;
 
-import scuts.core.extensions.Function1Ext;
-using scuts.core.extensions.Function1Ext;
+
 
 
 interface Enumeration<T> implements TC {

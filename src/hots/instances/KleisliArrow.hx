@@ -10,7 +10,7 @@ import hots.Of;
 import scuts.core.types.Tup2;
 import scuts.Scuts;
 
-using scuts.core.extensions.Function1Ext;
+using scuts.core.extensions.FunctionExt;
 
 private typedef B = hots.instances.KleisliBox;
 

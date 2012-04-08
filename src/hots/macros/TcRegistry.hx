@@ -15,6 +15,7 @@ import hots.macros.utils.Constants;
 import hots.macros.utils.Utils;
 import neko.FileSystem;
 import neko.io.File;
+import scuts.core.Log;
 import scuts.core.types.Option;
 import scuts.macros.Lazy;
 import scuts.mcore.cache.DiskCache;
@@ -31,7 +32,7 @@ import scuts.core.types.Tup2;
 
 import hots.macros.Data;
 
-using scuts.core.extensions.Function1Ext;
+using scuts.core.extensions.FunctionExt;
 
 using scuts.mcore.extensions.TypeExt;
 using scuts.core.extensions.OptionExt;
@@ -221,10 +222,12 @@ class TcRegistry
         var args = printableArgs.mapWithIndex(function (x,i) return "a" + i + ":" + Print.type(x).split(typeParamBaseId + ".").join(""));
         var callArgs = printableArgs.mapWithIndex(function (x,i) return "a" + i);
         
+        var retType = instanceId + getTypeParams;
+        
+        var s = "function " + getTypeParams + "(" + args.join(",") + "):" + retType + " return new " + instanceId + "(" + callArgs.join(",") + ")";
         
         
-        var s = "function " + getTypeParams + "(" + args.join(",") + ") return new " + instanceId + "(" + callArgs.join(",") + ")";
-        
+        //trace(s);
         
         
         var fExpr = Parse.parse(s);
@@ -295,6 +298,7 @@ class TcRegistry
     return try {
       var fields = Context.getBuildFields();
       var lc = Context.getLocalClass().get();
+      //trace(lc.name);
       return if (lc.isInterface) {
         // it's a type class interface
         buildTypeClassInterface(lc, fields);
@@ -308,10 +312,19 @@ class TcRegistry
       }
     } catch (e:Error) {
       trace(Stack.exceptionStack());
+      trace(Context.getLocalClass());
       Scuts.macroError(e.message, e.pos);
     }
     
+    //Context.registerModuleReuseCall("hots.macros.TcRegistry", "reuse");
+    
+    Context.registerModuleReuseCall("hots.macros.TcRegistry", "reuse");
+    
     return Context.getBuildFields();
+  }
+  
+  public static function reuse () {
+    Log.traced("hey");
   }
   
 

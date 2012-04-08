@@ -7,8 +7,8 @@ import hots.Of;
 import hots.classes.Functor;
 import scuts.core.types.Option;
 
-import scuts.core.extensions.Function1Ext;
-import scuts.core.extensions.Function2Ext;
+
+
 
 private typedef B = hots.macros.Box;
 

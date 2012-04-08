@@ -2,7 +2,7 @@ package hots.instances;
 import hots.classes.CategoryAbstract;
 import hots.In;
 
-using scuts.core.extensions.Function1Ext;
+using scuts.core.extensions.FunctionExt;
 
 private typedef B = FunctionBox;
 

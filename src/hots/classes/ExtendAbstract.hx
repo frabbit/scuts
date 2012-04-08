@@ -2,8 +2,8 @@ package hots.classes;
 import hots.Of;
 import scuts.Scuts;
 
-using scuts.core.extensions.Function1Ext;
-using scuts.core.extensions.Function2Ext;
+using scuts.core.extensions.FunctionExt;
+
 
 
  //class Comonad w where 

@@ -48,12 +48,14 @@ class TcContext
 {
   
   @:macro public static function forInstance (typeClass:ExprRequire<Class<TC>>, exprOrType:Expr) {
-    return tc1(exprOrType, typeClass);
+    return tc1(exprOrType, typeClass); 
   }
   
   @:macro public static function tc(exprOrType:Expr, typeClass:ExprRequire<Class<TC>>, ?contextClasses:ExprRequire<Array<TC>>) 
   {
-    return tc1(exprOrType, typeClass, contextClasses);
+    var e = tc1(exprOrType, typeClass, contextClasses);
+    //trace(Print.expr(e));
+    return e;
   }
   
   #if (macro || display)
@@ -75,6 +77,7 @@ class TcContext
 
   // expr can be a value or a type
     var exprType = Context.typeof(exprOrType);
+    
     var expr = switch (exprType) {
       case TType(t, p):
         var dt = t.get();
@@ -188,6 +191,7 @@ class TcContext
     var classTypeToSearch = Utils.replaceContainerElemType(tcType, exprType);
     var tcInContextFound = classTypeToSearch.flatMap(function (x) {
       var wildcards1 = (function () return MContext.getLocalTypeParameters(x)).lazyThunk();
+      
       return contextClasses.some(function (c) {
         
         var cType = c._1;

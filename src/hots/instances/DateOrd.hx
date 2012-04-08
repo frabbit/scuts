@@ -1,5 +1,6 @@
 package hots.instances;
 
+import hots.classes.Eq;
 import hots.classes.Ord;
 import hots.classes.OrdAbstract;
 import hots.instances.DateEq;
@@ -7,9 +8,9 @@ import hots.instances.FloatOrd;
 import scuts.core.types.Ordering;
 
 
-private class DateOrd extends OrdAbstract<Date> {
+class DateOrd extends OrdAbstract<Date> {
 
-  public function new (eq) { super(eq);}
+  public function new (eq:Eq<Date>) super(eq)
   
   override public function less (a:Date, b:Date):Bool {
     return FloatOrd.get().less(a.getTime(), b.getTime());

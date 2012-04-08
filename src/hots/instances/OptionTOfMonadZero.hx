@@ -2,13 +2,14 @@ package hots.instances;
 
 import hots.classes.MonadZeroAbstract;
 import hots.In;
+import hots.macros.Box;
 import hots.Of;
 import scuts.core.types.Option;
 import hots.classes.Monad;
 
-private typedef BT = OptionTBox;
+using hots.macros.Box;
 
-class OptionTOfMonadZeroImpl<M> extends MonadZeroAbstract<Of<M, Option<In>>> {
+class OptionTOfMonadZero<M> extends MonadZeroAbstract<Of<M, Option<In>>> {
   
   var monadM:Monad<M>;
   
@@ -18,8 +19,9 @@ class OptionTOfMonadZeroImpl<M> extends MonadZeroAbstract<Of<M, Option<In>>> {
   }
   
   override public inline function zero <A>():OptionTOf<M,A> {
-    return BT.box(monadM.pure(None));
+
+    
+    return monadM.pure(None).box();
   }
 }
 
-typedef OptionTOfMonadZero = haxe.macro.MacroType<[hots.macros.TypeClasses.createProvider(OptionTOfMonadZeroImpl)]>;

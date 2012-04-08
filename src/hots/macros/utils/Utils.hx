@@ -97,7 +97,7 @@ class Utils
 {
   public static function normalizeOfTypes (type:Type):Type {
     
-    return switch (Context.follow(type)) {
+    return switch (MContext.followAliases(type)) {
       case TInst(ctRef, params):
         var ct = ctRef.get();
         
@@ -358,8 +358,8 @@ class Utils
   public static function typeIsCompatibleTo1 ( t:Type, to:Type, wildcards:Array<Type>, mapping:Mapping ):Option<Mapping> 
   {
     // expand both types first
-    var t = Context.follow(t);
-    var to = Context.follow(to);
+    var t = MContext.followAliases(t);
+    var to = MContext.followAliases(to);
     
     var comp = typeIsCompatibleTo1;
     // checks if the parameter arrays are compatible
@@ -541,13 +541,16 @@ class Utils
             var maybeReversed = if (isOf) replaced.reverseCopy() else replaced;
             return TInst(ct, maybeReversed);
           });
-          
-          
-          
+
         case TEnum(et, params): 
           var found = params.someMappedWithIndex(function (p) return loop(p), function (x:Option<Type>) return x.isSome());
           found.map( function (x) {
             return TEnum(et, params.replaceElemAt(x._1.getOrError("Unexpected"), x._2));
+          });
+        case TType(tt, params): 
+          var found = params.someMappedWithIndex(function (p) return loop(p), function (x:Option<Type>) return x.isSome());
+          found.map( function (x) {
+            return TType(tt, params.replaceElemAt(x._1.getOrError("Unexpected"), x._2));
           });
         
         case TFun(args, ret):
@@ -605,7 +608,7 @@ class Utils
   
   public static function replaceOfElemType(ofType:Type, newElemType:Type):Option<Type> 
   {
-    return switch (Context.follow(ofType)) 
+    return switch (MContext.followAliases(ofType)) 
     {
       case TInst(t, params):
         var tget = t.get();
@@ -628,11 +631,16 @@ class Utils
     {
       return TypeExt.eq(t, inType()) || switch (t) 
       {
-        case TInst(_, params), TEnum(_, params):
+        case TInst(_, params), TEnum(_, params), TType(_, params):
           params.any(function (p) return loop(p));
         case TFun(args, ret):
           args.any(function (a) return loop(a.t)) || loop(ret);
-        default: Scuts.notImplemented();
+        
+        default: 
+          
+          trace(type);
+          trace(t);
+          Scuts.notImplemented();
       }
     }
     return loop(type);
@@ -640,7 +648,7 @@ class Utils
   
   public static function getOfParts (type:Type):Option<Tup2<Type, Type>>
   {
-    return switch (Context.follow(type)) 
+    return switch (MContext.followAliases(type)) 
     {
       case TInst(t, params):
         var tget = t.get();

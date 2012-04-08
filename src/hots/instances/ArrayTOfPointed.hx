@@ -10,8 +10,6 @@ import hots.Of;
 import scuts.core.extensions.ArrayExt;
 import hots.classes.Functor;
 
-import scuts.core.extensions.Function1Ext;
-import scuts.core.extensions.Function2Ext;
 
 using hots.macros.Box;
 

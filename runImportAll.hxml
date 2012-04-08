@@ -1,0 +1,9 @@
+-cp src 
+-cp ../scutsCore/src
+-cp ../scutsMCore/src
+-cp ../scutsMacros/src
+-cp test 
+-cp .
+-neko importAll.n
+#--no-output
+-main ImportAll

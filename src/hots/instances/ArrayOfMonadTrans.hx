@@ -5,7 +5,7 @@ import hots.classes.Monad;
 import hots.In;
 import hots.Of;
 
-using scuts.core.extensions.Function1Ext;
+
 
 using hots.macros.Box;
 

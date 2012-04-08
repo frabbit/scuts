@@ -6,9 +6,8 @@ import scuts.Scuts;
 import scuts.core.types.Option;
 import hots.classes.Monoid;
 
-using scuts.core.extensions.Function1Ext;
-using scuts.core.extensions.Function2Ext;
-using scuts.core.extensions.Function3Ext;
+using scuts.core.extensions.FunctionExt;
+
 
 import hots.instances.DualMonoid;
 import hots.instances.EndoMonoid;
@@ -48,7 +47,9 @@ class FoldableAbstract<F> implements Foldable<F>
   public function foldRight <A,B>(f:A->B->B, b:B, val:Of<F,A>):B 
   {
     //foldr f z t = appEndo (foldMap (Endo . f) t) z
-    var x = foldMap( f.curry(), EndoMonoid.get(), val);
+    
+    
+    var x = foldMap( f.curry(), EndoMonoid.get() , val);
     
     return x(b);
   }

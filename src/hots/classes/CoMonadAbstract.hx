@@ -2,8 +2,8 @@ package hots.classes;
 import hots.Of;
 import scuts.Scuts;
 
-using scuts.core.extensions.Function1Ext;
-using scuts.core.extensions.Function2Ext;
+using scuts.core.extensions.FunctionExt;
+
 
 
  //class Comonad w where 
@@ -16,20 +16,20 @@ using scuts.core.extensions.Function2Ext;
   */
 @:tcAbstract class CoMonadAbstract<W> implements CoMonad<W> 
 {
-  var ex:Extend<W>;
-  public function new (extend:Extend<W>) {
-    this.ex = extend;
+  var p:CoPointed<W>;
+  public function new (p:CoPointed<W>) {
+    this.p = p;
   }
 
-  public function extract <A>(f:Of<W,A>):A return Scuts.abstractMethod()
+  public function cojoin <A>(f:Of<W,A>):Of<W, Of<W, A>> return Scuts.abstractMethod()
   
-  // delegation of Extend
   
-  @:final public inline function extend <A,B>(f:Of<W,A>->B ):Of<W,A>->Of<W,B> return ex.extend(f)
   
-  @:final public inline function duplicate<A,B>(val:Of<W,A>):Of<W, Of<W,A>> return ex.duplicate(val)
+  // delegation of CoPointed
+  
+  @:final public inline function copure <A>(v:A):Of<W,A> return p.copure(v)
   
   // delegation of Functor
   
-  @:final public inline function map<A,B>(f:A->B, val:Of<W,A>):Of<W,B> return ex.map(f, val)
+  @:final public inline function map<A,B>(f:A->B, val:Of<W,A>):Of<W,B> return p.map(f, val)
 }

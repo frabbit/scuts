@@ -1,9 +1,9 @@
 package hots.extensions;
-import hots.instances.ArrayBox;
 import hots.instances.ArrayOfFunctor;
 import hots.instances.ArrayOf;
+import hots.macros.Box;
 
-private typedef B = ArrayBox;
+private typedef B = Box;
 
 extern class ArrayOfExt 
 {
@@ -25,7 +25,7 @@ extern class ArrayOfExt
   
   public static inline function empty<A>():ArrayOf<A> 
   {
-    return ArrayBox.box([]);
+    return B.box([]);
   }
   
   public static inline function concat<A>(a:ArrayOf<A>, b:ArrayOf<A>):ArrayOf<A> 

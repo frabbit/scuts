@@ -69,8 +69,10 @@ class Box
   @:macro public static function unboxF<A,B,C>(e:ExprRequire<A->Of<B,C>>, ?times:Int = 1) 
     return (0...times).foldLeft(function (acc, _) return unboxF1(acc), e)
   
-  @:macro public static function unbox<A,B>(e:ExprRequire<Of<A,B>>, ?times:Int = 1) 
-    return (0...times).foldLeft(function (acc, _) return unbox1(acc), e)
+  @:macro public static function unbox<A,B>(e:ExprRequire<Of<A,B>>, ?times:Int = 1) {
+    //trace(Print.expr(e));
+    return (0...times).foldLeft(function (acc, _) return unbox1(acc), e);
+  }
   
   
   #if (macro || display)
@@ -79,27 +81,29 @@ class Box
   {
     function f() 
     {
-      var type = Context.follow(Context.typeof(e));
-
+      var o = MContext.typeof(e);
+      //trace(o);
+      var type = MContext.followAliases(o.extract());
+      //trace(type);
       return unboxOfTypeToType(type)
         .mapRight(function (x) return unsafeCast(e, type, x))
         .getOrElse(function (err) return handleUnboxError(err, e));
     }
-    return cache.call(f, e);
+    return cache.call(f, function () return [Print.expr(e), e.pos]);
   }
   
   public static function box1(e:Expr):Expr 
   {
     function f() 
     {
-      var type = Context.follow(Context.typeof(e));
+      var type = MContext.followAliases(Context.typeof(e));
       var newType = boxTypeToOfType(type);
     
       return newType
         .mapRight(function (x) return unsafeCast(e, type,x))
         .getOrElse(function (err) return handleBoxError(err, e));
     }
-    return cache.call(f, e);
+    return cache.call(f, function () return [Print.expr(e), e.pos]);
   }
   
   public static function unboxF1 (e:Expr):Expr 
@@ -120,7 +124,7 @@ class Box
         case Right(type): unsafeCast(e, type, TFun(fnParts._1, type));
       };
     }
-    return cache.call(f, e);
+    return cache.call(f,function () return e);
   }
   
   public static function boxF1 (e:Expr) 
@@ -140,7 +144,7 @@ class Box
         case Right(type): unsafeCast(e, type, TFun(fnParts._1, type));
       };
     }
-    return cache.call(f, e);
+    return cache.call(f, function () return e);
   }
   
   static function handleBoxError <T>(error:BoxError, expr:Expr):T
@@ -170,11 +174,11 @@ class Box
   
   public static function boxTypeToOfType (type:Type):Either<BoxError, Type> 
   {
-    var type = Context.follow(type);
+    var type = MContext.followAliases(type);
     
     return (if (Utils.isOfType(type)) 
     {
-      var innerType = Context.follow(U.getOfElemType(type).extract());
+      var innerType = MContext.followAliases(U.getOfElemType(type).extract());
       
       if (U.isContainerType(innerType)) 
       {
@@ -214,12 +218,12 @@ class Box
   {
     
     var err = function () return TypeIsNoOfType(type);
-    return U.getOfParts(Context.follow(type)) // 1
+    return U.getOfParts(MContext.followAliases(type)) // 1
     .toRight(err) 
     .flatMapRight(function (t) // 2
     { 
-      var container = Context.follow(t._1);
-      var elemType = Context.follow(t._2);
+      var container = MContext.followAliases(t._1);
+      var elemType = MContext.followAliases(t._2);
       return if (U.isOfType(container)) //5
       {
         U.getOfElemType(container).map(function (x) return Context.follow(x))

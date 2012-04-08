@@ -4,7 +4,7 @@ import hots.Of;
 import hots.classes.Foldable;
 import scuts.Scuts;
 
-class TraversableAbstract<T> implements Traversable<T>
+@:tcAbstract class TraversableAbstract<T> implements Traversable<T>
 {
   var fu:Functor<T>;
   var fo:Foldable<T>;

@@ -2,8 +2,8 @@ package hots.classes;
 import scuts.core.types.LazyIterator;
 import scuts.Scuts;
 
-import scuts.core.extensions.Function1Ext;
-using scuts.core.extensions.Function1Ext;
+
+using scuts.core.extensions.FunctionExt;
 using scuts.core.extensions.IntExt;
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.IterableExt;

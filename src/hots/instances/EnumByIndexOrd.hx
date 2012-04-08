@@ -5,11 +5,11 @@ import hots.classes.OrdAbstract;
 
 
 
-class EnumByIndexOrd extends OrdAbstract<Enum<Dynamic>> {
+class EnumByIndexOrd extends OrdAbstract<EnumValue> {
   
   public function new () super(EnumByIndexEq.get())
 
-  override public function lessOrEq (a:Enum<Dynamic>, b:Enum<Dynamic>):Bool {
+  override public function lessOrEq (a:EnumValue, b:EnumValue):Bool {
     return Type.enumIndex(a) <= Type.enumIndex(b);
   }
 }

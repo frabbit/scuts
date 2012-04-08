@@ -19,7 +19,7 @@ import scuts.Scuts;
   duplicate = extend id
 
 */
-interface CoMonad<W> implements Extend<W>
+interface CoMonad<W> implements CoPointed<W>
 {
-  public function extract <A>(f:Of<W,A>):A;
+  public function cojoin <A>(f:Of<W,A>):Of<W, Of<W, A>>;
 }

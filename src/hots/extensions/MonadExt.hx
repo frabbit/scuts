@@ -28,17 +28,18 @@ class MonadExt
 {
   
   
-  @:macro public static function do_<M>(m:ExprRequire<hots.classes.Monad<M>>,
+  @:macro public static function runDo<M>(m:ExprRequire<hots.classes.Monad<M>>,
     e1:Expr, e2:Expr = null, e3:Expr = null, e4:Expr = null,
     e5:Expr = null, e6:Expr = null, e7:Expr = null, e8:Expr = null,
     e9:Expr = null, e10:Expr = null, e11:Expr = null
-    
   )
   {
     var maybeNullExprs = [e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11];
     var exprs = maybeNullExprs.filter(function (x) return !Check.isConstNull(x));
     var last = exprs[exprs.length -1];
     var head = exprs.removeLast();
+    
+    var pureExpr = Select.selectEReturn(last).map(function (x) return Make.field(m, "pure").call([x])).getOrElseConst(last);
     
     var res = head.foldRightWithIndex(
       function (x, acc, index) {
@@ -51,7 +52,7 @@ class MonadExt
         
         return flatMapCall;
         
-      }, Make.field(m, "pure").call([last]));
+      }, pureExpr);
 
     return res;
   }
