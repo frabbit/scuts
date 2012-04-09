@@ -241,6 +241,9 @@ class Context
 		Ctx.error(msg, pos);
 	}
 	
+  
+  public static function isTypeable (expr:Expr):Bool return typeof(expr).isSome()
+  
 	public static function typeof(expr:Expr):Option<Type>
 	{
 		return try {
