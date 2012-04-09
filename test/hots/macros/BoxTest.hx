@@ -15,6 +15,8 @@ class BoxTest<A>
   {
     var type1:Of<Array<In>, A> = null;
     var t1:Array<A> = Box.unbox(type1);
+    
+    Assert.isTrue(true);
   }
 
 
@@ -22,12 +24,16 @@ class BoxTest<A>
   {
     var type1:Of<Array<In>, {a:A, b:B}> = null;
     var t1:Array<{a:A, b:B}> = Box.unbox(type1);
+    
+    Assert.isTrue(true);
   }
   
   public function testBoxingWithFunctionParams<B>() 
   {
     var type1:Of<Array<In>, B> = null;
     var t1:Array<B> = Box.unbox(type1);
+    
+    Assert.isTrue(true);
   }
 
   
@@ -103,7 +109,7 @@ class BoxTest<A>
     var t1:Int -> Of<Of<In -> Of<Array<In>, In>, Int>, String> = null;
     
     var f : Int -> (Int->Of<Array<In>, String>) = Box.unboxF(t1);
-
+    
     Assert.isTrue(true);
   }
   

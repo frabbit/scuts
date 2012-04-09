@@ -16,7 +16,7 @@ import scuts.core.types.Option;
 using scuts.core.extensions.OptionExt;
 import hots.macros.utils.Utils;
 using scuts.core.extensions.DynamicExt;
-using scuts.core.extensions.Function0Ext;
+using scuts.core.extensions.FunctionExt;
 #end
 #if !macro
 class XXX {}

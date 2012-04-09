@@ -10,7 +10,7 @@ import hots.macros.utils.UtilsTest;
 import neko.Lib;
 import neko.Sys;
 #else 
-
+import hots.macros.TcContextTest;
 import hots.macros.BoxTest;
 #end
 
@@ -35,7 +35,7 @@ class AllTests
       
       #else
       runner.addCase(new BoxTest());
-      
+      runner.addCase(new TcContextTest());
       #end
       
       Report.create(runner);
