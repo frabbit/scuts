@@ -1,0 +1,10 @@
+-cp src 
+-cp test 
+-cp ./../scutsMcore/src
+-cp ./../scutsCore/src
+-cp ./../scutsMacros/src
+-lib utest 
+#--connect 127.0.0.1:8889
+
+--times
+-D macrotimes

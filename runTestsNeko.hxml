@@ -1,0 +1,4 @@
+commonTest.hxml
+-main AllTests
+-neko bin/test/testNeko.n
+
