@@ -70,7 +70,7 @@ class ExprExt
   
   public static inline function lazy (e:Expr, ?pos:Position) return Lazy.mkExpr(e)
   
-  public static inline function unsafeCastTo (e:Expr, type:ComplexType, ?pos:Position) return Cast.unsafeCast(e, type, pos)
+  public static inline function unsafeCastTo (e:Expr, type:ComplexType, ?pos:Position) return Cast.unsafeCastToComplexType(e, type, pos)
 
   public static inline function inParenthesis (e:Expr) return Make.parenthesis(e)
 }
