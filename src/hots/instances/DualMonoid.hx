@@ -9,13 +9,11 @@ class DualMonoid<T> extends MonoidAbstract<T>
 {
   var monoid:Monoid<T>;
   
-  public function new (m:Monoid<T>) 
-    this.monoid = m
-  
-  override public inline function append (a:T, b:T):T {
-    return monoid.append(b, a);
+  public function new (monoid:Monoid<T>) {
+    super(DualSemigroup.get(monoid));
+    this.monoid = monoid;
   }
-  
+
   override public inline function empty ():T {
     return monoid.empty();
   }

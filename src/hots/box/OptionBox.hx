@@ -12,9 +12,9 @@ class OptionBox
   
   public static inline function unbox <X>(o:OptionOf<X>):Option<X> return Box.unbox(o)
   
-  public static inline function boxF <X,XX>(o:X->Option<XX>):X->OptionOf<XX> return Box.boxF(o)
+  public static inline function boxF <X,XX>(o:X->Option<XX>):X->OptionOf<XX> return cast o //Box.boxF(o)
   
-  public static inline function unboxF <X,XX>(o:X->OptionOf<XX>):X->Option<XX> return Box.unboxF(o)
+  public static inline function unboxF <X,XX>(o:X->OptionOf<XX>):X->Option<XX> return cast o // Box.unboxF(o)
   
   public static inline function boxT <A,B>(o:Of<A, Option<B>>):OptionTOf<A,B> return Box.box(o)
   

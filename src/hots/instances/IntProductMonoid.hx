@@ -5,11 +5,9 @@ import hots.classes.MonoidAbstract;
 
 class IntProductMonoid extends MonoidAbstract<Int>
 {
-  public function new () {}
+  public function new () super(IntProductSemigroup.get())
   
-  override public inline function append (a:Int, b:Int):Int {
-    return a * b;
-  }
+  
   override public inline function empty ():Int {
     return 1;
   }

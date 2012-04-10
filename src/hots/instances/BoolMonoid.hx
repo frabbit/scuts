@@ -5,8 +5,8 @@ import hots.classes.MonoidAbstract;
 
 class BoolMonoid extends MonoidAbstract<Bool>
 {
-  public function new () {}
+  public function new () super(BoolSemigroup.get())
   
-  override public inline function append (a:Bool, b:Bool):Bool return a && b
+  
   override public inline function empty ():Bool return false
 }

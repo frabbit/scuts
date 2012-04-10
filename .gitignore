@@ -9,3 +9,9 @@
 /samples/04_Collection/bin
 /_scuts_cache
 /testing
+/samples/01_ArrayMonad/_scuts_cache
+/samples/02_MonadTransformer/_scuts_cache
+/samples/03_Foldable/_scuts_cache
+/samples/04_Collection/_scuts_cache
+/samples/06_Monoid/_scuts_cache
+/samples/07_GenEq/_hots_cache

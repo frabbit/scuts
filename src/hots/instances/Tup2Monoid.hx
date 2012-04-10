@@ -14,11 +14,7 @@ class Tup2Monoid<A,B> extends MonoidAbstract<Tup2<A,B>>
   public function new (m1:Monoid<A>, m2:Monoid<B>) {
     this.m1 = m1;
     this.m2 = m2;
-  }
-  
-  override public inline function append (a:Tup2<A,B>, b:Tup2<A,B>):Tup2<A,B> 
-  {
-    return Tup2.create(m1.append(a._1, b._1), m2.append(a._2, b._2));
+    super(Tup2Semigroup.get(m1,m2));
   }
   
   override public inline function empty ():Tup2<A,B> 

@@ -5,15 +5,14 @@ import scuts.Scuts;
 
 @:tcAbstract class MonoidAbstract<A> implements Monoid<A>
 {
-  public function append (a:A, b:A):A return Scuts.abstractMethod()
+  var semi:Semigroup<A>;
+  
+  public function new (semi:Semigroup<A>) {
+    this.semi = semi;
+  }
+  
+  public inline function append (a1:A, a2:A):A return semi.append(a1,a2)
   public function empty ():A  return Scuts.abstractMethod()
   
-  public function concatArray (v:Array<A>):A {
-    var res = empty();
-    for (e in v) {
-      res = append(res, e);
-    }
-    return res;
-  }
 }
 

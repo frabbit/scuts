@@ -1,6 +1,7 @@
 package hots.extensions;
 
 import hots.classes.Monoid;
+import hots.classes.Semigroup;
 import hots.instances.OptionOfFunctor;
 import hots.instances.OptionOf;
 import scuts.core.types.Option;
@@ -25,7 +26,7 @@ class OptionOfExt
     return B.box(None);
   }
   
-  public static function concat<A>(of1:OptionOf<A>, of2:OptionOf<A>, m:Monoid<A>):OptionOf<A> 
+  public static function concat<A>(of1:OptionOf<A>, of2:OptionOf<A>, m:Semigroup<A>):OptionOf<A> 
   {
     
     return B.box(switch (B.unbox(of1)) {

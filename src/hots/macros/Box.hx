@@ -69,7 +69,7 @@ class Box
   @:macro public static function boxF<A,B>(e:ExprRequire<A->B>, ?times:Int = 1) 
     return (0...times).foldLeft(function (acc, _) return boxF1(acc), e)
   
-  @:macro public static function unboxF<A,B,C>(e:ExprRequire<A->Of<B,C>>, ?times:Int = 1) 
+  @:macro public static function unboxF<A,B,C>(e:Expr /*ExprRequire<A->Of<B,C>>*/, ?times:Int = 1) 
     return (0...times).foldLeft(function (acc, _) return unboxF1(acc), e)
   
   @:macro public static function unbox<A,B>(e:ExprRequire<Of<A,B>>, ?times:Int = 1) {

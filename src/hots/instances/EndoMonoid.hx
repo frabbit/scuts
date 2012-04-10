@@ -8,11 +8,8 @@ import scuts.Scuts;
 
 class EndoMonoid<T> extends MonoidAbstract<T->T>
 {
-  public function new () {}
+  public function new () super(EndoSemigroup.get())
   
-  override public function append (a:T->T, b:T->T):T->T {
-    return a.compose(b);
-  }
   override public function empty ():T->T {
     return Scuts.id;
   }

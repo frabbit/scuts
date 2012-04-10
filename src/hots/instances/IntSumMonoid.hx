@@ -6,11 +6,8 @@ import hots.classes.MonoidAbstract;
 
 class IntSumMonoid extends MonoidAbstract<Int>
 {
-  public function new () {}
+  public function new () super(IntSumSemigroup.get())
   
-  override public inline function append (a:Int, b:Int):Int {
-    return IntNum.get().plus(a,b);
-  }
   override public inline function empty ():Int {
     return 0;
   }
