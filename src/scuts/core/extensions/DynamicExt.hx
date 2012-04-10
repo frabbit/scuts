@@ -47,18 +47,7 @@ class DynamicExt
   
   
   
-  /**
-   * Converts v into a Future and deliver it immediately.
-   */
-  public static inline function toFuture<T>(val:T):Future<T> 
-  {
-    return new Future().deliver(val);
-  }
   
-  public static inline function toArrayFuture<T>(t:T):Array<Future<T>> 
-  {
-    return [toFuture(t)];
-  }
   
   /**
    * Checks if v is an Object.
@@ -67,17 +56,7 @@ class DynamicExt
     return Reflect.isObject(v);
   }
   
-  /**
-   * Creates an Array containing the elemen e num times.
-   */
-  public static function replicateToArray<T>(e:T, num:Int):Array<T> 
-  {
-    var res = [];
-    for (_ in 0...num) {
-      res.push(e);
-    }
-    return res;
-  }
+  
   
   @:macro public static function lazy <T>(e:haxe.macro.Expr.ExprRequire<T>):haxe.macro.Expr.ExprRequire<Void->T>
   {
