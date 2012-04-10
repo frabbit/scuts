@@ -51,7 +51,7 @@ class Assert
   /**
    * throws an assertion error in debug mode if expected doesn't equals actual.
    */
-  public static inline function assertEquals <T>(expected:T, actual:T, ?message:String, ?posInfos:PosInfos):T 
+  public static function assertEquals <T>(expected:T, actual:T, ?message:String, ?posInfos:PosInfos):T 
   {
     #if debug
         message = message == null ? "expected " + expected + " but was " + actual : message;
