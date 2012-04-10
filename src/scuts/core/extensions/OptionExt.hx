@@ -5,6 +5,10 @@ import scuts.core.types.Option;
 import scuts.core.types.Either;
 import scuts.Scuts;
 
+using scuts.core.extensions.OptionExt;
+
+using scuts.core.extensions.PredicateExt;
+
 class OptionExt {
 
   public static function getOrElseConst <T>(o:Option<T>, elseValue:T):T
@@ -138,6 +142,16 @@ class OptionExt {
     }
   }
   
+  public static function ifSome <A,B> (o:Option<A>, ifVal:Void->Option<B>, elseVal:Void->Option<B>):Option<B>
+  {
+    return if (o.isSome()) ifVal() else elseVal();
+  }
+  
+  public static function ifNone <A,B> (o:Option<A>, ifVal:Void->Option<B>, elseVal:Void->Option<B>):Option<B>
+  {
+    return if (o.isNone()) ifVal() else elseVal();
+  }
+  
   public static function flatten <T> (o:Option<Option<T>>):Option<T>
   {
     return switch (o) {
@@ -169,6 +183,34 @@ class OptionExt {
       case Some(s): f(s);
     }
   }
+  
+  public static function withFilter <A> (o:Option<A>, filter:A->Bool) {
+    return new WithFilter(o,filter);
+  }
+  
+  public static function toString <A> (o:Option<A>, ?toStringA:A->String) {
+    var toStr = toStringA == null ? Std.string : toStringA;
+    return switch (o) {
+      case Some(v): "Some(" + toStr(v) + ")";
+      case None: "None";
+    }
+  }
+  
+}
+
+private class WithFilter<A> 
+{
+  private var filter:A -> Bool;
+  private var o:Option<A>;
+  
+  public function new (o:Option<A>, filter:A->Bool) {
+    this.o = o;
+    this.filter = filter;
+  }
+  
+  public function flatMap <B>(f:A->Option<B>):Option<B> return o.filter(filter).flatMap(f)
+  public function map <B>(f:A->B):Option<B> return o.filter(filter).map(f)
+  public function withFilter (f:A->Bool):WithFilter<A> return o.withFilter(filter.and(f))
 }
 
 class OptionDynamicConversions {
