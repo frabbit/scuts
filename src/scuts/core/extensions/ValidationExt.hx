@@ -287,7 +287,6 @@ class ValidationExt
     }
   }
   
-  
   public static inline function fail <A,B>(v:Validation<A,B>):FailProjection<A,B> return cast v
   
 }
