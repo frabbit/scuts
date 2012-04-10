@@ -68,7 +68,6 @@ class LazyListExt {
     var res = [];
     var loop = true;
     while (loop) {
-      //trace("loop");
       var e = l();
       switch (e) {
         case LazyNil: loop = false;
@@ -134,8 +133,9 @@ class LazyListExt {
     return init;
   }
   
-  public static function toString <T> (list:LL<T>, s:Show<T>):String {
-    return foldLeftWithIndex(list, function (acc, el, i) return acc + ((i>0) ? ", " : "") + s.show(el), "[") + "]";
+  public static function toString <T> (list:LL<T>, ?s:T->String):String {
+    var toString = s == null ? Std.string : s;
+    return foldLeftWithIndex(list, function (acc, el, i) return acc + ((i>0) ? ", " : "") + toString(el), "[") + "]";
   }
   
   public static function fromArrayAsView <T> (arr:Array<T>, index:Int = 0, to:Int = -1):LL<T> {
