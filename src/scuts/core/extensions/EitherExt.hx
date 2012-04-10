@@ -8,7 +8,41 @@ import scuts.core.types.Validation;
 class EitherExt
 {
   
- 
+  public static function applyLeft <L,R,LL>(e:Either<L,R>, f:Either<L->LL, R>):Either<LL, R>
+  {
+    return switch (f) {
+      case Left(l1):
+        switch (e) 
+        {
+          case Left(l2): Left(l1(l2)); // faster instead of Left(l2);
+          case Right(_): cast e;
+        }
+      case Right(r1):
+        switch (e) 
+        {
+          case Left(_): cast e;   // faster instead of Left(l);
+          case Right(r2): cast e;
+        }
+    }
+  }
+  
+  public static function applyRight <L,R,RR>(e:Either<L,R>, f:Either<L, R->RR>):Either<L, RR>
+  {
+    return switch (f) {
+      case Left(l1):
+        switch (e) 
+        {
+          case Left(_): cast e; 
+          case Right(_): cast e;
+        }
+      case Right(r1):
+        switch (e) 
+        {
+          case Left(_): cast e; 
+          case Right(r2): Right(r1(r2));
+        }
+    }
+  }
   
   public static function bool<L,R>(e:Either<L,R>):Bool 
   {
@@ -285,6 +319,8 @@ class LeftProjectionExt
 {
   public static inline function either<L,R>(e:LP<L,R>):Either<L,R> return cast e
   
+  public static inline function eitherF<L,R,LL>(e:L->LP<LL,R>):L->Either<LL,R> return cast e
+  
   public static inline function right<L,R>(e:LP<L,R>):RP<L,R> return either(e).right()
   
   public static inline function flatMap < L,R,LL > (e:LP<L,R>, f:L->Either<LL, R>):LP<LL,R>
@@ -295,6 +331,12 @@ class LeftProjectionExt
   {
     return e.either().mapLeft(f).left();
   }
+  public static function apply <L,R,LL>(e:LP<L,R>, f:Either<L->LL, R>):LP<LL, R>
+  {
+    return e.either().applyLeft(f).left();
+  }
+  
+  
 }
 
 
@@ -302,6 +344,8 @@ class LeftProjectionExt
 class RightProjectionExt 
 {
   public static inline function either<L,R>(e:RP<L,R>):Either<L,R> return cast e
+  
+  public static inline function eitherF<L,R,RR>(e:R->RP<L,RR>):R->Either<L,R> return cast e
   
   public static inline function left<L,R>(e:RP<L,R>):LP<L,R> return either(e).left()
   
@@ -312,7 +356,12 @@ class RightProjectionExt
   
   public static inline function map < L,R,RR > (e:RP<L,R>, f:R->RR):RP<L,RR>
   {
-    return return e.either().mapRight(f).right();
+    return e.either().mapRight(f).right();
+  }
+  
+  public static inline function apply <L,R,RR>(e:RP<L,R>, f:Either<L, R->RR>):RP<L, RR>
+  {
+    return e.either().applyRight(f).right();
   }
 }
 
