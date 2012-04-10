@@ -21,6 +21,11 @@ class Future<T>
   var _isSet:Bool;
   var _canceled:Bool;
 
+  public static function dead <T>() {
+    var f = new Future();
+    f.cancel();
+    return f;
+  }
   
   public function isDelivered () {
     return _isSet;
