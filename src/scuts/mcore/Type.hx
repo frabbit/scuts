@@ -79,7 +79,7 @@ class Type
       return switch (type) {
         case TInst(t, _):
           var pack = t.get().pack;
-          var cpack = x.pack.insertElemBack(x.name);
+          var cpack = x.pack.append(x.name);
           pack.length == cpack.length && ArrayExt.eq(pack, cpack, StringExt.eq);
         default: false;
       }

@@ -116,7 +116,7 @@ class Context
   
   public static function getClassTypeParameters (type:Type, pack:Array<String>, name:String):Array<Type>
   {
-    var cpack = pack.insertElemBack(name);
+    var cpack = pack.append(name);
     function loop (type:Type, found:Array<Type>) 
     {
       return switch (type) 
@@ -449,15 +449,16 @@ class Context
   {
     var c = t;
     var next = t;
-    var isAlias = false;
+    var isAlias = true;
     do {
       c = next;
       next = Ctx.follow(c, true);
       isAlias = switch (next) {
-        case TAnonymous(_), TFun(_): true;
-        default: false;
+        case TAnonymous(_), TFun(_): false;
+        
+        default: true;
       }
-    } while (!isAlias && !TypeExt.eq(c, next));
+    } while (isAlias && !TypeExt.eq(c, next));
     
     return c;
   }
