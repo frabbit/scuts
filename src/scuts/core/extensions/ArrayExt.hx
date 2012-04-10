@@ -11,7 +11,9 @@ using scuts.core.extensions.OptionExt;
 using scuts.core.extensions.DynamicExt;
 
 
+using scuts.core.extensions.ArrayExt;
 
+using scuts.core.extensions.PredicateExt;
 
 class ArrayExt
 {
@@ -308,7 +310,12 @@ class ArrayExt
   } 
   public static inline function map < A, B > (arr:Array<A>, f:A->B):Array<B> 
   {
-    return IterableExt.mapToArray(arr, f);
+    var r = [];
+    for (i in arr) {
+      r.push(f(i));
+    }
+    return r;
+    
   }
   
   public static function mapWithIndex < A, B > (arr:Array<A>, f:A->Int->B):Array<B> 
@@ -583,19 +590,20 @@ class ArrayExt
     return res;
   }
   
-  public static function insertElemFront <A> (a:Array<A>, e:A):Array<A> 
+  public static function cons <A> (a:Array<A>, e:A):Array<A> 
   {
     var cp = a.copy();
     cp.unshift(e);
     return cp;
   }
-  
-  public static function insertElemBack <A> (a:Array<A>, e:A):Array<A> 
+  public static function append <A> (a:Array<A>, e:A):Array<A> 
   {
     var cp = a.copy();
     cp.push(e);
     return cp;
   }
+  
+  
   
   public static function insertElemAt <A> (a:Array<A>, e:A, index:Int):Array<A> 
   {
@@ -655,5 +663,64 @@ class ArrayExt
     }
   }
   
+  public static function flatMapWithFilter <A,B>(a:Array<A>, fmap: A->Array<B>, filter:A->Bool):Array<B>
+  {
+    var res = [];
+    for (i in a)
+      if (filter(i)) 
+        for (j in fmap(i)) res.push(j);
+
+    return res;
+  }
   
+  public static function mapWithFilter <A,B>(a:Array<A>, map: A->B, filter:A->Bool):Array<B>
+  {
+    var r = [];
+    for (i in a) if (filter(i)) r.push(map(i));
+    return r;
+  }
+  
+  public static function withFilter <A> (a:Array<A>, filter:A->Bool) {
+    return new WithFilter(a, filter);
+  }
 }
+
+class ArrayLift {
+  /**
+   * Creates an Array containing the elemen e num times.
+   */
+  public static function replicateToArray<T>(e:T, num:Int):Array<T> 
+  {
+    var res = [];
+    for (_ in 0...num) {
+      res.push(e);
+    }
+    return res;
+  }
+  
+  public static inline function toArray<T>(i:Iterator<T>):Array<T> 
+  {
+    var res = [];
+    for (e in i) {
+      res.push(e);
+    }
+    return res;
+  }
+}
+
+private class WithFilter<A> 
+{
+  private var filter:A -> Bool;
+  private var a:Array<A>;
+  
+  public function new (a:Array<A>, filter:A->Bool) {
+    this.a = a;
+    this.filter = filter;
+  }
+  
+  public function flatMap <B>(f:A->Array<B>):Array<B> return a.flatMapWithFilter(f, filter)
+  public function map <B>(f:A->B):Array<B> return a.mapWithFilter(f, filter)
+  public function withFilter (f:A->Bool):WithFilter<A> return a.withFilter(filter.and(f))
+}
+
+  
