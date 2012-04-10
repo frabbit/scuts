@@ -11,7 +11,7 @@ class ListOfCollection extends CollectionAbstract<List<In>>
 {
   
   public function new () {}
-  override public function forEach <A>(collOf:ListOf<A>, f:A->Void):Void {
+  override public function each <A>(collOf:ListOf<A>, f:A->Void):Void {
     for (e in collOf.unbox()) {
       f(e);
     }

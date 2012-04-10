@@ -6,7 +6,7 @@ import hots.In;
 
 import scuts.core.types.Option;
 
-using hots.macros.Box;
+using hots.box.ArrayBox;
 
 class ArrayOfPointed extends PointedAbstract<Array<In>>
 {

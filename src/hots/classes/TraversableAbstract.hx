@@ -14,31 +14,31 @@ import scuts.Scuts;
     this.fo = foldable;
   }
   
-  public function sequence <M,A> (val:Of<T, Of<M,A>>, monad:Monad<M>):Of<M, Of<T,A>> return mapM(Scuts.id, val, monad)
+  public function sequence <M,A> (val:Of<T, Of<M,A>>, monad:Monad<M>):Of<M, Of<T,A>> return mapM(val, Scuts.id, monad)
   
-  public function sequenceA <F,A> (val:Of<T, Of<F,A>>, app:Applicative<F>):Of<F, Of<T,A>> return traverse(Scuts.id, val, app)
+  public function sequenceA <F,A> (val:Of<T, Of<F,A>>, app:Applicative<F>):Of<F, Of<T,A>> return traverse(val, Scuts.id, app)
   
-  public function traverse <F,A,B> (f:A->Of<F,B>, v:Of<T,A>, app:Applicative<F>):Of<F, Of<T,B>> return sequenceA(map(f,v), app)
+  public function traverse <F,A,B> (v:Of<T,A>, f:A->Of<F,B>, app:Applicative<F>):Of<F, Of<T,B>> return sequenceA(map(v,f), app)
   
-  public function mapM <M,A,B> (f:A->Of<M,B>, v:Of<T,A>, monad:Monad<M>):Of<M, Of<T,B>> return Scuts.abstractMethod()
+  public function mapM <M,A,B> (v:Of<T,A>, f:A->Of<M,B>, monad:Monad<M>):Of<M, Of<T,B>> return Scuts.abstractMethod()
   
   
   // functor delegation
   
-  @:final public inline function map<A,B>(f:A->B, val:Of<T,A>):Of<T,B> return fu.map(f, val)
+  @:final public inline function map<A,B>(val:Of<T,A>, f:A->B):Of<T,B> return fu.map(val,f)
   
   // foldable delegation
   
-  @:final public inline function fold <A>(mon:Monoid<A>, val:Of<T,A>):A return fo.fold(mon, val)
+  @:final public inline function fold <A>(of:Of<T,A>, mon:Monoid<A>):A return fo.fold(of, mon)
   
-  @:final public inline function foldMap <A,B>(f:A->B, mon:Monoid<B>, val:Of<T,A>):B return fo.foldMap(f, mon, val)
+  @:final public inline function foldMap <A,B>(of:Of<T,A>, mon:Monoid<B>, f:A->B):B return fo.foldMap(of, mon, f)
  
-  @:final public inline function foldLeft <A,B>(f:A->B->A, b:A, val:Of<T,B>):A return fo.foldLeft(f,b,val)
+  @:final public inline function foldLeft <A,B>(of:Of<T,B>, b:A, f:A->B->A):A return fo.foldLeft(of,b,f)
   
-  @:final public inline function foldRight <A,B>(f:A->B->B, b:B, val:Of<T,A>):B return fo.foldRight(f,b,val)
+  @:final public inline function foldRight <A,B>(of:Of<T,A>, b:B, f:A->B->B):B return fo.foldRight(of,b,f)
   
-  @:final public inline function foldLeft1 <A>(f:A->A->A, val:Of<T,A>):A return fo.foldLeft1(f, val)
+  @:final public inline function foldLeft1 <A>(of:Of<T,A>, f:A->A->A):A return fo.foldLeft1(of, f)
   
-  @:final public inline function foldRight1 <A>(f:A->A->A, val:Of<T,A>):A return fo.foldRight1(f, val)
+  @:final public inline function foldRight1 <A>(of:Of<T,A>, f:A->A->A):A return fo.foldRight1(of, f)
   
 }

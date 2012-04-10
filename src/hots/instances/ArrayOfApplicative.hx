@@ -5,7 +5,7 @@ import hots.In;
 import hots.classes.Applicative;
 import scuts.core.types.Option;
 
-using hots.macros.Box;
+using hots.box.ArrayBox;
 
 class ArrayOfApplicative extends ApplicativeAbstract<Array<In>>
 {

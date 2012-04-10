@@ -7,15 +7,15 @@ import hots.Of;
 
 
 
-using hots.macros.Box;
+using hots.box.ArrayBox;
 
 
 class ArrayOfMonadTrans<M> extends MonadTransAbstract<Array<In>> {
   
   public function new () {}
 
-  override public function lift <M, A>(val:Of<M, A>, monad:Monad<M>):ArrayTOf<M,A>
+  override public function lift <M, A>(of:Of<M, A>, monad:Monad<M>):ArrayTOf<M,A>
   {
-    return monad.map(function (x) return [x], val).box();
+    return monad.map(of, function (x) return [x]).boxT();
   }
 }

@@ -12,7 +12,8 @@ import scuts.Scuts;
     this.functor = functor;
   }
   public function pure <A>(v:A):Of<F,A> return Scuts.abstractMethod()
-  public function map<A,B>(f:A->B, val:Of<F,A>):Of<F,B> return functor.map(f,val)
+  
+  public function map<A,B>(of:Of<F,A>, f:A->B):Of<F,B> return functor.map(of,f)
   
 }
 

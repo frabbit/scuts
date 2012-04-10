@@ -14,8 +14,8 @@ class HashShow<T> extends ShowAbstract<Hash<T>> {
     this.showT = showT;
   }
   
-  override public function show (v:Hash<T>):String {
-    
+  override public function show (v:Hash<T>):String 
+  {
     var elems = v.keys().mapToArray(function (k) return StringShow.get().show(k) + " => " + showT.show(v.get(k)));
     return "{ " + elems.join(", ") + " }";
   }

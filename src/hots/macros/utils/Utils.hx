@@ -382,7 +382,7 @@ class Utils
       return  
         mapping.some(function (x) return x._1.eq(v))
         .map(function (tup) return if (t.eq(tup._2)) Some(mapping) else None)
-        .getOrElse(function () return Some(mapping.insertElemBack(Tup2.create(to, t))))
+        .getOrElse(function () return Some(mapping.append(Tup2.create(to, t))))
     )
     .orElse(function () {
       return switch (to) {
@@ -476,6 +476,7 @@ class Utils
     {
       case TInst(t, params): if (params.length == 1) makeOfType(TInst(t, [hotsInType()]), params[0]) else err();
       case TEnum(t, params): if (params.length == 1) makeOfType(TEnum(t, [hotsInType()]), params[0]) else err();
+      case TType(t, params): if (params.length == 1) makeOfType(TType(t, [hotsInType()]), params[0]) else err();
       default: err();
     }
   }
@@ -486,7 +487,7 @@ class Utils
   {
     return switch (type) 
     {
-      case TInst(_, params), TEnum(_, params): params.length == 1;
+      case TInst(_, params), TEnum(_, params), TType(_, params): params.length == 1;
       default: false;
     }
   }
@@ -495,7 +496,7 @@ class Utils
   {
     return switch (container) 
     {
-      case TInst(_, params), TEnum(_,params): if (params.length == 1) Some(params[0]) else None;
+      case TInst(_, params), TEnum(_,params), TType(_, params): if (params.length == 1) Some(params[0]) else None;
       default: None;
     }
   }
@@ -504,7 +505,7 @@ class Utils
   {
     return switch (container) 
     {
-      case TInst(_, params), TEnum(_,params): Some(params);
+      case TInst(_, params), TEnum(_,params), TType(_, params): Some(params);
       default: None;
     }
   }
@@ -515,6 +516,7 @@ class Utils
     {
       case TInst(t, params): if (params.length == 1) Some(TInst(t, [newElemType])) else None;
       case TEnum(t, params): if (params.length == 1) Some(TEnum(t, [newElemType])) else None;
+      case TType(t, params): if (params.length == 1) Some(TType(t, [newElemType])) else None;
       default: None;
     }
   }

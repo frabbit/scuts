@@ -1,11 +1,11 @@
 package hots.extensions;
+
 import hots.classes.Arrow;
 import hots.classes.Category;
 import hots.OfOf;
 import scuts.core.types.Tup2;
 
-
-class OfOfArrowExt 
+class ArrowExt 
 {
   public static inline function 
   next <A,B,C, Cat>(f:OfOf<Cat, A, B>, g:OfOf<Cat, B, C>, cat:Category<Cat>):OfOf<Cat,A, C> return cat.next(f,g)
@@ -21,6 +21,7 @@ class OfOfArrowExt
   public static inline function second <B,C,D, AR>(f:OfOf<AR,B, C>, arr:Arrow<AR>):OfOf<AR, Tup2<D,B>, Tup2<D,C>> return arr.second(f)
     
   public static inline function fanout <B,C, C1, AR>(f:OfOf<AR,B, C>, g:OfOf<AR, B, C1>, arr:Arrow<AR>):OfOf<AR, B, Tup2<C,C1>> return arr.fanout(f,g)
+  
   
   
 }

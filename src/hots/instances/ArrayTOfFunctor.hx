@@ -20,13 +20,14 @@ class ArrayTOfFunctor<M> extends FunctorAbstract<Of<M,Array<In>>> {
     this.functorM = functorM;
   }
 
-  override public function map<A,B>(f:A->B, fa:ArrayTOf<M, A>):ArrayTOf<M, B> {
+  override public function map<A,B>(of:ArrayTOf<M, A>,f:A->B):ArrayTOf<M, B> {
     return 
       functorM
       .map(
+        of.unbox(),
         function (x:Array<A>) 
-          return ArrayOfFunctor.get().map(f, x.box()).unbox(), 
-        fa.unbox()
+          return ArrayOfFunctor.get().map(x.box(),f).unbox()
+       
       )
       .box();
   }

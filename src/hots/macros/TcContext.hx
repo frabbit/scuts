@@ -233,8 +233,8 @@ class TcContext
       callArgs.foldLeft(
         function (acc:Tup2<Array<ResolveError>, Array<Expr>>, c) 
           return switch (c) { 
-            case Left(l): Tup2.create(acc._1.insertElemBack(l), acc._2);
-            case Right(r): Tup2.create(acc._1, acc._2.insertElemBack(r));
+            case Left(l): Tup2.create(acc._1.append(l), acc._2);
+            case Right(r): Tup2.create(acc._1, acc._2.append(r));
           }, 
         Tup2.create([], [])
       );

@@ -1,4 +1,5 @@
-package hots.instances;
+package hots.box;
+import hots.instances.KleisliOf;
 import hots.Of;
 
 

@@ -25,21 +25,21 @@ import scuts.Scuts;
   /**
    * aka <*>
    */
-  public function apply<A,B>(f:Of<M,A->B>, val:Of<M,B>):Of<M,B> return Scuts.abstractMethod()
+  public function apply<A,B>(f:Of<M,A->B>, of:Of<M,B>):Of<M,B> return Scuts.abstractMethod()
   
   /**
    * aka *>
    */
-  public function thenRight<A,B>(val1:Of<M,A>, val2:Of<M,B>):Of<M,B> return val2
+  public function thenRight<A,B>(of1:Of<M,A>, of2:Of<M,B>):Of<M,B> return of2
   
   /**
    * aka <*
    */
-  public function thenLeft<A,B>(val1:Of<M,A>, val2:Of<M,B>):Of<M,A> return val1
+  public function thenLeft<A,B>(of1:Of<M,A>, of2:Of<M,B>):Of<M,A> return of1
 
   
   // delegation of functor
-  @:final public inline function map<A,B>(f:A->B, val:Of<M,A>):Of<M,B> return pointed.map(f, val)
+  @:final public inline function map<A,B>(of:Of<M,A>, f:A->B):Of<M,B> return pointed.map(of, f)
   
   // delegation of pointed
   @:final public inline function pure<A>(x:A):Of<M,A> return pointed.pure(x)

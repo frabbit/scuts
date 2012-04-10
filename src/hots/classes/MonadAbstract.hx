@@ -15,7 +15,7 @@ import scuts.Scuts;
  
   // functions
   public function flatMap<A,B>(val:Of<M,A>, f: A->Of<M,B>):Of<M,B> {
-    return flatten(map(f, val));
+    return flatten(map(val,f));
   }
   
   public function flatten <A> (val: Of<M, Of<M,A>>):Of<M,A> {
@@ -23,7 +23,7 @@ import scuts.Scuts;
   }
   
   // delegation
-  @:final public inline function map<A,B>(f:A->B, val:Of<M,A>):Of<M,B> return applicative.map(f, val)
+  @:final public inline function map<A,B>(val:Of<M,A>, f:A->B):Of<M,B> return applicative.map(val,f)
 
   @:final public inline function pure<A>(x:A):Of<M,A> return applicative.pure(x)
   

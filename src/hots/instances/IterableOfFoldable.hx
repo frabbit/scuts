@@ -11,12 +11,13 @@ class IterableOfFoldable extends FoldableAbstract<Iterable<In>>
 {
   public function new () {}
   
-  override public inline function foldRight <A,B>(f:A->B->B, b:B, value:IterableOf<A>):B  {
-    return IterableExt.foldRight(value.unbox(), f, b);
-  }
   
-  override public inline function foldLeft <A,B>(f:A->B->A, b:A, value:IterableOf<B>):A {
-    return IterableExt.foldLeft(value.unbox(), f, b);
+  override public inline function foldRight <A,B>(of:IterableOf<A>, b:B, f:A->B->B):B  {
+    return IterableExt.foldRight(of.unbox(), f, b);
+  }
+   
+  override public inline function foldLeft <A,B>(of:IterableOf<B>, b:A, f:A->B->A):A {
+    return IterableExt.foldLeft(of.unbox(), f, b);
   }
   
 }

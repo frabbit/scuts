@@ -31,5 +31,5 @@ using scuts.core.extensions.FunctionExt;
   
   // delegation of Functor
   
-  @:final public inline function map<A,B>(f:A->B, val:Of<W,A>):Of<W,B> return p.map(f, val)
+  @:final public inline function map<A,B>(val:Of<W,A>, f:A->B):Of<W,B> return p.map(val, f)
 }

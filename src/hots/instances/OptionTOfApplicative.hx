@@ -31,7 +31,7 @@ class OptionTOfApplicative<M> extends ApplicativeAbstract<Of<M,Option<In>>> {
     var f1:Of<M, Option<A->B>> = B.unbox(f);
     var val1:Of<M, Option<A>> = B.unbox(val);
     
-    var f2 = applicativeM.map(function (f:Option<A->B>) {
+    var f2 = applicativeM.map(f1, function (f:Option<A->B>) {
       return function (a:Option<A>) {
         return switch (f) {
           case Some(v):
@@ -42,7 +42,7 @@ class OptionTOfApplicative<M> extends ApplicativeAbstract<Of<M,Option<In>>> {
           case None: None;
         }
       }
-    }, f1);
+    });
     return B.box(applicativeM.apply(f2, val1));
   }
 

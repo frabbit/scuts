@@ -26,6 +26,7 @@ using scuts.core.extensions.DynamicExt;
 using scuts.core.extensions.ArrayExt;
 using scuts.core.extensions.IteratorExt;
 using scuts.core.Log;
+using scuts.mcore.Check;
 private typedef U = hots.macros.utils.Utils;
 
 #end
@@ -59,8 +60,10 @@ class Box
     8. Error boxing not possible
    
    */
-  @:macro public static function box(e:Expr, ?times:Int = 1)
-    return (0...times).foldLeft(function (acc, _) return box1(acc), e)
+  @:macro public static function box(e:Expr, ?times:Int = 1) 
+  {
+    return (0...times).foldLeft(function (acc, _) return box1(acc), e);
+  }
   
   
   @:macro public static function boxF<A,B>(e:ExprRequire<A->B>, ?times:Int = 1) 
@@ -70,7 +73,6 @@ class Box
     return (0...times).foldLeft(function (acc, _) return unboxF1(acc), e)
   
   @:macro public static function unbox<A,B>(e:ExprRequire<Of<A,B>>, ?times:Int = 1) {
-    //trace(Print.expr(e));
     return (0...times).foldLeft(function (acc, _) return unbox1(acc), e);
   }
   
@@ -226,7 +228,7 @@ class Box
       var elemType = MContext.followAliases(t._2);
       return if (U.isOfType(container)) //5
       {
-        U.getOfElemType(container).map(function (x) return Context.follow(x))
+        U.getOfElemType(container).map(function (x) return MContext.followAliases(x))
         .toRight(err)
         .flatMapRight(function (innerElemType) {
           return if (U.hasInnerInType(innerElemType)) // 6
@@ -265,7 +267,8 @@ class Box
   static function unsafeCast (e:Expr, fromType:Type, toType:Type) 
   {
     var wildcards = MContext.getLocalTypeParameters(toType);
-    return Cast.inlinedUnsafeCastTo2(e, fromType, toType, wildcards);
+    
+    return Cast.unsafeCastFromTo(e, MContext.followAliases(fromType), toType, wildcards);
   }
 
   #end

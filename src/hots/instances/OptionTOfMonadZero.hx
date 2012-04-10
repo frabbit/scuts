@@ -18,9 +18,8 @@ class OptionTOfMonadZero<M> extends MonadZeroAbstract<Of<M, Option<In>>> {
     this.monadM = monadM;
   }
   
-  override public inline function zero <A>():OptionTOf<M,A> {
-
-    
+  override public inline function zero <A>():OptionTOf<M,A> 
+  {
     return monadM.pure(None).box();
   }
 }

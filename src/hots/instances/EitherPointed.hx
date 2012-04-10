@@ -5,7 +5,7 @@ import hots.classes.PointedAbstract;
 import hots.In;
 import scuts.core.types.Either;
 
-private typedef B = EitherBox;
+private typedef B = hots.box.EitherBox;
 
 class EitherPointed<L> extends PointedAbstract<Either<L,In>> {
   

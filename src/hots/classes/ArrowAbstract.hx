@@ -6,7 +6,7 @@ import scuts.core.extensions.Tup2Ext;
 import scuts.core.types.Tup2;
 import scuts.Scuts;
 
-using hots.extensions.OfOfArrowExt;
+using hots.extensions.ArrowExt;
 
 @:tcAbstract class ArrowAbstract<AR> implements Arrow<AR>
 {
@@ -16,7 +16,9 @@ using hots.extensions.OfOfArrowExt;
   // constructor
   function new (category:Category<AR>) this.c = category
   
-  // functions
+  /**
+   * @inheritDoc
+   */
   public function arr <B,C>(f:B->C):OfOf<AR,B, C> return Scuts.abstractMethod()
   
   public function first <B,C,D>(f:OfOf<AR,B,C>):OfOf<AR, Tup2<B,D>, Tup2<C,D>> return Scuts.abstractMethod()

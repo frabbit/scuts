@@ -23,7 +23,7 @@ import scuts.Scuts;
   
   @:final public inline function flatten <A> (val: Of<M, Of<M,A>>):Of<M,A> return mz.flatten(val)
   
-  @:final public inline function map<A,B>(f:A->B, val:Of<M,A>):Of<M,B> return mz.map(f, val)
+  @:final public inline function map<A,B>(val:Of<M,A>, f:A->B):Of<M,B> return mz.map(val, f)
 
   @:final public inline function pure<A>(x:A):Of<M,A> return mz.pure(x)
   

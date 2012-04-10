@@ -7,8 +7,14 @@ import scuts.Scuts;
 
 interface Arrow<AR> implements Category<AR>, implements TC
 {
+  /**
+   * The arr Function
+   */
   public function arr <B,C>(f:B->C):OfOf<AR,B, C>;
   
+  /**
+   * The first Function
+   */
   public function first <B,C,D>(f:OfOf<AR,B,C>):OfOf<AR, Tup2<B,D>, Tup2<C,D>>;
   
   public function second <B,C,D>(f:OfOf<AR,B, C>):OfOf<AR, Tup2<D,B>, Tup2<D,C>>;

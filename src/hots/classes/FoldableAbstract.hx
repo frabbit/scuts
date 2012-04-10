@@ -18,43 +18,44 @@ import hots.instances.EndoMonoid;
 class FoldableAbstract<F> implements Foldable<F>
 {
   
-  public function fold <A>(mon:Monoid<A>, val:Of<F,A>):A 
+ 
+  public function fold <A>(of:Of<F,A>, mon:Monoid<A>):A
   {
-    return foldMap(Scuts.id, mon, val);
+    return foldMap(of, mon, Scuts.id);
   }
   
   /**
    * Haskell Signature: Monoid b => (a -> b) -> f a -> b
    */
-  public function foldMap <A,B>(f:A->B, mon:Monoid<B>, val:Of<F,A>):B 
+  public function foldMap <A,B>(of:Of<F,A>, mon:Monoid<B>, f:A->B ):B
   {
     var newF = mon.append.curry().compose(f).uncurry();
-    return foldRight(newF, mon.empty(), val);
+    return foldRight(of, mon.empty(), newF);
   }
   
   /**
    * Haskell Signature: (a -> b -> a) -> a -> f b -> A 
    */
-  public function foldLeft <A,B>(f:A->B->A, b:A, val:Of<F,B>):A {
+  public function foldLeft <A,B>(of:Of<F,B>, b:A, f:A->B->A):A
     //  foldl f z t = appEndo (getDual (foldMap (Dual . Endo . flip f) t)) z
-    
+  {
     var f : B->(A->A)       = f.flip().curry();
     var mon : Monoid<A->A>  = DualMonoid.get(EndoMonoid.get());
     
-    return foldMap(f, mon, val)(b);
+    return foldMap(of, mon, f)(b);
   }
   
-  public function foldRight <A,B>(f:A->B->B, b:B, val:Of<F,A>):B 
+  public function foldRight <A,B>(of:Of<F,A>, b:B, f:A->B->B):B
   {
     //foldr f z t = appEndo (foldMap (Endo . f) t) z
     
     
-    var x = foldMap( f.curry(), EndoMonoid.get() , val);
+    var x = foldMap(of, EndoMonoid.get() ,f.curry());
     
     return x(b);
   }
   
-  public function foldLeft1 <A>(f:A->A->A, val:Of<F,A>):A 
+  public function foldLeft1 <A>(of:Of<F,A>, f:A->A->A):A
   {
     var mf = function (o:Option<A>, y) {
       return switch (o) {
@@ -63,7 +64,7 @@ class FoldableAbstract<F> implements Foldable<F>
       }
     }
     
-    var foldRes = foldLeft(mf, None, val);
+    var foldRes = foldLeft(of, None, mf);
     
     return switch (foldRes) {
       case None: Scuts.error("foldLeft1: Cannot fold over an empty Foldable Value");
@@ -71,7 +72,7 @@ class FoldableAbstract<F> implements Foldable<F>
     }
   }
   
-  public function foldRight1 <A>(f:A->A->A, val:Of<F,A>):A 
+  public function foldRight1 <A>(of:Of<F,A>, f:A->A->A):A
   {
     var mf = function (x:A, o:Option<A>) {
       return switch (o) {
@@ -80,7 +81,7 @@ class FoldableAbstract<F> implements Foldable<F>
       }
     }
     
-    var foldRes = foldRight(mf, None, val);
+    var foldRes = foldRight(of, None, mf);
     
     return switch (foldRes) {
       case None: Scuts.error("foldRight1: Cannot fold over an empty Foldable Value");

@@ -11,7 +11,7 @@ interface Functor<F> implements TC
    * Maps the function f:A->B over the monadic value F<A>.
    * Haskell: fmap :: (a -> b) -> f a -> f b
    */
-  public function map<A,B>(f:A->B, val:Of<F,A>):Of<F,B>;
+  public function map<A,B>(val:Of<F,A>, f:A->B):Of<F,B>;
 }
 
 

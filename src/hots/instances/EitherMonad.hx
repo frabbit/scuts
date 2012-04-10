@@ -1,11 +1,13 @@
 package hots.instances;
 
+
 import hots.classes.Monad;
 import hots.classes.MonadAbstract;
 import hots.In;
+import scuts.core.extensions.EitherExt;
 import scuts.core.types.Either;
 
-typedef B = EitherBox;
+using hots.box.EitherBox;
 
 class EitherMonad<L> extends MonadAbstract<Either<L,In>> {
   
@@ -13,12 +15,7 @@ class EitherMonad<L> extends MonadAbstract<Either<L,In>> {
     super(EitherApplicative.get());
   }
   
-  override public function flatMap<A,B>(val:EitherOf<L,A>, f: A->EitherOf<L,B>):EitherOf<L,B> {
-    var o = B.unbox(val);
-    
-    return switch(o) {
-      case Left(v): B.box(Left(v));
-      case Right(v): f(v);
-    };
+  override public function flatMap<R,RR>(of:EitherOf<L,R>, f: R->EitherOf<L,RR>):EitherOf<L,RR> {
+    return EitherExt.flatMapRight(of.unbox(), f.unboxF()).box();
   }
 }

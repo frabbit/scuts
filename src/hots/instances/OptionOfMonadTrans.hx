@@ -6,15 +6,15 @@ import hots.classes.Monad;
 
 import scuts.core.types.Option;
 
-private typedef B = hots.macros.Box;
+private typedef B = hots.box.OptionBox;
 
 
 class OptionOfMonadTrans<M> extends MonadTransAbstract<Option<In>> {
   
   public function new () {}
 
-  override public function lift <M, A>(val:Of<M, A>, monad:Monad<M>):OptionTOf<M,A>
+  override public function lift <M, A>(of:Of<M, A>, monad:Monad<M>):OptionTOf<M,A>
   {
-    return B.box(monad.map(function (x) return Some(x), val));
+    return B.boxT(monad.map(of, function (x) return Some(x)));
   }
 }

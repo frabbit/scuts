@@ -5,7 +5,7 @@ import hots.In;
 import scuts.core.types.Option;
 
 
-using hots.macros.Box;
+using hots.box.OptionBox;
 
 class OptionOfMonadZero extends MonadZeroAbstract<Option<In>>
 {

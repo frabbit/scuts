@@ -1,36 +1,35 @@
 package hots.extensions;
+
 import hots.instances.ArrayOfFunctor;
 import hots.instances.ArrayOf;
-import hots.macros.Box;
 
-private typedef B = Box;
+using scuts.core.extensions.ArrayExt;
 
-extern class ArrayOfExt 
+typedef ArrayBox = hots.box.ArrayBox;
+
+using hots.extensions.ArrayOfExt.ArrayBox;
+
+class ArrayOfExt 
 {
-
-  public static inline function box<A>(a:Array<A>):ArrayOf<A> 
+  
+  public static inline function map <A,B>(a:ArrayOf<A>, f:A->B):ArrayOf<B> 
   {
-    return B.box(a);
+    return a.unbox().map(f).box();
   }
   
-  public static inline function unbox<A>(a:ArrayOf<A>):Array<A> 
+  public static inline function flatMap<A,B>(a:ArrayOf<A>, f:A->ArrayOf<B>):ArrayOf<B> 
   {
-    return B.unbox(a);
-  }
-  
-  public static inline function map<A,B>(a:ArrayOf<A>, f:A->B):ArrayOf<B> 
-  {
-    return ArrayOfFunctor.get().map(f,a);
+    return a.unbox().flatMap(f.unboxF()).box();
   }
   
   public static inline function empty<A>():ArrayOf<A> 
   {
-    return B.box([]);
+    return [].box();
   }
   
   public static inline function concat<A>(a:ArrayOf<A>, b:ArrayOf<A>):ArrayOf<A> 
   {
-    return B.box(B.unbox(a).concat(B.unbox(b)));
+    return a.unbox().concat(b.unbox()).box();
   }
     
 }

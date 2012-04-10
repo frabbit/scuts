@@ -12,7 +12,7 @@ import scuts.Scuts;
 
 using scuts.core.extensions.FunctionExt;
 
-private typedef B = hots.instances.KleisliBox;
+private typedef B = hots.box.KleisliBox;
 
 class KleisliArrow<M> extends ArrowAbstract<In->Of<M,In>>
 {
@@ -33,7 +33,7 @@ class KleisliArrow<M> extends ArrowAbstract<In->Of<M,In>>
       var f1 = B.unbox(f);
       return m.flatMap(m.pure(t), function (t) {
         var d = f1(t._1);
-        return m.map(function (c) return Tup2.create(c,t._2), d); 
+        return m.map(d, function (c) return Tup2.create(c,t._2)); 
       });
     };
     return B.box(f);

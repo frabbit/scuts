@@ -17,7 +17,7 @@ import scuts.Scuts;
   
   // delegation monad
   
-  @:final public inline function map<A,B>(f:A->B, val:Of<M,A>):Of<M,B> return monad.map(f, val)
+  @:final public inline function map<A,B>(val:Of<M,A>, f:A->B):Of<M,B> return monad.map(val,f)
 
   @:final public inline function pure<A>(x:A):Of<M,A> return monad.pure(x)
   

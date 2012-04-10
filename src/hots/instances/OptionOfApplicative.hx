@@ -5,7 +5,7 @@ import hots.In;
 import scuts.core.extensions.OptionExt;
 import scuts.core.types.Option;
 
-using hots.macros.Box;
+using hots.box.OptionBox;
 
 class OptionOfApplicative extends ApplicativeAbstract<Option<In>>
 {
@@ -13,10 +13,10 @@ class OptionOfApplicative extends ApplicativeAbstract<Option<In>>
     super(OptionOfPointed.get());
   }
   
-  override public function apply<B,C>(f:OptionOf<B->C>, val:OptionOf<B>):OptionOf<C> 
+  override public function apply<B,C>(f:OptionOf<B->C>, of:OptionOf<B>):OptionOf<C> 
   {
     return switch(f.unbox()) {
-      case Some(f1): map(f1, val);
+      case Some(f1): map(of, f1);
       case None: None.box();
     }
   }

@@ -9,7 +9,7 @@ import scuts.Scuts;
   /**
    * @inheritDoc
    */
-  public function map<A,B>(f:A->B, val:Of<F,A>):Of<F,B> return Scuts.abstractMethod()
+  public function map<A,B>(val:Of<F,A>, f:A->B):Of<F,B> return Scuts.abstractMethod()
 }
 
 

@@ -28,8 +28,8 @@ class ArrayTOfMonad<M> extends MonadAbstract<Of<M,Array<In>>> {
       for (e1 in a) 
       {
         monadM.map(
-          function (x:Array<B>) for (e2 in x) res.push(e2), 
-          f(e1).unbox()
+          f(e1).unbox(),  
+          function (x:Array<B>) for (e2 in x) res.push(e2)
         );
       }
       return monadM.pure(res);
