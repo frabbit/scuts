@@ -4,6 +4,8 @@ import haxe.PosInfos;
 import haxe.Stack;
 import scuts.core.extensions.PosInfosExt;
 
+using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.StringExt;
 #if (macro || display)
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -19,17 +21,17 @@ class Scuts
   
   public static function abstractMethod <T>():T 
   {
-    return error("This method is abstract, you must override it");
+    return error("Scuts.abstract: This method is abstract, you must override it");
   }
   
   public static function notImplemented <T>(?posInfos:PosInfos):T 
   {
-    return error("This method is not yet implemented", posInfos);
+    return error("Scuts.notImplemented: This method is not yet implemented", posInfos);
   }
   
   public static function unexpected <T>(?posInfos:PosInfos):T 
   {
-    return error("This error shoud never occur, please inform the library author to fix this.", posInfos);
+    return error("Scuts.unexpected: This error shoud never occur, please inform the library author to fix this.", posInfos);
   }
   
   public static function checkNotNull <T>(v:T, ?posInfos:PosInfos):T 
@@ -52,11 +54,18 @@ class Scuts
   
   
   #if (macro || display)
+  
+
+  
   public static function macroError <T>(msg:String, ?p:Position, ?posInfos:PosInfos):T 
   {
     var p1 = p.nullGetOrElseConst(Context.currentPos());
-    var stack = Stack.toString(Stack.callStack());
-    throw new Error(msg + "\n@" + posInfos.toString() + stack,p1);
+    var stack = Stack.toString(Stack.callStack()).trim().split("\n").reverseCopy().filter(function (x) return x.indexOf("scuts/Scuts.hx") == -1 && x.indexOf("haxe/Stack.hx") == -1).join("\n");
+    throw new Error(
+      msg + "\n@" + posInfos.toString() 
+      + "\n-----------------------------------------------------------------------------\n" 
+      + stack 
+      + "\n-----------------------------------------------------------------------------",p1);
     return null;
   }
   
