@@ -24,6 +24,36 @@ class ValidationExt
     }
   }
   
+  public static function apply <F,S,SS> (v:Validation<F,S>, f:Validation<F, S->SS>, appendFailure:F->F->F):Validation<F, SS>
+  {
+    return switch (f) {
+      case Success(s1): switch (v) {
+        case Success(s2): Success(s1(s2));
+        case Failure(f): Failure(f);
+      }
+        
+      case Failure(f1): switch (v) {
+        case Success(s): Failure(f1);
+        case Failure(f2): Failure(appendFailure(f1, f2));
+      }
+    }
+  }
+  
+  public static function append <F,S,SS> (a1:Validation<F,S>, a2:Validation<F, S>, appendFailure:F->F->F, appendSuccess:S->S->S):Validation<F, S>
+  {
+    return switch (a1) {
+      case Success(s1): switch (a2) {
+        case Success(s2): Success(appendSuccess(s1,s2));
+        case Failure(f): Failure(f);
+      }
+        
+      case Failure(f1): switch (a2) {
+        case Success(s): Failure(f1);
+        case Failure(f2): Failure(appendFailure(f1, f2));
+      }
+    }
+  }
+  
   public static function getOrElse<F,S>(v:Validation<F,S>, withFailure:F->S):S
   {
     return switch (v) {
@@ -290,8 +320,6 @@ class ValidationExt
   public static inline function fail <A,B>(v:Validation<A,B>):FailProjection<A,B> return cast v
   
 }
-
-//private typedef V = ValidationExt;
 
 
 using scuts.core.extensions.ValidationExt;
