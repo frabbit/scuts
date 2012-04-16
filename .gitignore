@@ -1,3 +1,5 @@
 
 /bin
 /ImportAll.hx
+/samples/01_LazyList/bin
+/samples/02_List/bin
