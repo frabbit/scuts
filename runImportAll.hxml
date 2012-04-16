@@ -1,0 +1,10 @@
+-cp src 
+-cp ../scutsCore/src 
+-cp test 
+-cp .
+-neko bin/ImportAll.n
+-main ImportAll
+--times
+--next
+-cmd neko bin/ImportAll.n
+

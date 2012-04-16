@@ -1,55 +1,53 @@
 package scuts.data;
-import hots.classes.Monoid;
-import hots.classes.Ord;
-import hots.classes.Show;
+
 import scuts.Assert;
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 import scuts.core.types.Option;
 import scuts.core.types.Tup2;
-import scuts.macros.Lazy;
-import scuts.macros.P;
+import scuts.core.macros.Lazy;
+//import scuts.macros.P;
 import scuts.Scuts;
 import scuts.data.LazyList;
-using scuts.core.extensions.IteratorExt;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Iterators;
+using scuts.core.extensions.Options;
 
 private typedef LL<T> = LazyList<T>;
 
 class LazyListIter<T> 
 {
   var v:Null<T>;
-  var hasNextCalled:Bool;
+  var hasNextTrue:Bool;
   var l:LL<T>;
   
   public function new (l:LL<T>) {
     this.l = l;
     v = null;
-    hasNextCalled = false;
+    hasNextTrue = false;
   }
-  public function hasNext () {
-    hasNextCalled = true;
-    return switch (l()) {
-      case LazyNil: false;
+  public function hasNext () 
+  {
+    hasNextTrue = hasNextTrue || switch (l()) {
+      case LazyNil: hasNextTrue = false;
       case LazyCons(e, tail): 
         v = e;
         l = tail;
-        true;
+        hasNextTrue = true;
     }
+    return hasNextTrue;
   }
 
   public function next () {
-    if (!hasNextCalled) { 
-      hasNext();
-      if (v == null) Scuts.error("Iterator has no value left");
+    if (!hasNext()) {
+      Scuts.error("Iterator has no value left");
     }
-    hasNextCalled = false;
+    hasNextTrue = false;
     return v;
   }
 }
 
-private typedef A = ArrayExt;
+private typedef A = Arrays;
 
-class LazyListExt {
+class LazyLists {
   
   static var EMPTY_LIST = function () return LazyNil;
   
@@ -96,7 +94,7 @@ class LazyListExt {
   public static function reverseCopy <T> (l:LL<T>):LL<T> 
   {
     var a = toArray(l);
-    var rev = ArrayExt.reverseCopy(a);
+    var rev = Arrays.reverseCopy(a);
     return fromArrayAsView(rev);
     
   }
@@ -412,6 +410,31 @@ class LazyListExt {
           }
       }
     });
+  }
+  
+  public static function infinite <T>(start:T, next:T->T):LL<T>
+  {
+    return Lazy.expr(
+      LazyCons(start, infinite(next(start), next))
+    );
+  }
+  
+  public static function infinitePlusOne (start:Int):LL<Int>
+  {
+    
+    return Lazy.expr(
+      LazyCons(start, infinitePlusOne(start + 1))
+    );
+  }
+  
+  public static function interval (from:Int, to:Int):LL<Int>
+  {
+    return Lazy.expr(
+      if (from < to) 
+        LazyCons(from, interval(from + 1, to))
+      else
+        LazyNil
+    );
   }
   /*
   static function evens <T>(l:LL<T>):LL<T>
