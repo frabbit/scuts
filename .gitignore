@@ -15,3 +15,8 @@
 /samples/04_Collection/_scuts_cache
 /samples/06_Monoid/_scuts_cache
 /samples/07_GenEq/_hots_cache
+/samples/07_GenEq/bin
+/samples/07_GenEq/_scuts_cache
+/samples/05_Validation/_scuts_cache
+/samples/05_Validation/bin
+/samples/06_Monoid/bin
