@@ -3,15 +3,15 @@ package scuts.macros.builder;
 
 #if macro
 
-import scuts.core.extensions.ArrayExt;
-import scuts.core.extensions.IterableExt;
+import scuts.core.extensions.Arrays;
+import scuts.core.extensions.Iterables;
 
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Options;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-import scuts.core.extensions.DynamicExt;
+import scuts.core.extensions.Dynamics;
 import scuts.mcore.Check;
 import scuts.mcore.Parse;
 import scuts.mcore.Print;
@@ -47,7 +47,7 @@ class PartialApplication
     
     // passed args and function must be same size, fill missing ones with underscore
     var usedArgs = if (argsDiff > 0) 
-                      args.concat(DynamicExt.replicateToArray(underscoreExpr, functionArgs.length - args.length)) 
+                      args.concat(Dynamics.replicateToArray(underscoreExpr, functionArgs.length - args.length)) 
                    else if (argsDiff < 0)
                       Context.error("You cannot partially apply more arguments than " + functionArgs.length, f.pos)
                    else args;

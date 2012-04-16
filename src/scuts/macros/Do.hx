@@ -1,7 +1,7 @@
 package scuts.macros;
 
 #if (macro || display)
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 import scuts.core.types.Tup2;
 import scuts.mcore.Make;
 import scuts.mcore.MContext;
@@ -11,8 +11,8 @@ import haxe.macro.Expr;
 import scuts.mcore.Select;
 import scuts.Scuts;
 using scuts.mcore.extensions.ExprExt;
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Options;
 using scuts.mcore.Select;
 import scuts.core.types.Option;
 enum DoOp {
