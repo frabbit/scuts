@@ -1,11 +1,11 @@
 package scuts.core.extensions;
 
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Strings;
 import utest.Assert;
 
-private typedef S = StringExt;
+private typedef S = Strings;
 
-class StringExtTest 
+class StringsTest 
 {
 
   public function new () {}
