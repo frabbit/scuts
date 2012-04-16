@@ -3,9 +3,9 @@ package scuts.mcore;
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
 
-using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.Arrays;
 
-using scuts.core.extensions.IterableExt;
+using scuts.core.extensions.Iterables;
 
 
 
@@ -19,12 +19,12 @@ import scuts.mcore.types.InstType;
 
 import haxe.macro.Type.Ref;
 import haxe.macro.Context;
-import scuts.core.extensions.ArrayExt;
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Arrays;
+import scuts.core.extensions.Strings;
 import scuts.core.types.Tup2;
 import scuts.Scuts;
 import scuts.core.types.Option;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Options;
 
 private typedef MType = haxe.macro.Type;
 
@@ -80,7 +80,7 @@ class Type
         case TInst(t, _):
           var pack = t.get().pack;
           var cpack = x.pack.append(x.name);
-          pack.length == cpack.length && ArrayExt.eq(pack, cpack, StringExt.eq);
+          pack.length == cpack.length && Arrays.eq(pack, cpack, Strings.eq);
         default: false;
       }
     }).getOrElseConst(false);

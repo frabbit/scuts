@@ -9,9 +9,9 @@ import scuts.core.types.Pair;
 import scuts.core.types.Option;
 import scuts.core.types.Tup2;
 //using scuts.Core;
-using scuts.core.extensions.OptionExt;
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.DynamicExt;
+using scuts.core.extensions.Options;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Dynamics;
 
 //import scuts.CoreTypes;
 

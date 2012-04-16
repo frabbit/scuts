@@ -7,8 +7,8 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 import scuts.core.types.Option;
 import scuts.Scuts;
-using scuts.core.extensions.DynamicExt;
-using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.Dynamics;
+using scuts.core.extensions.Arrays;
 class Make
 {
   //public static inline function func (args:Array<FunctionArg>, 

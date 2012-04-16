@@ -10,11 +10,11 @@ import haxe.macro.Type;
 import scuts.core.std.StdType;
 import scuts.Scuts;
 import scuts.core.types.Option;
-using scuts.core.extensions.FunctionExt;
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.StringExt;
-using scuts.core.extensions.OptionExt;
-using scuts.core.extensions.DynamicExt;
+using scuts.core.extensions.Functions;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Strings;
+using scuts.core.extensions.Options;
+using scuts.core.extensions.Dynamics;
 //using scuts.Core;
 
 private typedef ParseContext = Dynamic<Dynamic>;

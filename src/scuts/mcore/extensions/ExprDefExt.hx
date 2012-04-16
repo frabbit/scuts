@@ -5,12 +5,12 @@ package scuts.mcore.extensions;
 #elseif (display || macro)
 
 import haxe.macro.Expr;
-import scuts.core.extensions.ArrayExt;
-import scuts.core.extensions.BoolExt;
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Arrays;
+import scuts.core.extensions.Bools;
+import scuts.core.extensions.Strings;
 import scuts.mcore.Make;
 
-using scuts.core.extensions.FunctionExt;
+using scuts.core.extensions.Functions;
 
 import scuts.mcore.extensions.ExprExt;
 
@@ -23,13 +23,13 @@ class ExprDefExt
   public static function eq (a:ExprDef, b:ExprDef):Bool 
   {
     
-    var eqStr = StringExt.eq;
+    var eqStr = Strings.eq;
     var eeq = ExprExt.eq;
     var eqComplex = ComplexTypeExt.eq;
     var eqTypePath = TypePathExt.eq;
-    var eqArrExpr = function (a, b) return ArrayExt.eq(a,b, ExprExt.eq);
-    var eqBool = BoolExt.eq;
-    var eqObjFields = function (a, b) return ArrayExt.eq(a,b, AnonFieldExt.eq);
+    var eqArrExpr = function (a, b) return Arrays.eq(a,b, ExprExt.eq);
+    var eqBool = Bools.eq;
+    var eqObjFields = function (a, b) return Arrays.eq(a,b, AnonFieldExt.eq);
     
     return switch (a) {
       case EConst(c1):                       switch (b) { case EConst(c2):                       ConstantExt.eq(c1, c2);     default: false; };   

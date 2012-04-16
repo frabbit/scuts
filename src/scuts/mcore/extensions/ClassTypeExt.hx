@@ -1,11 +1,11 @@
 package scuts.mcore.extensions;
 
 import haxe.macro.Type;
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Strings;
 
-using scuts.core.extensions.StringExt;
-using scuts.core.extensions.BoolExt;
-using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.Strings;
+using scuts.core.extensions.Bools;
+using scuts.core.extensions.Arrays;
 class ClassTypeExt 
 {
 
@@ -16,7 +16,7 @@ class ClassTypeExt
         && t1.isExtern.eq(t2.isExtern)
         && t1.isInterface.eq(t2.isInterface)
         && t1.isPrivate.eq(t2.isPrivate)
-        && t1.pack.eq(t2.pack, StringExt.eq);
+        && t1.pack.eq(t2.pack, Strings.eq);
   }
   
 }

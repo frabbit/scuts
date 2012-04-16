@@ -6,29 +6,29 @@ package scuts.mcore;
 
 //using scuts.Core;
 import haxe.macro.Compiler;
-import scuts.core.extensions.ArrayExt;
-import scuts.core.extensions.IntExt;
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Arrays;
+import scuts.core.extensions.Ints;
+import scuts.core.extensions.Strings;
 import scuts.core.Log;
 import scuts.CoreTypes;
 import scuts.mcore.extensions.TypeExt;
 import scuts.Scuts;
 
 
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Options;
 
 import haxe.macro.Expr;
 import haxe.macro.Type;
 import haxe.Stack;
 import neko.FileSystem;
 import neko.io.File;
-using scuts.core.extensions.IntExt;
-using scuts.core.extensions.DynamicExt;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Ints;
+using scuts.core.extensions.Dynamics;
+using scuts.core.extensions.Options;
 using scuts.core.Log;
 using scuts.mcore.extensions.TypeExt;
-using scuts.core.extensions.StringExt;
+using scuts.core.extensions.Strings;
 
 
 private typedef Ctx = haxe.macro.Context;
@@ -124,7 +124,7 @@ class Context
         case TInst(t, params):
           var tget = t.get();
           if (tget.pack.length == cpack.length 
-              && ArrayExt.eq(tget.pack, cpack, StringExt.eq) 
+              && Arrays.eq(tget.pack, cpack, Strings.eq) 
               && !found.any(function (x) return TypeExt.eq(x, type)))
             found.concat([type]);
           else

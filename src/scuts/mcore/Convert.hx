@@ -8,8 +8,8 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 import scuts.Scuts;
 
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.EitherExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Eithers;
 
 class Convert 
 {

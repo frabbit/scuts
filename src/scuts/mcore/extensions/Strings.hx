@@ -6,9 +6,9 @@ import scuts.mcore.Convert;
 import scuts.mcore.Make;
 import scuts.mcore.Parse;
 
-using scuts.core.extensions.DynamicExt;
+using scuts.core.extensions.Dynamics;
 
-class StringExt 
+class Strings 
 {
 
   public static function parse(s:String, ?context:Dynamic, ?pos:Position) 

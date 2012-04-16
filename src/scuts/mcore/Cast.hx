@@ -13,8 +13,8 @@ import neko.io.File;
 import scuts.core.Log;
 
 using scuts.mcore.extensions.ExprExt;
-using scuts.mcore.extensions.StringExt;
-using scuts.core.extensions.ArrayExt;
+using scuts.mcore.extensions.Strings;
+using scuts.core.extensions.Arrays;
 
 
 class Cast 
