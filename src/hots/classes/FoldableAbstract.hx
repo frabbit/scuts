@@ -6,7 +6,7 @@ import scuts.Scuts;
 import scuts.core.types.Option;
 import hots.classes.Monoid;
 
-using scuts.core.extensions.FunctionExt;
+using scuts.core.extensions.Functions;
 
 
 import hots.instances.DualMonoid;

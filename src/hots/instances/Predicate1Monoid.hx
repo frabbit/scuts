@@ -2,7 +2,7 @@ package hots.instances;
 import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
 
-using scuts.core.extensions.PredicateExt;
+using scuts.core.extensions.Predicates;
 
 class Predicate1Monoid<X> extends MonoidAbstract<X->Bool>
 {

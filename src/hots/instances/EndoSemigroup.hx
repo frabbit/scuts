@@ -1,6 +1,6 @@
 package hots.instances;
 
-using scuts.core.extensions.FunctionExt;
+using scuts.core.extensions.Functions;
 import hots.classes.SemigroupAbstract;
 
 class EndoSemigroup<T> extends SemigroupAbstract<T->T>

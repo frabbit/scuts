@@ -7,7 +7,7 @@ import hots.classes.PointedAbstract;
 import hots.instances.ArrayTOfFunctor;
 import hots.In;
 import hots.Of;
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 import hots.classes.Functor;
 
 

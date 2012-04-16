@@ -3,7 +3,7 @@ package hots.box;
 import hots.instances.EitherOf;
 import scuts.core.types.Either;
 
-class EitherBox 
+extern class EitherBox 
 {
   public static inline function box <L,R>(a:Either<L,R>):EitherOf<L,R> return cast a
   
@@ -15,14 +15,15 @@ class EitherBox
   
 }
 
-class EitherRightProjectionBox {
+
+extern class EitherRightProjectionBox {
   
   public static inline function box <L,R>(a:RightProjection<L,R>):RightProjectionOf<L,R> return cast a
   
   public static inline function unbox <L,R>(a:RightProjectionOf<L,R>):RightProjection<L,R> return cast a
 }
 
-class EitherLeftProjectionBox {
+extern class EitherLeftProjectionBox {
   
   public static inline function box <L,R>(a:LeftProjection<L,R>):LeftProjectionOf<L,R> return cast a
   

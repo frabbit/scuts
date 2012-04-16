@@ -3,7 +3,7 @@ import hots.classes.Monad;
 import hots.classes.MonadAbstract;
 import hots.extensions.ArrayOfExt;
 import hots.In;
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 
 using hots.box.ArrayBox;
 

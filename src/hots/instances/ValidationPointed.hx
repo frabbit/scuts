@@ -4,7 +4,7 @@ package hots.instances;
 import hots.classes.PointedAbstract;
 import hots.In;
 import hots.instances.ValidationOf;
-import scuts.core.extensions.ValidationExt;
+import scuts.core.extensions.Validations;
 import scuts.core.types.Validation;
 
 using hots.box.ValidationBox;

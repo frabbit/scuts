@@ -3,7 +3,7 @@ import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
 import hots.classes.SemigroupAbstract;
 
-using scuts.core.extensions.PredicateExt;
+using scuts.core.extensions.Predicates;
 
 class Predicate1Semigroup<X> extends SemigroupAbstract<X->Bool>
 {

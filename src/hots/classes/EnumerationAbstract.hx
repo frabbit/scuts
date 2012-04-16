@@ -1,13 +1,14 @@
 package hots.classes;
 import scuts.core.types.LazyIterator;
+import scuts.data.LazyList;
+import scuts.data.LazyLists; using scuts.data.LazyLists;
 import scuts.Scuts;
 
 
-using scuts.core.extensions.FunctionExt;
-using scuts.core.extensions.IntExt;
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.IterableExt;
-using scuts.core.extensions.LazyIteratorExt;
+using scuts.core.extensions.Functions;
+using scuts.core.extensions.Ints;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Iterables;
 
 @:tcAbstract class EnumerationAbstract<T> implements Enumeration<T>{
   
@@ -23,18 +24,20 @@ using scuts.core.extensions.LazyIteratorExt;
     return toEnum.compose(function (x) return x+1).compose(fromEnum)(a);
   }
   
-  public function enumFrom (a:T):LazyIterator<T>
+  public function enumFrom (a:T):LazyList<T>
   {
     var cur = fromEnum(a);
-    return cur.toLazyInfiniteIterator().map(toEnum);
+    return LazyLists.infinitePlusOne(cur).map(toEnum);
   }
   
-  public function enumFromTo (a:T, b:T):LazyIterator<T> {
-    return fromEnum(a).toLazyIteratorTo(fromEnum(b)).map(toEnum);
+  public function enumFromTo (a:T, b:T):LazyList<T> {
+    return LazyLists.interval(fromEnum(a), fromEnum(b)).map(toEnum);
   }
   
-  public function enumFromThenTo (a:T, b:T, c:T):LazyIterator<T> {
-    return fromEnum(b).toLazyIteratorTo(fromEnum(c)).cons(fromEnum(a)).map(toEnum);
+  public function enumFromThenTo (a:T, b:T, c:T):LazyList<T> {
+    return LazyLists.interval(fromEnum(b), fromEnum(c))
+      .cons(fromEnum(a))
+      .map(toEnum);
   }
 }
 

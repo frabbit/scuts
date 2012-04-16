@@ -17,20 +17,17 @@ import scuts.mcore.Parse;
 import scuts.mcore.Print;
 import scuts.Scuts;
 
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Options;
 using scuts.mcore.extensions.TypeExt;
 using scuts.mcore.extensions.ExprExt;
-using scuts.core.extensions.EitherExt;
+using scuts.core.extensions.Eithers;
 import scuts.core.types.Either;
-using scuts.core.extensions.DynamicExt;
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.IteratorExt;
+using scuts.core.extensions.Dynamics;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Iterators;
 using scuts.core.Log;
 using scuts.mcore.Check;
 private typedef U = hots.macros.utils.Utils;
-
-#end
-
 enum BoxError {
   TypeIsNoContainer(t:Type);
   InnerTypeIsNoContainer(t:Type, inner:Type);
@@ -41,12 +38,15 @@ enum UnboxError {
   InvalidOfType(t:Type);
   ConversionError(t:Type);
 }
+#end
+
+
 
 class Box 
 {
   
   #if (macro || display)
-  static var cache = new ExprCache(true).enableCache(true) #if !display .printOnGenerate("Box Times") #end;
+  static var cache = new ExprCache(true).enableCache(false) #if !display .printOnGenerate("Box Times") #end;
   #end
   /**
     
@@ -72,7 +72,7 @@ class Box
   @:macro public static function unboxF<A,B,C>(e:Expr /*ExprRequire<A->Of<B,C>>*/, ?times:Int = 1) 
     return (0...times).foldLeft(function (acc, _) return unboxF1(acc), e)
   
-  @:macro public static function unbox<A,B>(e:ExprRequire<Of<A,B>>, ?times:Int = 1) {
+  @:macro public static function unbox<A,B>(e:Expr /*ExprOf<Of<A,B>>*/, ?times:Int = 1) {
     return (0...times).foldLeft(function (acc, _) return unbox1(acc), e);
   }
   
@@ -167,10 +167,11 @@ class Box
   {
     var msg = switch (error) 
     {
-      case TypeIsNoOfType(t): "Cannot unbox expression " + Print.expr(expr) + " because it's no Of type";
+      case TypeIsNoOfType(t): "Cannot unbox expression " + Print.expr(expr) + " because it's type " + Print.type(t) + " is no Of type";
       case InvalidOfType(t): "Cannot unbox expression " + Print.expr(expr) + " because it's no Of type";
       case ConversionError(t):
     }
+    
     return Scuts.macroError(msg, expr.pos);
   }
   

@@ -2,10 +2,10 @@ package hots.macros.utils;
 #if (macro || display)
 import haxe.macro.Context;
 import haxe.macro.Type;
-import scuts.core.extensions.ArrayExt;
-import scuts.core.extensions.DynamicExt;
-import scuts.core.extensions.IntExt;
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Arrays;
+import scuts.core.extensions.Dynamics;
+import scuts.core.extensions.Ints;
+import scuts.core.extensions.Strings;
 import scuts.core.macros.Lazy;
 import scuts.core.types.Option;
 import scuts.core.types.Tup2;
@@ -17,18 +17,18 @@ import scuts.mcore.Parse;
 import scuts.mcore.Print;
 import scuts.Scuts;
 import scuts.core.types.Either;
-using scuts.core.extensions.EitherExt;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Eithers;
+using scuts.core.extensions.Options;
 using scuts.mcore.extensions.TypeExt;
-using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.Arrays;
 using scuts.mcore.extensions.ExprExt;
-using scuts.mcore.extensions.StringExt;
-using scuts.core.extensions.DynamicExt;
+using scuts.mcore.extensions.Strings;
+using scuts.core.extensions.Dynamics;
 using scuts.mcore.extensions.ComplexTypeExt;
 using scuts.mcore.extensions.FieldTypeExt;
 
 using scuts.core.Log;
-private typedef D = DynamicExt;
+private typedef D = Dynamics;
 
 //
 //
@@ -84,7 +84,7 @@ class PathNodeExt
     return switch (a) 
     {
       case SuperClass:      switch (b) { case SuperClass:true; default:false;};
-      case InterfaceAt(i1): switch (b) { case InterfaceAt(i2): IntExt.eq(i1, i2); default:false;};
+      case InterfaceAt(i1): switch (b) { case InterfaceAt(i2): Ints.eq(i1, i2); default:false;};
     }
   }
 }
@@ -458,10 +458,10 @@ class Utils
     });
   }
 
-  static var hotsOfClassType = DynamicExt.lazy(Context.getType("hots.Of").asClassType().extract()._1);
+  static var hotsOfClassType = Dynamics.lazy(Context.getType("hots.Of").asClassType().extract()._1);
   
-  static var hotsInType = DynamicExt.lazy(Context.getType("hots.In"));
-  static var hotsInClassType = DynamicExt.lazy(hotsInType().asClassType().extract()._1);
+  static var hotsInType = Dynamics.lazy(Context.getType("hots.In"));
+  static var hotsInClassType = Dynamics.lazy(hotsInType().asClassType().extract()._1);
   
   public static function makeOfType(container:Type, elem:Type) 
   {

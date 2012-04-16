@@ -7,7 +7,7 @@ import hots.In;
 import scuts.core.types.Either;
 
 using hots.box.EitherBox;
-using scuts.core.extensions.EitherExt;
+using scuts.core.extensions.Eithers;
 class EitherApplicative<L> extends ApplicativeAbstract<Either<L,In>> {
   
   public function new () {

@@ -4,7 +4,7 @@ package ;
 using hots.macros.Box;
 using hots.macros.TcContext;
 
-import scuts.core.extensions.OptionExt;
+import scuts.core.extensions.Options;
 import scuts.core.types.Option;
 import hots.classes.Monad;
 import hots.classes.MonadZero;
@@ -22,7 +22,7 @@ class MonadTransformerSample
     var a = [Some(5), Some(7), Some(2)].box(2);
     var b = [Some(2), Some(3), Some(1)].box(2);
     
-    var m = a.tc(Monad);
+    var m = a.tc(Monad); // ArrayTMonad.get(OptionMonad.get())
     
     var res = m.runDo(
       x <= a,

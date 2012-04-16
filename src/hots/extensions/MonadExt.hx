@@ -5,7 +5,7 @@ import hots.classes.MonadZero;
 import hots.instances.ArrayOfMonad;
 
 import hots.Of;
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 import hots.classes.Monad;
 
 typedef MonadExtApplicativeExt = hots.extensions.ApplicativeExt;
@@ -25,11 +25,11 @@ import scuts.mcore.Check;
 import haxe.macro.Expr;
 import scuts.mcore.Select;
 using scuts.mcore.extensions.ExprExt;
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Options;
 import scuts.macros.Do;
 using scuts.macros.Do;
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 import scuts.core.types.Tup2;
 import scuts.mcore.Make;
 import scuts.mcore.MContext;
@@ -72,6 +72,8 @@ class MonadExt
       // evaluate monad expr only once
       Make.block([Make.varExpr("___monad", monad), doOpToExpr(op, Make.constIdent("___monad"), isMonadZero)]);
     }
+    
+    trace(Print.expr(res));
     
     return res;
     
@@ -174,12 +176,12 @@ class MonadExt
       });
       
     }
-    return ArrayExt.foldRight(arr, k, monad.pure([]));
+    return Arrays.foldRight(arr, k, monad.pure([]));
   }
   
   public static inline function mapM <M,A,B>(mon:Monad<M>, f:A->Of<M,B>, a:Array<A>):Of<M,Array<B>>
   {
-    return sequence(mon, ArrayExt.map(a,f));
+    return sequence(mon, Arrays.map(a,f));
   }
   
   public static function with <M,A> (mon:Monad<M>, of:Of<M,A>) return new WithMonad(of, mon)
@@ -212,7 +214,7 @@ class WithMonad<M,A> {
     return new WithMonad(monad.map(of, f), monad);
   }
 }
-using scuts.core.extensions.PredicateExt;
+using scuts.core.extensions.Predicates;
 
 class WithMonadZeroExt {
   

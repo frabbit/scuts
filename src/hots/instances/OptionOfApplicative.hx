@@ -2,7 +2,7 @@ package hots.instances;
 
 import hots.classes.ApplicativeAbstract;
 import hots.In;
-import scuts.core.extensions.OptionExt;
+import scuts.core.extensions.Options;
 import scuts.core.types.Option;
 
 using hots.box.OptionBox;

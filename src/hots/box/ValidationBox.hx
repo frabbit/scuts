@@ -3,7 +3,7 @@ package hots.box;
 import hots.instances.ValidationOf;
 import scuts.core.types.Validation;
 
-class ValidationBox 
+extern class ValidationBox 
 {
   public static inline function box <F,S>(a:Validation<F,S>):ValidationOf<F,S> return cast a
   
@@ -15,7 +15,7 @@ class ValidationBox
   
 }
 
-class FailProjectionBox 
+extern class FailProjectionBox 
 {
   public static inline function box <F,S>(a:FailProjection<F,S>):FailProjectionOf<F,S> return cast a
   

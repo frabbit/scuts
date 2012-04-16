@@ -1,5 +1,6 @@
 -cp src 
 -cp ../scutsCore/src
+-cp ../scutsData/src
 -cp ../scutsMCore/src
 -cp ../scutsMacros/src
 -cp test 

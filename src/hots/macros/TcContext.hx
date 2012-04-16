@@ -28,19 +28,17 @@ import scuts.mcore.Print;
 import hots.macros.TcRegistry;
 import hots.macros.Data;
 
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Options;
 using scuts.core.Log;
 using scuts.mcore.extensions.TypeExt;
 using scuts.mcore.extensions.ExprExt;
-using scuts.core.extensions.StringExt;
-using scuts.core.extensions.EitherExt;
+using scuts.core.extensions.Strings;
+using scuts.core.extensions.Eithers;
 using scuts.mcore.extensions.TypeExt;
-using scuts.core.extensions.FunctionExt;
+using scuts.core.extensions.Functions;
 
 private typedef SType = scuts.mcore.Type;
-
-
 
 #end
 
@@ -122,9 +120,10 @@ class TcContext
         "Invalid Type Class";
       case NoInstanceFound(tcId, exprType): 
         "Cannot find Type class Instance of " + tcId + " for type " + Print.type(exprType);
-      case MultipleInstancesNoneInScope(tcId, exprType): 
+      case MultipleInstancesNoneInScope(tcId, exprType, instanceTypes): 
         "Cannot resolve Type Class " + tcId + " for type " + 
-            Print.type(exprType) + ".\nMultiple type classes were found and none of them is in scope.";
+            Print.type(exprType) + ".\nMultiple type classes were found and none of them is in scope."
+            + "\nInstances: " + instanceTypes.map(function (x) return MType.getFullQualifiedImportName(x)).join(",");
       case MultipleInstancesWithScope(tcId, exprType):
         "Cannot resolve Type Class " + tcId + " for type " + 
             Print.type(exprType) + ". Multiple type classes were found and more than one is in scope.";
@@ -144,7 +143,7 @@ class TcContext
       return switch (inScope.length) 
       {
         case 0: // None in scope -> Error
-          Left(MultipleInstancesNoneInScope(tcId, exprType));
+          Left(MultipleInstancesNoneInScope(tcId, exprType, filtered.map(function (x) return x._1.instance)));
         case 1: // only one in scope, fine 
           var tc = inScope[0];
           makeInstanceExpr(tc._1, tc._2, contextClasses, level);

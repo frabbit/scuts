@@ -10,7 +10,7 @@ import hots.classes.Semigroup;
 import hots.In;
 import hots.instances.ValidationOf;
 import hots.Of;
-import scuts.core.extensions.ValidationExt;
+import scuts.core.extensions.Validations; using scuts.core.extensions.Validations;
 import scuts.core.types.Validation;
 
 using hots.box.ValidationBox;
@@ -26,6 +26,8 @@ class ValidationMonadPlus<F> extends MonadPlusAbstract<Validation<F,In>> {
   
   override public function append <S>(a1:ValidationOf<F,S>, a2:ValidationOf<F,S>):ValidationOf<F,S>
   {
-    pure(failureMonoid.append(a1.unbox(), a2.unbox()));
+    
+    return Validations.append(a1.unbox(), a2.unbox(), failureMonoid.append, function (a,b) return b).box();
+    
   }
 }

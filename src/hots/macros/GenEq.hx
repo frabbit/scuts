@@ -21,12 +21,12 @@ import scuts.core.types.Option;
 import scuts.core.types.Either;
 import hots.macros.generators.GenError;
 
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.IteratorExt;
-using scuts.core.extensions.OptionExt;
-using scuts.core.extensions.EitherExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Iterators;
+using scuts.core.extensions.Options;
+using scuts.core.extensions.Eithers;
 using scuts.mcore.extensions.ExprExt;
-using scuts.core.extensions.HashExt;
+using scuts.core.extensions.Hashs;
 
 using scuts.core.Log;
 

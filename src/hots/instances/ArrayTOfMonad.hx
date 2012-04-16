@@ -5,7 +5,7 @@ import hots.instances.ArrayTOfApplicative;
 
 import hots.In;
 import hots.Of;
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 
 using hots.macros.Box;
 

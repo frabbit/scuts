@@ -7,7 +7,7 @@ import hots.classes.Semigroup;
 import hots.In;
 
 import hots.instances.ValidationOf;
-using scuts.core.extensions.ValidationExt;
+using scuts.core.extensions.Validations;
 import scuts.core.types.Validation;
 
 using hots.box.ValidationBox;

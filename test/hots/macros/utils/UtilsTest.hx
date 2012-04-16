@@ -1,10 +1,10 @@
 package hots.macros.utils;
 #if (macro || display)
 import haxe.macro.Context;
-import scuts.core.extensions.ArrayExt;
-import scuts.core.extensions.OptionExt;
-import scuts.core.extensions.StringExt;
-import scuts.core.extensions.Tup2Ext;
+import scuts.core.extensions.Arrays;
+import scuts.core.extensions.Options;
+import scuts.core.extensions.Strings;
+import scuts.core.extensions.Tup2s;
 import scuts.core.types.Tup2;
 import scuts.mcore.MContext;
 import scuts.mcore.extensions.TypeExt;
@@ -13,10 +13,10 @@ import scuts.mcore.Print;
 import scuts.Scuts;
 import utest.Assert;
 import scuts.core.types.Option;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Options;
 import hots.macros.utils.Utils;
-using scuts.core.extensions.DynamicExt;
-using scuts.core.extensions.FunctionExt;
+using scuts.core.extensions.Dynamics;
+using scuts.core.extensions.Functions;
 #end
 #if !macro
 class XXX {}
@@ -114,8 +114,8 @@ class UtilsTest
     var expected = Some([Tup2.create(MContext.getType("StdTypes.Int").extract(), param1)]);
     var actual = Utils.getTypeParamMappings(t2, t1);
     
-    var mappingEq = function (a,b) return OptionExt.eq(a,b, 
-      function (a,b) return ArrayExt.eq(a,b, function (a,b) return Tup2Ext.eq(a,b, TypeExt.eq, TypeExt.eq)));
+    var mappingEq = function (a,b) return Options.eq(a,b, 
+      function (a,b) return Arrays.eq(a,b, function (a,b) return Tup2s.eq(a,b, TypeExt.eq, TypeExt.eq)));
     
     Assert.isTrue(mappingEq(actual, expected));
   }
@@ -138,8 +138,8 @@ class UtilsTest
     var expected = Some([Tup2.create(t_K, t_T)]);
     var actual = Utils.getTypeParamMappings(t2, t1);
     
-    var mappingEq = function (a,b) return OptionExt.eq(a,b, 
-      function (a,b) return ArrayExt.eq(a,b, function (a,b) return Tup2Ext.eq(a,b, TypeExt.eq, TypeExt.eq)));
+    var mappingEq = function (a,b) return Options.eq(a,b, 
+      function (a,b) return Arrays.eq(a,b, function (a,b) return Tup2s.eq(a,b, TypeExt.eq, TypeExt.eq)));
       
     
     Assert.isTrue(mappingEq(actual, expected));
@@ -158,7 +158,7 @@ class UtilsTest
     var expected = Some([]);
     var actual = Utils.getFirstPath(t1, t2);
     
-    Assert.isTrue(OptionExt.eq(actual, expected, function (x,y) return ArrayExt.eq(x,y, PathNodeExt.eq))); 
+    Assert.isTrue(Options.eq(actual, expected, function (x,y) return Arrays.eq(x,y, PathNodeExt.eq))); 
   }
   
   public function testGetFirstPath2 () {
@@ -174,7 +174,7 @@ class UtilsTest
     var expected = Some([SuperClass]);
     var actual = Utils.getFirstPath(t1, t2);
     
-    Assert.isTrue(OptionExt.eq(actual, expected, function (x,y) return ArrayExt.eq(x,y, PathNodeExt.eq))); 
+    Assert.isTrue(Options.eq(actual, expected, function (x,y) return Arrays.eq(x,y, PathNodeExt.eq))); 
   }
   
   public function testGetFirstPath3 () {
@@ -189,7 +189,7 @@ class UtilsTest
     
     var expected = Some([SuperClass, InterfaceAt(0)]);
     var actual = Utils.getFirstPath(t1, t2);
-    Assert.isTrue(OptionExt.eq(actual, expected, function (x,y) return ArrayExt.eq(x,y, PathNodeExt.eq))); 
+    Assert.isTrue(Options.eq(actual, expected, function (x,y) return Arrays.eq(x,y, PathNodeExt.eq))); 
   }
   
   public function testGetFirstPath4 () {
@@ -206,7 +206,7 @@ class UtilsTest
     var expected = Some([SuperClass, InterfaceAt(0), InterfaceAt(1)]);
     var actual = Utils.getFirstPath(t1, t2);
     trace(actual);
-    Assert.isTrue(OptionExt.eq(actual, expected, function (x,y) return ArrayExt.eq(x,y, PathNodeExt.eq))); 
+    Assert.isTrue(Options.eq(actual, expected, function (x,y) return Arrays.eq(x,y, PathNodeExt.eq))); 
   }
   
   public function testIsCompatibleTo () {

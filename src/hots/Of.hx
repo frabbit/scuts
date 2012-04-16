@@ -17,7 +17,9 @@ class Of<M,A>
     return Box.box1(val);
   }
   
+  /*
   @:macro public function unbox (ethis):Expr {
     return Box.unbox1(ethis);
   }
+  */
 }

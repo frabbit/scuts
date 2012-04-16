@@ -9,7 +9,7 @@ enum ResolveError
 {
   InvalidTypeClass(t:Type);
   NoInstanceFound(tcId:String, exprType:Type);
-  MultipleInstancesNoneInScope(tcId:String, exprType:Type);
+  MultipleInstancesNoneInScope(tcId:String, exprType:Type, instanceTypes:Array<ClassType>);
   MultipleInstancesWithScope(tcId:String, exprType:Type);
   DependencyErrors(arr:Array<ResolveError>);
 }

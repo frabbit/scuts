@@ -2,7 +2,7 @@ package hots.instances;
 
 import hots.classes.FunctorAbstract;
 import hots.instances.ValidationOf;
-import scuts.core.extensions.ValidationExt;
+import scuts.core.extensions.Validations;
 import scuts.core.types.Validation;
 import hots.classes.Monad;
 import hots.In;
@@ -16,7 +16,7 @@ class ValidationFunctor<F> extends FunctorAbstract<Validation<F,In>> {
   
   override public function map<S,SS>(of:ValidationOf<F,S>, f:S->SS):ValidationOf<F,SS> 
   {
-    return ValidationExt.map(of.unbox(), f).box();
+    return Validations.map(of.unbox(), f).box();
   }
 
 }

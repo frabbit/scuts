@@ -3,8 +3,8 @@ import hots.classes.Show;
 import hots.classes.ShowAbstract;
 import hots.instances.StringShow;
 
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.IteratorExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Iterators;
 
 class HashShow<T> extends ShowAbstract<Hash<T>> {
 

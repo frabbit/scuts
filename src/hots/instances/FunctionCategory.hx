@@ -3,7 +3,7 @@ import hots.box.FunctionBox;
 import hots.classes.CategoryAbstract;
 import hots.In;
 
-using scuts.core.extensions.FunctionExt;
+using scuts.core.extensions.Functions;
 
 private typedef B = FunctionBox;
 

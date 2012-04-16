@@ -1,7 +1,7 @@
 package hots.instances;
 
 import hots.classes.EqAbstract;
-import scuts.core.extensions.OptionExt;
+import scuts.core.extensions.Options;
 import scuts.core.types.Option;
 import hots.classes.Eq;
 
@@ -14,6 +14,6 @@ class OptionEq<T> extends EqAbstract<Option<T>> {
     this.equals = equals;
   }
   
-  override public function eq  (a:Option<T>, b:Option<T>):Bool return OptionExt.eq(a,b, equals.eq)
+  override public function eq  (a:Option<T>, b:Option<T>):Bool return Options.eq(a,b, equals.eq)
   
 }

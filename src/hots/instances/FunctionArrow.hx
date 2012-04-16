@@ -4,7 +4,7 @@ import hots.In;
 import hots.classes.ArrowAbstract;
 import scuts.core.types.Tup2;
 
-using scuts.core.extensions.FunctionExt;
+using scuts.core.extensions.Functions;
 
 private typedef B = FunctionBox;
  

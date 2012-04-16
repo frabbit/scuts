@@ -8,7 +8,7 @@ import hots.classes.SemigroupAbstract;
 import scuts.core.types.Future;
 import scuts.macros.Do;
 
-using scuts.core.extensions.FutureExt;
+using scuts.core.extensions.Futures;
 
 class FutureSemigroup<X> extends SemigroupAbstract<Future<X>>
 {

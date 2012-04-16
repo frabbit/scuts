@@ -4,7 +4,7 @@ import hots.macros.Box;
 
 import hots.In;
 import hots.Of;
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 import hots.classes.Functor;
 
 

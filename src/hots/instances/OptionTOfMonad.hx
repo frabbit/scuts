@@ -3,7 +3,7 @@ package hots.instances;
 import hots.In;
 import hots.Of;
 import scuts.core.types.Option;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Options;
 import hots.classes.Monad;
 import hots.classes.MonadAbstract;
 

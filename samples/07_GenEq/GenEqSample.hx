@@ -32,8 +32,7 @@ import scuts.core.types.Option;
 enum MyEnum {
   Password(s:String);
   User(s:String);
-  Rec(a:MyEnum);
-  
+  Rec(a:MyEnum);  
 }
 
 typedef MyEnumEq = MacroType<[ hots.macros.GenEq.forType(MyEnum) ]>

@@ -3,7 +3,7 @@ package hots.instances;
 import hots.classes.FunctorAbstract;
 import hots.extensions.ArrayOfExt;
 import hots.In;
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 import hots.classes.Functor;
 
 using hots.box.ArrayBox;

@@ -3,20 +3,26 @@ package ;
 
 using hots.macros.TcContext;
 
-using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.Arrays;
 
 import hots.classes.Monad;
 import hots.classes.MonoidAbstract;
-import hots.instances.ValidationMonadPlus;
+import hots.classes.Semigroup;
+import hots.instances.ValidationMonad;
+import hots.instances.ValidationSemigroup;
+
+//import hots.instances.ValidationMonadPlus;
 import scuts.core.types.Validation;
 import hots.classes.SemigroupAbstract;
 
 import hots.instances.ArrayMonoid;
 import hots.Of;
 
-using scuts.core.extensions.ValidationExt;
+using scuts.core.extensions.Validations;
 
 using hots.extensions.MonadExt;
+
+using hots.box.ValidationBox;
 
 enum MultiError<T> {
   Simple(e:T);
@@ -24,7 +30,8 @@ enum MultiError<T> {
 }
 
 class MultiErrorSemigroup<X> extends SemigroupAbstract<MultiError<X>> {
-  public function new () {}
+  public function new () { }
+  
   override public function append (e1:MultiError<X>, e2:MultiError<X>):MultiError<X> {
     return switch (e1) {
       case Multiple(a1): switch (e2) 
@@ -41,6 +48,14 @@ class MultiErrorSemigroup<X> extends SemigroupAbstract<MultiError<X>> {
   }
 }
 
+class FirstSemigroup<X> extends SemigroupAbstract<X> {
+  public function new () { }
+  
+  override public function append (e1:X, e2:X):X {
+    return e1;
+  }
+}
+
 
 enum FormError {
   InvalidUserName(userName:String);
@@ -48,18 +63,8 @@ enum FormError {
   InvalidAge(age:Int);
 }
 
-enum FormSuccess {
-  FormSuccess;
-}
+typedef Person = { name : String, email : String, age : Int };
 
-class FormSuccessSemigroup extends SemigroupAbstract<FormSuccess> {
-  public function new () {}
-  override public function append (e1:FormSuccess, e2:FormSuccess):FormSuccess return e1
-}
-class FormSuccessMonoid extends MonoidAbstract<FormSuccess> {
-  public function new () {}
-  override public function zero ():FormSuccess return FormSuccess
-}
 
 
 
@@ -73,7 +78,7 @@ class ValidationSample
   
   public static function validEmail(email:String):Bool
   {
-    return email.indexOf("@") > -1;
+    return email.indexOf("@") != -1;
   }
   
   public static function validAge(age:Int):Bool
@@ -87,22 +92,48 @@ class ValidationSample
     var loginInfo = { name : "admin", email : "foo", age : 13 };
     
     // lifting into Validation<MultiError<FormError>>, Success>
-    var success = FormSuccess.toSuccess();
+    var success = function (x:Person) return x.toSuccess();
     var fail = function (x) return Simple(x).toFail();
     
-    var validEmail = function (p) return if (validEmail(p.email))   success else fail(InvalidEmail(p.email));
-    var validAge   = function (p) return if (validAge(p.age))       success else fail(InvalidAge(p.age));
-    var validName  = function (p) return if (validUserName(p.name)) success else fail(InvalidUserName(p.name));
+    var validEmail = function (p:Person) return if (validEmail(p.email))   success(p) else fail(InvalidEmail(p.email));
+    var validAge   = function (p:Person) return if (validAge(p.age))       success(p) else fail(InvalidAge(p.age));
+    var validName  = function (p:Person) return if (validUserName(p.name)) success(p) else fail(InvalidUserName(p.name));
     
     // we initialize with success
-    var a: Validation<MultiError<FormError>, FormSuccess> = FormSuccess.toSuccess();
+    
     
     // monad
+    var vv:Validation<MultiError<FormError>, Person> = null;
+    type(vv);
+    //var m = Tc.forType('ValidationSemigroup<MultiErrorSemigroup<FormError>, Person>');
     
-    var m = ValidationMonadPlus.get(new MultiErrorSemigroup());
+    var s:Semigroup<Person> = FirstSemigroup.get();
     
-    m.runDo(
+    var mon1 = vv.tc(Semigroup, [s]);
+    
+    
+    var mon = ValidationSemigroup.get(MultiErrorSemigroup.get(), FirstSemigroup.get());
+    
+    
+    
+    var e1 = validEmail(loginInfo);
+    var e2 = validAge(loginInfo);
+    var e3 = validName(loginInfo);
+    
+    trace(mon.append(mon.append(e1,e2), e3));
+    
+    
+    var m = ValidationMonad.get(MultiErrorSemigroup.get());
+    
+    var res = m.runDo(
+      x <= validEmail(loginInfo).box(),
+      y <= validAge(x).box(),
+      z <= validName(y).box(),
+      return z
+    );
+    
       
+    trace(res);
     
     //m.
     

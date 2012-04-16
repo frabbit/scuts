@@ -4,6 +4,7 @@ package ;
 
 import hots.classes.Monad;
 import hots.classes.MonadZero;
+import hots.In;
 import hots.instances.ArrayOfMonad;
 import hots.instances.ArrayOfMonadZero;
 
@@ -20,14 +21,20 @@ class ArrayMonadSample
     var a = [1,2,3].box();
     var b = [3,4,5].box();
     
-    var m = a.tc(Monad);
+    var m = a.tc(Monad); // ArrayMonad.get()
     
     var res = m.runDo(
       x <= a,
       y <= b,
       return x + y
     );
-    
+    /*
+    m.flatMap(a, function (x) {
+      return m.flatMap(b, function (y) {
+        return m.pure(x + y);
+      })
+    });
+    */
     
     trace(res);
     

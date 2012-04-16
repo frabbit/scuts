@@ -5,7 +5,7 @@ package hots.macros;
 
 private typedef SType = scuts.mcore.Type;
 
-using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.Arrays;
 import haxe.macro.Format;
 import haxe.macro.Type;
 import haxe.macro.Expr;
@@ -32,11 +32,11 @@ import scuts.core.types.Tup2;
 
 import hots.macros.Data;
 
-using scuts.core.extensions.FunctionExt;
+using scuts.core.extensions.Functions;
 
 using scuts.mcore.extensions.TypeExt;
-using scuts.core.extensions.OptionExt;
-using scuts.core.extensions.DynamicExt;
+using scuts.core.extensions.Options;
+using scuts.core.extensions.Dynamics;
 
 enum TcType {
   TTInstance(tc:ClassType, mapping:Mapping);

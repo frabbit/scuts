@@ -8,7 +8,7 @@ import hots.classes.Semigroup;
 import scuts.core.types.Future;
 import scuts.macros.Do;
 
-using scuts.core.extensions.FutureExt;
+using scuts.core.extensions.Futures;
 
 class FutureMonoid<X> extends MonoidAbstract<Future<X>>
 {

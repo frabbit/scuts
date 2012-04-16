@@ -9,7 +9,7 @@ import hots.classes.Semigroup;
 import hots.In;
 import hots.instances.ValidationOf;
 import hots.Of;
-import scuts.core.extensions.ValidationExt;
+import scuts.core.extensions.Validations;
 import scuts.core.types.Validation;
 
 using hots.box.ValidationBox;
@@ -25,6 +25,6 @@ class ValidationMonadZero<F> extends MonadZeroAbstract<Validation<F,In>> {
   
   override public function zero <S>():ValidationOf<F,S>
   {
-    return pure(failureMonoid.empty());
+    return Failure(failureMonoid.empty()).box();
   }
 }

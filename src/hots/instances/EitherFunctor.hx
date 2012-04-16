@@ -1,7 +1,7 @@
 package hots.instances;
 
 import hots.classes.FunctorAbstract;
-import scuts.core.extensions.EitherExt;
+import scuts.core.extensions.Eithers;
 
 import hots.classes.Monad;
 
@@ -17,7 +17,7 @@ class EitherFunctor<L> extends FunctorAbstract<Either<L,In>> {
   
   override public function map<R,RR>(of:EitherOf<L,R>, f:R->RR):EitherOf<L,RR> 
   {
-    return EitherExt.mapRight(of.unbox(), f).box();
+    return Eithers.mapRight(of.unbox(), f).box();
   }
 
 }

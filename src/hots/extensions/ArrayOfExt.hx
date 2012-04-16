@@ -3,7 +3,7 @@ package hots.extensions;
 import hots.instances.ArrayOfFunctor;
 import hots.instances.ArrayOf;
 
-using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.Arrays;
 
 typedef ArrayBox = hots.box.ArrayBox;
 
