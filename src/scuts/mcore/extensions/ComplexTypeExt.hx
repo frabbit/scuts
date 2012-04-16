@@ -5,8 +5,8 @@ package scuts.mcore.extensions;
 #elseif (display || macro)
 import haxe.macro.Type;
 import haxe.macro.Expr;
-import scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
+using scuts.core.extensions.Arrays;
 
 class ComplexTypeExt 
 {
@@ -14,17 +14,17 @@ class ComplexTypeExt
     return switch (c1) {
       case TAnonymous(fields1):
         switch (c2) {
-          case TAnonymous(fields2): ArrayExt.eq(fields1, fields2, FieldExt.eq);
+          case TAnonymous(fields2): Arrays.eq(fields1, fields2, FieldExt.eq);
           default: false;
         }
       case TExtend(p1, fields1):
         switch (c2) {
-          case TExtend(p2, fields2): TypePathExt.eq(p1, p2) && ArrayExt.eq(fields1, fields2, FieldExt.eq);
+          case TExtend(p2, fields2): TypePathExt.eq(p1, p2) && Arrays.eq(fields1, fields2, FieldExt.eq);
           default: false;
         }
       case TFunction(args1, ret1):
         switch (c2) {
-          case TFunction(args2, ret2):  ArrayExt.eq(args1, args2, ComplexTypeExt.eq) && ComplexTypeExt.eq(ret1, ret2);
+          case TFunction(args2, ret2):  Arrays.eq(args1, args2, ComplexTypeExt.eq) && ComplexTypeExt.eq(ret1, ret2);
           default: false;
         }
       case TOptional(t1): 

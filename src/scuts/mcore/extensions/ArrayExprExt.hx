@@ -7,7 +7,7 @@ package scuts.mcore.extensions;
 import haxe.macro.Expr;
 import scuts.mcore.Make;
 
-using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.Arrays;
 
 class ArrayExprExt 
 {

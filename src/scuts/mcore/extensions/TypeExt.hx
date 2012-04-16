@@ -1,24 +1,24 @@
 package scuts.mcore.extensions;
 import haxe.macro.Type;
 import haxe.macro.Expr;
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 import scuts.core.types.Tup2;
 import scuts.core.types.Option;
 import scuts.mcore.MType;
 import scuts.mcore.types.InstType;
 import scuts.Scuts;
 
-using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.Arrays;
 using scuts.mcore.extensions.ClassTypeExt;
 using scuts.mcore.extensions.EnumTypeExt;
 using scuts.mcore.extensions.DefTypeExt;
 using scuts.mcore.extensions.AnonTypeExt;
 
-using scuts.core.extensions.DynamicExt;
+using scuts.core.extensions.Dynamics;
 using scuts.mcore.extensions.TypeExt;
 
-using scuts.core.extensions.StringExt;
-using scuts.core.extensions.BoolExt;
+using scuts.core.extensions.Strings;
+using scuts.core.extensions.Bools;
 
 private typedef TFunArg = {t:Type, name:String, opt:Bool};
 
@@ -83,7 +83,7 @@ class TypeExt
   public static function eq(type1:Type, type2:Type):Bool 
   {
     
-    var eqParams = function (p1, p2) return ArrayExt.eq(p1, p2, TypeExt.eq);
+    var eqParams = function (p1, p2) return Arrays.eq(p1, p2, TypeExt.eq);
     return switch (type1) {
       case TAnonymous(a1):
         switch (type2) 
@@ -120,7 +120,7 @@ class TypeExt
           case TFun(args2, ret2): 
             function argEq(a1:TFunArg, a2:TFunArg) 
               return a1.name.eq(a2.name) && a1.opt.eq(a2.opt) && a1.t.eq(a2.t);
-            ArrayExt.eq(args1, args2, argEq) && ret1.eq(ret2);
+            Arrays.eq(args1, args2, argEq) && ret1.eq(ret2);
           default: false;
         }
       case TMono(t1): 

@@ -10,7 +10,7 @@ import scuts.mcore.Cast;
 import scuts.mcore.Make;
 
 
-using scuts.core.extensions.ArrayExt;
+using scuts.core.extensions.Arrays;
 private typedef M = Make;
 
 class ExprExt 

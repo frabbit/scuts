@@ -2,11 +2,11 @@ package scuts.mcore.extensions;
 
 import haxe.macro.Context;
 import haxe.macro.Type;
-import scuts.core.extensions.ArrayExt;
-import scuts.core.extensions.BoolExt;
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Arrays;
+import scuts.core.extensions.Bools;
+import scuts.core.extensions.Strings;
 
-using scuts.core.extensions.StringExt;
+using scuts.core.extensions.Strings;
 
 class ClassFieldExt 
 {
@@ -15,11 +15,11 @@ class ClassFieldExt
   {
     // TODO Currently there is no way to compare TypedExpr
     return ((v1.expr == null && v2.expr == null) || (v1.expr != null && v2.expr != null))
-      && BoolExt.eq(v1.isPublic, v2.isPublic)
+      && Bools.eq(v1.isPublic, v2.isPublic)
       && FieldKindExt.eq(v1.kind, v2.kind)
       && MetadataExt.eq(v1.meta.get(), v2.meta.get())
       && v1.name.eq(v2.name)
-      && ArrayExt.eq(v1.params, v2.params, function (a,b) return StringExt.eq(a.name, b.name) && TypeExt.eq(a.t, b.t))
+      && Arrays.eq(v1.params, v2.params, function (a,b) return Strings.eq(a.name, b.name) && TypeExt.eq(a.t, b.t))
       && PositionExt.eq(v1.pos, v2.pos)
       && TypeExt.eq(v1.type, v2.type);
   }

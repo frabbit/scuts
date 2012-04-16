@@ -1,6 +1,6 @@
 package scuts.mcore.extensions;
-import scuts.core.extensions.ArrayExt;
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Arrays;
+import scuts.core.extensions.Strings;
 import haxe.macro.Expr;
 
 private typedef MetadataEntry = { name : String, params : Array<Expr>, pos : Position };
@@ -9,9 +9,9 @@ class MetadataEntryExt
 {
   public static function eq (a:MetadataEntry, b:MetadataEntry):Bool 
   {
-    return StringExt.eq(a.name, b.name)
+    return Strings.eq(a.name, b.name)
       && PositionExt.eq(a.pos, b.pos)
-      && ArrayExt.eq(a.params, b.params, ExprExt.eq);
+      && Arrays.eq(a.params, b.params, ExprExt.eq);
   }
   
 }
@@ -21,7 +21,7 @@ class MetadataExt
 
   public static function eq (a:Metadata, b:Metadata):Bool 
   {
-    return ArrayExt.eq(a,b, MetadataEntryExt.eq);
+    return Arrays.eq(a,b, MetadataEntryExt.eq);
   }
   
 }

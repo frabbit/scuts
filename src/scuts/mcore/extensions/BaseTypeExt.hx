@@ -3,8 +3,8 @@ package scuts.mcore.extensions;
 import haxe.macro.Type;
 import haxe.macro.Expr;
 
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.DynamicExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Dynamics;
 class BaseTypeExt 
 {
 

@@ -5,7 +5,7 @@ package scuts.mcore.extensions;
 #elseif (display || macro)
 
 import haxe.macro.Expr;
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Strings;
 import scuts.mcore.Make;
 
 private typedef AnonField = { field : String, expr : Expr };
@@ -14,7 +14,7 @@ class AnonFieldExt
 {
   public static function eq (a:AnonField, b:AnonField):Bool 
   {
-    return StringExt.eq(a.field, b.field)
+    return Strings.eq(a.field, b.field)
       && ExprExt.eq(a.expr, b.expr);
   }
   

@@ -2,8 +2,8 @@ package scuts.mcore.extensions;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import scuts.core.extensions.IntExt;
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Ints;
+import scuts.core.extensions.Strings;
 
 class PositionExt 
 {
@@ -16,9 +16,9 @@ class PositionExt
     var infosA = Context.getPosInfos(a);
     var infosB = Context.getPosInfos(b);
     
-    return StringExt.eq(infosA.file, infosB.file)
-      && IntExt.eq(infosA.min, infosB.min)
-      && IntExt.eq(infosA.max, infosB.max);
+    return Strings.eq(infosA.file, infosB.file)
+      && Ints.eq(infosA.min, infosB.min)
+      && Ints.eq(infosA.max, infosB.max);
   }
   
 }

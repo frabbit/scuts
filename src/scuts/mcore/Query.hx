@@ -6,15 +6,15 @@ package scuts.mcore;
 #if false
 
 import haxe.macro.Expr;
-import scuts.core.extensions.DynamicExt;
-import scuts.core.extensions.OptionExt;
+import scuts.core.extensions.Dynamics;
+import scuts.core.extensions.Options;
 import scuts.CoreTypes;
 
 //using scuts.core.extensions.ArrayOptions;
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.IterableExt;
-using scuts.core.extensions.DynamicExt;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Iterables;
+using scuts.core.extensions.Dynamics;
+using scuts.core.extensions.Options;
 //using scuts.core.extensions.;
 
 typedef QSelection<U> = Array<Option<U>>;
@@ -87,7 +87,7 @@ class QueryNode {
 
 class QueryArray {
   public static inline function createQuery <T>(c:Array<T>):QSelection<T> {
-    return c.map(OptionExt.toOption);
+    return c.map(Options.toOption);
   }
 }
 

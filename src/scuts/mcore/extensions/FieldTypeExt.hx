@@ -3,7 +3,7 @@ package scuts.mcore.extensions;
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
 import haxe.macro.Expr;
-import scuts.core.extensions.StringExt;
+import scuts.core.extensions.Strings;
 import scuts.core.types.Option;
 
 class FieldTypeExt 
@@ -46,14 +46,14 @@ class FieldTypeExt
       case FFun(f1):  
         switch (b) { 
           case FFun(f2): 
-            FunctionExt.eq(f1, f2);
+            Functions.eq(f1, f2);
           default: false;
         } 
       case FProp(get1, set1, t1, e1):   
         switch (b) { 
           case FProp(get2, set2, t2, e2):    
-               StringExt.eq(get1, get2)
-            && StringExt.eq(get1, get2)
+               Strings.eq(get1, get2)
+            && Strings.eq(get1, get2)
             && ComplexTypeExt.eq(t1, t2)
             && ((e1 == null && e2 == null) || ExprExt.eq(e1, e2));
           default: false;

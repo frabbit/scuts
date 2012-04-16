@@ -5,8 +5,8 @@ package scuts.mcore;
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
 
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.IterableExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Iterables;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -17,8 +17,8 @@ import scuts.mcore.extensions.TypeExt;
 import scuts.Scuts;
 
 
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.DynamicExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Dynamics;
 
 private typedef SType = scuts.mcore.Type;
 

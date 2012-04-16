@@ -4,17 +4,17 @@ package scuts.mcore.extensions;
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
 import haxe.macro.Expr;
-import scuts.core.extensions.ArrayExt;
+import scuts.core.extensions.Arrays;
 
 
-class FunctionExt 
+class Functions 
 {
   public static function eq (a:Function, b:Function):Bool 
   {
-    return ArrayExt.eq(a.args,b.args, FunctionArgExt.eq)
+    return Arrays.eq(a.args,b.args, FunctionArgExt.eq)
         && ((a.ret == null && b.ret == null) || ComplexTypeExt.eq(a.ret, b.ret))
         && ((a.expr == null && b.expr == null) || ExprExt.eq(a.expr, b.expr))
-        && ArrayExt.eq(a.params, b.params, FunctionParamExt.eq);
+        && Arrays.eq(a.params, b.params, FunctionParamExt.eq);
   }
   
   public static function addArg (f:Function, name:String, opt:Bool, ?type:ComplexType, ?value:Expr ):Function

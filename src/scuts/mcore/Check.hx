@@ -3,10 +3,10 @@ package scuts.mcore;
 #if (!macro && !display)
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.IterableExt;
-using scuts.core.extensions.DynamicExt;
-using scuts.core.extensions.OptionExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Iterables;
+using scuts.core.extensions.Dynamics;
+using scuts.core.extensions.Options;
 
 import haxe.macro.Expr;
 import haxe.macro.Type;
