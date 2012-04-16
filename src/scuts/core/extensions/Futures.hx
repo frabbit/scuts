@@ -129,12 +129,12 @@ class Futures {
     return f.liftFutureF2()(a,b);
   }
   
-  public static function zip2With<A,B,C,D>(a:Future<A>, b:Future<B>, c:Future<C>, f:A->B->C->D):Future<D>
+  public static function zipWith2<A,B,C,D>(a:Future<A>, b:Future<B>, c:Future<C>, f:A->B->C->D):Future<D>
   {
     return f.liftFutureF3()(a,b,c);
   }
   
-  public static function zip3With<A,B,C,D,E>(a:Future<A>, b:Future<B>, c:Future<C>, d:Future<D>, f:A->B->C->D->E):Future<E>
+  public static function zipWith3<A,B,C,D,E>(a:Future<A>, b:Future<B>, c:Future<C>, d:Future<D>, f:A->B->C->D->E):Future<E>
   {
     return f.liftFutureF4()(a,b,c,d);
   }

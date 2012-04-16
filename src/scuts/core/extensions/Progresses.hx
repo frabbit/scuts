@@ -126,7 +126,7 @@ class Progresses
     return res;
   }
   
-  public static inline function map < S, T > (fut:Progress<S>, f:S->T):Progress<T>
+  public static function map < S, T > (fut:Progress<S>, f:S->T):Progress<T>
   {
     var res = new Progress();
       
