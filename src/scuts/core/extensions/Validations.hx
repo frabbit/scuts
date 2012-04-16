@@ -8,7 +8,7 @@ import scuts.core.types.Either;
 typedef ValidationArray<A,B> = Validation<Array<A>, B>;
 
 
-class ValidationExt
+class Validations
 {
   public static function either<F,S>(v:Validation<F,S>):Either<F,S> {
     return switch (v) {
@@ -322,7 +322,7 @@ class ValidationExt
 }
 
 
-using scuts.core.extensions.ValidationExt;
+using scuts.core.extensions.Validations;
 
 class FailProjectionExt 
 {

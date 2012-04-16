@@ -12,7 +12,7 @@ typedef FailureOrSuccess<Failure, Success> = Either<Failure, Success>;
 
 typedef Option<T> = scuts.core.types.Option<T>;
 
-typedef ProgressiveFuture<T> = scuts.core.types.ProgressiveFuture<T>;
+typedef Progress<T> = scuts.core.types.Progress<T>;
 
 typedef LazyIterator<T> = scuts.core.types.LazyIterator<T>;
 

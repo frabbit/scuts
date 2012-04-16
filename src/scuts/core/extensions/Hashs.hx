@@ -5,7 +5,7 @@ package scuts.core.extensions;
  * @author 
  */
 
-class HashExt 
+class Hashs 
 {
 
   public static function mapToArray<A,B>(h:Hash<A>, f : String -> A -> B):Array<B>

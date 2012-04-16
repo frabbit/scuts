@@ -11,7 +11,7 @@ import neko.Sys;
 
 
 #else 
-import scuts.core.extensions.StringExtTest;
+import scuts.core.extensions.StringsTest;
 #end
 
 
@@ -33,7 +33,7 @@ class AllTests
       #if macro
       
       #else
-      runner.addCase(new StringExtTest());
+      runner.addCase(new StringsTest());
       #end
       
       Report.create(runner);

@@ -4,13 +4,13 @@ import haxe.PosInfos;
 import haxe.Stack;
 import scuts.core.extensions.PosInfosExt;
 
-using scuts.core.extensions.ArrayExt;
-using scuts.core.extensions.StringExt;
+using scuts.core.extensions.Arrays;
+using scuts.core.extensions.Strings;
 #if (macro || display)
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
-using scuts.core.extensions.DynamicExt;
+using scuts.core.extensions.Dynamics;
 using scuts.core.extensions.PosInfosExt;
 #end
 
