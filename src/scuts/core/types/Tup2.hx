@@ -11,7 +11,7 @@ class Tup2<A,B> {
     this._2 = _2;
   }
   
-  public static inline function create <A,B>(_1:A, _2:B) {
+  public static function create <A,B>(_1:A, _2:B) {
     return new Tup2<A,B>(_1, _2);
   }
   

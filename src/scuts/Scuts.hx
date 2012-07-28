@@ -60,12 +60,21 @@ class Scuts
   public static function macroError <T>(msg:String, ?p:Position, ?posInfos:PosInfos):T 
   {
     var p1 = p.nullGetOrElseConst(Context.currentPos());
-    var stack = Stack.toString(Stack.callStack()).trim().split("\n").reverseCopy().filter(function (x) return x.indexOf("scuts/Scuts.hx") == -1 && x.indexOf("haxe/Stack.hx") == -1).join("\n");
+    #if scutsDebug
+    var stack = Stack.toString(Stack.callStack())
+      .trim().split("\n")
+      .reverseCopy()
+      .filter(function (x) return x.indexOf("scuts/Scuts.hx") == -1 && x.indexOf("haxe/Stack.hx") == -1)
+      .join("\n");
+    
     throw new Error(
       msg + "\n@" + posInfos.toString() 
       + "\n-----------------------------------------------------------------------------\n" 
       + stack 
       + "\n-----------------------------------------------------------------------------",p1);
+    #else
+    throw new Error(msg, p1);
+    #end
     return null;
   }
   
