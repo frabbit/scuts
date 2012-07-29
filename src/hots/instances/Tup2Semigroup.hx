@@ -5,11 +5,11 @@ import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
 import hots.classes.Semigroup;
 import hots.classes.SemigroupAbstract;
+import hots.TC;
 
 import scuts.core.types.Tup2;
 
-class Tup2Semigroup<A,B> extends SemigroupAbstract<Tup2<A,B>>
-{
+class Tup2Semigroup<A,B> extends SemigroupAbstract<Tup2<A,B>> {
   private var s1:Semigroup<A>;
   private var s2:Semigroup<B>;
   

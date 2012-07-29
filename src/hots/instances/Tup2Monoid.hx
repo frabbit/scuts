@@ -3,7 +3,7 @@ package hots.instances;
 
 import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
-
+import hots.instances.Tup2Semigroup;
 import scuts.core.types.Tup2;
 
 class Tup2Monoid<A,B> extends MonoidAbstract<Tup2<A,B>>

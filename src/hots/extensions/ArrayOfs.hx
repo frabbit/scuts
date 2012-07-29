@@ -7,10 +7,21 @@ using scuts.core.extensions.Arrays;
 
 typedef ArrayBox = hots.box.ArrayBox;
 
-using hots.extensions.ArrayOfExt.ArrayBox;
+using hots.extensions.ArrayOfs.ArrayBox;
 
-class ArrayOfExt 
+class ArrayOfs
 {
+  
+  public static inline function box <A>(a:Array<A>):ArrayOf<A> 
+  {
+    return ArrayBox.box(a);
+  }
+  
+  public static inline function unbox <A>(a:ArrayOf<A>):Array<A> 
+  {
+    return ArrayBox.unbox(a);
+  }
+  
   
   public static inline function map <A,B>(a:ArrayOf<A>, f:A->B):ArrayOf<B> 
   {

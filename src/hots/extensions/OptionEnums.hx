@@ -12,7 +12,7 @@ import haxe.macro.Expr;
 
 #end
 
-class OptionEnumExt 
+class OptionEnums
 {
   public static function Show(_:EO) return StringShow.get()
   public static function Eq(_:EO) return StringEq.get()

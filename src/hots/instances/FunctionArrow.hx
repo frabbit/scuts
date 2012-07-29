@@ -3,7 +3,7 @@ import hots.box.FunctionBox;
 import hots.In;
 import hots.classes.ArrowAbstract;
 import scuts.core.types.Tup2;
-
+import hots.instances.FunctionCategory;
 using scuts.core.extensions.Functions;
 
 private typedef B = FunctionBox;

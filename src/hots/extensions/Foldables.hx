@@ -9,7 +9,7 @@ import hots.Of;
  * @author 
  */
 
-class FoldableExt 
+class Foldables
 {
 
   public static function minimum <M,A>(f:Foldable<M>, of:Of<M,A>, ord:Ord<A>) {

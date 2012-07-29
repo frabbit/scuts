@@ -8,9 +8,22 @@ import hots.Of;
 
 class ArrayBox 
 {
-  public static inline function box <X>(a:Array<X>):ArrayOf<X> return Box.box(a)
+  public static inline function box <X>(a:Array<X>):ArrayOf<X> {
+    #if scutsDebug
+    return Box.box(a);
+    #else
+    return cast a;
+    #end
+  }
   
-  public static inline function unbox <X>(a:ArrayOf<X>):Array<X> return Box.unbox(a)
+  public static inline function unbox <X>(a:ArrayOf<X>):Array<X> {
+    #if scutsDebug
+    return Box.unbox(a);
+    #else
+    return cast a;
+    #end
+    
+  }
   
   public static inline function boxF <X,Y>(a:X->Array<Y>):X->ArrayOf<Y> return cast a // Box.boxF(a)
   

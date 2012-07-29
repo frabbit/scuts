@@ -2,7 +2,7 @@ package hots.extensions;
 import hots.classes.Eq;
 
 
-class EqExt
+class Eqs
 {
 
   public static inline function eq<T>(v1:T, v2:T, eq:Eq<T>):Bool return eq.eq(v1, v2)

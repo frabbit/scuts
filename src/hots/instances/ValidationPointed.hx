@@ -7,6 +7,8 @@ import hots.instances.ValidationOf;
 import scuts.core.extensions.Validations;
 import scuts.core.types.Validation;
 
+import hots.instances.ValidationFunctor;
+
 using hots.box.ValidationBox;
 
 class ValidationPointed<F> extends PointedAbstract<Validation<F,In>> {

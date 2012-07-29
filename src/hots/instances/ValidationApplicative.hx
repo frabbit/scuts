@@ -10,6 +10,8 @@ import hots.instances.ValidationOf;
 using scuts.core.extensions.Validations;
 import scuts.core.types.Validation;
 
+import hots.instances.ValidationPointed;
+
 using hots.box.ValidationBox;
 
 class ValidationApplicative<F> extends ApplicativeAbstract<Validation<F,In>> {

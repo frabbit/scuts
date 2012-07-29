@@ -8,7 +8,7 @@ import hots.Of;
 import scuts.core.extensions.Arrays;
 import hots.classes.Monad;
 
-typedef MonadExtApplicativeExt = hots.extensions.ApplicativeExt;
+typedef MonadExtApplicativeExt = hots.extensions.Applicatives;
 
 #end
 
@@ -44,7 +44,7 @@ using scuts.mcore.Check;
 
 
 
-class MonadExt 
+class Monads 
 {
   
   #if (macro || display)
@@ -140,7 +140,7 @@ class MonadExt
   
   public static inline function flatMap <M,A,B> (of:Of<M, A>, f:A->Of<M, B>, m:Monad<M>):Of<M,B> return m.flatMap(of, f)
   
-  public static inline function map <M,A,B> (of:Of<M, A>, f:A->Of<M, B>, m:Monad<M>):Of<M,B> return m.flatMap(of, f)
+  public static inline function map <M,A,B> (of:Of<M, A>, f:A->B, m:Monad<M>):Of<M,B> return m.map(of, f)
   
   
   public static function lift2 <M, A1, A2, R>(m:Monad<M>, f:A1->A2->R ):Of<M, A1>->Of<M, A2>->Of<M, R>

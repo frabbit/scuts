@@ -3,7 +3,7 @@ import hots.classes.Ord;
 import scuts.core.types.Ordering;
 
 
-class OrdExt 
+class Ords
 {
 
   public static inline function compare<T>(v1:T, v2:T, o:Ord<T>):Ordering return o.compare(v1, v2)

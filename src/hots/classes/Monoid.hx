@@ -9,5 +9,8 @@ interface Monoid<A> implements Semigroup<A>, implements TC
   public function empty ():A;
   
   //public function concatArray (v:Array<A>):A;
+  
+  
+  
 }
 

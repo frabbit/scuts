@@ -9,6 +9,8 @@ import hots.instances.ValidationOf;
 import scuts.core.extensions.Validations;
 import scuts.core.types.Validation;
 
+import hots.instances.ValidationApplicative;
+
 using hots.box.ValidationBox;
 
 class ValidationMonad<F> extends MonadAbstract<Validation<F,In>> {

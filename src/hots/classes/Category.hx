@@ -7,6 +7,9 @@ import scuts.Scuts;
 
 interface Category<Cat> implements TC
 {
+  
+  
+  
   public function id <A>(a:A):OfOf<Cat, A, A>;
   /**
    * aka (.)

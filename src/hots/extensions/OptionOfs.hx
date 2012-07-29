@@ -8,7 +8,7 @@ import scuts.core.types.Option;
 
 private typedef B = hots.macros.Box;
 
-class OptionOfExt 
+class OptionOfs
 {
 
   public static inline function box<A>(of:Option<A>):OptionOf<A> return B.box(of)

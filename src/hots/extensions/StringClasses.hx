@@ -4,7 +4,7 @@ import hots.instances.StringMonoid;
 import hots.instances.StringOrd;
 import hots.instances.StringShow;
 
-class StringClassExt 
+class StringClasses 
 {
   public static function Show(c:Class<String>) return StringShow.get()
   public static function Eq(c:Class<String>) return StringEq.get()

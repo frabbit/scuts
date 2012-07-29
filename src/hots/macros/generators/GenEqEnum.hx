@@ -131,7 +131,7 @@ class GenEqEnum
             var type = x.t;
             var arg1 = String.fromCharCode(varStart + i) + "1";
             var arg2 = String.fromCharCode(varStart + i) + "2";
-            return "hots.macros.TcContext.tc(" + arg1 + ", hots.classes.Eq, [" + memberArgs.join(",") + "]).eq(" + arg1 + "," + arg2 + ")";
+            return "hots.macros.Resolver.tc(" + arg1 + ", hots.classes.Eq, [" + memberArgs.join(",") + "]).eq(" + arg1 + "," + arg2 + ")";
           });
           var res = "case " + name + "(" + args1.join(",") + "): switch (x2) { case " + name + "(" + args2.join(",") + "): " + comps.join(" && ") + "; default: false;}";
           

@@ -182,6 +182,9 @@ class Box
     return (if (Utils.isOfType(type)) 
     {
       var innerType = MContext.followAliases(U.getOfElemType(type).extract());
+      var outerType = MContext.followAliases(U.getOfContainerType(type).extract());
+
+      
       
       if (U.isContainerType(innerType)) 
       {
@@ -191,13 +194,22 @@ class Box
         
         Right(flattened.extract());
       } 
-      else 
+      else if (U.isFunctionType(outerType)) {
+
+        var innerType = MContext.followAliases(U.getOfElemType(type).extract());
+        var r = U.convertToOfType(outerType);
+
+        Right(Utils.makeOfType(r, innerType));
+      }
+      else {
         Left(InnerTypeIsNoContainer(type, innerType));
+      }
     } 
-    else if (U.isContainerType(type)) 
+    else if (U.isContainerType(type) || U.isFunctionType(type)) 
     {
       Right(U.convertToOfType(type));
-    } 
+    }
+    
     else 
     {
       Left(TypeIsNoContainer(type));

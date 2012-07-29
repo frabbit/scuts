@@ -1,6 +1,9 @@
 package hots.macros.utils;
 #if (macro || display)
 import haxe.macro.Context;
+import scuts.core.extensions.Options;
+import scuts.core.extensions.Tup2s;
+
 import haxe.macro.Type;
 import scuts.core.extensions.Arrays;
 import scuts.core.extensions.Dynamics;
@@ -26,6 +29,7 @@ using scuts.mcore.extensions.Strings;
 using scuts.core.extensions.Dynamics;
 using scuts.mcore.extensions.ComplexTypeExt;
 using scuts.mcore.extensions.FieldTypeExt;
+using scuts.core.extensions.Functions;
 
 using scuts.core.Log;
 private typedef D = Dynamics;
@@ -89,41 +93,81 @@ class PathNodeExt
   }
 }
 
-
 typedef Mapping = Array<Tup2<Type, Type>>;
-
 
 class Utils 
 {
-  public static function normalizeOfTypes (type:Type):Type {
-    
+  static var hotsOfClassType = D.lazy(Context.getType("hots.Of").asClassType().extract()._1);
+  static var hotsInClassType = D.lazy(hotsInType().asClassType().extract()._1);
+  
+  public static var hotsInType = D.lazy(Context.getType("hots.In"));
+  
+  static function typeIsHotsInType (t:Type) 
+  {
+    return TypeExt.eq(hotsInType(), t);
+  }
+  
+  public static function normalizeOfTypes (type:Type):Type 
+  {
     return switch (MContext.followAliases(type)) {
       case TInst(ctRef, params):
         var ct = ctRef.get();
         
-        getOfParts(type).map(function (t) {
-          return if (TypeExt.eq(hotsInType(), t._2)) 
+        function normalizeOfType (t:Tup2<Type, Type>) 
+        {
+          var containerType = t._1;
+          var elemType = t._2;
+          
+          return if (!typeIsHotsInType(elemType)) 
           {
+            var newT1 = normalizeOfTypes(containerType);
             
-            getContainerElemType(t._1)
-            .map(function (x) return if (TypeExt.eq(x, hotsInType())) t._1 else type)
-            .getOrElseConst(type);
-          } else
-            makeOfType(normalizeOfTypes(t._1), normalizeOfTypes(t._2));
-        }).getOrElseConst(type);
+            switch (newT1) {
+              case TFun(args, ret):
+                if (typeIsHotsInType(ret)) 
+                {
+                  var newArgs = args.map(function (a) return { opt : a.opt, name : null, t: a.t } );
+                  TFun(newArgs, elemType);
+                } 
+                else 
+                {
+                  var index = args.findLastIndex(function (a) return typeIsHotsInType(a.t));
+                  
+                  function replaceInTypeAt (pos:Int) {
+                    return args.mapWithIndex(function (a,i) return { opt : a.opt, name : null, t: pos == i ? elemType : a.t } );
+                  }
+                  
+                  var newArgs = index.map(replaceInTypeAt).getOrElseConst(args);
+                  
+                  TFun(newArgs, ret);
+                }
+              default:
+                replaceFirstInType(newT1, elemType)
+                .getOrElseConst(type);
+            }
+          } else {
+            normalizeOfTypes(makeOfType(normalizeOfTypes(containerType), normalizeOfTypes(elemType)));
+          }
+        }
+        
+        getOfParts(type).map(normalizeOfType).getOrElseConst(type);
       case TEnum(eRef, params):
         TEnum(eRef, params.map(normalizeOfTypes));
       case TFun(args, ret):
-        TFun(args.map(function (a) return { name:a.name, opt:a.opt, t:normalizeOfTypes(a.t)}), normalizeOfTypes(ret));
+        function normalizeArg (a) return { name:a.name, opt:a.opt, t:normalizeOfTypes(a.t)}
+        TFun(args.map(normalizeArg), normalizeOfTypes(ret));
       default: Scuts.notImplemented();
     }
   }
   
   public static function getConstructorArgumentTypes (fields:Array<Field>):Option<Array<ComplexType>> 
   {
+    function mapArgs (x:Function) 
+      return x.args.map(function (x) return x.type);
+
     return 
       getFieldAsFunction(fields, "new")
-      .map(function (x) return x.args.map(function (x) return x.type));
+      .map(mapArgs);
   }
   
   public static function getFieldAsFunction (fields:Array<Field>, field:String):Option<Function> 
@@ -132,24 +176,25 @@ class Utils
       .flatMap(function (x) return x.kind.asFunction());
   }
   
-  public static function reverseMapping (m:Array<Tup2<Type, Type>>) {
-    return m.map(function (x) return Tup2.create(x._2, x._1));
+  public static function reverseMapping (m:Array<Tup2<Type, Type>>):Array<Tup2<Type, Type>> {
+    return m.map(Tup2s.swap);
   }
   
   public static function containsType (type:Type, search:Type):Bool
   {
+    
     return TypeExt.eq(type, search) || switch (type) {
       case TInst(t, params):
-        params.any( function (x) return containsType(x, search ));
+        params.any( containsType.partial2(search));
       case TEnum(t, params):
-        params.any( function (x) return containsType(x, search ));
+        params.any( containsType.partial2(search));
       case TFun(args, ret):
         args.any( function (x) return containsType(x.t, search )) 
         || containsType(ret, search);
       case TAnonymous(a):
         a.get().fields.any(function (x) return containsType(x.type, search));
       case TType(t, params):
-        params.any( function (x) return containsType(x, search ));
+        params.any( containsType.partial2(search));
       case TDynamic(t):
         containsType(t, search);
       case TLazy(t):
@@ -161,19 +206,34 @@ class Utils
     }
   }
   
+  /**
+   * Searches recursively in type for all types included in search. All found types are 
+   * returned in an Array. Its not important how often the type is included, one occurrence is 
+   * enough.
+   * 
+   * Example:
+   * typeA : Array<Int>->String
+   * typeInt : Int
+   * typeString : String
+   * typeFloat : String
+   * getContainingTypes(typeA, [typeInt]) // [typeInt]
+   * getContainingTypes(typeA, [typeInt, typeString]) // [typeInt, typeString]
+   * getContainingTypes(typeA, [typeInt, typeFloat]) // [typeInt]
+   * getContainingTypes(typeA, [typeFloat]) // []
+   * 
+   */
   public static function getContainingTypes (type:Type, search:Array<Type>):Array<Type>
   {
-    
-    
     function loop (type:Type, search:Array<Type>, found:Array<Type>):Tup2<Array<Type>, Array<Type>>
     {
       var foldParams = function (acc:Tup2<Array<Type>, Array<Type>>, cur) return loop(cur, acc._1, acc._2);
-      var foldArgs = function (acc:Tup2<Array<Type>, Array<Type>>, arg) return loop(arg.t, acc._1, acc._2);
-      var foldFields = function (acc:Tup2<Array<Type>, Array<Type>>, f) return loop(f.type, acc._1, acc._2);
+      var foldArgs   = function (acc:Tup2<Array<Type>, Array<Type>>, arg) return loop(arg.t, acc._1, acc._2);
+      var foldFields = function (acc:Tup2<Array<Type>, Array<Type>>, f)   return loop(f.type, acc._1, acc._2);
       
       function findInParams (params:Array<Type>) return params.foldLeft(foldParams, Tup2.create(search, found));
       
-      function findInner () {
+      function findInner () 
+      {
         return switch (type) {
           case TInst(t, params):
             findInParams(params);
@@ -194,11 +254,15 @@ class Utils
             loop(t.get(), search, found);
         }
       }
+
+      // remove the founded type from search and add it to the result
+      function typeFound( x:Tup2<Type, Int> ) 
+        return Tup2.create(search.removeElemAt(x._2), found.append(x._1));
       
       return 
         search
-        .someWithIndex( function (x) return TypeExt.eq(x, type))
-        .map( function ( x ) return Tup2.create(search.removeElemAt(x._2), found.concat([x._1])))
+        .someWithIndex( TypeExt.eq.partial2(type))
+        .map( typeFound )
         .getOrElse(findInner);
     }
     return loop(type, search, [])._2;
@@ -209,22 +273,23 @@ class Utils
     var m = classType.module;
     var s = (m != "" ? (m + ".") : "") + classType.name;
     var res = MContext.getType(s);
+    
+    function extractParams (x) return switch (x) 
+    {
+      case TInst(_, p), TType(_, p), TEnum(_, p): Some(p);
+      default: None;
+    }
+    
     return 
-      res.flatMap(function (x) return switch (x) {
-        case TInst(_, p), TType(_, p), TEnum(_, p): Some(p);
-        default: None;
-      })
+      res.flatMap(extractParams)
       .getOrElse(D.lazy([]));
   }
-  
-  
-  
-  
+
   public static function remap (type:Type, mapping:Array<Tup2<Type, Type>>):Type 
   {
-    var canMap = mapping.some(function (x) return TypeExt.eq(x._1, type));
-    var remapParam = function (x) return remap(x, mapping);
-    var remapArg = function (a) return { name: a.name, opt:a.opt, t : remap(a.t, mapping)};
+    var canMap     = mapping.some(function (x) return TypeExt.eq(x._1, type));
+    var remapParam = remap.partial2(mapping);
+    var remapArg   = function (a) return { name: a.name, opt:a.opt, t : remap(a.t, mapping)};
     
     return switch (canMap) {
       case Some(v): v._2;
@@ -237,6 +302,7 @@ class Utils
           case TFun(args, ret):
             TFun(args.map( remapArg ), remap(ret, mapping));
           case TAnonymous(a):
+            // TODO Needs compiler support
             Scuts.notImplemented();
           case TType(t, params):
             TType(t, params.map( remapParam ));
@@ -355,11 +421,17 @@ class Utils
     return typeIsCompatibleTo1(t, to, wildcards, []);
   }
   
-  public static function typeIsCompatibleTo1 ( t:Type, to:Type, wildcards:Array<Type>, mapping:Mapping ):Option<Mapping> 
+  static function typeIsCompatibleTo1 ( t:Type, to:Type, wildcards:Array<Type>, mapping:Mapping, ignoreFunArgNames:Bool = true ):Option<Mapping> 
   {
+    
+
+    
     // expand both types first
-    var t = MContext.followAliases(t);
+    
+    
     var to = MContext.followAliases(to);
+    
+    var t = MContext.followAliases(t);
     
     var comp = typeIsCompatibleTo1;
     // checks if the parameter arrays are compatible
@@ -377,23 +449,27 @@ class Utils
         else None;
     }
     var some = wildcards.some(function (x) return to.eq(x));
-    
-    return some.flatMap(function (v)
+    var ret = some.flatMap(function (v)
       return  
         mapping.some(function (x) return x._1.eq(v))
         .map(function (tup) return if (t.eq(tup._2)) Some(mapping) else None)
         .getOrElse(function () return Some(mapping.append(Tup2.create(to, t))))
-    )
-    .orElse(function () {
+    );
+    
+    
+    
+    return ret.orElse(function () {
       return switch (to) {
         case TLazy(f2): switch (t) 
         {
           case TLazy(f1): comp(f1(), f2(), wildcards, mapping);
+          case TMono(_): Some(mapping);
           default: None;
         }
         case TAnonymous(a2): switch (t) 
         {
           case TAnonymous(a1): Scuts.notImplemented();
+          case TMono(_): Some(mapping);
           default: None;
         }
         case TDynamic(t2): switch (t) 
@@ -402,27 +478,23 @@ class Utils
             if (t1 == null && t2 == null) Some(mapping)
             else if (t1 != null && t2 != null) comp(t1,t2, wildcards, mapping)
             else None;
+          case TMono(_): Some(mapping);
           default: None;
         }
-        case TInst(t2,params2): switch (t) 
+        case TInst(t2,params2): 
+          switch (t) 
         {
           case TInst(t1,params1):
             if (ClassTypeExt.eq(t1.get(),t2.get())) compParams(params1, params2) else None;
-          default: None;
+          case TMono(_): Some(mapping);
+        default: 
+          None;
         }
-        case TMono(t2Ref): switch (t) 
-        {
-          case TMono(t1Ref):
-            var t1 = t1Ref.get();
-            var t2 = t2Ref.get();
-            if (t1 == null && t2 == null) Some(mapping)
-            else if (t1 != null && t2 != null) comp(t1,t2, wildcards, mapping)
-            else None;
-          default: None;
-        }
+        case TMono(t2Ref): Some(mapping);
         case TType(t2, params2): switch (t) 
         {
           case TType(t1, params1): None;
+          case TMono(_): Some(mapping);
             //comp(t1,t2, openType) && compParams(params1, params2);
           default: None;
         }
@@ -430,19 +502,23 @@ class Utils
         {
           case TEnum(t1, params1):
             if (EnumTypeExt.eq(t1.get(),t2.get())) compParams(params1, params2) else None;
+          case TMono(_): Some(mapping);
           default: None;
         }
         case TFun(args2, ret2): switch (t) 
         {
           case TFun(args1, ret1):
+            
             if (args1.length == args2.length) 
             {
               function foldArgs (m:Option<Mapping>, a1,a2) 
               {
-                return if (a1.name == a2.name && a1.opt == a2.opt) 
+                
+                return if ((ignoreFunArgNames || (a1.name == a2.name)) && a1.opt == a2.opt) 
                   comp(a1.t, a2.t, wildcards, mapping)
                 else None;
               }
+              
               args1.zipFoldLeftWhile(
                 args2,
                 foldArgs,
@@ -452,60 +528,123 @@ class Utils
               .flatMap(function (m) return comp(ret1, ret2, wildcards,m));
             }
             else None;
+          case TMono(_): Some(mapping);
           default:None;
         }
       }
     });
   }
 
-  static var hotsOfClassType = Dynamics.lazy(Context.getType("hots.Of").asClassType().extract()._1);
   
-  static var hotsInType = Dynamics.lazy(Context.getType("hots.In"));
-  static var hotsInClassType = Dynamics.lazy(hotsInType().asClassType().extract()._1);
   
   public static function makeOfType(container:Type, elem:Type) 
   {
     return TInst(hotsOfClassType(), [container, elem]);
   }
-  
+
   public static function convertToOfType (containerType:Type) 
   {
-    var err = function () return Scuts.macroError("Cannot create Of Type, because " + Print.type(containerType) + " is not a container type");
+    var errGeneral = function (type) 
+      return Scuts.macroError("Cannot create Of Type, because " + Print.type(containerType) + " is not a " + type + " type");
+    
+    var err    = errGeneral.partial1("container");
+    var errFun = errGeneral.partial1("supported function");
+    
+    function replaceLastWithInType (params:Array<Type>) {
+      return params.take(params.length - 1).append(hotsInType());
+    }
     
     return switch (containerType) 
     {
-      case TInst(t, params): if (params.length == 1) makeOfType(TInst(t, [hotsInType()]), params[0]) else err();
-      case TEnum(t, params): if (params.length == 1) makeOfType(TEnum(t, [hotsInType()]), params[0]) else err();
-      case TType(t, params): if (params.length == 1) makeOfType(TType(t, [hotsInType()]), params[0]) else err();
+      case TInst(t, params): 
+        
+        var len = params.length;
+        if (len > 0) makeOfType(TInst(t, replaceLastWithInType(params)), params[len - 1]) else err();
+        
+      case TEnum(t, params): 
+        
+        var len = params.length;
+        if (len > 0) makeOfType(TEnum(t, replaceLastWithInType(params)), params[len - 1]) else err();
+        
+      case TType(t, params): 
+        
+        var len = params.length;
+        if (len > 0) makeOfType(TType(t, replaceLastWithInType(params)), params[len - 1]) else err();
+        
+      case TFun(args, ret): 
+        
+        if (args.length > 1) errFun();
+        switch (ret) {
+          case TInst(t,_): 
+            var tget= t.get();
+            
+            function isVoid(ct:ClassType) return ct.pack.length == 0 && ct.name == "Void";
+            
+            if (isVoid(tget)) {
+              errFun();
+            } else if (TypeExt.eq(ret, hotsInType())) {
+              
+              var newArgs = args.map(function (x) return { name: x.name, opt:x.opt, t:hotsInType() } );
+              var r = makeOfType(TFun(newArgs, ret), args[0].t);
+              r;
+            } else {
+              makeOfType(TFun(args, hotsInType()), ret);
+            }
+          default: 
+            makeOfType(TFun(args, hotsInType()), ret);
+        }
       default: err();
     }
   }
   
   public static function isOfType (type:Type):Bool return getOfParts(type).isSome()
   
+  public static function getOfLevel (type:Type):Int {
+    
+    function getLevel (x) {
+      return 1 + getOfLevel(x._1);
+    }
+    
+    return 
+      getOfParts(type)
+      .map(getLevel)
+      .getOrElseConst(0);
+  }
+  
+  
+  public static function isFunctionType(type:Type):Bool {
+    return switch (type) 
+    {
+      case TFun(_, _):true;
+      default: false;
+    }
+  }
   public static function isContainerType(type:Type):Bool 
   {
     return switch (type) 
     {
-      case TInst(_, params), TEnum(_, params), TType(_, params): params.length == 1;
+      case TInst(_, p), TEnum(_, p), TType(_, p): p.length > 0;
       default: false;
     }
   }
+  
   
   public static function getContainerElemType(container:Type):Option<Type> 
   {
     return switch (container) 
     {
-      case TInst(_, params), TEnum(_,params), TType(_, params): if (params.length == 1) Some(params[0]) else None;
+      case TInst(_, p), TEnum(_,p), TType(_, p): 
+        if (p.length == 1) Some(p[0]) else None;
       default: None;
     }
   }
+  
   
   public static function getContainerElemTypes(container:Type):Option<Array<Type>> 
   {
     return switch (container) 
     {
-      case TInst(_, params), TEnum(_,params), TType(_, params): Some(params);
+      case TInst(_, p), TEnum(_,p), TType(_, p): Some(p);
       default: None;
     }
   }
@@ -514,13 +653,112 @@ class Utils
   {
     return switch (container) 
     {
-      case TInst(t, params): if (params.length == 1) Some(TInst(t, [newElemType])) else None;
-      case TEnum(t, params): if (params.length == 1) Some(TEnum(t, [newElemType])) else None;
-      case TType(t, params): if (params.length == 1) Some(TType(t, [newElemType])) else None;
+      case TInst(t, p): if (p.length == 1) Some(TInst(t, [newElemType])) else None;
+      case TEnum(t, p): if (p.length == 1) Some(TEnum(t, [newElemType])) else None;
+      case TType(t, p): if (p.length == 1) Some(TType(t, [newElemType])) else None;
       default: None;
     }
   }
   
+  public static function replaceContainerElemTypeAt(container:Type, newElemType:Type, index:Int):Option<Type> 
+  {
+    return switch (container) 
+    {
+      case TInst(t, p): if (p.length > index) Some(TInst(t, p.replaceElemAt(newElemType, index))) else None;
+      case TEnum(t, p): if (p.length > index) Some(TEnum(t, p.replaceElemAt(newElemType, index))) else None;
+      case TType(t, p): if (p.length > index) Some(TType(t, p.replaceElemAt(newElemType, index))) else None;
+      default: None;
+    }
+  }
+  
+  public static function replaceContainerElemTypes(container:Type, newElemTypes:Array<Type>):Option<Type> 
+  {
+    return switch (container) 
+    {
+      case TInst(t, p): if (p.length == newElemTypes.length) Some(TInst(t, newElemTypes)) else None;
+      case TEnum(t, p): if (p.length == newElemTypes.length) Some(TEnum(t, newElemTypes)) else None;
+      case TType(t, p): if (p.length == newElemTypes.length) Some(TType(t, newElemTypes)) else None;
+      default: None;
+    }
+  }
+  /**
+   * right to left
+   */
+  public static function replaceFirstInType(type:Type, replacement:Type):Option<Type> 
+  {
+    var inType = hotsInType();
+    
+    function loop (t:Type) {
+      return if (TypeExt.eq(t, inType)) 
+        Some(replacement)
+      else {
+        function replaceParamAt (params:Array<Type>, x:Tup2<Option<Type>, Int>) {
+          return params.replaceElemAt(
+            x._1.getOrError("Unexpected"),
+            params.length - 1 - x._2
+          );
+        }
+        
+        switch (t) {
+          case TInst(ct, params): 
+            
+            function replaceTypeParamAt (x) return TInst(ct, replaceParamAt(params, x));
+            
+            params
+            .reverseCopy()
+            .someMappedWithIndex(loop, Options.isSome)
+            .map(replaceTypeParamAt);
+
+          case TEnum(et, params): 
+            
+            function replaceTypeParamAt (x) return TEnum(et, replaceParamAt(params, x));
+            
+            params.reverseCopy()
+            .someMappedWithIndex(loop, Options.isSome)
+            .map( replaceTypeParamAt);
+          
+          case TType(tt, params): 
+            
+            function replaceTypeParamAt (x) return TType(tt, replaceParamAt(params, x));
+            
+            params.reverseCopy()
+            .someMappedWithIndex(loop, Options.isSome)
+            .map( replaceTypeParamAt);
+          
+          case TFun(args, ret):
+            
+            function replaceTypeParamInArgs() 
+            {
+              function replaceTypeParamAt (x:Tup2<Option<Type>, Int>) {
+                var origIndex = args.length - 1 - x._2;
+                
+                var old = args[origIndex];
+                var newArg = { name : old.name, opt: old.opt, t : x._1.getOrError("Unexpected")};
+                return TFun(args.replaceElemAt(newArg, origIndex), ret);
+              }
+              return 
+                args.reverseCopy()
+                .someMappedWithIndex(function (a) return loop(a.t), Options.isSome)
+                .map( replaceTypeParamAt );
+            }
+            
+            loop(ret)
+            .map(callback(TFun, args, _))
+            .orElse(replaceTypeParamInArgs);
+            
+          default:Scuts.notImplemented();
+        }
+      }
+    }
+    return loop(type);
+    
+    
+  }
+  /*
+   * 
+   * left to right
+   * 
+   * 
   public static function replaceFirstInType(type:Type, replacement:Type):Option<Type> 
   {
     var inType = hotsInType();
@@ -556,6 +794,7 @@ class Utils
           });
         
         case TFun(args, ret):
+          // generell von rechts nach links
           args.someMappedWithIndex(function (a) return loop(a.t), function (x:Option<Type>) return x.isSome())
           .map( function (x) {
             var oldArg = args[x._2];
@@ -577,35 +816,42 @@ class Utils
     
     
   }
-
+  */
   public static function flattenOfType (ofType:Type):Type 
   {
-    var parts = getOfParts(ofType);
-    var t = parts.flatMap(function (x) 
+    function flattenOuterParts (x) 
     {
       var containerType = x._1;
-      var innerType = x._2; // this is also an ofType
-      var innerParts = getOfParts(innerType);
-      return innerParts.map(function (y) 
+      
+      function flattenInnerParts(y:Tup2<Type, Type>) 
       {
         var innerContainerType = y._1;
         var elemType = y._2;
         
         return makeOfType(makeOfType(containerType, innerContainerType), elemType);
-      });
+      }
+
+      var innerType = x._2; // this is also an ofType
       
-    });
-    return t.getOrElse(Lazy.expr(Scuts.macroError("Cannot flatten the type " + Print.type(ofType))));
+      return getOfParts(innerType).map(flattenInnerParts);
+    }
+    
+    var error = Lazy.expr(Scuts.macroError("Cannot flatten the type " + Print.type(ofType)));
+    
+    return 
+      getOfParts(ofType)
+      .flatMap(flattenOuterParts)
+      .getOrElse(error);
   }
   
   public static function getOfContainerType (t:Type):Option<Type> 
   {
-    return getOfParts(t).map(function (x) return x._1);
+    return getOfParts(t).map(Tup2s.first);
   }
   
   public static function getOfElemType (t:Type):Option<Type> 
   {
-    return getOfParts(t).map(function (x) return x._2);
+    return getOfParts(t).map(Tup2s.second);
   }
   
   public static function replaceOfElemType(ofType:Type, newElemType:Type):Option<Type> 
@@ -614,7 +860,9 @@ class Utils
     {
       case TInst(t, params):
         var tget = t.get();
-        if (tget.pack.length == 1 && tget.pack[0] == "hots" && tget.name == "Of") {
+        var pack = tget.pack;
+        
+        if (pack.length == 1 && pack[0] == "hots" && tget.name == "Of") {
           Some(TInst(t, [params[0], newElemType]));
         } else {
           None;
@@ -634,12 +882,11 @@ class Utils
       return TypeExt.eq(t, inType()) || switch (t) 
       {
         case TInst(_, params), TEnum(_, params), TType(_, params):
-          params.any(function (p) return loop(p));
+          params.any(loop);
         case TFun(args, ret):
           args.any(function (a) return loop(a.t)) || loop(ret);
         
         default: 
-          
           trace(type);
           trace(t);
           Scuts.notImplemented();

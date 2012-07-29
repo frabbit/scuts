@@ -8,7 +8,7 @@ import hots.Of;
  * @author 
  */
 
-class ApplicativeExt 
+class Applicatives
 {
   public static function ap<M,A,B>(m:Applicative<M>, f:Of<M, A->B>):Of<M, A>->Of<M,B> 
   {

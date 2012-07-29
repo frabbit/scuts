@@ -5,7 +5,7 @@ package hots.instances;
 import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
 import hots.classes.Semigroup;
-import hots.extensions.OptionOfExt;
+import hots.extensions.OptionOfs;
 import scuts.core.types.Option;
 
 using hots.macros.Box;

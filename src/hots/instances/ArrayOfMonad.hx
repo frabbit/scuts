@@ -1,7 +1,7 @@
 package hots.instances;
 import hots.classes.Monad;
 import hots.classes.MonadAbstract;
-import hots.extensions.ArrayOfExt;
+import hots.extensions.ArrayOfs;
 import hots.In;
 import scuts.core.extensions.Arrays;
 
@@ -14,7 +14,7 @@ class ArrayOfMonad extends MonadAbstract<Array<In>>
   
   override public function flatMap<A,B>(of:ArrayOf<A>, f: A->ArrayOf<B>):ArrayOf<B> 
   {
-    return ArrayOfExt.flatMap(of, f);
+    return ArrayOfs.flatMap(of, f);
   }
     
 }
