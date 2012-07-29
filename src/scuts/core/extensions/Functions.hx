@@ -24,6 +24,8 @@ class Function0s
     return function () f();
   }
   
+  
+  
   public static function lazyThunk <X>(f:Void->X):Void->X
   {
     var cur = None;

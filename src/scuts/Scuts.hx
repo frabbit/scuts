@@ -2,7 +2,7 @@ package scuts;
 
 import haxe.PosInfos;
 import haxe.Stack;
-import scuts.core.extensions.PosInfosExt;
+import scuts.core.extensions.PosInfosTools;
 
 using scuts.core.extensions.Arrays;
 using scuts.core.extensions.Strings;
@@ -11,7 +11,7 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 
 using scuts.core.extensions.Dynamics;
-using scuts.core.extensions.PosInfosExt;
+using scuts.core.extensions.PosInfosTools;
 #end
 
 class Scuts 

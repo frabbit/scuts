@@ -6,6 +6,7 @@
 --macro AllTests.main()
 --times
 -D macrotimes
+--connect 1978
 
 --next
 -cp src 
@@ -18,3 +19,4 @@
 -D macrotimes
 --next
 -cmd neko bin/test/testNeko.n
+--connect 1978

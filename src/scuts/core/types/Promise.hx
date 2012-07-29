@@ -2,6 +2,7 @@ package scuts.core.types;
 
 import scuts.Assert;
 import scuts.core.types.Option;
+import scuts.Scuts;
 
 #if scuts_multithreaded
 typedef Mutex = #if cpp cpp.vm.Mutex #elseif neko neko.vm.Mutex #else #error "not implemented" #end
@@ -13,41 +14,40 @@ private typedef Percent = Float;
 
 // based on stax version of future https://github.com/jdegoes/stax
 
-class Progress<T> 
+class Promise<T> 
 {
   #if scuts_multithreaded
   var mutex:Mutex;
   #end
-  var _listeners:Array<T->Void>;
-  var _cancelers:Array<Void->Void>;
   
-  var _progressListeners:Array<Percent->Void>;
+  var _completeListeners:Array<T->Dynamic>;
+  var _cancelListeners:Array<Void->Dynamic>;
   
+  var _progressListeners:Array<Percent->Dynamic>;
   
-  var _result:Option<T>;
-  var _isSet:Bool;
-  var _canceled:Bool;
+  var _value:Option<T>;
+  var _complete:Bool;
+  var _cancelled:Bool;
 
-  
-  public function isDelivered () {
-    return _isSet;
+  public inline function isComplete () {
+    return _complete;
   }
-  public function isCanceled () {
-    return _canceled;
+  public inline function isCancelled () {
+    return _cancelled;
   }
   
-  public function isDone () {
-    return _isSet || _canceled;
+  public inline function isDone () {
+    return _complete || _cancelled;
   }
   
   public function valueOption():Option<T> {
-    return _result;
+    return _value;
   }
   
   public function value ():T {
-    return switch (_result) {
+    return switch (_value) {
       case Some(v): v;
-      case None: throw "error result is not available";
+      case None: Scuts.error("error result is not available");
     }
   }
   
@@ -56,25 +56,25 @@ class Progress<T>
     #if scuts_multithreaded
     mutex = new Mutex();
     #end
-    _isSet = false;
-    _canceled = false;
-    _result = None;
-    _listeners = [];
-    _cancelers = [];
+    _complete = false;
+    _cancelled = false;
+    _value = None;
+    _completeListeners = [];
+    _cancelListeners = [];
     _progressListeners = [];
   }
   
 
-  public function onProgress (f:Percent->Void) {
-    if (isDelivered()) {
+  public function onProgress (f:Percent->Dynamic) {
+    if (isComplete()) {
       f(1.0);
-    } else if (!isCanceled()) {
+    } else if (!isCancelled()) {
       _progressListeners.push(f);
     } 
     return this;
   }
   
-  public function setProgress (percent:Percent) {
+  public function progress (percent:Percent) {
     Assert.assertTrue(percent >= 0.0 && percent <= 1.0);
     for (l in _progressListeners) {
       l(percent);
@@ -82,29 +82,26 @@ class Progress<T>
     return this;
   }
   
-  public function deliver (t:T) 
+  public function complete (val:T) 
   {
     
-    if (_isSet) {
+    if (isComplete()) {
       throw "Cannot set the result of this future more than once";
     }
     
-    if (!_canceled) {
+    if (!isCancelled()) {
       
       #if scuts_multithreaded mutex.acquire(); if (!isDone()) { #end
-      _result = Some(t);
-      _isSet = true;
+      _value = Some(val);
+      _complete = true;
+
+      progress(1.0);
       
-      
-      var v = value();
-      for (p in _progressListeners) {
-        p(1.0);
+      for (r in _completeListeners) {
+        r(val);
       }
-      for (r in _listeners) {
-        r(v);
-      }
-      _listeners = [];
-      _cancelers = [];
+      _completeListeners = [];
+      _cancelListeners = [];
       _progressListeners = [];
       #if scuts_multithreaded } mutex.release(); #end
     } // else ignore value
@@ -114,18 +111,18 @@ class Progress<T>
   
   public function cancel ():Bool {
     
-    return if (!_isSet) {
+    return if (!_complete) {
       
       // double check if multithreaded
       #if scuts_multithreaded mutex.acquire(); if (!_canceled) { #end
-      _canceled = true;
+      _cancelled = true;
       
-      for (c in _cancelers) {
+      for (c in _cancelListeners) {
         c();
       }
-      _listeners = [];
+      _completeListeners = [];
       _progressListeners = [];
-      _cancelers = [];
+      _cancelListeners = [];
       #if scuts_multithreaded } mutex.release(); #end
       
       true;
@@ -134,12 +131,12 @@ class Progress<T>
     }
   }
   
-  public function deliverTo (f:T->Void) {
-    if (_isSet) {
+  public function onComplete (f:T->Dynamic) {
+    if (isComplete()) {
       f(value());
-    } else if (!_canceled) {
+    } else if (!isCancelled()) {
       #if scuts_multithreaded mutex.acquire(); if (!_canceled) { #end
-      _listeners.push(f);
+      _completeListeners.push(f);
       #if scuts_multithreaded } mutex.release(); #end
     } 
     // ignore listener if cancelled
@@ -147,12 +144,12 @@ class Progress<T>
     return this;
   }
   
-  public function ifCanceled (f:Void->Void) {
-    if (!_isSet) {
-      if (_canceled) f();
+  public function onCancelled (f:Void->Dynamic) {
+    if (!isComplete()) {
+      if (isCancelled()) f();
       else {
         #if scuts_multithreaded mutex.acquire(); #end
-        _cancelers.push(f);
+        _cancelListeners.push(f);
         #if scuts_multithreaded mutex.release(); #end
       }
     }

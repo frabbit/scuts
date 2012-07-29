@@ -10,8 +10,10 @@ import neko.Sys;
 
 
 
+
 #else 
 import scuts.core.extensions.StringsTest;
+import scuts.core.extensions.PromisesTest;
 #end
 
 
@@ -34,6 +36,7 @@ class AllTests
       
       #else
       runner.addCase(new StringsTest());
+      runner.addCase(new PromisesTest());
       #end
       
       Report.create(runner);

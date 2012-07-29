@@ -6,7 +6,7 @@ import haxe.PosInfos;
  * @author 
  */
 
-class PosInfosExt 
+class PosInfosTools
 {
 
   public static function toString(p:PosInfos) 

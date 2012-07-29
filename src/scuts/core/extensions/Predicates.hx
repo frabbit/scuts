@@ -1,6 +1,6 @@
 package scuts.core.extensions;
 
-class Predicate0Ext 
+class Predicates0 
 {
 
   public static function and (f1:Void->Bool, f2:Void->Bool):Void->Bool
@@ -20,7 +20,7 @@ class Predicate0Ext
   
 }
 
-class Predicate1Ext 
+class Predicates1
 {
 
   public static function and < T > (f1:T->Bool, f2:T->Bool):T->Bool
@@ -40,7 +40,7 @@ class Predicate1Ext
   
 }
 
-class Predicate2Ext 
+class Predicates2 
 {
 
   public static function and <A,B>(f1:A->B->Bool, f2:A->B->Bool):A->B->Bool
