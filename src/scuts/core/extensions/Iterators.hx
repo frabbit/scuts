@@ -60,16 +60,22 @@ class Iterators
   {
     // lazy
     var n = null;
-    return {
-      next : function () {
+    return 
+    {
+      next : function () 
+      {
         var e = n;
         n = null;
         return e;
       },
-      hasNext : function () {
-        if (n == null) {
-          for (i in it) {
-            if (filter(i)) {
+      hasNext : function () 
+      {
+        if (n == null) 
+        {
+          for (i in it) 
+          {
+            if (filter(i)) 
+            {
               n = i;
               break;
             }
@@ -88,7 +94,8 @@ class Iterators
   }
   
   static function doFilter < A > (it:Iterator<A>, filter:A->Bool, cont: { function push (a:A):Dynamic; } ) {
-    for (e in it) {
+    for (e in it) 
+    {
       if (filter(e)) cont.push(e);
     }
     return cont;
@@ -103,7 +110,8 @@ class Iterators
   public static function findIndex<T>(iter:Iterator<T>, f:T->Bool):Option<Int>
   {
     var z = 0;
-    for (i in iter) {
+    for (i in iter) 
+    {
       if (f(i)) return Some(z);
       z++;
     }
@@ -116,7 +124,8 @@ class Iterators
     var outer = w;
     var inner:Iterator<T> = null;
     
-    var res = {
+    var res = 
+    {
       hasNext : null,
       next : function () return inner.next()
     }
@@ -124,21 +133,20 @@ class Iterators
     var innerF = null;
     outerF = function () {
       
-      if (outer.hasNext()) {
+      if (outer.hasNext()) 
+      {
         var val = outer.next();
         inner = f(val);
         res.hasNext = innerF;
         return innerF();
-      } else {
-        return false;
-      }
+      } 
+      else return false;
     }
-    innerF = function () {
-      if (inner.hasNext()) {
-        return true;
-      } else {
-        return outerF();
-      }
+    innerF = function () 
+    {
+      if (inner.hasNext()) return true
+      else                 return outerF();
+      
     }
     
     res.hasNext = outerF;
@@ -177,7 +185,9 @@ class Iterators
     var task:TaskA<B> = new AtomicTask(function () return acc);
     Tasks.runTaskAAsync(task);
     var fut = null;
-    for (e in iter) {
+    
+    for (e in iter) 
+    {
       var a = new AtomicTask(function () return e);
       task = new BinaryTask(f, task, a);
       Tasks.runTaskAAsync( a );
@@ -192,27 +202,26 @@ class Iterators
   public static function foldLeftWithIndex<A,B>(iter:Iterator<A>, f:B->A->Int->B, acc:B):B
   {
     var i = 0;
-    for (e in iter) {
-      acc = f(acc, e, i++);
-    }
+    
+    for (e in iter) acc = f(acc, e, i++);
+    
     return acc;
   }
   
-  public static function forEach <T>(a:Iterator<T>, f:T->Void):Void 
+  public static function each <T>(a:Iterator<T>, f:T->Void):Void 
   {
-    for (e in a) {
-      f(e);
-    }
+    for (e in a) f(e);
   }
   
   public static function intersperse < T > (a:Iterator<T>, b:T):Iterator<T> 
   {
     var i = 0;
-    return {
-      hasNext : function () {
-        return a.hasNext();
-      },
-      next : function () {
+    
+    return 
+    {
+      hasNext : function () return a.hasNext(),
+      next : function () 
+      {
         return if (i++ % 2 == 0) a.next() else b;
       }
     }
@@ -222,9 +231,9 @@ class Iterators
   {
     if (!iter.hasNext()) throw "cannot get last from empty iterable";
     var last = iter.next();
-    for (e in iter) {
-      last = e;
-    }
+    
+    for (e in iter) last = e;
+    
     return last;
   } 
   public static function lastOption<T>(arr:Iterator<T>):Option<T>
@@ -234,36 +243,30 @@ class Iterators
   
   public static function map < A, B > (it:Iterator<A>, f:A->B):Iterator<B> 
   {
-    return {
-      hasNext : function () {
-        return it.hasNext();
-      },
-      next : function () {
-        return f(it.next());
-      }
+    return 
+    {
+      hasNext : function () return it.hasNext(),
+      next :    function () return f(it.next())
     }
   }
   
   public static function mapWithIndex < A, B > (it:Iterator<A>, f:A->Int->B):Iterator<B> 
   {
     var index = 0;
-    return {
-      hasNext : function () {
-        return it.hasNext();
-      },
-      next : function () {
-        return f(it.next(), index++);
-      }
+    
+    return 
+    {
+      hasNext : function () return it.hasNext(),
+      next :    function () return f(it.next(), index++)
     }
   }
   
   public static function mapToList < A, B > (it:Iterator<A>, f:A->B):List<B> 
   {
     var r = new List();
-    for (e in it) 
-    {
-      r.push(f(e));
-    }
+    
+    for (e in it) r.push(f(e));
+    
     return r;
   }
   
@@ -271,20 +274,18 @@ class Iterators
   {
     var r = new List();
     var i = 0;
-    for (e in it) 
-    {
-      r.push(f(e, i++));
-    }
+    
+    for (e in it) r.push(f(e, i++));
+    
     return r;
   }
   
   public static function mapToArray < A, B > (it:Iterator<A>, f:A->B):Array<B> 
   {
     var r = [];
-    for (e in it) 
-    {
-      r.push(f(e));
-    }
+    
+    for (e in it) r.push(f(e));
+    
     return r;
   }
   
@@ -292,10 +293,9 @@ class Iterators
   {
     var r = [];
     var i = 0;
-    for (e in it) 
-    {
-      r.push(f(e, i++));
-    }
+    
+    for (e in it) r.push(f(e, i++));
+    
     return r;
   }
   
@@ -304,12 +304,11 @@ class Iterators
     if (!it.hasNext()) throw "cannot find maximum on empty list";
     
         
-    var compare = function (cur, max) {
-      return switch (f(cur, max)) {
-        case LT: max;
-        case EQ: max;
-        case GT: cur;
-      }
+    function compare (cur, max) return switch (f(cur, max)) 
+    {
+      case LT: max;
+      case EQ: max;
+      case GT: cur;
     }
     
     return foldLeft(it, compare, it.next());
@@ -320,12 +319,11 @@ class Iterators
       if (!it.hasNext()) None
       else 
       {
-        var compare = function (cur, max) {
-          return switch (f(cur, max)) {
-            case LT: max;
-            case EQ: max;
-            case GT: cur;
-          }
+        function compare(cur, max) return switch (f(cur, max)) 
+        {
+          case LT: max;
+          case EQ: max;
+          case GT: cur;
         }
         Some(foldLeft(it, compare, it.next()));
       }
@@ -335,12 +333,11 @@ class Iterators
   {
     if (!it.hasNext()) throw "cannot find maximum on empty list";
     
-    var compare = function (cur, max) {
-      return switch (f(cur, max)) {
-        case LT: cur;
-        case EQ: max;
-        case GT: max;
-      }
+    function compare (cur, max) return switch (f(cur, max)) 
+    {
+      case LT: cur;
+      case EQ: max;
+      case GT: max;
     }
     
     return foldLeft(it, compare, it.next());
@@ -351,9 +348,9 @@ class Iterators
     if (!a.hasNext()) throw "Cannot reduce an empty Iterator";
     
     var acc = first(a.next());
-    for (e in a) {
-      acc = f(acc, e);
-    }
+    
+    for (e in a) acc = f(acc, e);
+    
     return acc;
   }
   
@@ -363,7 +360,9 @@ class Iterators
     
     var acc = first(a.next());
     var i = 1;
-    for (e in a) {
+    
+    for (e in a) 
+    {
       acc = f(acc, e,i);
       i++;
     }
@@ -391,18 +390,18 @@ class Iterators
   public static function reverseCopyToArray <A> (a:Iterator<A>):Array<A>
   {
     var res = [];
-    for (e in a) {
-      res.push(e);
-    }
+    
+    for (e in a) res.push(e);
+    
     return Arrays.reverseCopy(res);
   }
   
   public static function size<T>(iter:Iterator<T>):Int
   {
     var s = 0;
-    for (e in iter) {
-      s++;
-    }
+    
+    for (e in iter) s++;
+
     return s;
   } 
   
@@ -421,14 +420,14 @@ class Iterators
     return 
     {
       hasNext : function () 
-        {
-          return i < numElements && iter.hasNext();
-        },
+      {
+        return i < numElements && iter.hasNext();
+      },
       next : function () 
-        {
-          i++;
-          return iter.next();
-        }
+      {
+        i++;
+        return iter.next();
+      }
     }
   }
 }

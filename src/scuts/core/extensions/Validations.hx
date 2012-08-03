@@ -1,81 +1,89 @@
 package scuts.core.extensions;
 
 import scuts.core.types.Option;
+import scuts.core.types.Tup2;
+import scuts.core.types.Tup3;
 import scuts.core.types.Validation;
 import scuts.Scuts;
 import scuts.core.types.Either;
 
 typedef ValidationArray<A,B> = Validation<Array<A>, B>;
 
+private typedef VD<F,S> = Validation<F,S>;
 
 class Validations
 {
-  public static function either<F,S>(v:Validation<F,S>):Either<F,S> {
-    return switch (v) {
-      case Failure(f): Left(f);
-      case Success(s): Right(s);
-    }
-  }
-  
-  public static function bool<F,S>(v:Validation<F,S>):Bool {
-    return switch (v) {
-      case Failure(_): false;
-      case Success(_): true;
-    }
-  }
-  
-  public static function apply <F,S,SS> (v:Validation<F,S>, f:Validation<F, S->SS>, appendFailure:F->F->F):Validation<F, SS>
+  public static function eq<F,S> (v1:Validation<F, S>, v2:Validation<F,S>, eqFailure:F->F->Bool, eqSuccess:S->S->Bool) return switch (v1)
   {
-    return switch (f) {
-      case Success(s1): switch (v) {
-        case Success(s2): Success(s1(s2));
-        case Failure(f): Failure(f);
-      }
-        
-      case Failure(f1): switch (v) {
-        case Success(s): Failure(f1);
-        case Failure(f2): Failure(appendFailure(f1, f2));
-      }
+    case Failure(f1): switch (v2)
+    {
+      case Failure(f2): eqFailure(f1, f2);
+      case Success(_):  false;
+    }
+    case Success(s1): switch (v2)
+    {
+      case Failure(_):  false;
+      case Success(s2): eqSuccess(s1,s2);
     }
   }
   
-  public static function append <F,S,SS> (a1:Validation<F,S>, a2:Validation<F, S>, appendFailure:F->F->F, appendSuccess:S->S->S):Validation<F, S>
+  public static function either<F,S>(v:Validation<F,S>):Either<F,S> return switch (v) 
   {
-    return switch (a1) {
-      case Success(s1): switch (a2) {
-        case Success(s2): Success(appendSuccess(s1,s2));
-        case Failure(f): Failure(f);
-      }
-        
-      case Failure(f1): switch (a2) {
-        case Success(s): Failure(f1);
-        case Failure(f2): Failure(appendFailure(f1, f2));
-      }
+    case Failure(f): Left(f);
+    case Success(s): Right(s);
+  }
+
+  public static function bool<F,S>(v:Validation<F,S>):Bool return switch (v) 
+  {
+    case Failure(_): false;
+    case Success(_): true;
+  }
+  
+  
+  public static function apply <F,S,SS> (v:Validation<F,S>, f:Validation<F, S->SS>, appendFailure:F->F->F):Validation<F, SS> return switch (f) 
+  {
+    case Success(s1): switch (v) 
+    {
+      case Success(s2): Success(s1(s2));
+      case Failure(f): Failure(f);
+    }
+    case Failure(f1): switch (v) 
+    {
+      case Success(s): Failure(f1);
+      case Failure(f2): Failure(appendFailure(f1, f2));
     }
   }
   
-  public static function getOrElse<F,S>(v:Validation<F,S>, withFailure:F->S):S
+  public static function append <F,S,SS> (a1:Validation<F,S>, a2:Validation<F, S>, appendFailure:F->F->F, appendSuccess:S->S->S):Validation<F, S> return switch (a1) 
   {
-    return switch (v) {
-      case Failure(f): withFailure(f);
-      case Success(s): s;
+    case Success(s1): switch (a2) 
+    {
+      case Success(s2): Success(appendSuccess(s1,s2));
+      case Failure(f): Failure(f);
+    }
+    case Failure(f1): switch (a2) 
+    {
+      case Success(s): Failure(f1);
+      case Failure(f2): Failure(appendFailure(f1, f2));
     }
   }
   
-  public static function ifFailure<F,S,FF>(v:Validation<F,S>, f:Void->Validation<FF,S>):Validation<FF,S>
+  public static function getOrElse<F,S>(v:Validation<F,S>, withFailure:F->S):S return switch (v) 
   {
-    return switch (v) {
-      case Failure(_): f();
-      case Success(_): cast v;
-    }
+    case Failure(f): withFailure(f);
+    case Success(s): s;
   }
   
-  public static function ifSuccess<F,S,SS>(v:Validation<F,S>, f:Void->Validation<F,SS>):Validation<F,SS>
+  public static function ifFailure<F,S,FF>(v:Validation<F,S>, f:Void->Validation<FF,S>):Validation<FF,S> return switch (v) 
   {
-    return switch (v) {
-      case Failure(_): cast v;
-      case Success(_): f();
-    }
+    case Failure(_): f();
+    case Success(_): cast v;
+  }
+  
+  public static function ifSuccess<F,S,SS>(v:Validation<F,S>, f:Void->Validation<F,SS>):Validation<F,SS> return switch (v) 
+  {
+    case Failure(_): cast v;
+    case Success(_): f();
   }
   
   /**
@@ -84,70 +92,58 @@ class Validations
    * @param e Validation Instance
    * @return the left Side of e 
    */
-  public static function extract<F,S>(v:Validation<F,S>):S 
+  public static function extract<F,S>(v:Validation<F,S>):S return switch (v) 
   {
-    return switch (v) {
-      case Failure(_): Scuts.error("Validation has no Success value");
-      case Success(s): s;
-    }
+    case Failure(_): Scuts.error("Validation has no Success value");
+    case Success(s): s;
   }
   
   /**
    * Returns the right value of e or throws an error if it's a left Validation.
    */
-  public static function extractFailure<F,S>(v:Validation<F,S>):F 
+  public static function extractFailure<F,S>(v:Validation<F,S>):F return switch (v) 
   {
-    return switch (v) {
-      case Failure(f): f;
-      case Success(_): Scuts.error("Validation has no Failure value");
-    }
+    case Failure(f): f;
+    case Success(_): Scuts.error("Validation has no Failure value");
   }
   
   /**
    * Converts the right value of e into an Option.
    */
-  public static function option<F,S>(v:Validation<F,S>):Option<S>
+  public static function option<F,S>(v:Validation<F,S>):Option<S> return switch (v) 
   {
-    return switch (v) {
-      case Failure(_): None;
-      case Success(s): Some(s);
-    }
+    case Failure(_): None;
+    case Success(s): Some(s);
   }
   
   /**
    * Converts the left value of e into an Option.
    */
-  public static function optionFailure<F,S>(v:Validation<F,S>):Option<F> 
+  public static function optionFailure<F,S>(v:Validation<F,S>):Option<F> return switch (v) 
   {
-    return switch (v) {
-      case Failure(f): Some(f);
-      case Success(_): None;
-    }
+    case Failure(f): Some(f);
+    case Success(_): None;
   }
   
-  public static function each < A, B> (v:Validation< A, B> , f:B->Void):Void {
-    switch (v) {
-      case Failure(_):
-      case Success(s): f(s);
-    }
+  public static function each < A, B> (v:Validation< A, B> , f:B->Void):Void switch (v) 
+  {
+    case Failure(_):
+    case Success(s): f(s);
   }
   
-  public static function eachFailure < A, B> (v:Validation< A, B> , f:A->Void):Void {
-    switch (v) {
-      case Failure(fe):f(fe);
-      case Success(_):
-    }
+  public static function eachFailure < A, B> (v:Validation< A, B> , f:A->Void):Void switch (v) 
+  {
+    case Failure(fe):f(fe);
+    case Success(_):
   }
 
   /**
    * Returns true if e is Left Validation.
    */
-  public static function isSuccess<F,S>(v:Validation<F,S>):Bool
+  public static function isSuccess<F,S>(v:Validation<F,S>):Bool return switch (v) 
   {
-    return switch (v) {
-      case Failure(_): false;
-      case Success(_): true;
-    }
+    case Failure(_): false;
+    case Success(_): true;
   }
   
  
@@ -157,6 +153,21 @@ class Validations
   public static inline function isFailure<F,S>(e:Validation<F,S>):Bool
   {
     return !isSuccess(e);
+  }
+  
+  public static function catIfAllSuccess<F,S>(a:Array<Validation<F,S>>):Validation<F, Array<S>>
+  {
+    // a.foldLeft(function (acc, cur) return acc.zip(cur).flatMap(function (t) return t._1.append(t._2))), Success([])
+    
+    var res = [];
+    
+    for (v in a) switch (v) 
+    {
+      case Success(s): res.push(s);
+      case Failure(f): return Failure(f);
+    }
+
+    return Success(res);
   }
   
   
@@ -192,16 +203,14 @@ class Validations
   }
   */
   
-  public static function concatArrays <A,B> (o1:Validation<Array<A>,B>, o2:Validation<Array<A>,B>):Validation<Array<A>, B>
+  public static function concatArrays <A,B> (o1:Validation<Array<A>,B>, o2:Validation<Array<A>,B>):Validation<Array<A>, B> return switch (o1) 
   {
-    return switch (o1) {
-      case Failure(f1):
-        switch (o2) {
-          case Failure(f2): Failure(f1.concat(f2));
-          default: o1;
-        }
-      default: o1;
+    case Failure(f1): switch (o2) 
+    {
+      case Failure(f2): Failure(f1.concat(f2));
+      case Success(_):  o1;
     }
+    case Success(_): o1;
   }
   
   /**
@@ -212,13 +221,10 @@ class Validations
    * 
    * @return flatMapped Validation instance
    */
-  public static function flatMap <F,S,SS> (o:Validation<F,S>, f:S->Validation<F, SS>):Validation<F,SS>
+  public static inline function flatMap <F,S,SS> (o:Validation<F,S>, f:S->Validation<F, SS>):Validation<F,SS> return switch o 
   {
-    // this implementation performs better than flattenRight(mapRight(o, rightF))
-    return switch (o) {
-      case Failure(_): cast o; // avoids creating a new object
-      case Success(v): f(v);
-    }
+    case Failure(_): cast o; // avoids creating a new object
+    case Success(v): f(v);
   }
   
   /**
@@ -229,13 +235,10 @@ class Validations
    * 
    * @return flatMapped Validation instance
    */
-  public static function flatMapFailure < F,S,FF > (o:Validation<F,S>, f:F->Validation<FF, S>):Validation<FF,S>
+  public static function flatMapFailure < F,S,FF > (o:Validation<F,S>, f:F->Validation<FF, S>):Validation<FF,S> return switch o
   {
-    // this implementation performs better than flattenLeft(mapLeft(o, rightF))
-    return switch (o) {
-      case Failure(v): f(v);
-      case Success(_): cast o; // avoids creating a new object
-    }
+    case Failure(v): f(v);
+    case Success(_): cast o; // avoids creating a new object
   }
   
   
@@ -264,11 +267,10 @@ class Validations
    * 
    * @return flattened Validation instance
    */
-  public static function flatten <F,S> (v:Validation<F, Validation<F,S>>):Validation<F,S> {
-    return switch (v) {
-      case Failure(_): cast v;
-      case Success(s): s;
-    }
+  public static function flatten <F,S> (v:Validation<F, Validation<F,S>>):Validation<F,S> return switch v
+  {
+    case Failure(_): cast v;
+    case Success(s): s;
   }
   
   /**
@@ -278,11 +280,10 @@ class Validations
    * 
    * @return flattened Validation instance
    */
-  public static function flattenFailure <F,S> (v:Validation<Validation<F,S>, S>):Validation<F,S> {
-    return switch (v) {
-      case Failure(f): f;
-      case Success(_): cast v;
-    }
+  public static function flattenFailure <F,S> (v:Validation<Validation<F,S>, S>):Validation<F,S> return switch v 
+  {
+    case Failure(f): f;
+    case Success(_): cast v;
   }
   
   /**
@@ -293,13 +294,13 @@ class Validations
    * 
    * @return mapped Validation instance
    */
-  public static function map < F,S,SS > (v:Validation<F,S>, f:S->SS):Validation<F,SS>
+  public static function map < F,S,SS > (v:Validation<F,S>, f:S->SS):Validation<F,SS> return switch v
   {
-    return switch (v) {
-      case Failure(_): cast v; // avoids creating a new object
-      case Success(s): Success(f(s));
-    }
+    case Failure(_): cast v; // avoids creating a new object
+    case Success(s): Success(f(s));
   }
+  
+  
   
   /**
    * Maps the left side of an Validation and returns a new Validation based on the mapping function f.
@@ -309,15 +310,54 @@ class Validations
    * 
    * @return mapped Validation instance
    */
-  public static function mapFailure < F,S,FF > (v:Validation<F,S>, f:F->FF):Validation<FF,S>
+  public static function mapFailure < F,S,FF > (v:Validation<F,S>, f:F->FF):Validation<FF,S> return switch v
   {
-    return switch (v) {
-      case Failure(l): Failure(f(l));
-      case Success(_): cast v; // avoids creating a new object
-    }
+    case Failure(l): Failure(f(l));
+    case Success(_): cast v; // avoids creating a new object
   }
   
   public static inline function fail <A,B>(v:Validation<A,B>):FailProjection<A,B> return cast v
+  
+  static function zipValWithSuccess <F,S1,S2>(s1:S1, v2:VD<F,S2>):VD<F,Tup2<S1,S2>> return switch v2
+  {
+    case Success(s2): Success(Tup2.create(s1,s2));
+    case Failure(f):  Failure(f);
+  }
+  
+  static function zipValWithSuccess2 <F,S1,S2,S3>(s1:S1, s2:S2, v:VD<F,S3>):VD<F,Tup3<S1,S2, S3>> return switch v
+  {
+    case Success(s3): Success(Tup3.create(s1,s2,s3));
+    case Failure(f):  Failure(f);
+  }
+  
+  public static function zipSuccess <F,S1,S2>(v1:VD<F,S1>, v2:VD<F,S2>):VD<F,Tup2<S1,S2>> return switch v1
+  {
+    case Success(s1): zipValWithSuccess(s1, v2);
+    case Failure(f):  Failure(f);
+  }
+  
+  public static function zipSuccessLazy <F,S1,S2>(v1:VD<F,S1>, v2:Void->VD<F,S2>):VD<F,Tup2<S1,S2>> return switch v1
+  {
+    case Success(s1): zipValWithSuccess(s1, v2());
+    case Failure(f):  Failure(f);
+  }
+  
+  public static function zipSuccessLazy2 <F,S1,S2,S3>(v1:VD<F,S1>, v2:Void->VD<F,S2>, v3:Void->VD<F,S3>):VD<F,Tup3<S1,S2,S3>> return switch v1
+  {
+    case Success(s1): switch v2() 
+    {
+      case Success(s2): zipValWithSuccess2(s1, s2, v3());
+      case Failure(f): Failure(f);
+    }
+    case Failure(f):  Failure(f);
+  }
+  
+  public static function zipSuccess2 <F,S1,S2,S3>(v1:VD<F,S1>, v2:VD<F,S2>, v3:VD<F,S3>):VD<F,Tup3<S1,S2,S3>>
+  {
+    return zipSuccessLazy2(v1, Dynamics.thunk(v2), Dynamics.thunk(v3));
+  }
+  
+
   
 }
 
@@ -369,36 +409,32 @@ class FailProjectionExt
   }
 }
 
-class ValidationEitherConversions 
+class ValidationFromEither
 {
-  public static function validation<L,R>(e:Either<L,R>):Validation<L,R> 
+  public static function validation<L,R>(e:Either<L,R>):Validation<L,R> return switch (e) 
   {
-    return switch (e) {
-      case Left(l): Failure(l);
-      case Right(r): Success(r);
-    }
+    case Left(l): Failure(l);
+    case Right(r): Success(r);
   }
 }
 
-class ValidationOptionConversions 
+class ValidationFromOption
 {
-  public static function validation<F,S>(o:Option<S>, f:Void->F):Validation<F,S> 
+  public static function validation<F,S>(o:Option<S>, f:Void->F):Validation<F,S> return switch (o) 
   {
-    return switch (o) {
-      case Some(s): Success(s);
-      case None:    Failure(f());
-    }
+    case Some(s): Success(s);
+    case None:    Failure(f());
   }
 }
 
-class ValidationDynamicConversions 
+class ValidationFromDynamic 
 {
   public static function toSuccess<F,S>(x:S):Validation<F,S> 
   {
     return Success(x);
   }
 
-  public static function toFail<F,S>(x:F):Validation<F,S> 
+  public static function toFailure<F,S>(x:F):Validation<F,S> 
   {
     return Failure(x);
   }

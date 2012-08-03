@@ -101,6 +101,9 @@ class Arrays
     return res;
   }
   
+  /**
+   * Converts an Array into an IntHash. The hash-key is generated with the help of the key function.
+   */
   public static function toIntHash <T>(arr:Array<T>, key:T->Int):IntHash<T> {
     var h = new IntHash();
     for (a in arr) {
@@ -109,7 +112,9 @@ class Arrays
     return h;
   }
   
-  // override Iterable for performance
+  /**
+   * Returns a new Array containing all elements of a except the first num elements.
+   */
   public static inline function dropToArray<T>(a:Array<T>, num:Int):Array<T> {
     return drop(a, num);
   }
@@ -157,6 +162,7 @@ class Arrays
     return res;
     
   }
+  
   /**
    * Returns a new array based on a, containing all elements of a starting from the first where the predicate f holds.
    */
@@ -193,7 +199,8 @@ class Arrays
   public static inline function filter <A> (a:Array<A>, filter:A->Bool):Array<A>
   {
     var res = [];
-    for ( e in a) {
+    for ( e in a) 
+    {
       if (filter(e)) res.push(e);
     }
     return res;
@@ -201,7 +208,8 @@ class Arrays
   public static function filterWithIndex <A> (a:Array<A>, filter:A->Int->Bool):Array<A>
   {
     var res = [];
-    for ( i in 0...a.length) {
+    for ( i in 0...a.length) 
+    {
       var e = a[i];
       if (filter(e, i)) res.push(e);
     }
@@ -220,8 +228,10 @@ class Arrays
   public static function flatMap < S, T > (w:Array<S>, f:S->Array<T>):Array<T>
   {
     var res = [];
-    for (i in w) {
-      for (j in f(i)) {
+    for (i in w) 
+    {
+      for (j in f(i)) 
+      {
         res.push(j);
       }
     }
@@ -230,18 +240,18 @@ class Arrays
   public static function flatten <T>(a:Array<Array<T>>):Array<T>
   {
     var res = [];
-    for (a1 in a) {
-      for (e in a1) {
+    for (a1 in a) 
+    {
+      for (e in a1) 
+      {
         res.push(e);
       }
     }
     return res;
   }
-  public static inline function forEach<T>(a:Array<T>, f:T->Void):Void 
+  public static inline function each<T>(a:Array<T>, f:T->Void):Void 
   {
-    for (e in a) {
-      f(e);
-    }
+    for (e in a) f(e);
   }
   
   public static function intersperse < T > (a:Array<T>, b:T):Array<T> 
@@ -311,7 +321,8 @@ class Arrays
   public static inline function map < A, B > (arr:Array<A>, f:A->B):Array<B> 
   {
     var r = [];
-    for (i in arr) {
+    for (i in arr) 
+    {
       r.push(f(i));
     }
     return r;
@@ -321,7 +332,8 @@ class Arrays
   public static function mapWithIndex < A, B > (arr:Array<A>, f:A->Int->B):Array<B> 
   {
     var r = [];
-    for (i in 0...arr.length) {
+    for (i in 0...arr.length) 
+    {
       r.push(f(arr[i], i));
     }
     return r;
@@ -352,7 +364,8 @@ class Arrays
     if (a.length == 0) Scuts.error("Cannot reduce an empty Array");
     
     var acc = first(a[0]);
-    for (i in 1...a.length) {
+    for (i in 1...a.length) 
+    {
       acc = f(acc, a[i]);
     }
     return acc;
@@ -360,10 +373,11 @@ class Arrays
   
   public static function reduceLeftWithIndex <T,S>(a:Array<T>, f:S->T->Int->S, first:T->S):S
   {
-    if (a.length == 0) throw "Cannot reduce an empty Array";
+    if (a.length == 0) Scuts.error("Cannot reduce an empty Array");
     
     var acc = first(a[0]);
-    for (i in 1...a.length) {
+    for (i in 1...a.length) 
+    {
       acc = f(acc, a[i],i);
     }
     
@@ -374,10 +388,13 @@ class Arrays
   
   public static function equals <T>(a1:Array<T>, a2:Array<T>, eqT:T->T->Bool) 
   {
-    var equalsElements = function () {
+    function equalsElements () 
+    {
       var eq = true;
-      for (i in 0...a1.length) {
-        if (!eqT(a1[i], a2[i])) {
+      for (i in 0...a1.length) 
+      {
+        if (!eqT(a1[i], a2[i])) 
+        {
           eq = false;
           break;
         }
@@ -392,7 +409,8 @@ class Arrays
   
   public static function some <T>(arr:Array<T>, e:T->Bool):Option<T> 
   {
-    for (i in arr) {
+    for (i in arr) 
+    {
       if (e(i)) return Some(i);
     }
     return None;
@@ -400,9 +418,29 @@ class Arrays
   
   public static function someWithIndex <T>(arr:Array<T>, p:T->Bool):Option<Tup2<T, Int>> 
   {
-    for (i in 0...arr.length) {
+    for (i in 0...arr.length) 
+    {
       var elem = arr[i];
       if (p(elem)) return Some(Tup2.create(elem, i));
+    }
+    return None;
+  }
+  
+  public static function findIndex <T>(arr:Array<T>, p:T->Bool):Option<Int> 
+  {
+    for (i in 0...arr.length) 
+    {
+      if (p(arr[i])) return Some(i);
+    }
+    return None;
+  }
+  
+  public static function findLastIndex <T>(arr:Array<T>, p:T->Bool):Option<Int> 
+  {
+    var i = arr.length;
+    while (--i > -1) 
+    {
+      if (p(arr[i])) return Some(i);
     }
     return None;
   }
@@ -420,7 +458,8 @@ class Arrays
     
   public static function someMapped <A,B>(arr:Array<A>, map:A->B, p:B->Bool):Option<B> 
   {
-    for (i in 0...arr.length) {
+    for (i in 0...arr.length) 
+    {
       var elem = arr[i];
       var mapped = map(elem);
       
@@ -439,7 +478,8 @@ class Arrays
     var a1 = reverseCopy(a);
     
     var acc = first(a1[0]);
-    for (i in 1...a1.length) {
+    for (i in 1...a1.length) 
+    {
       acc = f(a1[i], acc);
     }
     return acc;
@@ -453,7 +493,8 @@ class Arrays
     var a1 = reverseCopy(a);
     
     var acc = first(a1[0]);
-    for (i in 1...a1.length) {
+    for (i in 1...a1.length) 
+    {
       acc = f(a1[i], acc, a1.length - i);
     }
     return acc;
@@ -487,11 +528,13 @@ class Arrays
   public static function sortToBy<T>(a:Array<T>, ?f:T->T->Ordering):Array<T> 
   {
     var res = a.copy();
-    res.sort(function (a, b) return switch (f(a,b)) {
+    function sortElems (a, b) return switch (f(a,b)) 
+    {
       case LT: -1;
       case EQ: 0;
       case GT: 1;
-    });
+    }
+    res.sort(sortElems);
     return res;
   }
   
@@ -499,7 +542,8 @@ class Arrays
   {
     var res = [];
     
-    for (i in 0...it.length) {
+    for (i in 0...it.length) 
+    {
       if (i == numElements) break;
       res.push(it[i]);
     }
@@ -510,7 +554,8 @@ class Arrays
   {
     var res = [];
     
-    for (e in a) {
+    for (e in a) 
+    {
       res.push(e.toOption());
     }
     
@@ -521,7 +566,8 @@ class Arrays
   {
     var min = arr1.length.min(arr2.length);
     var res = [];
-    for (i in 0...min) {
+    for (i in 0...min) 
+    {
       res.push(f(arr1[i], arr2[i]));
     }
     return res;
@@ -550,7 +596,8 @@ class Arrays
     var min = arr1.length.min(arr2.length);
     
     var res = init;
-    for (i in 0...min) {
+    for (i in 0...min) 
+    {
       if (cond(res))
         res = f(res, arr1[i], arr2[i])
       else 
@@ -564,7 +611,8 @@ class Arrays
     var min = arr1.length.min(arr2.length);
     
     var res = init;
-    for (i in 0...min) {
+    for (i in 0...min) 
+    {
       res = f(res, arr1[i], arr2[i]);
     }
     return res;
@@ -574,7 +622,8 @@ class Arrays
   {
     var min = arr1.length.min(arr2.length).min(arr3.length);
     var res = [];
-    for (i in 0...min) {
+    for (i in 0...min) 
+    {
       res.push(f(arr1[i], arr2[i], arr3[i]));
     }
     return res;
@@ -584,7 +633,8 @@ class Arrays
   {
     var min = arr1.length.min(arr2.length);
     var res = [];
-    for (i in 0...min) {
+    for (i in 0...min) 
+    {
       res.push(Tup2.create(arr1[i], arr2[i]));
     }
     return res;
@@ -596,15 +646,12 @@ class Arrays
     cp.unshift(e);
     return cp;
   }
+  
   public static function append <A> (a:Array<A>, e:A):Array<A> 
   {
-    var cp = a.copy();
-    cp.push(e);
-    return cp;
+    return a.concat([e]);
   }
-  
-  
-  
+
   public static function insertElemAt <A> (a:Array<A>, e:A, index:Int):Array<A> 
   {
     var cp = a.copy();
@@ -615,9 +662,10 @@ class Arrays
   public static function replaceElemAt <A> (a:Array<A>, e:A, index:Int):Array<A> 
   {
     var res = [];
-    for (i in 0...a.length) {
+    for (i in 0...a.length) 
+    {
       if (i == index) res.push(e)
-      else res.push(a[i]);
+      else            res.push(a[i]);
     }
     return res;
   }
@@ -626,7 +674,8 @@ class Arrays
   {
     equals = equals.nullGetOrElseConst(function (x1, x2) return x1 == x2);
     var res = [];
-    for (i in a) {
+    for (i in a) 
+    {
       if (!equals(i, e)) res.push(i);  
     }
     return res;
@@ -635,7 +684,8 @@ class Arrays
   public static function removeElemAt <A> (a:Array<A>, at:Int):Array<A> 
   {
     var res = [];
-    for (i in 0...a.length) {
+    for (i in 0...a.length) 
+    {
       if (i != at) res.push(a[i]);
     }
     return res;
@@ -654,13 +704,7 @@ class Arrays
   
   public static function removeFirst <A> (a:Array<A>):Array<A> 
   {
-    return if (a.length > 0) {
-      var res = a.copy();
-      res.shift();
-      res;
-    } else {
-      a;
-    }
+    return drop(a, 1);
   }
   
   public static function flatMapWithFilter <A,B>(a:Array<A>, fmap: A->Array<B>, filter:A->Bool):Array<B>
@@ -680,28 +724,29 @@ class Arrays
     return r;
   }
   
-  public static function withFilter <A> (a:Array<A>, filter:A->Bool) {
+  public static function withFilter <A> (a:Array<A>, filter:A->Bool) 
+  {
     return new WithFilter(a, filter);
   }
 }
 
-class ArrayLift {
+class ArrayConvert 
+{
   /**
    * Creates an Array containing the elemen e num times.
    */
   public static function replicateToArray<T>(e:T, num:Int):Array<T> 
   {
     var res = [];
-    for (_ in 0...num) {
-      res.push(e);
-    }
+    for (_ in 0...num) res.push(e);
     return res;
   }
   
   public static inline function toArray<T>(i:Iterator<T>):Array<T> 
   {
     var res = [];
-    for (e in i) {
+    for (e in i) 
+    {
       res.push(e);
     }
     return res;
@@ -710,16 +755,18 @@ class ArrayLift {
 
 private class WithFilter<A> 
 {
+  
   private var filter:A -> Bool;
   private var a:Array<A>;
   
-  public function new (a:Array<A>, filter:A->Bool) {
+  public function new (a:Array<A>, filter:A->Bool) 
+  {
     this.a = a;
     this.filter = filter;
   }
   
-  public function flatMap <B>(f:A->Array<B>):Array<B> return a.flatMapWithFilter(f, filter)
-  public function map <B>(f:A->B):Array<B> return a.mapWithFilter(f, filter)
+  public function flatMap <B>(f:A->Array<B>):Array<B>  return a.flatMapWithFilter(f, filter)
+  public function map     <B>(f:A->B):Array<B>         return a.mapWithFilter(f, filter)
   public function withFilter (f:A->Bool):WithFilter<A> return a.withFilter(filter.and(f))
 }
 

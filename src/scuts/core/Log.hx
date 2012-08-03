@@ -12,7 +12,17 @@ class Log
   static var logOutputCreated:Bool = false;
   private static var writeLog:Bool = #if scutsLog true #else false #end;
   #end
-  public static function traced <T>(v:T, ?show:T->String, ?pos:PosInfos):T 
+  
+  public static function logLabeled <T>(v:T, label:String, ?show:T->String, ?pos:PosInfos):T 
+  {
+    #if (debug)
+    var t = label + " : " + if (show != null) show(v) else Std.string(v);
+    debugObj(v, t, pos);
+    #end
+    return v;
+  }
+  
+  public static function log <T>(v:T, ?show:T->String, ?pos:PosInfos):T 
   {
     #if (debug)
     var t = if (show != null) show(v) else Std.string(v);
@@ -20,6 +30,19 @@ class Log
     #end
     return v;
   }
+  
+  public static function logOtherLabeled <T,X>(v:T, other:X, label:String, ?show:X->String, ?pos:PosInfos):T
+  {
+    logLabeled(other, label, show, pos);
+    return v;
+  }
+  
+  public static function logOther <T,X>(v:T, other: X, ?show:X->String, ?pos:PosInfos):T 
+  {
+    log(other, show, pos);
+    return v;
+  }
+  
   
   public static function debugObj <T,X> (e:T, msg:X, ?p:PosInfos) 
   {

@@ -6,32 +6,37 @@ import scuts.Scuts;
 class Dynamics
 {
 
-  public static inline function nullOrError < T,S > (v:T, err:String):T {
+  public static inline function nullOrError < T,S > (v:T, err:String):T 
+  {
     return if (v != null) v else Scuts.error(err);
   }
 
-  public static inline function nullToArray < T > (v:T):Array<T> {
+  public static inline function nullToArray < T > (v:T):Array<T> 
+  {
     return v != null ? [v] : [];
   }
 
   /**
    * Returns v or elseValue, based on the nulliness of v.
    */
-  public static inline function nullGetOrElseConst < T > (v:T, elseValue:T):T {
+  public static inline function nullGetOrElseConst < T > (v:T, elseValue:T):T 
+  {
     return v != null ? v : elseValue;
   }
   
   /**
    * Returns v or elseValue, based on the nulliness of v.
    */
-  public static inline function nullGetOrElse < T > (v:T, elseValue:Void->T):T {
+  public static inline function nullGetOrElse < T > (v:T, elseValue:Void->T):T 
+  {
     return v != null ? v : elseValue();
   }
 
   /**
    * Checks if v is an Object.
    */
-  public static inline function isObject <T>(v:T):Bool {
+  public static inline function isObject <T>(v:T):Bool 
+  {
     return Reflect.isObject(v);
   }
   

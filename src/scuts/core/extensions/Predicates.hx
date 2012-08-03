@@ -1,21 +1,52 @@
 package scuts.core.extensions;
+import scuts.core.types.Predicate0;
+import scuts.core.types.Predicate1;
+import scuts.core.types.Predicate2;
+import scuts.core.types.Thunk;
+
+class Predicates {
+  public static function constTrue0 () return true
+  public static function constFalse0 () return false
+  
+  public static function constTrue1  <A>(t:A) return true
+  public static function constFalse1 <A>(t:A) return false
+  
+  public static function constTrue2  <A,B>(a:A, b:B) return true
+  public static function constFalse2 <A,B>(a:A, b:B) return false
+}
 
 class Predicates0 
 {
-
-  public static function and (f1:Void->Bool, f2:Void->Bool):Void->Bool
+  /**
+   * Logical and (&&) operator for predicates without arguments.
+   */
+  public static function and (p1:Predicate0, p2:Predicate0):Predicate0
   {
-    return function () return f1() && f2();
+    return function () return p1() && p2();
   }
   
-  public static function not (f:Void->Bool):Void->Bool
+  /**
+   * Logical not (!) for predicates without arguments.
+   */
+  public static function not (p:Predicate0):Predicate0
   {
-    return function () return !f();
+    return function () return !p();
   }
   
-  public static function or  (f1:Void->Bool, f2:Void->Bool):Void->Bool
+  /**
+   * Logical or (||) operator for predicates without arguments.
+   */
+  public static function or (p1:Predicate0, p2:Predicate0):Predicate0
   {
-    return function () return f1() || f2();
+    return function () return p1() || p2();
+  }
+  
+  /**
+   * If Else Conditional for Predicates without arguments.
+   */
+  public static function ifElse <A>(p:Predicate0, ifVal:Thunk<A>, elseVal:Thunk<A>):Thunk<A>
+  {
+    return function () return if (p()) ifVal() else elseVal();
   }
   
 }
@@ -23,39 +54,73 @@ class Predicates0
 class Predicates1
 {
 
-  public static function and < T > (f1:T->Bool, f2:T->Bool):T->Bool
+  /**
+   * Logical and (&&) operator for predicates with one argument.
+   */
+  public static function and < A > (p1:Predicate1<A>, p2:Predicate1<A>):Predicate1<A>
   {
-    return function (a) return f1(a) && f2(a);
+    return function (a) return p1(a) && p2(a);
   }
   
-  public static function not < T > (f:T->Bool):T->Bool
+  
+  /**
+   * Logical not (!) for predicates with one argument.
+   */
+  public static function not < A > (p:Predicate1<A>):Predicate1<A>
   {
-    return function (a) return !f(a);
+    return function (a) return !p(a);
   }
   
-  public static function or < T > (f1:T->Bool, f2:T->Bool):T->Bool
+  /**
+   * Logical or (||) operator for predicates with one argument.
+   */
+  public static function or < A > (p1:Predicate1<A>, p2:Predicate1<A>):Predicate1<A>
   {
-    return function (a) return f1(a) || f2(a);
+    return function (a) return p1(a) || p2(a);
+  }
+  
+  /**
+   * If Else Conditional for Predicates with one argument.
+   */
+  public static function ifElse <A,R>(p:Predicate1<A>, ifVal:Thunk<R>, elseVal:Thunk<R>):A->R
+  {
+    return function (a) return if (p(a)) ifVal() else elseVal();
   }
   
 }
 
 class Predicates2 
 {
-
-  public static function and <A,B>(f1:A->B->Bool, f2:A->B->Bool):A->B->Bool
+  /**
+   * Logical and (&&) operator for predicates with two arguments.
+   */
+  public static function and <A,B>(p1:Predicate2<A,B>, p2:Predicate2<A,B>):Predicate2<A,B>
   {
-    return function (a,b) return f1(a,b) && f2(a,b);
+    return function (a,b) return p1(a,b) && p2(a,b);
   }
   
-  public static function not <A,B>(f:A->B->Bool):A->B->Bool
+  /**
+   * Logical not (!) for predicates with two argument.
+   */
+  public static function not <A,B>(p:Predicate2<A,B>):Predicate2<A,B>
   {
-    return function (a,b) return !f(a,b);
+    return function (a,b) return !p(a,b);
   }
   
-  public static function or  <A,B>(f1:A->B->Bool, f2:A->B->Bool):A->B->Bool
+  /**
+   * Logical or (||) operator for predicates with two arguments.
+   */
+  public static function or  <A,B>(p1:Predicate2<A,B>, p2:Predicate2<A,B>):Predicate2<A,B>
   {
-    return function (a,b) return f1(a,b) || f2(a,b);
+    return function (a,b) return p1(a,b) || p2(a,b);
+  }
+  
+  /**
+   * If Else Conditional for Predicates with two arguments.
+   */
+  public static function ifElse <A,B,R>(p:Predicate2<A,B>, ifVal:Thunk<R>, elseVal:Thunk<R>):A->B->R
+  {
+    return function (a,b) return if (p(a,b)) ifVal() else elseVal();
   }
  
   

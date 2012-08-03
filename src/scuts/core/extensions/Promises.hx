@@ -11,6 +11,8 @@ using scuts.core.extensions.Options;
 using scuts.core.extensions.Promises;
 using scuts.core.extensions.Predicates;
 
+using scuts.core.extensions.Functions;
+
 class Promises
 {
   static function collectCompleteHandler <S,T>(p:Promise<Array<T>>, num:Int, followers:Iterable<Promise<T>>) {
@@ -21,7 +23,7 @@ class Promises
       var firstRatio = 1 / (num + 1);
       var allRatio = 1.0 - firstRatio;
       var completeCount = 0;
-      var d = [];
+      var result = [];
       var percentages = [];
       
       function updateProgress () {
@@ -29,9 +31,7 @@ class Promises
         for (p in percentages) total += p;
         p.progress(firstRatio + (total/num) * allRatio);
       }
-      
-      
-      
+
       var i = 0;
       for (f in followers) 
       {
@@ -43,8 +43,8 @@ class Promises
           updateProgress();
         }
         function complete (x:T) {
-          d[index] = x;
-          if (++completeCount == num) p.complete(d);
+          result[index] = x;
+          if (++completeCount == num) p.complete(result);
         }
         
         f.onComplete(complete)
@@ -61,13 +61,10 @@ class Promises
     var res = new Promise();
     
     function complete (r) {
-      var all = f(r);
-      collectCompleteHandler(res, all.length, all);
+      var promises = f(r);
+      collectCompleteHandler(res, promises.length, promises);
     }
-    
-    // we don't know how many Promises are returned by f, so we cannot
-    // calculate the percentage correctly. We don't set the progress for the first Promise, only for the following Promises.
-    
+
     p.onComplete(complete)
      .onCancelled(res.cancel);
     
@@ -83,8 +80,6 @@ class Promises
       collectCompleteHandler(res, Iterables.size(promises), promises);
     }
 
-    // we don't know how many Promises are returned by f, so we cannot
-    // calculate the percentage correctly. We don't set the progress for the first Promise, only for the following Promises.
     p.onComplete(complete)
      .onCancelled(res.cancel);
     return res;
@@ -95,10 +90,10 @@ class Promises
     var res = new Promise();
     
     function complete(r) {
-      var f1 = f(r);
-      f1.onComplete(res.complete);
-      f1.onProgress(function (p) res.progress(0.5 + p * 0.5));
-      f1.onCancelled(res.cancel);
+      var p1 = f(r);
+      p1.onComplete(res.complete);
+      p1.onProgress(function (p) res.progress(0.5 + p * 0.5));
+      p1.onCancelled(res.cancel);
     }
     
     p.onComplete(complete)
@@ -112,7 +107,8 @@ class Promises
   {
     var res = new Promise();
       
-    p.onComplete (function (x) res.complete(f(x)))
+    
+    p.onComplete (f.next(res.complete))
      .onCancelled(res.cancel)
      .onProgress (res.progress);
       
@@ -123,7 +119,7 @@ class Promises
   public static function filter <T>(p:Promise<T>, f:T->Bool):Promise<T>
   {
     var res = new Promise();
-    p.onComplete (function (v2) if (f(v2)) res.complete(v2) else res.cancel())
+    p.onComplete (function (x) if (f(x)) res.complete(x) else res.cancel())
      .onCancelled(res.cancel)
      .onProgress (res.progress);
     return res;
@@ -222,7 +218,7 @@ class Promises
   {
     return function (a:Promise<A>) {
       var res = new Promise();
-      a.onComplete(function (r) res.complete(f(r)) )
+      a.onComplete(f.next(res.complete))
        .onCancelled(res.cancel)
        .onProgress(res.progress);
       return res;
@@ -238,7 +234,7 @@ class Promises
       var valB = None;
       
       function check () if (valA.isSome() && valB.isSome()) {
-        res.complete(f(valA.value(), valB.value()));
+        res.complete(f(valA.extract(), valB.extract()));
       }
       
       function progress (p:Float) res.progress(p * 0.5);
@@ -261,7 +257,7 @@ class Promises
       var valC = None;
       
       function check () if (valA.isSome() && valB.isSome() && valC.isSome()) {
-        res.complete(f(valA.value(), valB.value(), valC.value()));
+        res.complete(f(valA.extract(), valB.extract(), valC.extract()));
       }
 
       function progress (p:Float) res.progress(p * (1 / 3));
@@ -285,7 +281,7 @@ class Promises
       var valD = None;
       
       function check () if (valA.isSome() && valB.isSome() && valC.isSome() && valD.isSome()) {
-        res.complete(f(valA.value(), valB.value(), valC.value(), valD.value()));
+        res.complete(f(valA.extract(), valB.extract(), valC.extract(), valD.extract()));
       }
 
       function progress (p:Float) res.progress(p * 0.25);
@@ -311,7 +307,7 @@ class Promises
       var valE = None;
       
       function check () if (valA.isSome() && valB.isSome() && valC.isSome() && valD.isSome() && valE.isSome()) {
-        res.complete(f(valA.value(), valB.value(), valC.value(), valD.value(), valE.value()));
+        res.complete(f(valA.extract(), valB.extract(), valC.extract(), valD.extract(), valE.extract()));
       }
       
 
@@ -347,7 +343,7 @@ private class WithFilter<A>
   public function withFilter (f:A->Bool):WithFilter<A> return p.withFilter(filter.and(f))
 }
 
-class PromiseConversions {
+class PromiseFromDynamic {
   /**
    * Converts v into a Promise and deliver it immediately.
    */

@@ -1,6 +1,7 @@
 package scuts.core.types;
 
-enum Option<T> {
+enum Option<T> 
+{
   Some(v:T);
   None;
 }

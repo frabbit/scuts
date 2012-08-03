@@ -15,12 +15,9 @@ class FloatFormat
     
     var s = Std.string(t / factor);
     
-    if (s.indexOf(".") == -1) {
-      s += ".";
-    }
-    while (s.indexOf(".") > s.length - precision - 1) {
-      s += "0";
-    }
+    if (s.indexOf(".") == -1) s += ".";
+    
+    while (s.indexOf(".") > s.length - precision - 1) s += "0";
     
     return s;
     

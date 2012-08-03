@@ -19,6 +19,8 @@ class Scuts
   
   public static function id <T> (a:T):T return a
   
+  public static function posInfos <T>(?p:PosInfos):PosInfos return p
+  
   public static function abstractMethod <T>():T 
   {
     return error("Scuts.abstract: This method is abstract, you must override it");
@@ -56,22 +58,24 @@ class Scuts
   #if (macro || display)
   
 
-  
   public static function macroError <T>(msg:String, ?p:Position, ?posInfos:PosInfos):T 
   {
     var p1 = p.nullGetOrElseConst(Context.currentPos());
     #if scutsDebug
-    var stack = Stack.toString(Stack.callStack())
+    var stack = 
+      Stack.toString(Stack.callStack())
       .trim().split("\n")
       .reverseCopy()
       .filter(function (x) return x.indexOf("scuts/Scuts.hx") == -1 && x.indexOf("haxe/Stack.hx") == -1)
       .join("\n");
     
-    throw new Error(
+    throw new Error
+    (
       msg + "\n@" + posInfos.toString() 
       + "\n-----------------------------------------------------------------------------\n" 
       + stack 
-      + "\n-----------------------------------------------------------------------------",p1);
+      + "\n-----------------------------------------------------------------------------",p1
+    );
     #else
     throw new Error(msg, p1);
     #end

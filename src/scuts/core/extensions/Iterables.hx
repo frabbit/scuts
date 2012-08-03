@@ -23,12 +23,13 @@ class Iterables
     var res = [];
     var iter = a.iterator();
     var i = 0;
-    while (i < num && iter.hasNext()) {
-      
+    while (i < num && iter.hasNext()) 
+    {
       iter.next();
       i++;
     }
-    while (iter.hasNext()) {
+    while (iter.hasNext()) 
+    {
       res.push(iter.next());
     }
     return res;
@@ -40,12 +41,14 @@ class Iterables
     var res = new List();
     var iter = a.iterator();
     var i = 0;
-    while (i < num && iter.hasNext()) {
-      
+    
+    while (i < num && iter.hasNext()) 
+    {
       iter.next();
       i++;
     }
-    while (iter.hasNext()) {
+    while (iter.hasNext()) 
+    {
       res.add(iter.next());
     }
     return res;
@@ -57,17 +60,20 @@ class Iterables
     var res = [];
     var iter = a.iterator();
     var i = 0;
-    while (iter.hasNext()) {
-      
+    
+    while (iter.hasNext()) 
+    {
       var cur = iter.next();
       
-      if (!f(cur, i)) {
+      if (!f(cur, i)) 
+      {
         res.push(cur);
         break;
       }
       i++;
     }
-    while (iter.hasNext()) {
+    while (iter.hasNext()) 
+    {
       res.push(iter.next());
     }
     return res;
@@ -82,18 +88,21 @@ class Iterables
     {
       var cur = iter.next();
       
-      if (!f(cur)) {
+      if (!f(cur)) 
+      {
         res.push(cur);
         break;
       }
     }
-    while (iter.hasNext()) {
+    while (iter.hasNext()) 
+    {
       res.push(iter.next());
     }
     return res;
   }
   
-  public static inline function elem < T > (it:Iterable<T>, e:T) {
+  public static inline function elem < T > (it:Iterable<T>, e:T) 
+  {
     return Iterators.elem(it.iterator(), e);
   }
   
@@ -115,10 +124,12 @@ class Iterables
   {
     return Iterators.foldRight(iter.iterator(), f, acc);
   }
+  
   public static function foldLeft <A,B>(iter:Iterable<A>, f:B->A->B, acc:B):B
   {
     return Iterators.foldLeft(iter.iterator(), f, acc);
   }
+  
   #if (!macro && scuts_multithreaded)
   public static function foldLeftParallel <A,B>(iter:Iterable<A>, f:B->A->B, acc:B):B
   {
@@ -130,13 +141,16 @@ class Iterables
   {
     return Iterators.foldLeftWithIndex(iter.iterator(), f, acc);
   }
+  
   public static function foldRightWithIndex <A,B>(iter:Iterable<A>, f:A->B->Int->B, acc:B):B
   {
     return Iterators.foldRightWithIndex(iter.iterator(), f, acc);
   }
-  public static function forEach<T>(a:Iterable<T>, f:T->Void):Void 
+  
+  public static function each<T>(a:Iterable<T>, f:T->Void):Iterable<T> 
   {
-    Iterators.forEach(a.iterator(), f);
+    Iterators.each(a.iterator(), f);
+    return a;
   }
   
   public static function last<T>(iter:Iterable<T>):T
@@ -147,7 +161,8 @@ class Iterables
   public static function mapToList < A, B > (iterable:Iterable<A>, f:A->B):List<B> 
   {
     var r = new List();
-    for (i in iterable) {
+    for (i in iterable) 
+    {
       r.add(f(i));
     }
     return r;
@@ -166,7 +181,8 @@ class Iterables
   public static function mapToArray < A, B > (iterable:Iterable<A>, f:A->B):Array<B> 
   {
     var r = [];
-    for (i in iterable) {
+    for (i in iterable) 
+    {
       r.push(f(i));
     }
     return r;
@@ -176,7 +192,8 @@ class Iterables
   {
     var r = new List();
     var index = 0;
-    for (e in iterable) {
+    for (e in iterable) 
+    {
       r.add(f(e, index));
       index++;
     }
@@ -188,7 +205,8 @@ class Iterables
   {
     var r = [];
     var index = 0;
-    for (i in iterable) {
+    for (i in iterable) 
+    {
       r.push(f(i, index++));
     }
     return r;
@@ -227,11 +245,10 @@ class Iterables
   {
     var res = [];
     var i = 0;
-    for (e in it) {
+    for (e in it) 
+    {
       if (i++ == numElements) break;
       res.push(e);
-      
-      
     }
     return res;
   }
@@ -240,7 +257,9 @@ class Iterables
   {
     var it1 = arr1.iterator(), it2 = arr2.iterator();
     var res = [];
-    while (it1.hasNext() && it2.hasNext()) {
+    
+    while (it1.hasNext() && it2.hasNext()) 
+    {
       res.push(f(it1.next(), it2.next()));
     }
     
@@ -251,7 +270,9 @@ class Iterables
   {
     var it1 = arr1.iterator(), it2 = arr2.iterator(), it3 = arr3.iterator();
     var res = [];
-    while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
+    
+    while (it1.hasNext() && it2.hasNext() && it3.hasNext()) 
+    {
       res.push(f(it1.next(), it2.next(), it3.next()));
     }
     return res;
@@ -261,7 +282,9 @@ class Iterables
   {
     var it1 = arr1.iterator(), it2 = arr2.iterator();
     var res = [];
-    while (it1.hasNext() && it2.hasNext()) {
+    
+    while (it1.hasNext() && it2.hasNext()) 
+    {
       res.push(Tup2.create(it1.next(), it2.next()));
     }
     return res;
@@ -271,7 +294,9 @@ class Iterables
   {
     var it1 = arr1.iterator(), it2 = arr2.iterator(), it3 = arr3.iterator();
     var res = [];
-    while (it1.hasNext() && it2.hasNext() && it3.hasNext()) {
+    
+    while (it1.hasNext() && it2.hasNext() && it3.hasNext()) 
+    {
       res.push(Tup3.create(it1.next(), it2.next(), it3.next()));
     }
     

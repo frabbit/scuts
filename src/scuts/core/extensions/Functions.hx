@@ -1,32 +1,57 @@
 package scuts.core.extensions;
 
 
+import haxe.PosInfos;
 import scuts.core.types.Option;
 import scuts.core.types.Either;
+import scuts.core.types.Thunk;
 import scuts.core.types.Tup2;
 import scuts.core.types.Tup3;
 using scuts.core.extensions.Options;
 
 class Function0s 
 {
-  public static function tryToOption <T>(f:Void->T):Void->Option<T>
+  
+  
+  public static function map <A,B>(a:Void->A, f:A->B):Void->B
   {
-    return function () return try Some(f()) catch (e:Dynamic) None;
+    return function () return f(a());
   }
   
-  public static function evalToOption <T>(f:Void->T):Option<T>
+  public static function flatMap <A,B>(a:Void->A, f:A->(Void->B)):Void->B
+  {
+    return function () return f(a())();
+  }
+  
+  /**
+   * Evaluates f inside of a try...catch block and wrapps the result into a Some if no Exceptions are thrown,
+   * None otherwise.
+   */
+  public static function evalToOption <T>(f:Thunk<T>):Option<T>
   {
     return try Some(f()) catch (e:Dynamic) None;
   }
   
-  public static function toEffect <T>(f:Void->T):Void->Void
+  /**
+   * Same as evalToOption, but returns a Thunk that evaluates f.
+   */
+  public static function evalToOptionThunk <T>(f:Thunk<T>):Void->Option<T>
+  {
+    return function () return evalToOption(f);
+  }
+  
+  /**
+   * Converts f into a effectful function with no return type.
+   */
+  public static function toEffect <T>(f:Thunk<T>):Void->Void
   {
     return function () f();
   }
-  
-  
-  
-  public static function lazyThunk <X>(f:Void->X):Void->X
+  /**
+   * Converts a function into a function which caches it's result and returns it from cache.
+   * Useful for computation intensive operations.
+   */
+  public static function lazyThunk <T>(f:Thunk<T>):Thunk<T>
   {
     var cur = None;
     return function () {
@@ -39,33 +64,45 @@ class Function0s
       }
     }
   }
-  
-  public static function promote <T,X>(f:Void->T):X->T
+  /**
+   * Promotes a function taking no arguments into a one argument function
+   * by simply ignoring it's argument.
+   */
+  public static function promote <A,R>(f:Thunk<R>):A->R
   {
     return function (x) return f();
   }
   
-  /*
-   * macro stuff
-   * 
-  public static function tryToEither <T,X,Y>(f:Void->T, handler:X->Y):Void->Either<Y, T>
+}
+
+class Function1Opts 
+{
+
+  public static function partial0_ < A, B, C,D > (f:?A->C):Void->C
   {
-    return function () return try Right(f()) catch (e:X) Left(handler(e));
+    return function () return f();
   }
-  
-  public static function evalToEither <T,X,Y>(f:Void->T, handler:X->Y):Either<Y, T>
-  {
-    return try Right(f()) catch (e:X) Left(handler(e));
-  }
-  */
-  
 }
 
 
-// TODO: A Macro would be nice, something like F.compose( a, b, c ) with optimizations, auto-currying and short lambdas.
-// Maybe something like a functional context: F.ctx (' a( b . c . f.flip() . x => x + 1 * _+2 ')(d)
 class Function1s 
 {
+  /**
+   * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
+   */
+  public static function curry < A, B > (f:A->B):A->(Void->B)
+  {
+    return function (a:A) 
+      return function () return f(a);
+  }
+  
+  /**
+   * Converts a curried function into a function taking multiple arguments.
+   */
+  public static function uncurry <A,B>(f:A->(Void->B)):A->B
+  {
+    return function (a:A) return f(a)();
+  }
   /**
    * Composes 2 Functions together. 
    * 
@@ -81,101 +118,238 @@ class Function1s
     return function (a:A) return f1(f2(a));
   }
   
+  
   /**
-   * Composes 2 Functions by currying the second function A->B->C to A->(B->C).
-   * (B->C) must be the first Argument of f1.
-   * 
-   * usage:
-   *   var f1:(Int->Int)->Int = ...
-   *   var f2:String->Int->Int = ...
-   *   var g:String->Int = f1.compose2(f2);
+   * Reversed function composition, like a unix pipe.
    */
-  public static function compose2 < A, B, C,D > (f1:(B->C)->D, f2:A->B->C):A->D
+  public static inline function next <A,B,C> (from:A->B, to:B->C):A->C
   {
-    var f2Curried = function (a) return function (b:B) return f2(a,b);
-    return compose(f1, f2Curried);
+    return compose(to, from);
   }
   
   /**
-   * Composes 2 Functions by currying the second function A->B->C->D to A->(B->C->D).
-   * (B->C->D) must be the first Argument of f1.
-   * 
-   * usage:
-   *   var f1:(Int->Int->Int)->Int = ...
-   *   var f2:String->Int->Int->Int = ...
-   *   var g:String->Int = f1.compose3(f2);
+   * Converts f into a effectful function with no return type.
    */
-  public static function compose3 <A,B,C,D,E> (f1:(B->C->D)->E, f2:A->B->C->D):A->E
-  {
-    var f2Curried = function (a) return function (b:B, c:C) return f2(a,b,c);
-    
-    return compose(f1, f2Curried);
-  }
-  
-  public static function compose4 <A,B,C,D,E,F> (f1:(B->C->D->E)->F, f2:A->B->C->D->E):A->F
-  {
-    var f2Curried = function (a) return function (b:B, c:C,d:D) return f2(a,b,c,d);
-    
-    return compose(f1, f2Curried);
-  }
-  
-  public static function toEffect <T,X>(f:X->T):X->Void
+  public static function toEffect <A,R>(f:A->R):A->Void
   {
     return function (x) f(x);
   }
   
-  /*
-  public static function compose2 < A, B, C, D > (f2:C->D, f1:A->B->C):A->B->D
+  /**
+   * Partially applies the function f with the first parameter and returns a thunk.
+   */
+  public static function partial1 < A, B > (f:A->B, a:A):Thunk<B>
   {
-    return function (a:A, b:B) return f2(f1(a, b));
+    return function () return f(a);
   }
-  public static function compose3 < A, B, C, D, E > (f2:D->E, f1:A->B->C->D):A->B->C->E
+}
+
+class Function2OptsPosInfos 
+{
+  public static function compose < A, B, C,D > (f1:B->?PosInfos->D, f2:A->B):A->D
   {
-    return function (a:A, b:B, c:C) return f2(f1(a, b, c));
+    return function (a:A) return f1(f2(a));
   }
-  public static function compose4 < A, B, C, D, E, F > (f2:E->F, f1:A->B->C->D->E):A->B->C->D->F
+  public static function partial0_ < A, B, C,D > (f:A->?PosInfos->C):A->C
   {
-    return function (a:A, b:B, c:C, d:D) return f2(f1(a, b, c, d));
+    return function (a:A) return f(a);
   }
-  public static function compose5 < A, B, C, D, E, F, G > (f2:F->G, f1:A->B->C->D->E->F):A->B->C->D->E->G
-  {
-    return function (a:A, b:B, c:C, d:D, e:E) return f2(f1(a, b, c, d, e));
-  }
-  */
   
 }
 
+class Function2Opts 
+{
+  public static function compose < A, B, C,D > (f1:B->?C->D, f2:A->B):A->D
+  {
+    return function (a:A) return f1(f2(a));
+  }
+  
+  public static function partial0_ < A, B, C,D > (f:A->?B->C):A->C
+  {
+    return function (a:A) return f(a);
+  }
+  
+  
+}
+
+
+
 class Function2s 
 {
+  /**
+   * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
+   */
   public static function curry < A, B, C > (f:A->B->C):A->(B->C)
   {
     return function (a:A) 
       return function (b:B) return f(a, b);
   }
-
+  
+  /**
+   * Converts a curried function into a function taking multiple arguments.
+   */
   public static function uncurry <A,B,C>(f:A->(B->C)):A->B->C
   {
     return function (a:A, b:B) return f(a)(b);
   }
   
+  /**
+   * Partially applies the function f with the first parameter.
+   */
+  public static function partial1 < A, B, C > (f:A->B->C, a:A):B->C
+  {
+    return function (b:B) return f(a, b);
+  }
+  
+  /**
+   * Partially applies the function f with the second parameter.
+   */
+  public static function partial2 < A, B, C > (f:A->B->C, b:B):A->C
+  {
+    return function (a:A) return f(a, b);
+  }
+  
+  /**
+   * Partially applies the function f with the first and second parameter and returns a thunk.
+   */
+  public static function partial1_2 < A, B, C > (f:A->B->C, a:A, b:B):Thunk<C>
+  {
+    return function () return f(a, b);
+  }
+  
+  
+
+  
+  
+  /**
+   * Reverses the first 2 arguments of f.
+   */
   public static function flip < A, B, C > (f:A->B->C):B->A->C
   {
     return function (b, a) return f(a, b);
   }
 
+  /**
+   * Converts f into a function taking a Tuple as only parameter instead of 2 values.
+   */
   public static function tupled <A,B,Z>(f:A->B->Z):Tup2<A,B>->Z
   {
     return function (t) return f(t._1, t._2);
   }
+  
+  /**
+   * Converts f into a function taking 2 parameters instead of a Tuple.
+   */
   public static function untupled <A,B,Z>(f:Tup2<A,B>->Z):A->B->Z
   {
     return function (a,b) return f(Tup2.create(a,b));
   }
+  
+  /**
+   * Converts f into a effectful function with no return type.
+   */
+  public static function toEffect <A,B,R>(f:A->B->R):A->B->Void
+  {
+    return function (a,b) f(a,b);
+  }
+}
+
+class Function3Opts2PosInfos 
+{
+  
+  public static function partial0_ < A, B,C,D > (f:A->?B->?PosInfos->D):A->D
+  {
+    return function (a:A) return f(a);
+  }
+  
+  public static function partial1_ < A, B,C,D > (f:A->?B->?PosInfos->D, a:A):B->D
+  {
+    return function (b:B) return f(a,b);
+  }
+  
+  
+  
+}
+
+
+class Function3Opts1PosInfos 
+{
+  
+  public static function partial0_ < A, B,C,D > (f:A->B->?PosInfos->D):A->B->D
+  {
+    return function (a:A, b:B) return f(a,b);
+  }
+  
+  public static function partial1_ < A, B,C,D > (f:A->B->?PosInfos->D, a:A):B->D
+  {
+    return function (b:B) return f(a,b);
+  }
+  
+  public static function partial2_ < A, B,C,D > (f:A->B->?PosInfos->D, b:B):A->D
+  {
+    return function (a:A) return f(a,b);
+  }
+  public static function partial1_2_ < A, B,C,D > (f:A->B->?PosInfos->D, a:A, b:B):Void->D
+  {
+    return function () return f(a,b);
+  }
+  
+}
+
+class Function3Opts3
+{
+  public static function partial0_ < A, B, C,D > (f:?A->?B->?C->D):Void->D
+  {
+    return function () return f();
+  }
+}
+class Function3Opts2
+{
+  public static function partial0_ < A, B, C,D > (f:A->?B->?C->D):A->D
+  {
+    return function (a:A) return f(a);
+  }
+  
+  public static function partial1_ < A, B, C,D > (f:A->?B->?C->D, a:A):Void->D
+  {
+    return function () return f(a);
+  }
+  
+  public static function compose < A, B, C,D,X > (f1:A->?B->?C->D, f2:X->A):X->D
+  {
+    return function (a:X) return f1(f2(a));
+  }
+}
+
+
+class Function3Opts1
+{
+  public static function partial0_ < A, B,C,D > (f:A->B->?C->D):A->B->D
+  {
+    return function (a:A, b:B) return f(a,b);
+  }
+  
+  public static function partial1_ < A, B,C,D > (f:A->B->?C->D, a:A):B->D
+  {
+    return function (b:B) return f(a,b);
+  }
+  
+  public static function partial2_ < A, B,C,D > (f:A->B->?C->D, b:B):A->D
+  {
+    return function (a:A) return f(a,b);
+  }
+  public static function partial1_2_ < A, B,C,D > (f:A->B->?C->D, a:A, b:B):Void->D
+  {
+    return function () return f(a,b);
+  }
+  
 }
 
 class Function3s 
 {
-
+  /**
+   * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
+   */
   public static function curry < A, B, C, D > (f:A->B->C->D):A->(B->(C->D))
   {
     return function (a:A) 
@@ -183,24 +357,99 @@ class Function3s
         return function(c:C) return f(a, b, c);
   }
   
+  /**
+   * Converts a curried function into a function taking multiple arguments.
+   */
   public static function uncurry <A,B,C,D>(f:A->(B->(C->D))):A->B->C->D
   {
     return function (a,b,c) return f(a)(b)(c);
   }
-  
+  /**
+   * Reverses the first 2 arguments of f.
+   */
   public static function flip < A, B, C, D > (f:A->B->C->D):B->A->C->D
   {
     return function (b, a, c) return f(a, b, c);
   }
   
+  /**
+   * Converts f into a function taking a Tuple as only parameter instead of 3 values.
+   */
   public static function tupled <A,B,C,Z>(f:A->B->C->Z):Tup3<A,B,C>->Z
   {
     return function (t) return f(t._1, t._2, t._3);
   }
   
+  /**
+   * Converts f into a function taking 3 parameters instead of a Tuple.
+   */
   public static function untupled <A,B,C,Z>(f:Tup3<A,B,C>->Z):A->B->C->Z
   {
     return function (a,b,c) return f(Tup3.create(a,b,c));
+  }
+  
+  /**
+   * Converts f into a effectful function with no return type.
+   */
+  public static function toEffect <A,B,C,R>(f:A->B->C->R):A->B->C->Void
+  {
+    return function (a,b,c) f(a,b,c);
+  }
+  
+  /**
+   * Partially applies the function f with the first parameter.
+   */
+  public static function partial1 < A, B, C, D > (f:A->B->C->D, a:A):B->C->D
+  {
+    return function (b:B, c:C) return f(a, b, c);
+  }
+  
+  /**
+   * Partially applies the function f with the first and third parameter.
+   */
+  public static function partial1_3 < A, B, C, D > (f:A->B->C->D, a:A, c:C):B->D
+  {
+    return function (b:B) return f(a, b, c);
+  }
+  
+  /**
+   * Partially applies the function f with the first and second parameter.
+   */
+  public static function partial1_2 < A, B, C, D > (f:A->B->C->D, a:A, b:B):C->D
+  {
+    return function (c:C) return f(a, b, c);
+  }
+  
+  /**
+   * Partially applies the function f with the second and third parameter.
+   */
+  public static function partial2_3 < A, B, C, D > (f:A->B->C->D, b:B, c:C):A->D
+  {
+    return function (a:A) return f(a, b, c);
+  }
+  
+  /**
+   * Partially applies the function f with the second parameter.
+   */
+  public static function partial2 < A, B, C, D > (f:A->B->C->D, b:B):A->C->D
+  {
+    return function (a:A, c:C) return f(a, b, c);
+  }
+  
+  /**
+   * Partially applies the function f with the second parameter.
+   */
+  public static function partial3 < A, B, C, D > (f:A->B->C->D, c:C):A->B->D
+  {
+    return function (a:A, b:B) return f(a, b, c);
+  }
+  
+  /**
+   * Partially applies the function f with the all parameter and returns a thunk.
+   */
+  public static function partial1_2_3 < A, B, C,D > (f:A->B->C->D, a:A, b:B, c:C):Thunk<D>
+  {
+    return function () return f(a, b, c);
   }
 
 }
@@ -208,6 +457,9 @@ class Function3s
 class Function4s 
 {
 
+  /**
+   * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
+   */
   public static function curry < A, B, C, D, Z > (f:A->B->C->D->Z):A->(B->(C->(D->Z)))
   {
     return function (a:A) 
@@ -217,23 +469,190 @@ class Function4s
             return f(a, b, c,d);
   }
 
+  /**
+   * Converts a curried function into a function taking multiple arguments.
+   */
   public static function uncurry <A,B,C,D, Z>(f:A->(B->(C->(D->Z)))):A->B->C->D->Z
   {
     return function (a,b,c,d) return f(a)(b)(c)(d);
   }
   
+  /**
+   * Reverses the first 2 arguments of f.
+   */
   public static function flip < A, B, C, D, E > (f:A->B->C->D->E):B->A->C->D->E
   {
     return function (b, a, c, d) return f(a, b, c, d);
   }
   
+  /**
+   * Converts f into a effectful function with no return type.
+   */
+  public static function toEffect <A,B,C,D,R>(f:A->B->C->D->R):A->B->C->D->Void
+  {
+    return function (a,b,c,d) f(a,b,c,d);
+  }
+  
+  /**
+   * Partially applies the function f with the first parameter.
+   */
+  public static function partial1 < A, B, C, D, E > (f:A->B->C->D->E, a:A):B->C->D->E
+  {
+    return function (b:B, c:C, d:D) return f(a, b, c, d);
+  }
+  
+  /**
+   * Partially applies the function f with the second parameter.
+   */
+  public static function partial2 < A, B, C, D, E > (f:A->B->C->D->E, b:B):A->C->D->E
+  {
+    return function (a:A, c:C, d:D) return f(a, b, c, d);
+  }
+  
+  /**
+   * Partially applies the function f with the second parameter.
+   */
+  public static function partial3 < A, B, C, D, E > (f:A->B->C->D->E, c:C):A->B->D->E
+  {
+    return function (a:A, b:B, d:D) return f(a, b, c, d);
+  }
+  
+  /**
+   * Partially applies the function f with the second parameter.
+   */
+  public static function partial4 < A, B, C, D, E > (f:A->B->C->D->E, d:D):A->B->C->E
+  {
+    return function (a:A, b:B, c:C) return f(a, b, c, d);
+  }
+  
+   /**
+   * Partially applies the function f with the first and second parameter.
+   */
+  public static function partial1_2 < A, B, C, D, E > (f:A->B->C->D->E, a:A, b:B):C->D->E
+  {
+    return function (c:C, d:D) return f(a, b, c, d);
+  }
+  
+  /**
+   * Partially applies the function f with the first, second and third parameter.
+   */
+  public static function partial1_2_3 < A, B, C, D, E > (f:A->B->C->D->E, a:A, b:B, c:C):D->E
+  {
+    return function (d:D) return f(a, b, c, d);
+  }
+  
+  /**
+   * Partially applies the function f with the second parameter.
+   */
+  public static function partial1_2_4 < A, B, C, D, E > (f:A->B->C->D->E, a:A, b:B, d:D):C->E
+  {
+    return function (c:C) return f(a, b, c, d);
+  }
+  
+  /**
+   * Partially applies the function f with the second parameter.
+   */
+  public static function partial2_3_4 < A, B, C, D, E > (f:A->B->C->D->E, b:B, c:C, d:D):A->E
+  {
+    return function (a:A) return f(a, b, c, d);
+  }
+  
+  /**
+   * Partially applies the function f with the all parameter and returns a thunk.
+   */
+  public static function partial1_2_3_4 < A, B, C,D,E > (f:A->B->C->D->E, a:A, b:B, c:C, d:D):Thunk<E>
+  {
+    return function () return f(a, b, c, d);
+  }
+  
 }
 class Function5s 
 {
-
+  /**
+   * Reverses the first 2 arguments of f.
+   */
   public static function flip < A, B, C, D, E, F > (f:A->B->C->D->E->F):B->A->C->D->E->F
   {
     return function (b, a, c, d, e) return f(a, b, c, d, e);
   }
   
+  /**
+   * Partially applies the function f with the first parameter.
+   */
+  public static function partial1 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A):B->C->D->E->F
+  {
+    return function (b:B, c:C, d:D, e:E) return f(a, b, c, d, e);
+  }
+  
+  /**
+   * Partially applies the function f with the second parameter.
+   */
+  public static function partial2 < A, B, C, D, E, F > (f:A->B->C->D->E->F, b:B):A->C->D->E->F
+  {
+    return function (a:A, c:C, d:D, e:E) return f(a, b, c, d, e);
+  }
+  
+  /**
+   * Partially applies the function f with the third parameter.
+   */
+  public static function partial3 < A, B, C, D, E, F > (f:A->B->C->D->E->F, c:C):A->B->D->E->F
+  {
+    return function (a:A, b:B, d:D, e:E) return f(a, b, c, d, e);
+  }
+  
+  /**
+   * Partially applies the function f with the fourth parameter.
+   */
+  public static function partial4 < A, B, C, D, E, F > (f:A->B->C->D->E->F, d:D):A->B->C->E->F
+  {
+    return function (a:A, b:B, c:C, e:E) return f(a, b, c, d, e);
+  }
+  
+  /**
+   * Partially applies the function f with the fifth parameter.
+   */
+  public static function partial5 < A, B, C, D, E, F > (f:A->B->C->D->E->F, e:E):A->B->C->D->F
+  {
+    return function (a:A, b:B, c:C, d:D) return f(a, b, c, d, e);
+  }
+  
+  /**
+   * Partially applies the function f with the first to forth parameters.
+   */
+  public static function partial1_2_3_4 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A, b:B, c:C, d:D):E->F
+  {
+    return function (e:E) return f(a, b, c, d, e);
+  }
+  
+  /**
+   * Partially applies the function f with the first to third parameter.
+   */
+  public static function partial1_2_3 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A, b:B, c:C):D->E->F
+  {
+    return function (d:D, e:E) return f(a, b, c, d, e);
+  }
+  
+  /**
+   * Partially applies the function f with the first and second parameter.
+   */
+  public static function partial1_2 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A, b:B):C->D->E->F
+  {
+    return function (c:C, d:D, e:E) return f(a, b, c, d, e);
+  }
+  
+  /**
+   * Partially applies the function f with the second to fifth parameters.
+   */
+  public static function partial2_3_4_5 < A, B, C, D, E, F > (f:A->B->C->D->E->F, b:B, c:C, d:D, e:E):A->F
+  {
+    return function (a:A) return f(a, b, c, d, e);
+  }
+  
+  /**
+   * Partially applies the function f with all parameters and returns a thunk.
+   */
+  public static function partial1_2_3_4_5 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A, b:B, c:C, d:D, e:E):Thunk<F>
+  {
+    return function () return f(a, b, c, d, e);
+  }
 }
