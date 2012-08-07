@@ -15,6 +15,7 @@ import haxe.macro.Expr;
 import haxe.macro.Type.BaseType;
 import haxe.macro.Type.ClassField;
 import haxe.macro.Type.ClassType;
+import haxe.macro.Type.DefType;
 import scuts.mcore.types.InstType;
 
 import haxe.macro.Type.Ref;
@@ -79,7 +80,7 @@ class Type
       return switch (type) {
         case TInst(t, _):
           var pack = t.get().pack;
-          var cpack = x.pack.append(x.name);
+          var cpack = x.pack.appendElem(x.name);
           pack.length == cpack.length && Arrays.eq(pack, cpack, Strings.eq);
         default: false;
       }
@@ -214,12 +215,11 @@ class Type
          && switch (cf.kind) 
             { 
               case FieldKind.FMethod(_): true;
-              case FieldKind.FVar(_, _): 
-                switch (cf.type) 
-                {
-                  case TFun(args, _): args.length == 0;
-                  default: false;
-                }
+              case FieldKind.FVar(_, _): switch (cf.type) 
+              {
+                case TFun(args, _): args.length == 0;
+                default: false;
+              }
             } 
     };
     

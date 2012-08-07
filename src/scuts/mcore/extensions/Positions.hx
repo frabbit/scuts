@@ -5,10 +5,11 @@ import haxe.macro.Expr;
 import scuts.core.extensions.Ints;
 import scuts.core.extensions.Strings;
 
-class PositionExt 
+class Positions 
 {
 
-  public static inline function nullOrCurrent (p:Position) {
+  public static inline function nullOrCurrent (p:Position) 
+  {
     return p == null ? Context.currentPos() : p;
   }
   public static function eq (a:Position, b:Position):Bool 

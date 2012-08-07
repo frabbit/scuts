@@ -9,7 +9,7 @@ import scuts.mcore.Make;
 
 using scuts.core.extensions.Arrays;
 
-class ArrayExprExt 
+class ArrayExprs 
 {
   
   public static inline function after(a:Array<Expr>, e:Expr):Array<Expr> return [e].concat(a)

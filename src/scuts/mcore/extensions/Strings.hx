@@ -26,7 +26,8 @@ class Strings
     return Make.constIdent(s, pos);
   }
   
-  public static function toType(s:String, ?pos:Position) {
+  public static function toType(s:String, ?pos:Position) 
+  {
     var p = pos.nullGetOrElseConst(Context.currentPos());
     return Context.parse("{v: " + s + " = null; s}", p);
   }

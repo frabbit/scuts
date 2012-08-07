@@ -8,10 +8,12 @@ package scuts.mcore;
 import haxe.macro.Compiler;
 import scuts.core.extensions.Arrays;
 import scuts.core.extensions.Ints;
+import scuts.core.extensions.Predicates;
 import scuts.core.extensions.Strings;
 import scuts.core.Log;
+import scuts.core.types.Validation;
 import scuts.CoreTypes;
-import scuts.mcore.extensions.TypeExt;
+import scuts.mcore.extensions.Types;
 import scuts.Scuts;
 
 
@@ -27,13 +29,16 @@ using scuts.core.extensions.Ints;
 using scuts.core.extensions.Dynamics;
 using scuts.core.extensions.Options;
 using scuts.core.Log;
-using scuts.mcore.extensions.TypeExt;
+using scuts.mcore.extensions.Types;
 using scuts.core.extensions.Strings;
-
-
+using scuts.core.extensions.Validations;
+using scuts.core.extensions.Functions;
 private typedef Ctx = haxe.macro.Context;
 
-enum TypeType {
+private typedef TypeCacheKey = { name:String, type:TypeKind, isPrivate:Bool };
+
+enum TypeKind 
+{
 	TClass;
 	TTypedef;
 	TEnum;
@@ -68,27 +73,37 @@ class Context
   {
     function loop (type:Type, found:Array<Type>) 
     {
+      function searchInParams (params:Array<Type>) 
+      {
+        return params.foldLeft(function (acc, cur) return loop(cur, acc), found);
+      }
+      
+      function isFunctionTypeParameter (t:ClassType) 
+      {
+        var pack = t.pack;
+        return pack.length == 1 && pack[0] == functionName;
+      }
+      
       return switch (type) 
       {
-        case TInst(t, params):
-          var tget = t.get();
-          if (tget.pack.length == 1 && tget.pack[0] == functionName 
-              && !found.any(function (x) return TypeExt.eq(x, type))) 
-            found.concat([type]);
+        case TInst(t, p):
+          var pack = t.get().pack;
+          // check if function type parameter and not already collected.
+          if (isFunctionTypeParameter(t.get()) && !found.any(Types.eq.partial2(type))) 
+            found.appendElem(type);
           else 
-            params.foldLeft(function (acc, cur) return loop(cur, acc), found);
-        case TEnum(t, params):
-          params.foldLeft(function (acc, cur) return loop(cur, acc), found);
+            searchInParams(p);
+        case TEnum(_, p), TType(_, p):
+          searchInParams(p);
         case TFun(args, ret):
           var res = args.foldLeft(function (acc, cur) return loop(cur.t, acc), found);
           loop(ret, res);
         case TAnonymous(a):
           a.get().fields.foldLeft(function (acc, cur) return loop(cur.type, acc), found);
-        case TType(t, params):
-          params.foldLeft(function (acc, cur) return loop(cur, acc), found);
+        
         case TDynamic(t): loop(t, found);
         case TLazy(t): loop(t(), found);
-        case TMono(t): found;
+        case TMono(_): found;
       }
     }
     return loop(type, []);
@@ -96,15 +111,17 @@ class Context
   
   public static function getLocalClassTypeParameters (type:Type):Array<Type>
   {
+    function getClassTypeParams (x:ClassType) return getClassTypeParameters(type, x.pack, x.name);
+    
     return getLocalClassAsClassType()
-      .map(function (x) return getClassTypeParameters(type, x.pack, x.name))
+      .map(getClassTypeParams)
       .getOrElse(function () return []);
   }
   
   public static function getLocalTypeParameters (type:Type):Array<Type>
   {
     return getLocalClassTypeParameters(type)
-      .union(getLocalMethodTypeParameters(type), TypeExt.eq);
+      .union(getLocalMethodTypeParameters(type), Types.eq);
   }
   
   public static function getLocalMethodTypeParameters (type:Type):Array<Type>
@@ -116,7 +133,7 @@ class Context
   
   public static function getClassTypeParameters (type:Type, pack:Array<String>, name:String):Array<Type>
   {
-    var cpack = pack.append(name);
+    var cpack = pack.appendElem(name);
     function loop (type:Type, found:Array<Type>) 
     {
       return switch (type) 
@@ -125,7 +142,7 @@ class Context
           var tget = t.get();
           if (tget.pack.length == cpack.length 
               && Arrays.eq(tget.pack, cpack, Strings.eq) 
-              && !found.any(function (x) return TypeExt.eq(x, type)))
+              && !found.any(function (x) return Types.eq(x, type)))
             found.concat([type]);
           else
             params.foldLeft(function (acc, cur) return loop(cur, acc), found);
@@ -152,44 +169,14 @@ class Context
   public static function getLocalClassAsType ():Option<Type>
   {
     return Ctx.getLocalType().nullToOption();
-    // TODO this was a hack because getLocalClass was returning the Main Type of a Module in a case, but i can't reproduce now.
-    /*
-    var lc = Ctx.getLocalClass().nullToOption();
-    return lc.flatMap(function (x) {
-      
-      var types = Ctx.getModule(x.get().module);
-      var pos = Ctx.getPosInfos(Ctx.currentPos());
-      var min = pos.min;
-      return types.some(function (t) {
-          return switch (t) {
-            case TInst(t1, params):
-              var tget = t1.get();
-              var tpos = Ctx.getPosInfos(tget.pos);
-              
-              min.inRange(tpos.min, tpos.max);
-            default: false;
-          };
-      });
-    });
-    */
   }
   
   public static function getLocalClassAsClassType ():Option<ClassType> 
   {
-    return Ctx.getLocalClass()
+    return 
+      Ctx.getLocalClass()
       .nullToOption()
       .map(function (x) return x.get());
-      
-    // related to the hack i cannot reproduce anymore, see getLocalClassAsType
-    /*
-    return getLocalClassAsType().map(function (x) {
-      return switch (x) {
-        case TInst(t1,_):
-          t1.get();
-        default: Scuts.unexpected();
-      }
-    });
-    */
   }
   
   /**
@@ -198,46 +185,51 @@ class Context
    * 
    * @return 
    */
-  public static function getLocalMethod ():Option<String> {
+  public static function getLocalMethod ():Option<String> 
+  {
     var lc = Ctx.getLocalClass().nullToOption();
-    return lc.flatMap(function (x) {
-      
+    
+    function findInClassType (x:Ref<ClassType>) 
+    {
       var types = Ctx.getModule(x.get().module);
       var pos = Ctx.getPosInfos(Ctx.currentPos());
       var min = pos.min;
-      return 
-        types.flatMap(function (t) {
-          return switch (t) {
-            case TInst(t1, params):
-              var tget = t1.get();
-              var tpos = Ctx.getPosInfos(tget.pos);
-              // TODO this is a hack because in display mode the min and max positions of the current class are wrong (report issue), so we don't filter anything out here
-              if (#if display true #else min.inRange(tpos.min, tpos.max) #end) {
-                tget.constructor.nullToArray()
-                .map(function (x) return x.get())
-                .concat(tget.fields.get())
-                .concat(tget.statics.get());
+      
+      function getAllFields (t:Type) return switch (t) 
+      {
+        case TInst(t1, params):
+          var tget = t1.get();
+          var tpos = Ctx.getPosInfos(tget.pos);
+          // TODO this is a hack because in display mode the min and max positions of the current class 
+          // are wrong (report issue), so we don't filter anything out here
+          if (#if display true #else min.inRange(tpos.min, tpos.max) #end) 
+          {
+            var constructor = tget.constructor.nullToArray().map(function (x) return x.get());
+            
+            constructor
+            .concat(tget.fields.get())
+            .concat(tget.statics.get());
 
-              } else [];
-            default: [];
-          }
-        })
-        .some(function (f) {
-          var fpos = Ctx.getPosInfos(f.pos);
-          return min.inRange(fpos.min, fpos.max);
-        })
-        .map(function (x) return x.name);
-    });
+          } else [];
+        default: [];
+      }
+      
+      function checkIfFieldIsLocalMethod(f:ClassField) 
+      {
+        var fpos = Ctx.getPosInfos(f.pos);
+        return min.inRange(fpos.min, fpos.max);
+      }
+      
+      return types.flatMap(getAllFields).some(checkIfFieldIsLocalMethod).map(function (x) return x.name);
+    }
+    
+    return lc.flatMap(findInClassType);
   }
   
   
 	public static function error(msg:Dynamic, pos:Position) 
 	{
-    
-		if (Ctx.defined("display")) 
-		{
-			throw msg;
-		}
+		if (Ctx.defined("display")) throw msg;
 		Ctx.error(msg, pos);
 	}
 	
@@ -246,14 +238,14 @@ class Context
   
 	public static function typeof(expr:Expr):Option<Type>
 	{
-		return try {
-			Some(Ctx.typeof(expr));
-		} catch (e:Dynamic) {
-			None;
-		}
+		return 
+      try               Some(Ctx.typeof(expr))
+      catch (e:Dynamic) None;
+		
 	}
 	
-  public static function getType2( pack:Array<String>, module:String, name:String ):Option<Type> {
+  public static function getType2( pack:Array<String>, module:String, name:String ):Option<Type> 
+  {
     return 
       if (module.length > 0) 
         getType(module + "." + name)
@@ -261,34 +253,39 @@ class Context
         getType(name);
   }
   
-  public static function getType( s:String ) : Option<Type> {
+  public static function getType( s:String ) : Option<Type> 
+  {
     var parts = s.split(".");
-    return if (parts.length >= 2 
-      && parts[parts.length-2].charAt(0) == parts[parts.length-2].toUpperCase().charAt(0)) // in module resolution
+    var len = parts.length;
+    
+    function isTypeInModule () 
     {
-        
-        // type in module
-        var p = parts.copy();
-        var typeName = p.last();
-        var module = p.removeLast().join(".");
-        var types = try Some(Ctx.getModule(module)) catch (e:Dynamic) None;
-        types.flatMap(function (types) {
-          
-          var filtered = types.filter(function (t)
-            return switch (t) {
-              case TInst(t, _):
-                t.get().name == typeName;
-              case TEnum(t, _):
-                t.get().name == typeName;
-              case TType(t, _):
-                t.get().name == typeName;
-              default: false;
-            }
-          );
-          
-          return filtered.length == 1 ? Some(filtered[0]) : None;
-        });
+      return len >= 2 && { var p = parts[len - 2].charAt(0); p == p.toUpperCase(); }
+    }
+    return if (isTypeInModule()) // in module resolution
+    {
+      // type in module
+      var p = parts.copy();
+      var typeName = p.last();
+      var module = p.removeLast().join(".");
       
+      var types = try Some(Ctx.getModule(module)) catch (e:Dynamic) None;
+      
+      function findTypeInModuleTypes (types:Array<Type>) 
+      {
+        function typeFilter(t:Type) return switch (t) 
+        {
+          case TInst(t, _): t.get().name == typeName;
+          case TEnum(t, _): t.get().name == typeName;
+          case TType(t, _): t.get().name == typeName;
+          default: false;
+        }
+        
+        var filtered = types.filter(typeFilter);
+        
+        return filtered.length == 1 ? Some(filtered[0]) : None;
+      }
+      types.flatMap(findTypeInModuleTypes);
     } 
     else // normal resolution
     {
@@ -296,111 +293,123 @@ class Context
     }
   }
   
-	public static function parse( expr : String, ?pos : Position ) : Either<Error, Expr> {
-		var pos = pos == null ? Ctx.currentPos() : pos;
-		return try {
-			//trace("try parse");
-			var r = Ctx.parse(expr, pos);
-			//trace("end parse");
-			Right(r);
-		} catch (e:Error) {
-      Left(e);
-			
-		}
+	public static function parse( expr : String, ?pos : Position ) : Validation<Error, Expr> 
+  {
+		var p = pos == null ? Ctx.currentPos() : pos;
+		
+    return try      Ctx.parse(expr, p).toSuccess()
+    catch (e:Error) e.toFailure();
 	}
 	
   
-  static var typeCache:Hash<Array<{ name:String, type:TypeType, isPrivate:Bool}>> = new Hash();
+  static var typeCache:Hash<Array<TypeCacheKey>> = new Hash();
   
-	static public function getTypesFromClasspath (path:String, ?filter:{name:String, type:TypeType, isPrivate:Bool}->Bool):Array<{ name:String, type:TypeType, isPrivate:Bool}>
+	static public function getTypesFromClasspath (path:String, ?filter: TypeCacheKey->Bool)
+    :Array<TypeCacheKey>
 	{
-    if (typeCache.exists(path)) {
-      return typeCache.get(path);
+    return if (typeCache.exists(path)) 
+    {
+      typeCache.get(path);
+    } 
+    else 
+    {
+      if (filter == null) filter = function (_) return true;
+      var hxPattern = ~/^(.+).hx$/;
+      
+      var allTypes = [];
+      
+      function readDirectory (path, pack:Array<String>) 
+      {
+        var paths = FileSystem.readDirectory(path);
+        
+        for (p in paths) 
+        {
+          var absolutePath = path + "/" + p;
+          
+          if (FileSystem.isDirectory(absolutePath)) 
+          {
+            var newPack = pack.copy();
+            newPack.push(p);
+            readDirectory(absolutePath, newPack);
+          } 
+          else 
+          {
+            // is file
+            if (hxPattern.match(p)) 
+            {
+              var types = getTypesFromFile(absolutePath, pack, hxPattern.matched(1), filter);
+              allTypes = allTypes.concat(types);
+            }
+          }
+        }
+      }
+      readDirectory(path, []);
+      typeCache.set(path, allTypes);
+      allTypes;
     }
     
-		if (filter == null) filter = function (_) return true;
-		var hxPattern = ~/^(.+).hx$/;
-		
-		var allTypes = [];
-		
-		function readDirectory (path, pack:Array<String>) {
-			var paths = FileSystem.readDirectory(path);
-			
-			for (p in paths) {
-				var absolutePath = path + "/" + p;
-				
-				if (FileSystem.isDirectory(absolutePath)) {
-					var newPack = pack.copy();
-					newPack.push(p);
-					readDirectory(absolutePath, newPack);
-				} else {
-					// is file
-					if (hxPattern.match(p)) {
-						var types = getTypesFromFile(absolutePath, pack, hxPattern.matched(1), filter);
-						allTypes = allTypes.concat(types);
-						
-					}
-					 
-				}
-			}
-			
-		}
     
-    
-		readDirectory(path, []);
-    typeCache.set(path, allTypes);
-		return allTypes;
+		
 	}
 	
-	static function matchAll (ereg:EReg, str:String, f:EReg->Void) {
-		while (ereg.match(str)) {
-			f(ereg);
+	static function matchAll (ereg:EReg, str:String, f:EReg->Option<TypeCacheKey>):Array<TypeCacheKey> 
+  {
+    var res = [];
+    
+		while (ereg.match(str)) 
+    {
+      switch (f(ereg)) 
+      {
+        case Some(v): res.push(v);
+        case None:
+      }
 			str = ereg.matchedRight();
 		}
+    return res;
 	}
 	
-	static public function getTypesFromFile(
-		file:String, pack:Array<String>, moduleName:String, ?filter:{name:String, type:TypeType, isPrivate:Bool}->Bool
-		)
-		:Array<{ name:String, type:TypeType, isPrivate:Bool}>
-	{
-		if (filter == null) filter = function (_) return true;
+	static public function getTypesFromFile (file:String, pack:Array<String>, moduleName:String, ?filter: TypeCacheKey->Bool):Array<TypeCacheKey>
+  {
+		var typeFilter = filter.nullGetOrElseConst(Predicates.constTrue1);
+    
 		var content = File.getContent(file);
-		
-		var enumPattern = ~/^[ \r\n\t]*(private )?[ \r\n\t]*enum[ \r\n\t]*([A-Za-z0-9_]+)/g;
-		var classPattern = ~/^[ \r\n\t]*(private )?[ \r\n\t]*class[ \r\n\t]*([A-Za-z0-9_]+)/g;
-    var interfacePattern = ~/^[ \r\n\t]*(private )?[ \r\n\t]*interface[ \r\n\t]*([A-Za-z0-9_]+)/g;
-		var typedefPattern = ~/^[ \r\n\t]*(private )?[ \r\n\t]*typedef[ \r\n\t]*([A-Za-z0-9_]+)/g;
-    var packPattern = ~/~package ([A-Za-z0-9_.]+)/g;
-		var types = [];
-		
-    if (content.indexOf("package " + pack.join(".") + ";") == -1) {
-      return types;
-    }
+
+    var packStr = pack.join(".");
     
-		function f(type:TypeType, e:EReg) {
-			var isPrivate = e.matched(1) == "private";
-			var typeName = e.matched(2);
-			
-			var packStr = (pack.length > 0) ? (pack.join(".") + ".") : "";
-			var moduleStr = (isPrivate ? "_" + moduleName + "." : "");
-			
-			var typeStr = typeName;
-			
-			var entry = { name:packStr + moduleStr + typeStr, type:type, isPrivate:isPrivate };
-			
-			if (filter(entry)) {
-				types.push(entry);
-			}
-		}
-		
-    
-    
-		matchAll(enumPattern, content, callback(f, TEnum));
-		matchAll(classPattern, content, callback(f, TClass));
-		matchAll(typedefPattern, content, callback(f, TTypedef));
-		matchAll(interfacePattern, content, callback(f, TInterface));
-		return types;
+    return 
+      if (content.indexOf("package " + packStr + ";") == -1) 
+        []
+      else 
+      {
+        function f(type:TypeKind, e:EReg):Option<TypeCacheKey> 
+        {
+          var isPrivate = e.matched(1) == "private";
+          var typeName = e.matched(2);
+          
+          var packStr = (pack.length > 0) ? (packStr + ".") : "";
+          var moduleStr = (isPrivate ? "_" + moduleName + "." : "");
+          
+          var typeStr = typeName;
+          
+          var entry = { name:packStr + moduleStr + typeStr, type:type, isPrivate:isPrivate };
+          
+          return 
+            if (typeFilter(entry)) Some(entry)
+            else                   None;
+        }
+        
+        var enumPattern = ~/^[ \r\n\t]*(private )?[ \r\n\t]*enum[ \r\n\t]*([A-Za-z0-9_]+)/g;
+        var classPattern = ~/^[ \r\n\t]*(private )?[ \r\n\t]*class[ \r\n\t]*([A-Za-z0-9_]+)/g;
+        var interfacePattern = ~/^[ \r\n\t]*(private )?[ \r\n\t]*interface[ \r\n\t]*([A-Za-z0-9_]+)/g;
+        var typedefPattern = ~/^[ \r\n\t]*(private )?[ \r\n\t]*typedef[ \r\n\t]*([A-Za-z0-9_]+)/g;
+        var packPattern = ~/~package ([A-Za-z0-9_.]+)/g;
+        
+        
+        return matchAll(enumPattern, content, f.partial1(TEnum))
+        .concat( matchAll(classPattern, content, f.partial1(TClass)) )
+        .concat( matchAll(typedefPattern, content, f.partial1(TTypedef)) )
+        .concat( matchAll(interfacePattern, content, f.partial1(TInterface)) );
+      }
 	}
   
   public static function getUsings(file:String, maxPosInFile:Int):Array<String> 
@@ -423,44 +432,49 @@ class Context
   
   public static function getImports(file:String, maxPosInFile:Int):Array<String> 
   {
-
     var content = neko.io.File.getContent(file);
     
     // TODO remove possible import statements in comments, best overwrite all comment chars with spaces
     
-    
-    
     var e = ~/import[ ]*([a-zA-Z0-9._]+)[ ]*;/;
     
     var res = [];
-    while (e.match(content) && e.matchedPos().pos <= maxPosInFile) {
-      //trace("matched");
+    
+    while (e.match(content) && e.matchedPos().pos <= maxPosInFile) 
+    {
       res.push(e.matched(1));
       content = e.matchedRight();
     }
     
-    
-    
     return res;
-    
   }
 	
   public static function followAliases (t:Type):Type
   {
-    var c = t;
-    var next = t;
-    var isAlias = true;
-    do {
-      c = next;
-      next = Ctx.follow(c, true);
-      isAlias = switch (next) {
-        case TAnonymous(_), TFun(_): false;
-        
-        default: true;
-      }
-    } while (isAlias && !TypeExt.eq(c, next));
+    // TODO This is a workaround because it seems that haxe.macro.Context.follow throws an error for functions (StdTypes.Int -> hots.In)
     
-    return c;
+    function isFunOrAnonymous (t:Type) return switch (t) 
+    {
+      case TAnonymous(_), TFun(_): return true;
+      default:
+    }
+    
+    return 
+      if (isFunOrAnonymous(t)) t 
+      else 
+      {
+        var c = t;
+        var next = t;
+        var isAlias = true;
+        do 
+        {
+          c = next;
+          next = Ctx.follow(c, true);
+          isAlias = !isFunOrAnonymous(next);
+        } while (isAlias && !Types.eq(c, next));
+        
+        return c;
+      }
   }
   
 }

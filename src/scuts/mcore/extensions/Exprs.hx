@@ -13,12 +13,12 @@ import scuts.mcore.Make;
 using scuts.core.extensions.Arrays;
 private typedef M = Make;
 
-class ExprExt 
+class Exprs 
 {
   public static function eq (e1:Expr, e2:Expr):Bool 
   {
-    return PositionExt.eq(e1.pos, e2.pos)
-      && ExprDefExt.eq(e1.expr, e2.expr);
+    return Positions.eq(e1.pos, e2.pos)
+      && ExprDefs.eq(e1.expr, e2.expr);
   }
   
   

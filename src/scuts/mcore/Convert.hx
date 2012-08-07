@@ -4,201 +4,173 @@ package scuts.mcore;
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
 
+
+private typedef MType = haxe.macro.Type;
 import haxe.macro.Expr;
 import haxe.macro.Context;
+import scuts.core.types.Option;
+import scuts.core.types.Validation;
 import scuts.Scuts;
 
 using scuts.core.extensions.Arrays;
 using scuts.core.extensions.Eithers;
 
+
+using scuts.core.extensions.Validations;
+using scuts.core.extensions.Functions;
+using scuts.core.extensions.Options;
+
 class Convert 
 {
 
-	public static function stringToComplexType (s:String, ?pos:Position):ComplexType
+	public static function stringToComplexType (s:String, ?pos:Position):Validation<Error, ComplexType>
 	{
 		if (pos == null) pos = Context.currentPos();
-		s = "{ var a:" + s + ";}";
+		
 		//trace(s);
-		var e = MContext.parse(s, pos).extractRight();
-    
-		return switch (e.expr) {
-			case EBlock(b):
-				switch (b[0].expr) {
-					case EVars(v):
-						v[0].type;
-					default:Scuts.macroError("assert");
-				}
-			default: Scuts.macroError("assert");
-		}
+
+    function extractType (e:Expr) return switch (e.expr) 
+    {
+			case EBlock(b): switch (b[0].expr) 
+      {
+        case EVars(v): v[0].type.toSuccess();
+        default:       Scuts.unexpected();
+      }
+			default: Scuts.unexpected();
+    }
+
+    var e = MContext.parse("{ var a:" + s + ";}", pos);
+    return e.flatMap(extractType);
     
 	}
-  
-	
-	public static function complexTypeToType (t:ComplexType):haxe.macro.Type
+
+	public static function complexTypeToType (t:ComplexType):Option<MType>
 	{
-    
     var ctAsString = Print.complexType(t);
-		var e = Parse.parse("{ var a : $0 = null; a;}", [ctAsString]);
-		return Context.typeof(e);
+		
+    var e = Parse.parse("{ var a : $0 = null; a;}", [ctAsString]);
+    
+    
+		return MContext.typeof(e);
 	}
 	
-  public static function complexTypeToFullQualifiedComplexType (c:ComplexType):ComplexType
+  public static function complexTypeToFullQualifiedComplexType (c:ComplexType):Validation<Error, ComplexType>
   {
     var ct = complexTypeToFullQualifiedComplexType;
     
-    function convFields (fields:Array<Field>) {
-      return fields.map(function (f) {
-        var k = switch (f.kind) {
-          case FFun(f):
-            var newF = {
-              args: f.args.map(function (a) return if (a.type == null) a else { name: a.name, opt: a.opt, type: ct(a.type), value: a.value}),
-              expr: f.expr,
-              params: f.params,
-              ret: if (f.ret != null) ct(f.ret) else f.ret
-            };
-            FFun(newF);
-          case FVar(t, e):
-            FVar(ct(t), e);
-          case FProp(get, set, t, e):
-            FProp(get, set, ct(t), e);
+    function convFields (fields:Array<Field>):Validation<Error, Array<Field>> 
+    {
+      function convField (f:Field) 
+      {
+        function convFunction (f:Function) 
+        {
+          function convArgs () 
+          {
+            function createArg (a, t) return { name: a.name, opt: a.opt, type: t, value: a.value };
+            
+            function mapArg (a:FunctionArg) return if (a.type == null) Success(a) else ct(a.type).map(createArg.partial1(a));
+            
+            return f.args.map(mapArg).catIfAllSuccess();
+          }
+          function createFunction (args, r) return { args: args, expr: f.expr, params: f.params, ret: r };
+          
+          return 
+            if (f.ret != null) ct(f.ret).zipSuccessLazy(convArgs).map(createFunction.flip().tupled());
+            else               convArgs().map(createFunction.partial2(f.ret));
         }
-        return {
-          access: f.access,
-          doc: f.doc,
-          kind: k,
-          meta: f.meta,
-          name: f.name,
-          pos: f.pos
+        
+        
+        function createField (k) return { access: f.access, doc: f.doc, kind: k, meta: f.meta, name: f.name, pos: f.pos };
+        
+        var k = switch (f.kind) 
+        {
+          case FFun(f):               convFunction(f).map(FieldType.FFun);
+          case FVar(t, e):            ct(t).map(FieldType.FVar.partial2(e));
+          case FProp(get, set, t, e): ct(t).map(FieldType.FProp.partial1_2_4(get, set, e));
         }
-      });
+        
+        return k.map(createField);
+      }
+      
+      return fields.map(convField).catIfAllSuccess();
     }
     
-    function convTypePath (p:TypePath) {
+    function convTypePath (p:TypePath):Validation<Error, TypePath> 
+    {
       // pack must be changed to fq paths
-      // try to typeof
       
       var qname = p.pack.join(".") + (p.pack.length > 0 ? "." : "") + p.name;
       
       var testE = "{ var a: " + qname + ((p.params.length > 0) ? ("<" + p.params.map(function (_) return "Int").join(",") + ">") : "") + " = null; a;}";
       
-      // todo type parameter constraints can cause problems here.
-      
-     
       var pos = Context.makePosition({min:0, max:0, file: "Convert.complexTypeToFullQualifiedComplexType"});
+ 
       
-      var expr = try {
-      Context.parse(testE, pos);
-      } catch (e:Dynamic) {
-        trace(e);
-        null;
+      function exprToTypePath (expr:Expr):Validation<Error, TypePath>
+      {
+        function toTp (params) 
+        {
+          function extractPackAndNameFromType (t:MType) return switch t 
+          {
+            case TInst( tr, p): var dt = tr.get(); { p:dt.pack, n:dt.name};
+            case TEnum( tr, p): var dt = tr.get(); { p:dt.pack, n:dt.name};
+            default:                            Scuts.notImplemented();
+          }
+          function extractPackAndName () return { p:p.pack, n:p.name };
+          
+          var packAndName = MContext.typeof(expr).map(extractPackAndNameFromType).getOrElse(extractPackAndName);
+          
+          return { name: packAndName.n, pack: packAndName.p, params: params, sub: p.sub };
+        }
+        
+        function convParam (tp) return switch (tp) 
+        {
+          case TPExpr(e): tp.toSuccess(); 
+          case TPType(t): ct(t).map(TPType);
+        }
+        
+        return p.params.map(convParam).catIfAllSuccess().map(toTp);
       }
       
-      //trace(qname);
-      
-      
-      
-      var packAndName = {
-        try {
-          var t1 = Context.typeof(expr);
-          switch (t1) {
-            case haxe.macro.Type.TInst( t, p): 
-              var defType = t.get();
-              { p:defType.pack, n:defType.name};
-            case haxe.macro.Type.TEnum( t, p): 
-              var defType = t.get();
-              { p:defType.pack, n:defType.name};
-            default:
-              throw "not implemented";
-              
-          };
-        } catch (e:Dynamic) {
-          {p:p.pack, n:p.name};
-        }
-      }
-        
-      
-      var params = p.params.map(function (tp) {
-        return switch (tp) {
-          case TPExpr(e): tp; 
-          case TypeParam.TPType(t): TPType(ct(t));
-        }
-      });
-      
-      
-      return {
-        name: packAndName.n,
-        pack: packAndName.p,
-        params: params ,
-        sub: p.sub
-        
-      };
+      return MContext.parse(testE, pos).flatMap(exprToTypePath);
     }
     
-    return switch (c) {
-      case TAnonymous(fields):
-        
-        TAnonymous(convFields(fields));
-      case TExtend(p, fields):
-        TExtend(convTypePath(p), convFields(fields));
-      case TFunction(args, ret):
-        var newArgs = args.map(function (a) return ct(a));
-        var newRet = ct(ret);
-        TFunction(newArgs, newRet);
-      case TOptional(t): TOptional(ct(t));
-      case TParent(t):
-        TParent(ct(t));
-      case TPath(p):
-        TPath(convTypePath(p));
+    function funcToFullQualified (args:Array<ComplexType>, ret) 
+    {
+      var newArgs = args.map(ct).catIfAllSuccess();
+      var newRet = ct(ret);
+      return newArgs.zipSuccess(newRet).map(TFunction.tupled());
+    }
+    
+    return switch (c) 
+    {
+      case TAnonymous(fields):   convFields(fields).map(ComplexType.TAnonymous);
+      case TExtend(p, fields):   convTypePath(p).zipSuccess(convFields(fields)).map(TExtend.tupled());
+      case TFunction(args, ret): funcToFullQualified(args, ret);
+      case TOptional(t):         ct(t).map(TOptional);
+      case TParent(t):           ct(t).map(TParent);
+      case TPath(p):             convTypePath(p).map(TPath);
     }
   }
   
-	public static function typeToComplexType (t:haxe.macro.Type, ?pos:Position):ComplexType
+	public static function typeToComplexType (t:MType, ?pos:Position):Validation<Error, ComplexType>
 	{
-    if (pos == null) pos = Context.currentPos();
-    
+    var p = if (pos == null) Context.currentPos() else pos;
     var s = Print.type( t, true);
-    
-    
-    
-		return stringToComplexType(s, pos);
+		return stringToComplexType(s, p);
 	}
 	
 	
-	public static function exprToType (e:Expr) {
-    
-		return switch (e.expr) {
-			case EConst(c):
-				switch (c) {
-					case CType(t):
-						stringToComplexType(t, e.pos);
-					default: throw "Expression " + Print.expr(e) + " is not a Type";
-				}
-      case EType(_, _):
-        stringToComplexType(Print.expr(e), e.pos);
-			default: throw "Expression " + Print.expr(e) + " is not a Type";
-		}
-	}
-  /* from MacroTools */
-  /*
-  public static function exprToType(expr:Expr):Type
+	public static function exprToType (e:Expr):Option<ComplexType> return switch (e.expr) 
+  {
+    case EConst(c): switch (c) 
     {
-      return 
-        try switch (expr.expr) 
-          {
-            case EConst(c):
-              switch (c) {
-                case CType(s): Context.getType(s);
-                default: throw expr;
-              }
-            default: throw expr;
-          } 
-        catch (e:Dynamic) 
-          {
-            throw "Unsupported Expression, Type expected";
-          }
-      
+      case CType(t): stringToComplexType(t, e.pos).option();
+      default:       None;
     }
-  */
+    case EType(_, _): stringToComplexType(Print.expr(e), e.pos).option();
+    default:          None;
+  }
 	
 }
 

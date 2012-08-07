@@ -2,12 +2,12 @@ package scuts.mcore.extensions;
 
 import haxe.macro.Expr;
 
-import scuts.mcore.extensions.ExprDefExt;
+import scuts.mcore.extensions.ExprDefs;
 import utest.Assert;
 
-private typedef E = ExprDefExt;
+private typedef E = ExprDefs;
 
-class ExprDefExtTest 
+class ExprDefsTest 
 {
 
   public function new() 

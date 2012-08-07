@@ -9,31 +9,26 @@ import haxe.macro.Expr;
 class Modify 
 {
 
-  public static function modifyEConstCIdentValue(e:Expr, modifier:String->ExprDef):Void 
+  public static function modifyEConstCIdentValue(e:Expr, modifier:String->ExprDef):Void switch (e.expr) 
   {
-    switch (e.expr) {
-      case EConst(c):
-        switch (c) {
-          case CIdent(ident):
-            e.expr = modifier(ident);
-          default:
-        }
+    case EConst(c): switch (c) 
+    {
+      case CIdent(ident): e.expr = modifier(ident);
       default:
     }
+    default:
   }
   
-  public static function modifyEConstCStringValue(e:Expr, modifier:String->ExprDef):Void 
+  public static function modifyEConstCStringValue(e:Expr, modifier:String->ExprDef):Void switch (e.expr) 
   {
-    switch (e.expr) {
-      case EConst(c):
-        switch (c) {
-          case CString(s):
-            e.expr = modifier(s);
-          default:
-        }
+    case EConst(c): switch (c) 
+    {
+      case CString(s): e.expr = modifier(s);
       default:
     }
+    default:
   }
+
   
 }
 

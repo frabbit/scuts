@@ -5,7 +5,7 @@ package scuts.mcore.extensions;
 #elseif (display || macro)
 import haxe.macro.Expr;
 
-class AccessExt 
+class Accesses 
 {
 
   public static function eq (a:Access, b:Access):Bool 

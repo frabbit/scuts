@@ -168,11 +168,11 @@ class Select
   
   public static function selectEBinopLeftExpr (e:Expr):Option<Expr> {
     var val = selectEBinopExprs(e);
-    return val.isSome() ? val.value()._1.toOption() : None;
+    return val.isSome() ? val.extract()._1.toOption() : None;
   }
   public static function selectEBinopRightExpr (e:Expr):Option<Expr> {
     var val = selectEBinopExprs(e);
-    return val.isSome() ? val.value()._2.toOption() : None;
+    return val.isSome() ? val.extract()._2.toOption() : None;
   }
   
 

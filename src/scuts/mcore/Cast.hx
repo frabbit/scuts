@@ -12,23 +12,27 @@ import neko.FileSystem;
 import neko.io.File;
 import scuts.core.Log;
 
-using scuts.mcore.extensions.ExprExt;
+using scuts.mcore.extensions.Exprs;
 using scuts.mcore.extensions.Strings;
 using scuts.core.extensions.Arrays;
 
 
-class Cast 
+class Cast
 {
   
   public static function unsafeCastToComplexType (expr:Expr, type:ComplexType, ?pos:Position):Expr
   {
-    var f = Make.funcExpr([Make.funcArg("x", false, TPath(Make.typePath([], "Dynamic")))], type, "x".asConstIdent().asReturn());
-    return Make.call(f, [expr]);
+    //var args = [Make.funcArg("x", false, TPath(Make.typePath([], "Dynamic")))];
+    //var f = Make.funcExpr(args, type, "x".asConstIdent().asReturn());
+    
+    return macro inline function (x:Dynamic):$type return x;
+    
+    //return Make.call(f, [expr]);
   }
   
   public static function unsafeCastFromTo (expr:Expr, fromType:Type, toType:Type, wildcards:Array<Type>, ?pos:Position):Expr
   {
-     return makeCastFromTo(expr, fromType, toType, wildcards, false, pos);
+    return makeCastFromTo(expr, fromType, toType, wildcards, false, pos);
   }
   
   public static function safeCastFromTo (expr:Expr, fromType:Type, toType:Type, wildcards:Array<Type>, ?pos:Position):Expr
@@ -38,9 +42,9 @@ class Cast
   
   
   /**
-   * Returns an expression that performs an cast on {expr} from {fromType} to {toType}. 
+   * Returns an expression that performs a cast on {expr} from {fromType} to {toType}. 
    * This functions generates a new extern Class with a unique name based on it's parameters. The class contains 
-   * one function doCast which performs an inlined cast (a no-op operation). After generation an expression 
+   * one function doCast which performs an inlined cast (a no-op operation if {safe} is false). After generation an expression 
    * is returned that calls the doCast function with expr as argument. 
    * The argument safe controls the type of cast, safe or unsafe cast (not checked by compiler).
    * 
@@ -54,21 +58,34 @@ class Cast
    */
   static function makeCastFromTo (expr:Expr, fromType:Type, toType:Type, wildcards:Array<Type>, safe:Bool, pos:Position):Expr 
   {
-    var id = Context.signature( [Print.type(toType), Print.type(fromType), wildcards.map(function (x) return Print.type(x))] );
+    var wildcardStr = wildcards.map(function (x) return Print.type(x, true, [x])).join(",");
     
-    var clName = "TypedCast__" + (safe ? "safe" : "unsafe") + "__" + id;
+    var id = Context.signature( [Print.type(toType), Print.type(fromType), wildcardStr] );
+    
+    var safeStr = (safe ? "safe" : "unsafe");
+    
+    var clName = "TypedCast__" + safeStr + "__" + id;
 
-    if (!FileSystem.exists(MContext.getCacheFolder() + "/" + clName + ".hx")) 
+    var cacheFolder = MContext.getCacheFolder();
+    
+    if (!FileSystem.exists(cacheFolder + "/" + clName + ".hx")) 
     {
       var fromTypeStr = Print.type(fromType, true, wildcards);
       var ct = Print.type(toType, true, wildcards);
 
-      var wildcardsStr = "<" + Constants.UNKNOWN_T_MONO
-        + (wildcards.length > 0 ? "," + wildcards.map(function (x) return Print.type(x, true, [x])).join(",") : "")
-        + ">";
+      var wildcardsStr2 = 
+      {
+        var wildcardsInner = if (wildcards.length > 0) "," + wildcardStr else "";
+        "<" + Constants.UNKNOWN_T_MONO + wildcardsInner + ">";
+      }
       
-      var cl = "extern class " + clName + "\n{\n\tpublic static inline function doCast " + wildcardsStr + "(e:" + fromTypeStr + "):" + ct + " return " + (safe ? "" : "cast ") + "e\n}";
-      var out = File.write(MContext.getCacheFolder() + "/" + clName + ".hx", false);
+      var cl = "extern class " + clName + "\n{\n" + 
+        "\tpublic static inline function doCast " + wildcardsStr2 + "(e:" + fromTypeStr + "):" + ct + 
+        "\n\t\t return " + (safe ? "" : "cast ") + "e" + 
+        "\n}";
+        
+      var out = File.write(cacheFolder + "/" + clName + ".hx", false);
+      
       out.writeString(cl);
       out.close();
     }
@@ -78,7 +95,6 @@ class Cast
 
     return call;
   }
-  
 }
 
 

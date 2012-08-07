@@ -6,12 +6,12 @@ import haxe.macro.Expr;
 
 private typedef FunctionParam = {name:String, constraints:Array<ComplexType>};
 
-class FunctionParamExt 
+class FunctionParams 
 {
   public static function eq (a:FunctionParam, b:FunctionParam):Bool 
   {
     return Strings.eq(a.name, b.name)
-      && Arrays.eq(a.constraints, b.constraints, ComplexTypeExt.eq);
+      && Arrays.eq(a.constraints, b.constraints, ComplexTypes.eq);
   }
   
   

@@ -10,12 +10,11 @@ import scuts.mcore.Make;
 
 private typedef AnonField = { field : String, expr : Expr };
 
-class AnonFieldExt 
+class AnonFields
 {
   public static function eq (a:AnonField, b:AnonField):Bool 
   {
-    return Strings.eq(a.field, b.field)
-      && ExprExt.eq(a.expr, b.expr);
+    return Strings.eq(a.field, b.field) && Exprs.eq(a.expr, b.expr);
   }
   
   public static function next (cur:AnonField, field:String, expr:Expr):Array<AnonField>
@@ -24,7 +23,8 @@ class AnonFieldExt
   }
 }
 
-class ArrayAnonObjFieldExt {
+class ArrayAnonObjFields 
+{
   public static function addBack (cur:Array<AnonField>, field:String, expr:Expr):Array<AnonField>
   {
     return cur.concat([Make.anonField(field, expr)]);

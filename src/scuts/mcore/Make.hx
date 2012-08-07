@@ -69,12 +69,12 @@ class Make
     
   public static function funcExpr (
     ?name:String, ?args:Array<FunctionArg>, ?ret:ComplexType, ?eexpr:Expr, 
-    ?params:Array<{name:String, constraints:Array<ComplexType>}>, ?pos:Position) 
+    ?params:Array<{ ?params : Array<TypeParamDecl>, name:String, ?constraints:Array<ComplexType>}>, ?pos:Position) 
   {
     return expr(EFunction(name, func(args, ret, eexpr, params)), pos);
   }
   
-  public static function func (?args:Array<FunctionArg>, ?ret:ComplexType, ?expr:Expr, ?params:Array<{name:String, constraints:Array<ComplexType>}>) {
+  public static function func (?args:Array<FunctionArg>, ?ret:ComplexType, ?expr:Expr, ?params:Array<{?params : Array<TypeParamDecl>, name:String, ?constraints:Array<ComplexType>}>) {
     return {
       args: args == null ? [] : args,
       ret: ret,

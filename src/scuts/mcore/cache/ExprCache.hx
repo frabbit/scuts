@@ -12,7 +12,7 @@ import haxe.macro.Expr;
 import haxe.PosInfos;
 import haxe.Timer;
 import neko.Lib;
-import scuts.core.extensions.PosInfosExt;
+import scuts.core.extensions.PosInfosTools;
 import scuts.mcore.Print;
 
 using StringTools;

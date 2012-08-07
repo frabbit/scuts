@@ -4,7 +4,7 @@ import haxe.macro.Expr;
 import scuts.core.extensions.Arrays;
 import scuts.core.extensions.Strings;
 
-class TypePathExt 
+class TypePaths 
 {
 
   public static function eq (a:TypePath, b:TypePath):Bool 
@@ -12,7 +12,7 @@ class TypePathExt
     return Strings.eq(a.name,b.name)
         && Arrays.eq(a.pack, b.pack, Strings.eq)
         && ((a.sub == null && b.sub == null) || Strings.eq(a.sub, b.sub))
-        && Arrays.eq(a.params, b.params, TypeParamExt.eq);
+        && Arrays.eq(a.params, b.params, TypeParams.eq);
   }
   
 }

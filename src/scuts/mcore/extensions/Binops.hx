@@ -2,7 +2,7 @@ package scuts.mcore.extensions;
 
 import haxe.macro.Expr;
 
-class BinopExt 
+class Binops 
 {
 
   public static function eq (a:Binop, b:Binop):Bool 

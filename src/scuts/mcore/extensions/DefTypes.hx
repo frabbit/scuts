@@ -6,8 +6,9 @@ import scuts.core.extensions.Strings;
 using scuts.core.extensions.Strings;
 using scuts.core.extensions.Bools;
 using scuts.core.extensions.Arrays;
-using scuts.mcore.extensions.TypeExt;
-class DefTypeExt 
+using scuts.mcore.extensions.Types;
+
+class DefTypes 
 {
 
   public static function eq(t1:DefType, t2:DefType) 

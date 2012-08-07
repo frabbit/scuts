@@ -10,13 +10,13 @@ class MetadataEntryExt
   public static function eq (a:MetadataEntry, b:MetadataEntry):Bool 
   {
     return Strings.eq(a.name, b.name)
-      && PositionExt.eq(a.pos, b.pos)
-      && Arrays.eq(a.params, b.params, ExprExt.eq);
+      && Positions.eq(a.pos, b.pos)
+      && Arrays.eq(a.params, b.params, Exprs.eq);
   }
   
 }
 
-class MetadataExt 
+class Metadatas 
 {
 
   public static function eq (a:Metadata, b:Metadata):Bool 
