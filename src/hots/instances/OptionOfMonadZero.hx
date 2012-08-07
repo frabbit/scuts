@@ -11,9 +11,9 @@ class OptionOfMonadZero extends MonadZeroAbstract<Option<In>>
 {
   public function new () super(OptionOfMonad.get())
   
-  override public inline function zero <A>():OptionOf<A> {
-    var v:Option<A> = None;
-    return v.box();
+  override public inline function zero <A>():OptionOf<A> 
+  {
+    return None.box();
   }
   
 }

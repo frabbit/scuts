@@ -10,7 +10,7 @@ import hots.classes.Functor;
 
 
 
-using hots.macros.Box;
+using hots.box.ArrayBox;
 
 
 
@@ -29,21 +29,23 @@ class ArrayTOfApplicative<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
    */
   override public function apply<A,B>(f:ArrayTOf<M,A->B>, of:ArrayTOf<M,A>):ArrayTOf<M,B> 
   {
-    var f2 = appM.map(f.unbox(), function (x:Array<A->B>) 
+    
+    function mapInner (x:Array<A->B>) 
     {
-      return function (a:Array<A>) {
+      return function (a:Array<A>) 
+      {
         var res = [];
-        for (a1 in a) {
-          for (f1 in x) {
+        for (a1 in a) 
+          for (f1 in x) 
             res.push(f1(a1));
-          }
-        }
+
         return res;
       }
-    });
+    }
     
-    return appM.apply(f2, of.unbox()).box();
-
+    var newF = appM.map(f.unboxT(), mapInner);
+    
+    return appM.apply(newF, of.unboxT()).boxT();
   }
 
 }

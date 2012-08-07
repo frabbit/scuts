@@ -2,37 +2,28 @@ package hots.box;
 import hots.In;
 import hots.instances.ArrayOf;
 import hots.instances.ArrayTOf;
-import hots.macros.Box;
+import hots.instances.KleisliOf;
+
 import hots.Of;
+
 
 
 class ArrayBox 
 {
-  public static inline function box <X>(a:Array<X>):ArrayOf<X> {
-    #if scutsDebug
-    return Box.box(a);
-    #else
-    return cast a;
-    #end
-  }
   
-  public static inline function unbox <X>(a:ArrayOf<X>):Array<X> {
-    #if scutsDebug
-    return Box.unbox(a);
-    #else
-    return cast a;
-    #end
-    
-  }
+  public static inline function asKleisli <M,A,B>(f:A->Array<B>):KleisliOf<Array<In>,A,B> return cast f
   
-  public static inline function boxF <X,Y>(a:X->Array<Y>):X->ArrayOf<Y> return cast a // Box.boxF(a)
+  public static inline function runKleisli <M,A,B>(f:KleisliOf<Array<In>,A,B>):A->Array<B> return cast f
   
-  public static function unboxF <A,B>(e:A->ArrayOf<B>):A->Array<B> {
-    return cast e; // type(Box.unboxF( e));
-  }
+  public static inline function box <X>(a:Array<X>):ArrayOf<X> return cast a
   
+  public static inline function unbox <X>(a:ArrayOf<X>):Array<X> return cast a
   
-  public static inline function boxT <X,Y>(a:Of<X, Array<Y>>):ArrayTOf<X,Y> return cast a //Box.box(a)
+  public static inline function boxF <X,Y>(a:X->Array<Y>):X->ArrayOf<Y> return cast a
   
-  public static inline function unboxT <X,Y>(a:ArrayTOf<X,Y>):Of<X, Array<Y>> return cast a// Box.unbox(a)
+  public static inline function unboxF <A,B>(e:A->ArrayOf<B>):A->Array<B> return cast e
+  
+  public static inline function boxT <X,Y>(a:Of<X, Array<Y>>):ArrayTOf<X,Y> return cast a
+  
+  public static inline function unboxT <X,Y>(a:ArrayTOf<X,Y>):Of<X, Array<Y>> return cast a
 }

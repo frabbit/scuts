@@ -12,9 +12,12 @@ class DualSemigroup<T> extends SemigroupAbstract<T>
   var semi:Semigroup<T>;
   
   public function new (s:Semigroup<T>) 
-    this.semi = s
+  {
+    this.semi = s;
+  }
   
-  override public inline function append (a1:T, a2:T):T {
+  override public inline function append (a1:T, a2:T):T 
+  {
     return semi.append(a2, a1);
   }
   

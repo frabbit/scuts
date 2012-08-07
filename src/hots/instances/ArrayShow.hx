@@ -4,15 +4,18 @@ import hots.classes.ShowAbstract;
 
 using scuts.core.extensions.Arrays;
 
-class ArrayShow<T> extends ShowAbstract<Array<T>> {
+class ArrayShow<T> extends ShowAbstract<Array<T>> 
+{
 
   private var showT:Show<T>;
   
-  public function new (showT:Show<T>) {
+  public function new (showT:Show<T>) 
+  {
     this.showT = showT;
   }
   
-  override public function show (v:Array<T>):String {
+  override public function show (v:Array<T>):String 
+  {
     return "[" + v.map(function (x) return showT.show(x)).join(", ") + "]";
   }
 }

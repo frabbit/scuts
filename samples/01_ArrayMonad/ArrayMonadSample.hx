@@ -9,7 +9,7 @@ import hots.instances.ArrayOfMonad;
 import hots.instances.ArrayOfMonadZero;
 
 using hots.extensions.MonadExt;
-using hots.macros.TcContext;
+using hots.macros.Resolver;
 using hots.macros.Box;
 
 class ArrayMonadSample 

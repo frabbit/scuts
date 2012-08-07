@@ -8,8 +8,8 @@ import neko.FileSystem;
 import neko.io.File;
 import scuts.core.types.Tup2;
 import scuts.mcore.Context;
-import scuts.mcore.extensions.ExprExt;
-import scuts.mcore.extensions.TypeExt;
+import scuts.mcore.extensions.Exprs;
+import scuts.mcore.extensions.Types;
 import scuts.mcore.Make;
 import scuts.mcore.MContext;
 import scuts.mcore.MType;
@@ -23,7 +23,7 @@ using scuts.core.extensions.Arrays;
 using scuts.core.extensions.Iterators;
 using scuts.core.extensions.Options;
 using scuts.core.extensions.Eithers;
-using scuts.mcore.extensions.ExprExt;
+using scuts.mcore.extensions.Exprs;
 using scuts.core.extensions.Hashs;
 
 #end
@@ -48,6 +48,7 @@ class GenEqEnum
   // generates a Eq class for an Enum
   public static function build(t:Type, en:EnumType, params:Array<Type>):Either<GenError, Type>
   {
+    
     var data = getClassData(t, en, params);
     
     var classData = buildClass(data);
@@ -68,10 +69,8 @@ class GenEqEnum
   {
     
     var startVar:Int = "a".charCodeAt(0);
-  
-    
+
     var deps = data.dependencies;
-    
     
     var instName = MType.getFullQualifiedTypeName(data.enumType);
     
@@ -120,27 +119,36 @@ class GenEqEnum
     
     var equalsSwitch = "return switch (x1) {\n\t\t\t";
     
-    var cases = data.constructs.map(function (x) {
+    function createCases (x:ConstructorData) 
+    {
       return switch (x) {
         case Simple(name, _): "case " + name + ": switch (x2) { case " + name + ": true; default: false; }";
         case Complex(name, _, params): 
           var varStart = "a".charCodeAt(0);
           var args1 = params.mapWithIndex(function (x, i) return String.fromCharCode(varStart + i) + "1");
           var args2 = params.mapWithIndex(function (x, i) return String.fromCharCode(varStart + i) + "2");
-          var comps = params.mapWithIndex(function (x, i) {
+          
+          function createExpr (x:{t:Type, opt:Bool}, i:Int) {
             var type = x.t;
             var arg1 = String.fromCharCode(varStart + i) + "1";
             var arg2 = String.fromCharCode(varStart + i) + "2";
             return "hots.macros.Resolver.tc(" + arg1 + ", hots.classes.Eq, [" + memberArgs.join(",") + "]).eq(" + arg1 + "," + arg2 + ")";
-          });
-          var res = "case " + name + "(" + args1.join(",") + "): switch (x2) { case " + name + "(" + args2.join(",") + "): " + comps.join(" && ") + "; default: false;}";
+          }
           
-          return res;
+          var comps = params.mapWithIndex(createExpr);
+          var res = "case " + name + "(" + args1.join(",") + "): switch (x2)"
+          + " { case " + name + "(" + args2.join(",") + "): " + comps.join(" && ") + "; default: false;}";
+          
+          res;
         
         //return "";
       }
-    });
-    var cl = "class " + classNameValid + classParamsStr + " extends " + extendsType + " {\n\n" + members.join("\n") + "\n\n\t" + constuctor + "\n\n\t" + funcSignature + equalsSwitch + cases.join("\n\t\t\t") + "\n\t\t}\n\t}\n}";
+    }
+    
+    var cases = data.constructs.map(createCases);
+    var cl = "class " + classNameValid + classParamsStr + " extends " + extendsType + " {\n\n" 
+      + members.join("\n") + "\n\n\t" + constuctor + "\n\n\t" 
+      + funcSignature + equalsSwitch + cases.join("\n\t\t\t") + "\n\t\t}\n\t}\n}";
     
     
     return Tup2.create(classNameValid, cl);
@@ -151,15 +159,16 @@ class GenEqEnum
   
   static function getClassData (t:Type, en:EnumType, params:Array<Type>):ClassData
   {
-    var constructs = en.constructs
-      .mapToArray(function (key, elem) {
-        return switch (elem.type) {
-          case TFun(args,_): Complex(elem.name, elem.index, args.map(function (a) return { t:a.t, opt:a.opt}));
-          case TEnum(_, _): Simple(elem.name, elem.index);
-          default: Scuts.unexpected();
-            
-        }
-      });
+    function toConstructorData (key, elem) return switch (elem.type) 
+    {
+      case TFun(args,_): 
+        Complex(elem.name, elem.index, args.map(function (a) return { t:a.t, opt:a.opt}));
+      case TEnum(_, _): 
+        Simple(elem.name, elem.index);
+      default: Scuts.unexpected();
+    }
+    
+    var constructs = en.constructs.mapToArray(toConstructorData);
     
     return {
       type : t,

@@ -11,15 +11,15 @@ import hots.Of;
 import scuts.mcore.cache.ExprCache;
 import scuts.mcore.Cast;
 import scuts.mcore.MContext;
-import scuts.mcore.extensions.TypeExt;
+import scuts.mcore.extensions.Types;
 import scuts.mcore.Make;
 import scuts.mcore.Parse;
 import scuts.mcore.Print;
 import scuts.Scuts;
 
 using scuts.core.extensions.Options;
-using scuts.mcore.extensions.TypeExt;
-using scuts.mcore.extensions.ExprExt;
+using scuts.mcore.extensions.Types;
+using scuts.mcore.extensions.Exprs;
 using scuts.core.extensions.Eithers;
 import scuts.core.types.Either;
 using scuts.core.extensions.Dynamics;
@@ -27,29 +27,22 @@ using scuts.core.extensions.Arrays;
 using scuts.core.extensions.Iterators;
 using scuts.core.Log;
 using scuts.mcore.Check;
-private typedef U = hots.macros.utils.Utils;
-enum BoxError {
-  TypeIsNoContainer(t:Type);
-  InnerTypeIsNoContainer(t:Type, inner:Type);
-}
 
-enum UnboxError {
-  TypeIsNoOfType(t:Type);
-  InvalidOfType(t:Type);
-  ConversionError(t:Type);
-}
-#end
+import hots.macros.Data;
+private typedef U = hots.macros.utils.Utils;
+
+using scuts.core.extensions.Functions;
+
 
 
 
 class Box 
 {
   
-  #if (macro || display)
+  
   static var cache = new ExprCache(true).enableCache(false) #if !display .printOnGenerate("Box Times") #end;
-  #end
+  
   /**
-    
     1. Check if the type is an Of type, if yes goto 4
     2. Check if type wraps another type, if no goto 9
     3. Convert the type M<A> into Of<M, A> and goto 8
@@ -60,24 +53,24 @@ class Box
     8. Error boxing not possible
    
    */
-  @:macro public static function box(e:Expr, ?times:Int = 1) 
+  public static function box(e:Expr, ?times:Int = 1) 
   {
     return (0...times).foldLeft(function (acc, _) return box1(acc), e);
   }
   
   
-  @:macro public static function boxF<A,B>(e:ExprRequire<A->B>, ?times:Int = 1) 
+  public static function boxF<A,B>(e:ExprRequire<A->B>, ?times:Int = 1) 
     return (0...times).foldLeft(function (acc, _) return boxF1(acc), e)
   
-  @:macro public static function unboxF<A,B,C>(e:Expr /*ExprRequire<A->Of<B,C>>*/, ?times:Int = 1) 
+  public static function unboxF<A,B,C>(e:Expr /*ExprRequire<A->Of<B,C>>*/, ?times:Int = 1) 
     return (0...times).foldLeft(function (acc, _) return unboxF1(acc), e)
   
-  @:macro public static function unbox<A,B>(e:Expr /*ExprOf<Of<A,B>>*/, ?times:Int = 1) {
+  public static function unbox<A,B>(e:Expr /*ExprOf<Of<A,B>>*/, ?times:Int = 1) {
     return (0...times).foldLeft(function (acc, _) return unbox1(acc), e);
   }
   
   
-  #if (macro || display)
+  
   
   public static function unbox1(e:Expr):Expr 
   {
@@ -88,8 +81,8 @@ class Box
       var type = MContext.followAliases(o.extract());
       //trace(type);
       return unboxOfTypeToType(type)
-        .mapRight(function (x) return unsafeCast(e, type, x))
-        .getOrElse(function (err) return handleUnboxError(err, e));
+        .mapRight(unsafeCast.partial1_2(e, type))
+        .getOrElse(handleUnboxError.partial2(e));
     }
     return cache.call(f, function () return [Print.expr(e), e.pos]);
   }
@@ -102,8 +95,8 @@ class Box
       var newType = boxTypeToOfType(type);
     
       return newType
-        .mapRight(function (x) return unsafeCast(e, type,x))
-        .getOrElse(function (err) return handleBoxError(err, e));
+        .mapRight(unsafeCast.partial1_2(e, type))
+        .getOrElse(handleBoxError.partial2(e));
     }
     return cache.call(f, function () return [Print.expr(e), e.pos]);
   }
@@ -112,9 +105,11 @@ class Box
   {
     function f() 
     {
-      var errorNoFunction = function () return Scuts.macroError("Argument " + Print.expr(e) + " must be a function with 1-arity");
+      function errorNoFunction () return Scuts.macroError("Argument " + Print.expr(e) + " must be a function with 1-arity");
       
-      var type = MContext.typeof(e).getOrElse(function () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos));
+      function errorType () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos);
+      
+      var type = MContext.typeof(e).getOrElse(errorType);
       
       var fnParts = type.asFunction().getOrElse(errorNoFunction);
 
@@ -126,22 +121,24 @@ class Box
         case Right(type): unsafeCast(e, type, TFun(fnParts._1, type));
       };
     }
+    //return f();
     return cache.call(f,function () return e);
   }
   
   public static function boxF1 (e:Expr) 
   {
+    function errorNoFunction () return Scuts.macroError("Argument " + Print.expr(e) + " must be a function with 1-arity");
+    
     function f() 
     {
-      var errorNoFunction = function () return Scuts.macroError("Argument " + Print.expr(e) + " must be a function with 1-arity");
-      
       var type = MContext.typeof(e).getOrElse(function () return Scuts.macroError("Cannot determine the type of expression " + e,e.pos));
       
       var fnParts = type.asFunction().getOrElse(errorNoFunction);
 
       var retBoxed = boxTypeToOfType(fnParts._2);
-       
-      return switch (retBoxed) {
+      
+      return switch (retBoxed) 
+      {
         case Left(error): handleBoxError(error, e);
         case Right(type): unsafeCast(e, type, TFun(fnParts._1, type));
       };
@@ -184,13 +181,11 @@ class Box
       var innerType = MContext.followAliases(U.getOfElemType(type).extract());
       var outerType = MContext.followAliases(U.getOfContainerType(type).extract());
 
-      
-      
       if (U.isContainerType(innerType)) 
       {
         var innerTypeAsOf = U.convertToOfType(innerType);
         
-        var flattened = U.replaceOfElemType(type, innerTypeAsOf).map( function (x) return U.flattenOfType(x));
+        var flattened = U.replaceOfElemType(type, innerTypeAsOf).map(U.flattenOfType);
         
         Right(flattened.extract());
       } 
@@ -231,38 +226,43 @@ class Box
    */
   public static function unboxOfTypeToType (type:Type):Either<UnboxError, Type> 
   {
+    function err () return TypeIsNoOfType(type);
     
-    var err = function () return TypeIsNoOfType(type);
-    return U.getOfParts(MContext.followAliases(type)) // 1
-    .toRight(err) 
-    .flatMapRight(function (t) // 2
+    function unboxRootOfType (t) // 2
     { 
       var container = MContext.followAliases(t._1);
       var elemType = MContext.followAliases(t._2);
+      
       return if (U.isOfType(container)) //5
       {
-        U.getOfElemType(container).map(function (x) return MContext.followAliases(x))
-        .toRight(err)
-        .flatMapRight(function (innerElemType) {
+        function unboxElemType (innerElemType:Type) 
+        {
           return if (U.hasInnerInType(innerElemType)) // 6
           {
-            
             U.getOfElemType(type)
-            .flatMap(function (x) return U.replaceFirstInType(innerElemType, x)) // we have D<E>
-            .flatMap(function (x) return U.replaceOfElemType(container, x))
+            .flatMap(U.replaceFirstInType.partial1(innerElemType)) // we have D<E>
+            .flatMap(U.replaceOfElemType.partial1(container))
             .toRight(err);
           } 
           else {
             // the current Of container type must have more than one In Type, which means a higher category (Arrow instances f.e.).
             // We need to unbox the container type first and then we can unbox actual type.
             
-            unboxOfTypeToType(container)
-            .flatMapRight(function (x) {
+            function unboxActual (x:Type) 
+            {
               var of = U.makeOfType(x, elemType);
               return unboxOfTypeToType(of);
-            });
+            }
+            
+            unboxOfTypeToType(container)
+            .flatMapRight(unboxActual);
           }
-        });
+        }
+        
+        U.getOfElemType(container)
+        .map(MContext.followAliases)
+        .toRight(err)
+        .flatMapRight(unboxElemType);
       } 
       else // 3
       {
@@ -273,10 +273,14 @@ class Box
         }
         else Left(InvalidOfType(type));
       }
-    });
+    }
+
+    return 
+      U.getOfParts(MContext.followAliases(type)) // 1
+      .toRight(err) 
+      .flatMapRight(unboxRootOfType);
   }
   
-
   static function unsafeCast (e:Expr, fromType:Type, toType:Type) 
   {
     var wildcards = MContext.getLocalTypeParameters(toType);
@@ -284,6 +288,7 @@ class Box
     return Cast.unsafeCastFromTo(e, MContext.followAliases(fromType), toType, wildcards);
   }
 
-  #end
+  
   
 }
+#end

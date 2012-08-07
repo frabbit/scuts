@@ -22,7 +22,6 @@ class Tup3Monoid<A,B,C> extends MonoidAbstract<Tup3<A,B,C>>
     this.m3 = m3;
   }
   
-  
   override public inline function empty ():Tup3<A,B,C> 
   {
     return Tup3.create(m1.empty(), m2.empty(), m3.empty());

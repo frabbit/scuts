@@ -2,6 +2,7 @@ package hots.instances;
 
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
+import scuts.core.extensions.Eithers;
 import scuts.core.types.Either;
 
 class EitherEq<A,B> extends EqAbstract<Either<A,B>> {
@@ -15,14 +16,10 @@ class EitherEq<A,B> extends EqAbstract<Either<A,B>> {
     this.eqB = eqB;
   }
   
-  override public function eq (a:Either<A,B>, b:Either<A,B>):Bool 
+  override public function eq (a:Either<A,B>, b:Either<A,B>):Bool return switch (a) 
   {
-    return switch (a) {
-      case Left(l1):
-        switch (b) { case Left(l2): eqA.eq(l1, l2); default: false;}
-      case Right(r1):
-        switch (b) { case Right(r2): eqB.eq(r1, r2); default: false;}
-    }
+    return Eithers.eq(a, b, eqA.eq, eqB.eq);
   }
+
   
 }

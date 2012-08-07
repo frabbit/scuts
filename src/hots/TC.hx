@@ -3,6 +3,6 @@ package hots;
 
 
 #if !macro
-@:autoBuild(hots.macros.Registry.build())
+@:autoBuild(hots.Hots.register())
 #end
 interface TC {}

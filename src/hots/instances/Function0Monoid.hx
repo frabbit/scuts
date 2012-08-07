@@ -17,7 +17,8 @@ class Function0Monoid<A> extends MonoidAbstract<Void->A>
     this.monoidA = monoidA;
   }
   
-  override public inline function empty ():Void->A {
-    return function () return monoidA.empty();
+  override public inline function empty ():Void->A 
+  {
+    return monoidA.empty;
   }
 }

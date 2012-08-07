@@ -11,7 +11,7 @@ import scuts.core.extensions.Arrays;
 import hots.classes.Functor;
 
 
-using hots.macros.Box;
+using hots.box.ArrayBox;
 
 class ArrayTOfPointed<M> extends PointedAbstract<Of<M,Array<In>>> 
 {
@@ -28,7 +28,7 @@ class ArrayTOfPointed<M> extends PointedAbstract<Of<M,Array<In>>>
    */
   override public function pure<A>(x:A):ArrayTOf<M,A> 
   {
-    return pointedM.pure([x]).box();
+    return pointedM.pure([x]).boxT();
   }
   
 

@@ -6,7 +6,8 @@ import scuts.data.LazyList;
 
 
 
-interface Enumeration<T> implements TC {
+interface Enumeration<T> implements TC 
+{
   public function pred (a:T):T;
   
   public function succ (a:T):T;

@@ -13,24 +13,26 @@ import scuts.core.macros.Lazy;
 import scuts.core.types.Option;
 import scuts.core.types.Tup2;
 import scuts.mcore.MContext;
-import scuts.mcore.extensions.ClassTypeExt;
-import scuts.mcore.extensions.EnumTypeExt;
-import scuts.mcore.extensions.TypeExt;
+import scuts.mcore.extensions.ClassTypes;
+import scuts.mcore.extensions.EnumTypes;
+import scuts.mcore.extensions.Types;
 import scuts.mcore.Parse;
 import scuts.mcore.Print;
 import scuts.Scuts;
 import scuts.core.types.Either;
 using scuts.core.extensions.Eithers;
 using scuts.core.extensions.Options;
-using scuts.mcore.extensions.TypeExt;
+using scuts.mcore.extensions.Types;
 using scuts.core.extensions.Arrays;
-using scuts.mcore.extensions.ExprExt;
+using scuts.mcore.extensions.Exprs;
 using scuts.mcore.extensions.Strings;
 using scuts.core.extensions.Dynamics;
-using scuts.mcore.extensions.ComplexTypeExt;
-using scuts.mcore.extensions.FieldTypeExt;
+using scuts.mcore.extensions.ComplexTypes;
+using scuts.mcore.extensions.FieldTypes;
 using scuts.core.extensions.Functions;
 
+using scuts.core.extensions.Validations;
+import scuts.core.types.Validation;
 using scuts.core.Log;
 private typedef D = Dynamics;
 
@@ -104,7 +106,7 @@ class Utils
   
   static function typeIsHotsInType (t:Type) 
   {
-    return TypeExt.eq(hotsInType(), t);
+    return Types.eq(hotsInType(), t);
   }
   
   public static function normalizeOfTypes (type:Type):Type 
@@ -183,7 +185,7 @@ class Utils
   public static function containsType (type:Type, search:Type):Bool
   {
     
-    return TypeExt.eq(type, search) || switch (type) {
+    return Types.eq(type, search) || switch (type) {
       case TInst(t, params):
         params.any( containsType.partial2(search));
       case TEnum(t, params):
@@ -257,11 +259,11 @@ class Utils
 
       // remove the founded type from search and add it to the result
       function typeFound( x:Tup2<Type, Int> ) 
-        return Tup2.create(search.removeElemAt(x._2), found.append(x._1));
+        return Tup2.create(search.removeElemAt(x._2), found.appendElem(x._1));
       
       return 
         search
-        .someWithIndex( TypeExt.eq.partial2(type))
+        .someWithIndex( Types.eq.partial2(type))
         .map( typeFound )
         .getOrElse(findInner);
     }
@@ -287,7 +289,7 @@ class Utils
 
   public static function remap (type:Type, mapping:Array<Tup2<Type, Type>>):Type 
   {
-    var canMap     = mapping.some(function (x) return TypeExt.eq(x._1, type));
+    var canMap     = mapping.some(function (x) return Types.eq(x._1, type));
     var remapParam = remap.partial2(mapping);
     var remapArg   = function (a) return { name: a.name, opt:a.opt, t : remap(a.t, mapping)};
     
@@ -376,32 +378,34 @@ class Utils
   }
   
   
-  
   public static function getFirstPath (from:ClassType, to:ClassType):Option<Path> 
   {
-    function loop(from:ClassType, to:ClassType, path:Path) 
+    
+    function loop(from:ClassType, to:ClassType, path:Path):Option<Path> 
     {
-      return if (ClassTypeExt.eq(from, to)) {
-        Some(path);
-      } else {
-        var fromSuper = function () return 
-          if (from.superClass != null)
-            loop(from.superClass.t.get(), to, path.concat([SuperClass]))
-          else None;
-        
-        var fromInterf = function () 
+     
+      
+      function findInSuperOrInterface () 
+      {
+        function findInSuper () 
         {
-          return from.interfaces.foldLeftWithIndex(
-            function (acc:Option<Path>, cur, index) 
-            {
-              return acc.orElse(
-                function () return loop(cur.t.get(), to, path.concat([InterfaceAt(index)]))
-              );
-            }, None);
+          var sc = from.superClass;
+          return if (sc != null) loop(sc.t.get(), to, path.concat([SuperClass])) else None;
         }
-        fromSuper().orElse(fromInterf);
+        
+        function findInInterfaces () 
+        {
+          function findInInterface (cur, index) return loop(cur.t.get(), to, path.concat([InterfaceAt(index)]));
+          function findFirst (acc:Option<Path>, cur, index) return acc.orElse(findInInterface.partial1_2(cur, index));
+          
+          return from.interfaces.foldLeftWithIndex(findFirst, None);
+        }
+        return findInSuper().orElse(findInInterfaces);
       }
+      
+      return if (ClassTypes.eq(from, to)) Some(path) else findInSuperOrInterface();
     }
+    
     return loop(from, to, []);
   }
   
@@ -423,19 +427,13 @@ class Utils
   
   static function typeIsCompatibleTo1 ( t:Type, to:Type, wildcards:Array<Type>, mapping:Mapping, ignoreFunArgNames:Bool = true ):Option<Mapping> 
   {
-    
-
-    
     // expand both types first
-    
-    
-    var to = MContext.followAliases(to);
-    
-    var t = MContext.followAliases(t);
-    
+
     var comp = typeIsCompatibleTo1;
     // checks if the parameter arrays are compatible
-    function compParams(paramsT:Array<Type>, paramsTo:Array<Type>) {
+    
+    function compParams(paramsT:Array<Type>, paramsTo:Array<Type>) 
+    {
       return 
         if (paramsT.length == paramsTo.length)
         {
@@ -448,91 +446,104 @@ class Utils
         }
         else None;
     }
-    var some = wildcards.some(function (x) return to.eq(x));
-    var ret = some.flatMap(function (v)
-      return  
-        mapping.some(function (x) return x._1.eq(v))
-        .map(function (tup) return if (t.eq(tup._2)) Some(mapping) else None)
-        .getOrElse(function () return Some(mapping.append(Tup2.create(to, t))))
-    );
     
+    var to = MContext.followAliases(to);
     
+    var t = MContext.followAliases(t);
     
-    return ret.orElse(function () {
-      return switch (to) {
-        case TLazy(f2): switch (t) 
-        {
-          case TLazy(f1): comp(f1(), f2(), wildcards, mapping);
-          case TMono(_): Some(mapping);
-          default: None;
-        }
-        case TAnonymous(a2): switch (t) 
-        {
-          case TAnonymous(a1): Scuts.notImplemented();
-          case TMono(_): Some(mapping);
-          default: None;
-        }
-        case TDynamic(t2): switch (t) 
-        {
-          case TDynamic(t1):
-            if (t1 == null && t2 == null) Some(mapping)
-            else if (t1 != null && t2 != null) comp(t1,t2, wildcards, mapping)
-            else None;
-          case TMono(_): Some(mapping);
-          default: None;
-        }
-        case TInst(t2,params2): 
-          switch (t) 
-        {
-          case TInst(t1,params1):
-            if (ClassTypeExt.eq(t1.get(),t2.get())) compParams(params1, params2) else None;
-          case TMono(_): Some(mapping);
-        default: 
-          None;
-        }
-        case TMono(t2Ref): Some(mapping);
-        case TType(t2, params2): switch (t) 
-        {
-          case TType(t1, params1): None;
-          case TMono(_): Some(mapping);
-            //comp(t1,t2, openType) && compParams(params1, params2);
-          default: None;
-        }
-        case TEnum(t2, params2): switch (t) 
-        {
-          case TEnum(t1, params1):
-            if (EnumTypeExt.eq(t1.get(),t2.get())) compParams(params1, params2) else None;
-          case TMono(_): Some(mapping);
-          default: None;
-        }
-        case TFun(args2, ret2): switch (t) 
-        {
-          case TFun(args1, ret1):
-            
-            if (args1.length == args2.length) 
-            {
-              function foldArgs (m:Option<Mapping>, a1,a2) 
-              {
-                
-                return if ((ignoreFunArgNames || (a1.name == a2.name)) && a1.opt == a2.opt) 
-                  comp(a1.t, a2.t, wildcards, mapping)
-                else None;
-              }
-              
-              args1.zipFoldLeftWhile(
-                args2,
-                foldArgs,
-                function (c:Option<Mapping>) return c.isSome(),
-                Some(mapping)
-              )
-              .flatMap(function (m) return comp(ret1, ret2, wildcards,m));
-            }
-            else None;
-          case TMono(_): Some(mapping);
-          default:None;
-        }
+    // wildcards in target type
+    var targetIsWildcard = wildcards.some(to.eq);
+    
+    function addMappingIfPossible (v) 
+    {
+      function isWildCardInMapping (x:Tup2<Type,Type>) return x._1.eq(v); // wildcards must be unique in mapping
+      function currentTypeIsAlsoInMapping (tup) return t.eq(tup._2);
+      
+      var targetInMapping = mapping.some(isWildCardInMapping);
+      var currentTypeInMapping = targetInMapping.filter(currentTypeIsAlsoInMapping).isSome();
+      
+      return
+        if (targetInMapping.isSome())
+          if (currentTypeInMapping) Some(mapping) 
+          else None
+        else Some(mapping.appendElem(Tup2.create(to, t)));
+      
+    }
+    
+    function checkNormalTarget () return switch (to) 
+    {
+      case TLazy(f2): switch (t) 
+      {
+        case TLazy(f1): comp(f1(), f2(), wildcards, mapping);
+        case TMono(_):  Some(mapping);
+        default:        None;
       }
-    });
+      case TAnonymous(a2): switch (t) 
+      {
+        case TAnonymous(a1): Scuts.notImplemented();
+        case TMono(_):       Some(mapping);
+        default:             None;
+      }
+      case TDynamic(t2): switch (t) 
+      {
+        case TDynamic(t1):
+          if (t1 == null && t2 == null) Some(mapping)
+          else if (t1 != null && t2 != null) comp(t1,t2, wildcards, mapping)
+          else None;
+        case TMono(_): Some(mapping);
+        default: None;
+      }
+      case TInst(t2,params2): switch (t) 
+      {
+        case TInst(t1,params1): if (ClassTypes.eq(t1.get(),t2.get())) compParams(params1, params2) else None;
+        case TMono(_):          Some(mapping);
+        default:                None;
+      }
+      case TMono(t2Ref): Some(mapping);
+      case TType(t2, params2): switch (t) 
+      {
+        case TType(t1, params1): None;
+        case TMono(_): Some(mapping);
+          //comp(t1,t2, openType) && compParams(params1, params2);
+        default: None;
+      }
+      case TEnum(t2, params2): switch (t) 
+      {
+        case TEnum(t1, params1): if (EnumTypes.eq(t1.get(),t2.get())) compParams(params1, params2) else None;
+        case TMono(_):           Some(mapping);
+        default:                 None;
+      }
+      case TFun(args2, ret2): switch (t) 
+      {
+        case TFun(args1, ret1):
+          
+          if (args1.length == args2.length) 
+          {
+            function foldArgs (m:Option<Mapping>, a1,a2) 
+            {
+              return if ((ignoreFunArgNames || (a1.name == a2.name)) && a1.opt == a2.opt) 
+                comp(a1.t, a2.t, wildcards, mapping)
+              else None;
+            }
+            
+            args1.zipFoldLeftWhile(
+              args2,
+              foldArgs,
+              Options.isSome,
+              Some(mapping)
+            )
+            .flatMap(comp.partial1_2_3_(ret1, ret2, wildcards));
+          }
+          else None;
+        case TMono(_): Some(mapping);
+        default:None;
+      }
+    }
+    
+    
+    return if (targetIsWildcard.isSome()) targetIsWildcard.flatMap(addMappingIfPossible)
+    else checkNormalTarget();
+      
   }
 
   
@@ -551,7 +562,7 @@ class Utils
     var errFun = errGeneral.partial1("supported function");
     
     function replaceLastWithInType (params:Array<Type>) {
-      return params.take(params.length - 1).append(hotsInType());
+      return params.take(params.length - 1).appendElem(hotsInType());
     }
     
     return switch (containerType) 
@@ -582,7 +593,7 @@ class Utils
             
             if (isVoid(tget)) {
               errFun();
-            } else if (TypeExt.eq(ret, hotsInType())) {
+            } else if (Types.eq(ret, hotsInType())) {
               
               var newArgs = args.map(function (x) return { name: x.name, opt:x.opt, t:hotsInType() } );
               var r = makeOfType(TFun(newArgs, ret), args[0].t);
@@ -689,7 +700,7 @@ class Utils
     var inType = hotsInType();
     
     function loop (t:Type) {
-      return if (TypeExt.eq(t, inType)) 
+      return if (Types.eq(t, inType)) 
         Some(replacement)
       else {
         function replaceParamAt (params:Array<Type>, x:Tup2<Option<Type>, Int>) {
@@ -764,7 +775,7 @@ class Utils
     var inType = hotsInType();
     
     function loop (t:Type) {
-      return if (TypeExt.eq(t, inType)) Some(replacement)
+      return if (Types.eq(t, inType)) Some(replacement)
       else switch (t) {
         case TInst(ct, params): 
           // Special care for Of types, check always the right side first (reverse parameters).
@@ -879,7 +890,7 @@ class Utils
     
     function loop(t:Type) 
     {
-      return TypeExt.eq(t, inType()) || switch (t) 
+      return Types.eq(t, inType()) || switch (t) 
       {
         case TInst(_, params), TEnum(_, params), TType(_, params):
           params.any(loop);

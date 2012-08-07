@@ -7,7 +7,7 @@ import hots.In;
 import hots.Of;
 import scuts.core.extensions.Arrays;
 
-using hots.macros.Box;
+using hots.box.ArrayBox;
 
 
 class ArrayTOfMonad<M> extends MonadAbstract<Of<M,Array<In>>> {
@@ -22,17 +22,18 @@ class ArrayTOfMonad<M> extends MonadAbstract<Of<M,Array<In>>> {
   
   override public function flatMap<A,B>(val:ArrayTOf<M,A>, f: A->ArrayTOf<M,B>):ArrayTOf<M,B> 
   {
-    return monadM.flatMap(val.unbox(), function (a:Array<A>):Of<M, Array<B>>
+    function flatMapInner (a:Array<A>):Of<M, Array<B>>
     {
       var res = [];
+      function pushElems (x:Array<B>) for (e2 in x) res.push(e2);
+      
       for (e1 in a) 
       {
-        monadM.map(
-          f(e1).unbox(),  
-          function (x:Array<B>) for (e2 in x) res.push(e2)
-        );
+        monadM.map(f(e1).unboxT(), pushElems);
       }
       return monadM.pure(res);
-    }).box();
+    }
+
+    return monadM.flatMap(val.unboxT(), flatMapInner).boxT();
   }
 }

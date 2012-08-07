@@ -7,7 +7,7 @@ import scuts.core.extensions.Strings;
 import scuts.core.extensions.Tup2s;
 import scuts.core.types.Tup2;
 import scuts.mcore.MContext;
-import scuts.mcore.extensions.TypeExt;
+import scuts.mcore.extensions.Types;
 import scuts.mcore.Parse;
 import scuts.mcore.Print;
 import scuts.Scuts;
@@ -57,7 +57,7 @@ class UtilsTest
   {
     var t = MContext.getType(FQ_V).getOrError("Cannot get type of " + FQ_V);
     
-    var ct = TypeExt.asClassType(t).getOrError("Cannot convert to Class Type");
+    var ct = Types.asClassType(t).getOrError("Cannot convert to Class Type");
     
     var paramsCur = ct._2[0];
     var paramsNew = MContext.getType(FQ_XXX).getOrError("Cannot get type " + FQ_XXX);
@@ -67,7 +67,7 @@ class UtilsTest
     var actual = Utils.remap(t, mapping);
     var expected = Context.typeof(Parse.parse("{ var x:hots.macros.utils.UtilsTest.V<" + FQ_XXX + "> = null; x;}"));
     
-    Assert.isTrue(TypeExt.eq(actual, expected));
+    Assert.isTrue(Types.eq(actual, expected));
   }
   
   public function testRemap2 () 
@@ -75,7 +75,7 @@ class UtilsTest
     
     var t = MContext.getType(FQ_V).getOrError("Cannot get type of " + FQ_V); // V<T>
     
-    var ct = TypeExt.asClassType(t).getOrError("Cannot convert to Class Type"); // XXX
+    var ct = Types.asClassType(t).getOrError("Cannot convert to Class Type"); // XXX
     
     var paramsCur = ct._2[0]; // T 
     var paramsNew = MContext.getType(FQ_XXX).getOrError("Cannot get type " + FQ_XXX); // XXX
@@ -85,13 +85,13 @@ class UtilsTest
     var actual = Utils.remap(t, mapping); // shoulb be V<XXX>
     var expected = Parse.parseToType(FQ_V + "<" + FQ_XXX + ">").getOrError("Parse To Type Fails");
     
-    Assert.isTrue(TypeExt.eq(actual, expected));
+    Assert.isTrue(Types.eq(actual, expected));
   }
 
   public function testGetParamsAsTypes () 
   {
     var paramsOption = MContext.getType(FQ_V).flatMap(
-      function (t) return TypeExt.asClassType(t).map(
+      function (t) return Types.asClassType(t).map(
         function (x) return Utils.getParamsAsTypes(x._1.get())
       )
     );
@@ -103,11 +103,11 @@ class UtilsTest
     
     trace(MContext.getType("hots.macros.utils.UtilsTest.V"));
     var t1 = 
-      TypeExt.asClassType(MContext.getType(FQ_V).extract())
+      Types.asClassType(MContext.getType(FQ_V).extract())
       .map(function (x) return x._1.get()).extract();
       
     var t2 = 
-      TypeExt.asClassType(Parse.parseToType(FQ_Z).extract())
+      Types.asClassType(Parse.parseToType(FQ_Z).extract())
       .map(function (x) return x._1.get()).extract();
       
     var param1 = Utils.getParamsAsTypes(t1)[0];
@@ -115,7 +115,7 @@ class UtilsTest
     var actual = Utils.getTypeParamMappings(t2, t1);
     
     var mappingEq = function (a,b) return Options.eq(a,b, 
-      function (a,b) return Arrays.eq(a,b, function (a,b) return Tup2s.eq(a,b, TypeExt.eq, TypeExt.eq)));
+      function (a,b) return Arrays.eq(a,b, function (a,b) return Tup2s.eq(a,b, Types.eq, Types.eq)));
     
     Assert.isTrue(mappingEq(actual, expected));
   }
@@ -124,11 +124,11 @@ class UtilsTest
     
     trace(MContext.getType("hots.macros.utils.UtilsTest.V"));
     var t1 = 
-      TypeExt.asClassType(MContext.getType(FQ_V).extract())
+      Types.asClassType(MContext.getType(FQ_V).extract())
       .map(function (x) return x._1.get()).extract();
       
     var t2 = 
-      TypeExt.asClassType(MContext.getType(FQ_Z2).extract())
+      Types.asClassType(MContext.getType(FQ_Z2).extract())
       .map(function (x) return x._1.get()).extract();
     
     // expected K -> V.T
@@ -139,7 +139,7 @@ class UtilsTest
     var actual = Utils.getTypeParamMappings(t2, t1);
     
     var mappingEq = function (a,b) return Options.eq(a,b, 
-      function (a,b) return Arrays.eq(a,b, function (a,b) return Tup2s.eq(a,b, TypeExt.eq, TypeExt.eq)));
+      function (a,b) return Arrays.eq(a,b, function (a,b) return Tup2s.eq(a,b, Types.eq, Types.eq)));
       
     
     Assert.isTrue(mappingEq(actual, expected));
@@ -147,11 +147,11 @@ class UtilsTest
   
   public function testGetFirstPath () {
     var t1 = 
-      TypeExt.asClassType(Parse.parseToType(FQ_U).extract())
+      Types.asClassType(Parse.parseToType(FQ_U).extract())
       .map(function (x) return x._1.get()).extract();
       
     var t2 = 
-      TypeExt.asClassType(Parse.parseToType(FQ_U).extract())
+      Types.asClassType(Parse.parseToType(FQ_U).extract())
       .map(function (x) return x._1.get()).extract();
     
     
@@ -163,11 +163,11 @@ class UtilsTest
   
   public function testGetFirstPath2 () {
     var t1 = 
-      TypeExt.asClassType(Parse.parseToType(FQ_U).extract())
+      Types.asClassType(Parse.parseToType(FQ_U).extract())
       .map(function (x) return x._1.get()).extract();
       
     var t2 = 
-      TypeExt.asClassType(Parse.parseToType(FQ_S).extract())
+      Types.asClassType(Parse.parseToType(FQ_S).extract())
       .map(function (x) return x._1.get()).extract();
     
     
@@ -179,11 +179,11 @@ class UtilsTest
   
   public function testGetFirstPath3 () {
     var t1 = 
-      TypeExt.asClassType(Parse.parseToType(FQ_U).extract())
+      Types.asClassType(Parse.parseToType(FQ_U).extract())
       .map(function (x) return x._1.get()).extract();
       
     var t2 = 
-      TypeExt.asClassType(Parse.parseToType(FQ_C).extract())
+      Types.asClassType(Parse.parseToType(FQ_C).extract())
       .map(function (x) return x._1.get()).extract();
     
     
@@ -194,11 +194,11 @@ class UtilsTest
   
   public function testGetFirstPath4 () {
     var t1 = 
-      TypeExt.asClassType(Parse.parseToType(FQ_U).extract())
+      Types.asClassType(Parse.parseToType(FQ_U).extract())
       .map(function (x) return x._1.get()).extract();
       
     var t2 = 
-      TypeExt.asClassType(Parse.parseToType(FQ_D).extract())
+      Types.asClassType(Parse.parseToType(FQ_D).extract())
       .map(function (x) return x._1.get()).extract();
     
     
@@ -265,7 +265,7 @@ class UtilsTest
     
     var actualType = Utils.convertToOfType(containerType);
 
-    Assert.isTrue(TypeExt.eq(expectedType, actualType));
+    Assert.isTrue(Types.eq(expectedType, actualType));
   }
   
   public function testGetOfParts () {
@@ -278,8 +278,8 @@ class UtilsTest
     Assert.isTrue(actual.isSome());
     var tup = actual.extract();
     
-    Assert.isTrue(TypeExt.eq(expectedType1, tup._1));
-    Assert.isTrue(TypeExt.eq(expectedType2, tup._2));
+    Assert.isTrue(Types.eq(expectedType1, tup._1));
+    Assert.isTrue(Types.eq(expectedType2, tup._2));
   }
   
   public function testFlattenOfType () {
@@ -288,7 +288,7 @@ class UtilsTest
     
     var actualType = Utils.flattenOfType(startType);
     
-    Assert.isTrue(TypeExt.eq(expectedType, actualType));
+    Assert.isTrue(Types.eq(expectedType, actualType));
   }
   
   public function testReplaceContainerElemType () {
@@ -300,7 +300,7 @@ class UtilsTest
     
     
     Assert.isTrue(actualType.isSome());
-    Assert.isTrue(TypeExt.eq(expectedType, actualType.extract()));
+    Assert.isTrue(Types.eq(expectedType, actualType.extract()));
     
   }
  

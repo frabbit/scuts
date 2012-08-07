@@ -8,8 +8,8 @@ import neko.FileSystem;
 import neko.io.File;
 import scuts.core.types.Tup2;
 import scuts.mcore.Context;
-import scuts.mcore.extensions.ExprExt;
-import scuts.mcore.extensions.TypeExt;
+import scuts.mcore.extensions.Exprs;
+import scuts.mcore.extensions.Types;
 import scuts.mcore.Make;
 import scuts.mcore.MContext;
 import scuts.mcore.MType;
@@ -23,7 +23,7 @@ using scuts.core.extensions.Arrays;
 using scuts.core.extensions.Iterators;
 using scuts.core.extensions.Options;
 using scuts.core.extensions.Eithers;
-using scuts.mcore.extensions.ExprExt;
+using scuts.mcore.extensions.Exprs;
 using scuts.core.extensions.Hashs;
 
 #end

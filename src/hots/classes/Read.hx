@@ -6,6 +6,7 @@ import hots.TC;
  * @author 
  */
 
-interface Read<T> implements TC {
+interface Read<T> implements TC 
+{
   public function read (v:String):T;
 }

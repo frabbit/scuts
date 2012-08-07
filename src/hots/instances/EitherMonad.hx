@@ -11,11 +11,13 @@ using hots.box.EitherBox;
 
 class EitherMonad<L> extends MonadAbstract<Either<L,In>> {
   
-  public function new () {
+  public function new () 
+  {
     super(EitherApplicative.get());
   }
   
-  override public function flatMap<R,RR>(of:EitherOf<L,R>, f: R->EitherOf<L,RR>):EitherOf<L,RR> {
+  override public function flatMap<R,RR>(of:EitherOf<L,R>, f: R->EitherOf<L,RR>):EitherOf<L,RR> 
+  {
     return Eithers.flatMapRight(of.unbox(), f.unboxF()).box();
   }
 }

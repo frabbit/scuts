@@ -9,11 +9,13 @@ import hots.TC;
 
 import scuts.core.types.Tup2;
 
-class Tup2Semigroup<A,B> extends SemigroupAbstract<Tup2<A,B>> {
+class Tup2Semigroup<A,B> extends SemigroupAbstract<Tup2<A,B>> 
+{
   private var s1:Semigroup<A>;
   private var s2:Semigroup<B>;
   
-  public function new (s1:Semigroup<A>, s2:Semigroup<B>) {
+  public function new (s1:Semigroup<A>, s2:Semigroup<B>) 
+  {
     this.s1 = s1;
     this.s2 = s2;
   }

@@ -3,10 +3,6 @@ import hots.classes.Applicative;
 import hots.classes.Monad;
 import hots.Of;
 
-/**
- * ...
- * @author 
- */
 
 class Applicatives
 {

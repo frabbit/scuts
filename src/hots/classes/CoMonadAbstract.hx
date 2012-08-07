@@ -17,7 +17,9 @@ using scuts.core.extensions.Functions;
 @:tcAbstract class CoMonadAbstract<W> implements CoMonad<W> 
 {
   var p:CoPointed<W>;
-  public function new (p:CoPointed<W>) {
+  
+  public function new (p:CoPointed<W>) 
+  {
     this.p = p;
   }
 
@@ -27,9 +29,9 @@ using scuts.core.extensions.Functions;
   
   // delegation of CoPointed
   
-  @:final public inline function copure <A>(v:A):Of<W,A> return p.copure(v)
+  public inline function copure <A>(v:A):Of<W,A> return p.copure(v)
   
   // delegation of Functor
   
-  @:final public inline function map<A,B>(val:Of<W,A>, f:A->B):Of<W,B> return p.map(val, f)
+  public inline function map<A,B>(val:Of<W,A>, f:A->B):Of<W,B> return p.map(val, f)
 }

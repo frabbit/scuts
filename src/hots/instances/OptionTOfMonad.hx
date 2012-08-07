@@ -9,7 +9,7 @@ import hots.classes.MonadAbstract;
 
 
 
-using hots.macros.Box;
+using hots.box.OptionBox;
 
 class OptionTOfMonad<M> extends MonadAbstract<Of<M, Option<In>>> {
   
@@ -23,14 +23,14 @@ class OptionTOfMonad<M> extends MonadAbstract<Of<M, Option<In>>> {
   
   override public function flatMap<A,B>(val:Of<Of<M, Option<In>>,A>, f: A->Of<Of<M, Option<In>>,B>):Of<Of<M, Option<In>>,B> 
   {
-    return monadM.flatMap(val.unbox(), function (a)
+    return monadM.flatMap(val.unboxT(), function (a)
     {
       return switch (a) 
       {
-        case Some(v): f(v).unbox();
+        case Some(v): f(v).unboxT();
         case None: monadM.pure(None);
       }
-    }).box();
+    }).boxT();
   }
   
 }

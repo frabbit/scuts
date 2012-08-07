@@ -5,23 +5,25 @@ import hots.In;
 
 using scuts.core.extensions.Functions;
 
-private typedef B = FunctionBox;
+
+
+using hots.box.FunctionBox;
 
 class FunctionCategory extends CategoryAbstract<In->In>
 {
 
   public function new() {}
   
-  override public function id <A>(a:A):FunctionOf<A, A> {
-    return B.asArrow(function (a) return a);
+  override public function id <A>(a:A):FunctionOfOf<A, A> 
+  {
+    return (function (a) return a).asArrow();
   }
   /**
    * aka (.)
    */
-  override public function dot <A,B,C>(f:FunctionOf<B, C>, g:FunctionOf<A, B>):FunctionOf<A, C> {
-    var f1 = B.runArrow(f);
-    var g1 = B.runArrow(g);
-    return B.asArrow(f1.compose(g1));
+  override public function dot <A,B,C>(f:FunctionOfOf<B, C>, g:FunctionOfOf<A, B>):FunctionOfOf<A, C> 
+  {
+    return ( f.runArrow().compose(g.runArrow()) ).asArrow();
   }
   
 }

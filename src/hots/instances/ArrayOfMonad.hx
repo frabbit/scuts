@@ -1,9 +1,11 @@
 package hots.instances;
+import hots.instances.ArrayOfApplicative;
 import hots.classes.Monad;
 import hots.classes.MonadAbstract;
 import hots.extensions.ArrayOfs;
 import hots.In;
 import scuts.core.extensions.Arrays;
+
 
 using hots.box.ArrayBox;
 

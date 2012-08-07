@@ -1,7 +1,6 @@
 package hots.box;
 import hots.instances.ImmutableListOf;
 import hots.instances.LazyListOf;
-//import hots.macros.Box;
 import scuts.data.LazyList;
 import scuts.data.List;
 

@@ -8,10 +8,6 @@ import hots.classes.Semigroup;
 import hots.extensions.OptionOfs;
 import scuts.core.types.Option;
 
-using hots.macros.Box;
-
-
-
 class OptionMonoid<X> extends MonoidAbstract<Option<X>>
 {
   

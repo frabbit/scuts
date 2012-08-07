@@ -6,7 +6,7 @@ import hots.Of;
 import hots.instances.ArrayOfCollection;
 import hots.instances.ListOfCollection;
 
-using hots.macros.TcContext;
+using hots.macros.Resolver;
 using hots.macros.Box;
 
 

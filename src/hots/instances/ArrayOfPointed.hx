@@ -1,5 +1,6 @@
 package hots.instances;
 
+import hots.instances.ArrayOfFunctor;
 
 import hots.classes.PointedAbstract;
 import hots.In;

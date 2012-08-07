@@ -17,7 +17,7 @@ import hots.instances.IntSumSemigroup;
 
 import scuts.core.types.Tup2;
 
-using hots.macros.TcContext;
+using hots.macros.Resolver;
 using hots.macros.Box;
 
 import scuts.core.types.Option;

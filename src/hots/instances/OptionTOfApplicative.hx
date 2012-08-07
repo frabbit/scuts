@@ -10,7 +10,7 @@ import scuts.core.types.Option;
 
 
 
-private typedef B = hots.macros.Box;
+using hots.box.OptionBox;
 
 
 
@@ -27,23 +27,24 @@ class OptionTOfApplicative<M> extends ApplicativeAbstract<Of<M,Option<In>>> {
   /**
    * aka <*>
    */
-  override public function apply<A,B>(f:OptionTOf<M,A->B>, val:OptionTOf<M,A>):OptionTOf<M,B> {
-    var f1:Of<M, Option<A->B>> = B.unbox(f);
-    var val1:Of<M, Option<A>> = B.unbox(val);
-    
-    var f2 = applicativeM.map(f1, function (f:Option<A->B>) {
-      return function (a:Option<A>) {
-        return switch (f) {
-          case Some(v):
-            switch (a) {
-              case Some(v2): Some(v(v2));
-              case None: None;
-            }
-          case None: None;
-        }
+  override public function apply<A,B>(f:OptionTOf<M,A->B>, val:OptionTOf<M,A>):OptionTOf<M,B> 
+  {
+    function mapInner (f:Option<A->B>)
+    {
+      return function (a:Option<A>) return switch (f) 
+      {
+        case Some(v):
+          switch (a) {
+            case Some(v2): Some(v(v2));
+            case None: None;
+          }
+        case None: None;
       }
-    });
-    return B.box(applicativeM.apply(f2, val1));
+    }
+    
+    var newF = applicativeM.map(f.unboxT(), mapInner);
+    
+    return applicativeM.apply(newF, val.unboxT()).boxT();
   }
 
 }

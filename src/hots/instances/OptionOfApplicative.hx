@@ -9,15 +9,15 @@ using hots.box.OptionBox;
 
 class OptionOfApplicative extends ApplicativeAbstract<Option<In>>
 {
-  public function new () {
+  public function new () 
+  {
     super(OptionOfPointed.get());
   }
   
-  override public function apply<B,C>(f:OptionOf<B->C>, of:OptionOf<B>):OptionOf<C> 
+  override public function apply<B,C>(f:OptionOf<B->C>, of:OptionOf<B>):OptionOf<C> return switch(f.unbox()) 
   {
-    return switch(f.unbox()) {
-      case Some(f1): map(of, f1);
-      case None: None.box();
-    }
+    case Some(f1): map(of, f1);
+    case None: None.box();
   }
+
 }

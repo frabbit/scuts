@@ -27,11 +27,11 @@ using scuts.core.extensions.Functions;
   
   // delegation of Extend
   
-  @:final public inline function copure <A>(v:A):Of<W,A> return Scuts.abstractMethod()
+  public inline function copure <A>(v:A):Of<W,A> return Scuts.abstractMethod()
   
   
   
   // delegation of Functor
   
-  @:final public inline function map<A,B>(val:Of<W,A>, fn:A->B):Of<W,B> return f.map(val,fn)
+  public inline function map<A,B>(val:Of<W,A>, fn:A->B):Of<W,B> return f.map(val,fn)
 }

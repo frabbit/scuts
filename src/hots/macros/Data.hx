@@ -33,3 +33,14 @@ typedef TypeClassInstanceInfo =
   usingCall:String
 }
 
+enum BoxError {
+  TypeIsNoContainer(t:Type);
+  InnerTypeIsNoContainer(t:Type, inner:Type);
+}
+
+enum UnboxError {
+  TypeIsNoOfType(t:Type);
+  InvalidOfType(t:Type);
+  ConversionError(t:Type);
+}
+

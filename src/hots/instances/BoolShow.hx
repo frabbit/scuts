@@ -7,7 +7,8 @@ class BoolShow extends ShowAbstract<Bool>
 {
   public function new () {}
 
-  override public inline function show (v:Bool):String {
+  override public inline function show (v:Bool):String 
+  {
     return Std.string(v);
   }
 }

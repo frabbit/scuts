@@ -7,7 +7,8 @@ class EndoSemigroup<T> extends SemigroupAbstract<T->T>
 {
   public function new () {}
   
-  override public function append (a:T->T, b:T->T):T->T {
+  override public function append (a:T->T, b:T->T):T->T 
+  {
     return a.compose(b);
   }
   

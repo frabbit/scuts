@@ -16,9 +16,7 @@ using hots.extensions.Arrows;
   // constructor
   function new (category:Category<AR>) this.c = category
   
-  /**
-   * @inheritDoc
-   */
+  
   public function arr <B,C>(f:B->C):OfOf<AR,B, C> return Scuts.abstractMethod()
   
   public function first <B,C,D>(f:OfOf<AR,B,C>):OfOf<AR, Tup2<B,D>, Tup2<C,D>> return Scuts.abstractMethod()
@@ -40,13 +38,13 @@ using hots.extensions.Arrows;
   }
   
   // delegation
-  @:final public inline function id <A>(a:A):OfOf<AR, A, A> return c.id(a)
+  public inline function id <A>(a:A):OfOf<AR, A, A> return c.id(a)
 
-  @:final public inline function dot <A,B,C>(g:OfOf<AR, B, C>, f:OfOf<AR, A, B>):OfOf<AR, A, C> return c.dot(g,f)
+  public inline function dot <A,B,C>(g:OfOf<AR, B, C>, f:OfOf<AR, A, B>):OfOf<AR, A, C> return c.dot(g,f)
   
-  @:final public inline function next <A,B,C>(f:OfOf<AR, A, B>, g:OfOf<AR, B, C>):OfOf<AR,A, C> return c.next(f,g)
+  public inline function next <A,B,C>(f:OfOf<AR, A, B>, g:OfOf<AR, B, C>):OfOf<AR,A, C> return c.next(f,g)
   
-  @:final public inline function back <A,B,C>(g:OfOf<AR, B, C>, f:OfOf<AR, A, B>):OfOf<AR,A, C> return c.back(g,f)
+  public inline function back <A,B,C>(g:OfOf<AR, B, C>, f:OfOf<AR, A, B>):OfOf<AR,A, C> return c.back(g,f)
   
 }
 

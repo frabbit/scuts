@@ -9,7 +9,7 @@ import scuts.core.macros.Lazy;
 import scuts.core.types.Tup2;
 import scuts.core.types.Tup3;
 import scuts.mcore.Check;
-import scuts.mcore.extensions.TypeExt;
+import scuts.mcore.extensions.Types;
 import scuts.mcore.MType;
 import scuts.mcore.Select;
 import scuts.Scuts;
@@ -28,35 +28,20 @@ import hots.macros.Data;
 using scuts.core.extensions.Arrays;
 using scuts.core.extensions.Options;
 using scuts.core.Log;
-using scuts.mcore.extensions.TypeExt;
-using scuts.mcore.extensions.ExprExt;
+using scuts.mcore.extensions.Types;
+using scuts.mcore.extensions.Exprs;
 using scuts.core.extensions.Strings;
 using scuts.core.extensions.Eithers;
-using scuts.mcore.extensions.TypeExt;
+using scuts.mcore.extensions.Types;
 using scuts.core.extensions.Functions;
 
 private typedef SType = scuts.mcore.Type;
 
-#end
+
 
 class Resolver 
 {
-  
-  @:macro public static function forInstance (typeClass:ExprRequire<Class<TC>>, exprOrType:Expr) {
-    return tc1(exprOrType, typeClass); 
-  }
-  
-  @:macro public static function tc(exprOrType:Expr, typeClass:ExprRequire<Class<TC>>, ?contextClasses:ExprRequire<Array<TC>>) 
-  {
-    var e = tc1(exprOrType, typeClass, contextClasses);
-    #if scutsDebug
-    trace(Print.expr(e));
-    #end
-    return e;
-  }
-  
-  #if (macro || display)
-  
+
   static function getExprType (e:Expr):Type
   {
     function eType () return Context.typeof(e);
@@ -66,8 +51,7 @@ class Resolver
       case CString(s): 
         if (s.charAt(0) == "#") 
         {
-          var ex = Context.parse("{ var a : " + s.substr(1) + "; a;}", Context.currentPos());
-          Context.typeof(ex);
+          Parse.parseToType(s.substr(1)).getOrError("Cannot parse the expression, syntax error");
         }
         else eType();
       default: eType();
@@ -98,7 +82,10 @@ class Resolver
     {
       case EConst(co):
         fromConst(co);
-      
+      case EVars(vars):
+        var t = vars[0].type;
+        var e = macro ( { var x :  $t = null; x; } );
+        Context.typeof(e);
       default: 
         switch (Context.typeof(e)) {
           case TType(t, _):
@@ -248,7 +235,7 @@ class Resolver
       function isInstanceOfTypeClass(c:Tup2<Type, Expr>) {
         var cType = c._1;
         var wildcards2 = MContext.getLocalTypeParameters(cType);
-        var allWildcards = wildcards1().union(wildcards2, TypeExt.eq);
+        var allWildcards = wildcards1().union(wildcards2, Types.eq);
         return MType.isInstanceOf (cType.toComplexType(allWildcards), x.toComplexType(allWildcards));
       }
       
@@ -288,10 +275,10 @@ class Resolver
       function foldArgs (acc:Tup2<Array<ResolveError>, Array<Expr>>, c) return switch c 
       {
         case Left(l):  
-          var errors = acc._1.append(l);
+          var errors = acc._1.appendElem(l);
           Tup2.create(errors, acc._2);
         case Right(r): 
-          var exprs = acc._2.append(r);
+          var exprs = acc._2.appendElem(r);
           Tup2.create(acc._1, exprs);
       }
       callTypes.foldLeft(foldArgs, Tup2.create([], []));
@@ -327,7 +314,9 @@ class Resolver
     return MContext.typeof(doCall).isSome();
   }
 
-  #end
   
   
 }
+
+#end
+  

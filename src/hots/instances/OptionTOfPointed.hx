@@ -10,7 +10,7 @@ import hots.classes.Functor;
 import scuts.core.types.Option;
 
 
-private typedef B = hots.macros.Box;
+using hots.box.OptionBox;
 
 
 
@@ -18,7 +18,7 @@ class OptionTOfPointed<M> extends PointedAbstract<Of<M,Option<In>>> {
   
   var pointedM:Pointed<M>;
 
-  public function new (pointedM:Applicative<M>) 
+  public function new (pointedM:Pointed<M>) 
   {
     super(OptionTOfFunctor.get(pointedM));
     this.pointedM = pointedM;
@@ -28,7 +28,7 @@ class OptionTOfPointed<M> extends PointedAbstract<Of<M,Option<In>>> {
    * aka return
    */
   override public function pure<A>(x:A):OptionTOf<M,A> {
-    return B.box(pointedM.pure(Some(x)));
+    return pointedM.pure(Some(x)).boxT();
   }
   
 

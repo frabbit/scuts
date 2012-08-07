@@ -1,25 +1,21 @@
 package hots.extensions;
-
 import hots.instances.ArrayOfFunctor;
 import hots.instances.ArrayOf;
 
 using scuts.core.extensions.Arrays;
-
-typedef ArrayBox = hots.box.ArrayBox;
-
-using hots.extensions.ArrayOfs.ArrayBox;
+using hots.box.ArrayBox;
 
 class ArrayOfs
 {
   
   public static inline function box <A>(a:Array<A>):ArrayOf<A> 
   {
-    return ArrayBox.box(a);
+    return a.box();
   }
   
   public static inline function unbox <A>(a:ArrayOf<A>):Array<A> 
   {
-    return ArrayBox.unbox(a);
+    return a.unbox();
   }
   
   
@@ -38,9 +34,10 @@ class ArrayOfs
     return [].box();
   }
   
-  public static inline function concat<A>(a:ArrayOf<A>, b:ArrayOf<A>):ArrayOf<A> 
+  public static inline function append<A>(a:ArrayOf<A>, b:ArrayOf<A>):ArrayOf<A> 
   {
     return a.unbox().concat(b.unbox()).box();
   }
+  
     
 }

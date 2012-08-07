@@ -22,7 +22,7 @@ class Tup4Monoid<A,B,C,D> extends MonoidAbstract<Tup4<A,B,C,D>>
     this.m3 = m3;
     this.m4 = m4;
   }
-   
+
   override public inline function empty ():Tup4<A,B,C,D> 
   {
     return Tup4.create(m1.empty(), m2.empty(), m3.empty(), m4.empty());

@@ -9,7 +9,8 @@ import scuts.Scuts;
   var fu:Functor<T>;
   var fo:Foldable<T>;
   
-  public function new (functor:Functor<T>, foldable:Foldable<T>) {
+  public function new (functor:Functor<T>, foldable:Foldable<T>) 
+  {
     this.fu = functor;
     this.fo = foldable;
   }
@@ -25,20 +26,20 @@ import scuts.Scuts;
   
   // functor delegation
   
-  @:final public inline function map<A,B>(val:Of<T,A>, f:A->B):Of<T,B> return fu.map(val,f)
+  public inline function map<A,B>(val:Of<T,A>, f:A->B):Of<T,B> return fu.map(val,f)
   
   // foldable delegation
   
-  @:final public inline function fold <A>(of:Of<T,A>, mon:Monoid<A>):A return fo.fold(of, mon)
+  public inline function fold <A>(of:Of<T,A>, mon:Monoid<A>):A return fo.fold(of, mon)
   
-  @:final public inline function foldMap <A,B>(of:Of<T,A>, mon:Monoid<B>, f:A->B):B return fo.foldMap(of, mon, f)
+  public inline function foldMap <A,B>(of:Of<T,A>, mon:Monoid<B>, f:A->B):B return fo.foldMap(of, mon, f)
  
-  @:final public inline function foldLeft <A,B>(of:Of<T,B>, b:A, f:A->B->A):A return fo.foldLeft(of,b,f)
+  public inline function foldLeft <A,B>(of:Of<T,B>, b:A, f:A->B->A):A return fo.foldLeft(of,b,f)
   
-  @:final public inline function foldRight <A,B>(of:Of<T,A>, b:B, f:A->B->B):B return fo.foldRight(of,b,f)
+  public inline function foldRight <A,B>(of:Of<T,A>, b:B, f:A->B->B):B return fo.foldRight(of,b,f)
   
-  @:final public inline function foldLeft1 <A>(of:Of<T,A>, f:A->A->A):A return fo.foldLeft1(of, f)
+  public inline function foldLeft1 <A>(of:Of<T,A>, f:A->A->A):A return fo.foldLeft1(of, f)
   
-  @:final public inline function foldRight1 <A>(of:Of<T,A>, f:A->A->A):A return fo.foldRight1(of, f)
+  public inline function foldRight1 <A>(of:Of<T,A>, f:A->A->A):A return fo.foldRight1(of, f)
   
 }

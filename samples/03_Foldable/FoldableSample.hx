@@ -6,7 +6,7 @@ import hots.Of;
 import hots.instances.ArrayOfFoldable;
 import hots.instances.ListOfFoldable;
 
-using hots.macros.TcContext;
+using hots.macros.Resolver;
 using hots.macros.Box;
 
 class FoldableSample 

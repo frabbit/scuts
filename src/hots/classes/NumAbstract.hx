@@ -17,7 +17,8 @@ import scuts.Scuts;
     this.s = show;
   }
   
-  public function minus (a:A, b:A):A {
+  public function minus (a:A, b:A):A 
+  {
     return minus(a, negate(b));
   }
   
@@ -32,10 +33,10 @@ import scuts.Scuts;
   
   
   // delegation of Show
-  @:final public inline function show (a:A):String return s.show(a)
+  public inline function show (a:A):String return s.show(a)
   
   // delegation of Eq
-  @:final public inline function eq (a:A, b:A):Bool return e.eq(a,b)
+  public inline function eq (a:A, b:A):Bool return e.eq(a,b)
   
-  @:final public inline function notEq (a:A, b:A):Bool return e.notEq(a,b)
+  public inline function notEq (a:A, b:A):Bool return e.notEq(a,b)
 }

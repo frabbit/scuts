@@ -9,7 +9,8 @@ class Predicate1Semigroup<X> extends SemigroupAbstract<X->Bool>
 {
   public function new () {}
   
-  override public inline function append (a:X->Bool, b:X->Bool):X->Bool {
+  override public inline function append (a:X->Bool, b:X->Bool):X->Bool 
+  {
     return a.and(b);
   }
   

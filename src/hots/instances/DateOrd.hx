@@ -8,19 +8,28 @@ import hots.instances.FloatOrd;
 import scuts.core.types.Ordering;
 
 
-class DateOrd extends OrdAbstract<Date> {
-
-  public function new (eq:Eq<Date>) super(eq)
+class DateOrd extends OrdAbstract<Date> 
+{
+  var floatEq:FloatOrd;
   
-  override public function less (a:Date, b:Date):Bool {
-    return FloatOrd.get().less(a.getTime(), b.getTime());
+  public function new (eq:Eq<Date>) 
+  {
+    super(eq);
+    this.floatEq = FloatOrd.get();
   }
   
-  override public function compare (a:Date, b:Date):Ordering {
-    return FloatOrd.get().compare(a.getTime(), b.getTime());
+  override public function less (a:Date, b:Date):Bool 
+  {
+    return floatEq.less(a.getTime(), b.getTime());
   }
   
-  override public inline function compareInt (a:Date, b:Date):Int {
-    return FloatOrd.get().compareInt(a.getTime(), b.getTime());
+  override public function compare (a:Date, b:Date):Ordering 
+  {
+    return floatEq.compare(a.getTime(), b.getTime());
+  }
+  
+  override public inline function compareInt (a:Date, b:Date):Int 
+  {
+    return floatEq.compareInt(a.getTime(), b.getTime());
   }
 }

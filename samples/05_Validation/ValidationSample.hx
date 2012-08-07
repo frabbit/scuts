@@ -1,7 +1,7 @@
 package ;
 
 
-using hots.macros.TcContext;
+using hots.macros.Resolver;
 
 using scuts.core.extensions.Arrays;
 
@@ -37,7 +37,7 @@ class MultiErrorSemigroup<X> extends SemigroupAbstract<MultiError<X>> {
       case Multiple(a1): switch (e2) 
       {
         case Multiple(a2): Multiple(a1.concat(a2));
-        case Simple(a2): Multiple(a1.append(a2));
+        case Simple(a2): Multiple(a1.appendElem(a2));
       }
       case Simple(a1): switch (e2) 
       {

@@ -5,7 +5,7 @@ import hots.In;
 import scuts.core.extensions.Iterables;
 import hots.classes.Foldable;
 
-using hots.macros.Box;
+using hots.box.IterableBox;
 
 class IterableOfFoldable extends FoldableAbstract<Iterable<In>> 
 {

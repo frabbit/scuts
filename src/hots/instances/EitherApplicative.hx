@@ -1,6 +1,5 @@
 package hots.instances;
 
-
 import hots.classes.ApplicativeAbstract;
 import hots.In;
 
@@ -8,9 +7,12 @@ import scuts.core.types.Either;
 
 using hots.box.EitherBox;
 using scuts.core.extensions.Eithers;
-class EitherApplicative<L> extends ApplicativeAbstract<Either<L,In>> {
+
+class EitherApplicative<L> extends ApplicativeAbstract<Either<L,In>> 
+{
   
-  public function new () {
+  public function new () 
+  {
     super(EitherPointed.get());
   }
   
@@ -19,3 +21,4 @@ class EitherApplicative<L> extends ApplicativeAbstract<Either<L,In>> {
     return of.unbox().applyRight(f.unbox()).box();
   }
 }
+
