@@ -6,9 +6,11 @@ using scuts.data.LazyStacks;
 
 class LazyStacks 
 {
-  public static inline function box <T>(l:LazyList<T>):LazyStack<T> return cast l
+  static inline function box <T>(l:LazyList<T>):LazyStack<T> return cast l
   
-  public static inline function unbox <T>(s:LazyStack<T>):LazyList<T> return cast s
+  static inline function unbox <T>(s:LazyStack<T>):LazyList<T> return cast s
+  
+  public static inline function toLazyList <T>(l:LazyStack<T>):LazyList<T> return unbox(l)
   
   public static inline function fromLazyList <T>(l:LazyList<T>):LazyStack<T> return box(l)
   

@@ -327,7 +327,11 @@ class LazyLists {
     return concat(mkOneThunk(el), l);
   }
   
-  public static function append <T>(l:LL<T>, el:T):LL<T> {
+  public static function append <T>(a:LL<T>, b:LL<T>):LL<T> {
+    return concat(l, b);
+  }
+  
+  public static function appendElem <T>(l:LL<T>, el:T):LL<T> {
     return concat(l, mkOne(el));
   }
   
@@ -436,7 +440,7 @@ class LazyLists {
         LazyNil
     );
   }
-  /*
+  
   static function evens <T>(l:LL<T>):LL<T>
   {
     function evens1 (l, i) {
@@ -464,7 +468,7 @@ class LazyLists {
     }
     return Lazy.expr(odds1(l, 0));
   }
-  
+  /*
   static function cleave <T>(l:LL<T>):Tup2<LL<T>, LL<T>>
   {
     return Tup2.create(evens(l), odds(l));

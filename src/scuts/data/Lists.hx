@@ -41,7 +41,6 @@ class Lists {
   
   public static function each <T> (l:List<T>, f:T->Void) 
   {
-
     while (true) {
       switch (l) {
         case Cons(e, tail):
@@ -50,7 +49,6 @@ class Lists {
         case Nil: break;
       }
     }
-    
   }
   
   public static function fromArray <T> (arr:Array<T>):List<T> {
