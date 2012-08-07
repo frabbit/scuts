@@ -13,6 +13,25 @@ class Log
   private static var writeLog:Bool = #if scutsLog true #else false #end;
   #end
   
+  static var traceId = 0;
+  
+  public static function enableScutsTrace () {
+    var normal = haxe.Log.trace;
+    
+    haxe.Log.trace = function (msg:Dynamic, ?pos:PosInfos) 
+    {
+      scutsTrace(msg, normal, pos);
+    }
+  }
+  
+  public static function scutsTrace (msg:Dynamic, log:Dynamic->?PosInfos->Void, ?pos:PosInfos) 
+  {
+    
+    
+    log( { id : traceId++, val:msg },pos );
+    
+  }
+  
   public static function logLabeled <T>(v:T, label:String, ?show:T->String, ?pos:PosInfos):T 
   {
     #if (debug)

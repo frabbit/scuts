@@ -12,7 +12,6 @@ using scuts.core.extensions.Options;
 class Function0s 
 {
   
-  
   public static function map <A,B>(a:Void->A, f:A->B):Void->B
   {
     return function () return f(a());
@@ -90,11 +89,12 @@ class Function1s
   /**
    * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
    */
-  public static function curry < A, B > (f:A->B):A->(Void->B)
+  /*
+   public static function curry < A, B > (f:A->B):A->B
   {
-    return function (a:A) 
-      return function () return f(a);
+    return f;
   }
+  */
   
   /**
    * Converts a curried function into a function taking multiple arguments.
@@ -454,6 +454,17 @@ class Function3s
 
 }
 
+class Function4Opt1s {
+  
+  /**
+   * Partially applies the function f with the first, second and third parameter.
+   */
+  public static function partial1_2_3_ < A, B, C, D, E > (f:A->B->C->?D->E, a:A, b:B, c:C):Void->E
+  {
+    return function () return f(a, b, c);
+  }
+}
+
 class Function4s 
 {
 
@@ -566,8 +577,34 @@ class Function4s
   }
   
 }
+
+class Function5Opt2s 
+{
+  
+  /**
+   * Partially applies the function f with the first to third parameter and applying the default arguments.
+   */
+  public static function partial1_2_3_ < A, B, C, D, E, F > (f:A->B->C->?D->?E->F, a:A, b:B, c:C):Void->F
+  {
+    return function () return f(a, b, c);
+  }
+}
+
+class Function5Opt1s 
+{
+  
+  /**
+   * Partially applies the function f with the first to third parameter and applying the default arguments.
+   */
+  public static function partial1_2_3_ < A, B, C, D, E, F > (f:A->B->C->D->?E->F, a:A, b:B, c:C):D->F
+  {
+    return function (d:D) return f(a, b, c, d);
+  }
+}
+
 class Function5s 
 {
+  
   /**
    * Reverses the first 2 arguments of f.
    */

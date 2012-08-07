@@ -100,7 +100,7 @@ class Options {
     return !isSome(o);
   }
     
-  public static inline function extract <T>(o:Option<T>):T return switch (o) 
+  public static  function extract <T>(o:Option<T>):T return switch (o) 
   {
     case Some(v): v;
     case None:    Scuts.error("Cannot extract value from Option None");
@@ -135,7 +135,7 @@ class Options {
     case None:    None;
   }
   
-  public static inline function map < S, T > (o:Option<S>, f:S->T):Option<T> return switch (o) 
+  public static function map < S, T > (o:Option<S>, f:S->T):Option<T> return switch (o) 
   {
     case Some(v): Some(f(v));
     case None:    None;

@@ -39,7 +39,7 @@ class Scuts
   public static function checkNotNull <T>(v:T, ?posInfos:PosInfos):T 
   {
     #if debug
-    Assert.assertNotNull(v, posInfos);
+    Assert.notNull(v, posInfos);
     #end
     return error("This method is not yet implemented");
   }

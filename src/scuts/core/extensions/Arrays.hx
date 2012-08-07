@@ -318,6 +318,7 @@ class Arrays
   {
     return if (arr.length == 0) None else Some(arr[arr.length - 1]);
   } 
+  
   public static inline function map < A, B > (arr:Array<A>, f:A->B):Array<B> 
   {
     var r = [];
@@ -326,8 +327,9 @@ class Arrays
       r.push(f(i));
     }
     return r;
-    
   }
+  
+  
   
   public static function mapWithIndex < A, B > (arr:Array<A>, f:A->Int->B):Array<B> 
   {
@@ -647,9 +649,14 @@ class Arrays
     return cp;
   }
   
-  public static function append <A> (a:Array<A>, e:A):Array<A> 
+  public static function appendElem <A> (a:Array<A>, e:A):Array<A> 
   {
     return a.concat([e]);
+  }
+  
+  public static function append <A> (a:Array<A>, b:Array<A>):Array<A> 
+  {
+    return a.concat(b);
   }
 
   public static function insertElemAt <A> (a:Array<A>, e:A, index:Int):Array<A> 
@@ -693,13 +700,14 @@ class Arrays
   
   public static function removeLast <A> (a:Array<A>):Array<A> 
   {
-    return if (a.length > 0) {
-      var res = a.copy();
-      res.pop();
-      res;
-    } else {
-      a;
-    }
+    return 
+      if (a.length > 0) 
+      {
+        var res = a.copy();
+        res.pop();
+        res;
+      } 
+      else a;
   }
   
   public static function removeFirst <A> (a:Array<A>):Array<A> 

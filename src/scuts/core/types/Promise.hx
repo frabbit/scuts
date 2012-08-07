@@ -132,7 +132,7 @@ class Promise<T>
   
   public function progress (percent:Percent):Promise<T>
   {
-    Assert.assertTrue(percent >= 0.0 && percent <= 1.0);
+    Assert.isTrue(percent >= 0.0 && percent <= 1.0, null);
     for (l in _progressListeners) l(percent);
     return this;
   }
