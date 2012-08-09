@@ -11,9 +11,9 @@ using hots.box.EitherBox;
 
 class EitherMonad<L> extends MonadAbstract<Either<L,In>> {
   
-  public function new () 
+  public function new (app) 
   {
-    super(EitherApplicative.get());
+    super(app);
   }
   
   override public function flatMap<R,RR>(of:EitherOf<L,R>, f: R->EitherOf<L,RR>):EitherOf<L,RR> 

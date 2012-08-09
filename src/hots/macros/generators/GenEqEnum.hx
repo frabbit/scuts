@@ -1,6 +1,6 @@
 package hots.macros.generators;
 
-#if (macro || display)
+#if macro
 import hots.macros.generators.GenError;
 import haxe.macro.Expr;
 import haxe.macro.Type;

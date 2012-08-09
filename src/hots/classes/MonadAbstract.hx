@@ -8,7 +8,7 @@ import scuts.Scuts;
 /**
  * Either flatMap or flatten must be overriden by classes extending MonadAbstract
  */
-@:tcAbstract class MonadAbstract<M> implements Monad<M> 
+class MonadAbstract<M> implements Monad<M> 
 {
   private var applicative:Applicative<M>;
   

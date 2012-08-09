@@ -1,14 +1,14 @@
 package hots.classes;
 
 import hots.OfOf;
-import hots.TC;
+
 import scuts.core.extensions.Tup2s;
 import scuts.core.types.Tup2;
 import scuts.Scuts;
 
 using hots.extensions.Arrows;
 
-@:tcAbstract class ArrowAbstract<AR> implements Arrow<AR>
+class ArrowAbstract<AR> implements Arrow<AR>
 {
   // constraints
   var c:Category<AR>;

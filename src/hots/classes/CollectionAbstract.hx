@@ -7,7 +7,7 @@ import scuts.Scuts;
  * @author 
  */
 
-@:tcAbstract class CollectionAbstract<M> implements Collection<M>
+class CollectionAbstract<M> implements Collection<M>
 {
 
   public function each <A>(coll:Of<M,A>, f:A->Void):Void return Scuts.abstractMethod()

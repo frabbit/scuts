@@ -10,9 +10,9 @@ class Function1Monoid<A,B> extends MonoidAbstract<A->B>
   
   var monoidB:Monoid<B>;
   
-  public function new (monoidB:Monoid<B>) 
+  public function new (monoidB:Monoid<B>, semi) 
   {
-    super(Function1Semigroup.get(monoidB));
+    super(semi);
     this.monoidB = monoidB;
   }
   

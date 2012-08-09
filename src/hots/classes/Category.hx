@@ -1,11 +1,11 @@
 package hots.classes;
 import hots.OfOf;
-import hots.TC;
+
 import scuts.Scuts;
 
 
 
-interface Category<Cat> implements TC
+interface Category<Cat>
 {
   
   

@@ -8,7 +8,6 @@ import scuts.data.LazyList;
 class LazyListBox 
 {
   public static inline function boxT <A,B>(o:Of<A, LazyList<B>>):LazyListTOf<A,B> return cast o
-  
   public static inline function unboxT <A,B>(o:LazyListTOf<A,B>):Of<A, LazyList<B>> return cast o 
   
   

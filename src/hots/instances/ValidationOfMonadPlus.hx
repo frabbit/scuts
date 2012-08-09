@@ -21,9 +21,9 @@ class ValidationOfMonadPlus<F> extends MonadPlusAbstract<Validation<F,In>> {
   
   private var failureMonoid:Monoid<F>;
   
-  public function new (failureMonoid:Monoid<F>) 
+  public function new (failureMonoid:Monoid<F>, monZero) 
   {
-    super(ValidationOfMonadZero.get(failureMonoid));
+    super(monZero);
     this.failureMonoid = failureMonoid;
   }
   

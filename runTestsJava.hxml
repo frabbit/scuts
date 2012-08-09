@@ -1,0 +1,4 @@
+commonTest.hxml
+-main AllTests
+-java bin/test/java
+

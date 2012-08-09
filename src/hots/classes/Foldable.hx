@@ -1,11 +1,11 @@
 package hots.classes;
 import hots.Of;
 import hots.classes.Monoid;
-import hots.TC;
+
 
 
 // minimal implementation foldRight or foldMap
-interface Foldable<F> implements TC 
+interface Foldable<F>
 {
   public function fold <A>(of:Of<F,A>, mon:Monoid<A>):A;
   

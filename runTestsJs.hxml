@@ -1,0 +1,4 @@
+commonTest.hxml
+-main AllTests
+-js bin/test/testJs.js
+

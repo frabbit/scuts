@@ -11,7 +11,7 @@ class OptionSemigroup<X> extends SemigroupAbstract<Option<X>>
 {
   var semi:Semigroup<X>;
   
-  public function new (semi:Semigroup<X>) 
+  public function new (semi) 
   {
     this.semi = semi;
   }

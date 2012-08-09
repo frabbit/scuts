@@ -12,10 +12,10 @@ class DateOrd extends OrdAbstract<Date>
 {
   var floatEq:FloatOrd;
   
-  public function new (eq:Eq<Date>) 
+  public function new (eq:Eq<Date>, floatEq:FloatOrd) 
   {
     super(eq);
-    this.floatEq = FloatOrd.get();
+    this.floatEq = floatEq;
   }
   
   override public function less (a:Date, b:Date):Bool 

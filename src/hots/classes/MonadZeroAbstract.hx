@@ -6,7 +6,7 @@ import scuts.Scuts;
 
 
 
-@:tcAbstract class MonadZeroAbstract<M> implements MonadZero<M>
+class MonadZeroAbstract<M> implements MonadZero<M>
 {
   var monad:Monad<M>;
   

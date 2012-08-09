@@ -1,10 +1,7 @@
 package hots.classes;
 import hots.Of;
 
-/**
- * ...
- * @author 
- */
+
 
 interface AlternativeArray<F> implements Applicative<F>
 {

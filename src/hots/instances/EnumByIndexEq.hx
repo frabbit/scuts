@@ -7,10 +7,10 @@ import hots.instances.IntEq;
 class EnumByIndexEq extends EqAbstract<EnumValue> 
 {
   
-  private var intEq;
+  private var intEq:Eq<Int>;
   
-  public function new () {
-    this.intEq = IntEq.get();
+  public function new (intEq) {
+    this.intEq = intEq;
   }
 
   override public function eq (a:EnumValue, b:EnumValue):Bool {

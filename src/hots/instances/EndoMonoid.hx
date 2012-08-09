@@ -8,7 +8,12 @@ import scuts.Scuts;
 
 class EndoMonoid<T> extends MonoidAbstract<T->T>
 {
-  public function new () super(EndoSemigroup.get())
+  static var instance = new EndoMonoid(new EndoSemigroup());
+  
+  public static inline function endo <T>():EndoMonoid<T> return instance
+  
+  
+  public function new (semi) super(semi)
   
   override public function empty ():T->T 
   {

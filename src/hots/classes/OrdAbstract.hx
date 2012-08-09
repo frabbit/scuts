@@ -3,7 +3,7 @@ package hots.classes;
 
 import scuts.core.types.Ordering;
 
-@:tcAbstract class OrdAbstract<T> implements Ord<T> {
+class OrdAbstract<T> implements Ord<T> {
   
   var e:Eq<T>;
   

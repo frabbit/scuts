@@ -1,4 +1,6 @@
 package hots.classes;
+import hots.instances.DualSemigroup;
+import hots.instances.EndoSemigroup;
 import hots.Of;
 
 import hots.Of;
@@ -14,10 +16,10 @@ import hots.instances.EndoMonoid;
 
 
 // minimal implementation foldRight or foldMap
-@:tcAbstract 
+
 class FoldableAbstract<F> implements Foldable<F>
 {
-  
+
   public function fold <A>(of:Of<F,A>, mon:Monoid<A>):A
   {
     return foldMap(of, mon, Scuts.id);
@@ -39,7 +41,7 @@ class FoldableAbstract<F> implements Foldable<F>
   public function foldLeft <A,B>(of:Of<F,B>, b:A, f:A->B->A):A
   {
     var f : B->(A->A)       = f.flip().curry();
-    var mon : Monoid<A->A>  = DualMonoid.get(EndoMonoid.get());
+    var mon : Monoid<A->A>  = new DualMonoid(EndoMonoid.endo(), new DualSemigroup(EndoMonoid.endo()));
 
     return foldMap(of, mon, f)(b);
   }
@@ -49,7 +51,7 @@ class FoldableAbstract<F> implements Foldable<F>
    */
   public function foldRight <A,B>(of:Of<F,A>, b:B, f:A->B->B):B
   {
-    var x = foldMap(of, EndoMonoid.get() ,f.curry());
+    var x = foldMap(of, EndoMonoid.endo(),f.curry());
     
     return x(b);
   }

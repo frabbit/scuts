@@ -9,14 +9,16 @@ using scuts.core.extensions.Iterators;
 class HashShow<T> extends ShowAbstract<Hash<T>> {
 
   private var showT:Show<T>;
+  private var stringShow:Show<String>;
   
-  public function new (showT:Show<T>) {
+  public function new (showT:Show<T>, stringShow:Show<String>) {
     this.showT = showT;
+    this.stringShow = stringShow;
   }
   
   override public function show (v:Hash<T>):String 
   {
-    var elems = v.keys().mapToArray(function (k) return StringShow.get().show(k) + " => " + showT.show(v.get(k)));
+    var elems = v.keys().mapToArray(function (k) return stringShow.show(k) + " => " + showT.show(v.get(k)));
     return "{ " + elems.join(", ") + " }";
   }
 }

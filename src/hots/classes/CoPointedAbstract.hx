@@ -14,7 +14,7 @@ using scuts.core.extensions.Functions;
   duplicate = extend id
  
   */
-@:tcAbstract class CoPointedAbstract<W> implements CoPointed<W> 
+class CoPointedAbstract<W> implements CoPointed<W> 
 {
   
   var f:Functor<W>;

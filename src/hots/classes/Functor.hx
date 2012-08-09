@@ -1,11 +1,11 @@
 package hots.classes;
 
 import hots.Of;
-import hots.TC;
+
 import scuts.Scuts;
 
 
-interface Functor<F> implements TC
+interface Functor<F> 
 {
   /**
    * Maps the function f:A->B over the monadic value F<A>.

@@ -4,7 +4,7 @@ import hots.Of;
 import scuts.Scuts;
 
 
-@:tcAbstract class PointedAbstract<F> implements Pointed<F>
+class PointedAbstract<F> implements Pointed<F>
 {
   var functor:Functor<F>;
   

@@ -1,14 +1,15 @@
 package hots.instances;
 
+import hots.classes.Eq;
 import hots.classes.Ord;
 import hots.classes.OrdAbstract;
 import scuts.core.types.Ordering;
 
 class FloatOrd extends OrdAbstract<Float> {
   
-  public function new () 
+  public function new (eq:Eq<Float>) 
   { 
-    super(FloatEq.get());
+    super(eq);
   }
   
   override public inline function lessOrEq (a:Float, b:Float):Bool 

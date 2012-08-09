@@ -2,12 +2,12 @@ package hots.classes;
 
 import hots.classes.Applicative;
 import hots.Of;
-import hots.TC;
+
 
 import scuts.Scuts;
 
 
-interface Monad<M> implements Applicative<M>, implements TC
+interface Monad<M> implements Applicative<M>
 {
   public function flatMap<A,B>(val:Of<M,A>, f: A->Of<M,B>):Of<M,B>;
   

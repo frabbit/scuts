@@ -1,8 +1,10 @@
 package hots.classes;
-import hots.TC;
+
 
 //@:typeClass
-interface Eq<T> implements TC {
+interface Eq<T> {
+  
+  
   public function eq (a:T, b:T):Bool;
   
   public function notEq (a:T, b:T):Bool;

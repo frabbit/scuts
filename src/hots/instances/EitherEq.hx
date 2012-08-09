@@ -16,7 +16,7 @@ class EitherEq<A,B> extends EqAbstract<Either<A,B>> {
     this.eqB = eqB;
   }
   
-  override public function eq (a:Either<A,B>, b:Either<A,B>):Bool return switch (a) 
+  override public function eq (a:Either<A,B>, b:Either<A,B>):Bool
   {
     return Eithers.eq(a, b, eqA.eq, eqB.eq);
   }

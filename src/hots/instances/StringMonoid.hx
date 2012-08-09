@@ -2,10 +2,11 @@ package hots.instances;
 
 
 import hots.classes.MonoidAbstract;
+import hots.Objects;
 
 class StringMonoid extends MonoidAbstract<String>
 {
-  public function new () super(StringSemigroup.get())
+  public function new (semi) super(semi)
   
   
   override public inline function empty ():String {

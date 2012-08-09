@@ -14,7 +14,7 @@ using scuts.core.extensions.Functions;
   duplicate = extend id
  
   */
-@:tcAbstract class CoMonadAbstract<W> implements CoMonad<W> 
+class CoMonadAbstract<W> implements CoMonad<W> 
 {
   var p:CoPointed<W>;
   

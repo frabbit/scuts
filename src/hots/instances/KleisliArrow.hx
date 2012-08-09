@@ -18,8 +18,8 @@ class KleisliArrow<M> extends ArrowAbstract<In->Of<M,In>>
 {
   var m:Monad<M>;
   
-  public function new (m:Monad<M>) {
-    super(KleisliCategory.get(m));
+  public function new (m:Monad<M>, cat) {
+    super(cat);
     this.m = m;
   }
   

@@ -14,13 +14,13 @@ using hots.box.ArrayBox;
 
 
 
-class ArrayTOfApplicative<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
+class ArrayTOfApplicative<M> extends ApplicativeAbstract<OfT<M,Array<In>>> {
   
   var appM:Applicative<M>;
 
-  public function new (appM:Applicative<M>) 
+  public function new (appM, pointed) 
   {
-    super(ArrayTOfPointed.get(appM));
+    super(pointed);
     this.appM = appM;
   }
 

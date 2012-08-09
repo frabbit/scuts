@@ -1,7 +1,0 @@
--main.hxml
--cp ../../src 
--cp ../../../scutsCore/src
--cp ../../../hots/src
--cp ../../../scutsMacros/src
--cp ../../../scutsMCore/src
--php bin/php

@@ -1,16 +1,17 @@
 package hots.classes;
 import scuts.core.types.LazyIterator;
 import scuts.data.LazyList;
-import scuts.data.LazyLists; using scuts.data.LazyLists;
+import scuts.data.LazyLists; 
+
 import scuts.Scuts;
 
-
+using scuts.data.LazyLists;
 using scuts.core.extensions.Functions;
 using scuts.core.extensions.Ints;
 using scuts.core.extensions.Arrays;
 using scuts.core.extensions.Iterables;
 
-@:tcAbstract class EnumerationAbstract<T> implements Enumeration<T>{
+class EnumerationAbstract<T> {
   
   public function toEnum (i:Int):T return Scuts.abstractMethod()
   

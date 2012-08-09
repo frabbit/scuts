@@ -11,7 +11,7 @@ using hots.box.ArrayBox;
 
 
 
-class ArrayTOfFunctor<M> extends FunctorAbstract<Of<M,Array<In>>> 
+class ArrayTOfFunctor<M> extends FunctorAbstract<OfT<M,Array<In>>> 
 {
   
   var functorM:Functor<M>;

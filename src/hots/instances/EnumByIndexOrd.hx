@@ -8,7 +8,7 @@ import hots.classes.OrdAbstract;
 class EnumByIndexOrd extends OrdAbstract<EnumValue> 
 {
   
-  public function new () super(EnumByIndexEq.get())
+  public function new (eq) super(eq)
 
   override public function lessOrEq (a:EnumValue, b:EnumValue):Bool 
   {

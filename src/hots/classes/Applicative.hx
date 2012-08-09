@@ -2,7 +2,7 @@ package hots.classes;
 
 
 import hots.Of;
-import hots.TC;
+
 import scuts.Scuts;
 
 
@@ -13,7 +13,7 @@ import scuts.Scuts;
    (<*>) :: f (a -> b) -> f a -> f b
  */
 
-interface Applicative<M> implements Pointed<M>, implements TC
+interface Applicative<M> implements Pointed<M>
 {
   /**
    * aka <*>

@@ -7,4 +7,19 @@ package hots;
 #else
 @:native('Dynamic')
 #end
-class Of<M,A> {}
+class Of<M,A> { }
+/*
+#if flash
+@:native('Object')
+#else
+@:native('Dynamic')
+#end
+*/
+//typedef OfT<M,A> = Of<M,A>;
+
+#if flash
+@:native('Object')
+#else
+@:native('Dynamic')
+#end
+class OfT<M,A> { }

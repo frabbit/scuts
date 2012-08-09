@@ -19,9 +19,9 @@ class ValidationOfMonadZero<F> extends MonadZeroAbstract<Validation<F,In>> {
   
   private var failureMonoid:Monoid<F>;
   
-  public function new (failureMonoid:Monoid<F> ) 
+  public function new (failureMonoid:Monoid<F>, monad ) 
   {
-    super(ValidationOfMonad.get(failureMonoid));
+    super(monad);
     this.failureMonoid = failureMonoid;
   }
   

@@ -10,9 +10,9 @@ using hots.box.EitherBox;
 
 class EitherPointed<L> extends PointedAbstract<Either<L,In>> {
   
-  public function new () 
+  public function new (func) 
   {
-    super(EitherFunctor.get());
+    super(func);
   }
   
   override public function pure<A>(x:A):EitherOf<L,A> return Right(x).box()

@@ -9,7 +9,7 @@ using hots.box.OptionBox;
 
 class OptionOfMonadZero extends MonadZeroAbstract<Option<In>>
 {
-  public function new () super(OptionOfMonad.get())
+  public function new (mon) super(mon)
   
   override public inline function zero <A>():OptionOf<A> 
   {

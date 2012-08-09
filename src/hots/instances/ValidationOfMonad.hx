@@ -15,9 +15,9 @@ using hots.box.ValidationBox;
 
 class ValidationOfMonad<F> extends MonadAbstract<Validation<F,In>> {
   
-  public function new (failureSemi:Semigroup<F>) 
+  public function new (failureSemi:Semigroup<F>, app) 
   {
-    super(ValidationOfApplicative.get(failureSemi));
+    super(app);
   }
   
   override public function flatMap<S,SS>(of:ValidationOf<F,S>, f: S->ValidationOf<F,SS>):ValidationOf<F,SS> 

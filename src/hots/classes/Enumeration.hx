@@ -1,12 +1,12 @@
 package hots.classes;
-import hots.TC;
+
 import scuts.core.types.LazyIterator;
 import scuts.data.LazyList;
 
 
 
 
-interface Enumeration<T> implements TC 
+interface Enumeration<T>
 {
   public function pred (a:T):T;
   

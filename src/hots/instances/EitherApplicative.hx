@@ -11,9 +11,9 @@ using scuts.core.extensions.Eithers;
 class EitherApplicative<L> extends ApplicativeAbstract<Either<L,In>> 
 {
   
-  public function new () 
+  public function new (pointed) 
   {
-    super(EitherPointed.get());
+    super(pointed);
   }
   
   override public function apply<A,B>(f:EitherOf<L,A->B>, of:EitherOf<L,A>):EitherOf<L,B> 

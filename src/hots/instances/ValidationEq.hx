@@ -8,19 +8,19 @@ import scuts.core.types.Tup2;
 import scuts.core.types.Validation;
 
 
-class ValidationEq<A,B> extends EqAbstract<Validation<F,S>> 
+class ValidationEq<F,S> extends EqAbstract<Validation<F,S>> 
 {
   
-  var failureEq:Eq<B>;
-  var successEq:Eq<A>;
+  var failureEq:Eq<F>;
+  var successEq:Eq<S>;
   
-  public function new (failureEq:Eq<B>, successEq:Eq<A> ) 
+  public function new (failureEq:Eq<F>, successEq:Eq<S> ) 
   {
     this.failureEq = failureEq;
     this.successEq = successEq;
   }
   
-  override public inline function eq  (a:Tup2<A,B>, b:Tup2<A,B>):Bool 
+  override public inline function eq  (a:Validation<F,S>, b:Validation<F,S>):Bool 
   {
     return Validations.eq(a, b, failureEq.eq, successEq.eq);
   }

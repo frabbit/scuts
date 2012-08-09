@@ -9,7 +9,7 @@ import hots.classes.Monad;
 
 using hots.box.OptionBox;
 
-class OptionTOfMonadZero<M> extends MonadZeroAbstract<Of<M, Option<In>>> {
+class OptionTOfMonadZero<M> extends MonadZeroAbstract<OfT<M, Option<In>>> {
   
   var monadM:Monad<M>;
   

@@ -2,6 +2,7 @@ package hots.instances;
 
 import hots.classes.ApplicativeAbstract;
 import hots.In;
+import hots.Objects;
 import scuts.core.extensions.Options;
 import scuts.core.types.Option;
 
@@ -9,9 +10,9 @@ using hots.box.OptionBox;
 
 class OptionOfApplicative extends ApplicativeAbstract<Option<In>>
 {
-  public function new () 
+  public function new (pointed) 
   {
-    super(OptionOfPointed.get());
+    super(pointed);
   }
   
   override public function apply<B,C>(f:OptionOf<B->C>, of:OptionOf<B>):OptionOf<C> return switch(f.unbox()) 

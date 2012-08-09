@@ -14,13 +14,13 @@ using hots.box.OptionBox;
 
 
 
-class OptionTOfApplicative<M> extends ApplicativeAbstract<Of<M,Option<In>>> {
+class OptionTOfApplicative<M> extends ApplicativeAbstract<OfT<M,Option<In>>> {
   
   var applicativeM:Applicative<M>;
 
-  public function new (applicativeM:Applicative<M>) 
+  public function new (applicativeM:Applicative<M>, pointed) 
   {
-    super(OptionTOfPointed.get(applicativeM));
+    super(pointed);
     this.applicativeM = applicativeM;
   }
 

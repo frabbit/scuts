@@ -2,4 +2,5 @@ package hots;
 
 
 
-typedef ImplicitConversion<A,B> = ImplicitObject<A->B>;
+
+typedef ImplicitConversion<A,B > = { __impFrom:Void->A, __impTo:Void->B }

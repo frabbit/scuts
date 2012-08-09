@@ -6,7 +6,7 @@ import scuts.Scuts;
 
 
 
-@:tcAbstract class NumAbstract<A> implements Num<A> 
+class NumAbstract<A> implements Num<A> 
 {
   
   var e:Eq<A>;

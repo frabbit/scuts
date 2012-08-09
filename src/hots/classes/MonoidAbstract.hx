@@ -3,7 +3,7 @@ import scuts.Scuts;
 
 
 
-@:tcAbstract class MonoidAbstract<A> implements Monoid<A>
+class MonoidAbstract<A> implements Monoid<A>
 {
   var semi:Semigroup<A>;
   

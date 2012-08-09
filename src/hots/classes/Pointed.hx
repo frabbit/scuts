@@ -1,9 +1,9 @@
 package hots.classes;
 import hots.Of;
-import hots.TC;
 
 
-interface Pointed<F> implements Functor<F>, implements TC
+
+interface Pointed<F> implements Functor<F>
 {
   public function pure <A>(v:A):Of<F,A>;
 }

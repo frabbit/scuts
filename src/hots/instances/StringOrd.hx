@@ -6,7 +6,7 @@ import hots.instances.StringEq;
 
 class StringOrd extends OrdAbstract<String> {
   
-  public function new () super(StringEq.get())
+  public function new (eq) super(eq)
   
   override public inline function lessOrEq (a:String, b:String):Bool {
     return a <= b;

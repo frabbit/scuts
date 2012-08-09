@@ -6,7 +6,7 @@ import scuts.core.types.Ordering;
 
 class IntOrd extends OrdAbstract<Int> {
   
-  public function new () super(IntEq.get())
+  public function new (eq:IntEq) super(eq)
   
   override public inline function lessOrEq (a:Int, b:Int):Bool {
     return a <= b;

@@ -14,13 +14,13 @@ using hots.box.OptionBox;
 
 
 
-class OptionTOfPointed<M> extends PointedAbstract<Of<M,Option<In>>> {
+class OptionTOfPointed<M> extends PointedAbstract<OfT<M,Option<In>>> {
   
   var pointedM:Pointed<M>;
 
-  public function new (pointedM:Pointed<M>) 
+  public function new (pointedM:Pointed<M>, functor) 
   {
-    super(OptionTOfFunctor.get(pointedM));
+    super(functor);
     this.pointedM = pointedM;
   }
 

@@ -1,11 +1,11 @@
 package hots.classes;
 
 import hots.OfOf;
-import hots.TC;
+
 import scuts.core.types.Tup2;
 import scuts.Scuts;
 
-interface Arrow<AR> implements Category<AR>, implements TC
+interface Arrow<AR> implements Category<AR>
 {
   /**
    * The arr Function

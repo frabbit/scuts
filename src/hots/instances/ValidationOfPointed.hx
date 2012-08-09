@@ -14,9 +14,9 @@ using hots.box.ValidationBox;
 
 class ValidationOfPointed<F> extends PointedAbstract<Validation<F,In>> 
 {
-  public function new () 
+  public function new (func) 
   {
-    super(ValidationOfFunctor.get());
+    super(func);
   }
   
   override public function pure<S>(x:S):ValidationOf<F,S> return x.toSuccess().box()

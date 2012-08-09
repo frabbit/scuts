@@ -1,7 +1,7 @@
 package hots.classes;
-import hots.TC;
 
-interface Show<T> implements TC 
+
+interface Show<T>  
 {
   public function show (v:T):String;
 }

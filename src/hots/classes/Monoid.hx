@@ -1,10 +1,10 @@
 package hots.classes;
-import hots.TC;
+
 import scuts.Scuts;
 
 
 
-interface Monoid<A> implements Semigroup<A>, implements TC
+interface Monoid<A> implements Semigroup<A>
 {
   public function empty ():A;
   

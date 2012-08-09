@@ -1,8 +1,8 @@
 package hots.classes;
 import hots.Of;
-import hots.TC;
 
-interface Collection<M> implements TC
+
+interface Collection<M>
 {
   public function each <A>(of:Of<M,A>, f:A->Void):Void;
   

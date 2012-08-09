@@ -2,6 +2,7 @@ package hots.instances;
 import hots.box.FunctionBox;
 import hots.In;
 import hots.classes.ArrowAbstract;
+import hots.Objects;
 import scuts.core.types.Tup2;
 import hots.instances.FunctionCategory;
 using scuts.core.extensions.Functions;
@@ -11,8 +12,8 @@ private typedef B = FunctionBox;
 // Arrow of Functions
 class FunctionArrow extends ArrowAbstract<In->In>
 {
-  public function new () {
-    super(FunctionCategory.get());
+  public function new (cat) {
+    super(cat);
   }
   
   /**

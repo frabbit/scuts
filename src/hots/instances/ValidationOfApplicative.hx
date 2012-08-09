@@ -19,9 +19,9 @@ class ValidationOfApplicative<F> extends ApplicativeAbstract<Validation<F,In>>
   
   var failureSemi:Semigroup<F>;
   
-  public function new (failureSemi:Semigroup<F>) 
+  public function new (failureSemi:Semigroup<F>, pointed) 
   {
-    super(ValidationOfPointed.get());
+    super(pointed);
     this.failureSemi = failureSemi;
   }
   

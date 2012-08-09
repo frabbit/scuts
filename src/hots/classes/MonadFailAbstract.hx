@@ -5,7 +5,7 @@ import hots.Of;
 import scuts.Scuts;
 
 
-@:tcAbstract class MonadFailAbstract<M> implements MonadFail<M> {
+class MonadFailAbstract<M> implements MonadFail<M> {
   
   var m:Monad<M>;
   

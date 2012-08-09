@@ -5,7 +5,7 @@ import scuts.Scuts;
 
 
 
-@:tcAbstract class CategoryAbstract<Cat> implements Category<Cat>
+class CategoryAbstract<Cat> implements Category<Cat>
 {
   public function id <A>(a:A):OfOf<Cat, A, A> return Scuts.abstractMethod()
   /**

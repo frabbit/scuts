@@ -2,10 +2,6 @@ package hots.extensions;
 import hots.classes.MonadZero;
 import hots.Of;
 
-/**
- * ...
- * @author 
- */
 
 class MonadZeros 
 {

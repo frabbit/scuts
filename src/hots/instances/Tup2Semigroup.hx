@@ -5,7 +5,7 @@ import hots.classes.Monoid;
 import hots.classes.MonoidAbstract;
 import hots.classes.Semigroup;
 import hots.classes.SemigroupAbstract;
-import hots.TC;
+
 
 import scuts.core.types.Tup2;
 

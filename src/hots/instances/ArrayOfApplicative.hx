@@ -4,6 +4,7 @@ import hots.instances.ArrayOfPointed;
 import hots.classes.ApplicativeAbstract;
 import hots.In;
 import hots.classes.Applicative;
+import hots.Objects;
 import scuts.core.types.Option;
 
 
@@ -11,7 +12,7 @@ using hots.box.ArrayBox;
 
 class ArrayOfApplicative extends ApplicativeAbstract<Array<In>>
 {
-  public function new () super(ArrayOfPointed.get())
+  public function new (pointed) super(pointed)
   
   override public function apply<B,C>(f:ArrayOf<B->C>, v:ArrayOf<B>):ArrayOf<C> 
   {

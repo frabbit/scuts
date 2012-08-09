@@ -13,13 +13,13 @@ import hots.classes.Functor;
 
 using hots.box.ArrayBox;
 
-class ArrayTOfPointed<M> extends PointedAbstract<Of<M,Array<In>>> 
+class ArrayTOfPointed<M> extends PointedAbstract<OfT<M,Array<In>>> 
 {
   var pointedM:Pointed<M>;
 
-  public function new (pointedM:Pointed<M>) 
+  public function new (pointedM:Pointed<M>, functor) 
   {
-    super(ArrayTOfFunctor.get(pointedM));
+    super(functor);
     this.pointedM = pointedM;
   }
 

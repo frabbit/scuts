@@ -6,16 +6,15 @@ import hots.instances.FloatEq;
 
 class DateEq extends EqAbstract<Date> 
 {
+  var floatEq:FloatEq;
   
-  public function new () {}
+  public function new (floatEq) {
+    this.floatEq = floatEq;
+  }
 
   override public inline function eq (a:Date, b:Date):Bool 
   {
-    return FloatEq.get().eq(a.getTime(), b.getTime());
+    return floatEq.eq(a.getTime(), b.getTime());
   }
-  
-  override public inline function notEq (a:Date, b:Date):Bool 
-  {
-    return FloatEq.get().notEq(a.getTime(), b.getTime());
-  }
+
 }

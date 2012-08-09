@@ -9,7 +9,7 @@ import scuts.core.types.Ordering;
 
 class BoolOrd extends OrdAbstract<Bool> 
 {
-  public function new () super(BoolEq.get())
+  public function new (eq) super(eq)
   
   override public function less (a:Bool, b:Bool):Bool return !a && b
   

@@ -4,7 +4,7 @@ import scuts.Scuts;
 
 
 
-@:tcAbstract class MonadPlusAbstract<M>
+class MonadPlusAbstract<M>
 {
   var mz:MonadZero<M>;
   

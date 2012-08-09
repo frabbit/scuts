@@ -12,7 +12,7 @@ import scuts.Scuts;
    (<*>) :: f (a -> b) -> f a -> f b
  */
 
-@:tcAbstract class ApplicativeAbstract<M> implements Applicative<M>
+class ApplicativeAbstract<M> implements Applicative<M>
 {
 
   // constraint

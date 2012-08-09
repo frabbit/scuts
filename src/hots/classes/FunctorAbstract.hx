@@ -4,7 +4,7 @@ import hots.Of;
 import scuts.Scuts;
 
 
-@:tcAbstract class FunctorAbstract<F> implements Functor<F>
+class FunctorAbstract<F> implements Functor<F>
 {
   /**
    * @inheritDoc

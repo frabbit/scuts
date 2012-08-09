@@ -1,10 +1,14 @@
 package hots.instances;
+import hots.classes.Eq;
 import hots.classes.Num;
 import hots.classes.NumAbstract;
+import hots.classes.Show;
 
 class IntNum extends NumAbstract<Int>
 {
-  public function new () { super(IntEq.get(), IntShow.get());}
+  public function new (eq:Eq<Int>, show:Show<Int>) { 
+    super(eq, show);
+  }
   
   
   override public inline function plus (a:Int, b:Int):Int return a+b

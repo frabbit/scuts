@@ -10,7 +10,7 @@ import scuts.Scuts;
  * @author 
  */
 
-@:tcAbstract class ArrowZeroAbstract<AR> implements ArrowZero<AR>
+class ArrowZeroAbstract<AR> implements ArrowZero<AR>
 {
   var arrow:Arrow<AR>;
   
