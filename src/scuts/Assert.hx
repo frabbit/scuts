@@ -93,7 +93,7 @@ class Assert
    * throws an assertion error in debug mode if expr is not true
    */
   @:noUsing 
-  public static inline function isTrue <T>(expr:Bool, ret:T, ?message:String, ?posInfos:PosInfos):T {
+  public static inline function isTrue <T>(expr:Bool, ?ret:T, ?message:String, ?posInfos:PosInfos):T {
     #if debug
     doAssert(expr, "assertTrue", message, posInfos);
     #end
@@ -104,7 +104,7 @@ class Assert
    * throws an assertion error in debug mode if expr is not true
    */
   @:noUsing
-  public static function isObject <T>(val:Dynamic, ret:T, ?message:String, ?posInfos:PosInfos):T 
+  public static function isObject <T>(val:Dynamic, ?ret:T, ?message:String, ?posInfos:PosInfos):T 
   {
     #if debug
     doAssert(Reflect.isObject(val), "assertIsObject", message, posInfos);
@@ -127,7 +127,7 @@ class Assert
    * throws an assertion error in debug mode if expected doesn't equals actual.
    */
   @:noUsing
-  public static function equals <X,T>(expected:T, actual:T, ret:X, ?message:String, ?posInfos:PosInfos):X 
+  public static function equals <X,T>(expected:T, actual:T, ?ret:X, ?message:String, ?posInfos:PosInfos):X 
   {
     #if debug
         message = message == null ? "expected " + expected + " but was " + actual : message;
@@ -140,7 +140,7 @@ class Assert
    * throws an assertion error in debug mode if a is null.
    */
   @:noUsing
-  public static function notNull <T,X>(a:T, ret:X, ?message:String = null, ?posInfos:PosInfos):X 
+  public static function notNull <T,X>(a:T, ?ret:X, ?message:String = null, ?posInfos:PosInfos):X 
   {
     #if debug
     doAssert(a != null, "assertNotNull", message, posInfos);
@@ -152,7 +152,7 @@ class Assert
    * throws an assertion error in debug mode if all elements of a are null.
    */
   @:noUsing
-  public static inline function allNotNull <X>(a:Iterable<Dynamic>, ret:X, ?message:String = null, ?posInfos:PosInfos):X 
+  public static inline function allNotNull <X>(a:Iterable<Dynamic>, ?ret:X, ?message:String = null, ?posInfos:PosInfos):X 
   {
     
     #if debug
@@ -170,7 +170,7 @@ class Assert
    * throws an assertion error in debug mode if a is not null.
    */
   @:noUsing
-  public static function isNull <X>(a:Dynamic, ret:X, ?message:String, ?posInfos:PosInfos):X
+  public static function isNull <X>(a:Dynamic, ?ret:X, ?message:String, ?posInfos:PosInfos):X
   {
     #if debug
     doAssert(a == null, "assertNotNull", message, posInfos);
@@ -182,7 +182,7 @@ class Assert
    * throws an assertion error in debug mode if value is not between min and max.
    */
   @:noUsing
-  public static inline function floatInRange <X>(value : Float, min : Float, max : Float, ret:X, ?message : String, ?posInfos:PosInfos):X
+  public static inline function floatInRange <X>(value : Float, min : Float, max : Float, ?ret:X, ?message : String, ?posInfos:PosInfos):X
   {
     #if debug
     message = message == null 
@@ -198,7 +198,7 @@ class Assert
    * throws an assertion error in debug mode if value is not between min and max.
    */
   @:noUsing
-  public static inline function intInRange <X>(value : Int, min : Int, max : Int, ret:X, ?message : String, ?posInfos:PosInfos):X
+  public static inline function intInRange <X>(value : Int, min : Int, max : Int, ?ret:X, ?message : String, ?posInfos:PosInfos):X
   {
     #if debug
     message = message == null 
@@ -213,7 +213,7 @@ class Assert
    * throws an assertion error in debug mode if expr is true.
    */
   @:noUsing
-  public static inline function isFalse <X>(expr:Bool, ret:X, ?message:String, ?posInfos:PosInfos):X 
+  public static inline function isFalse <X>(expr:Bool, ?ret:X, ?message:String, ?posInfos:PosInfos):X 
   {
     #if debug
     doAssert(!expr, "assertFalse", message, posInfos);
@@ -225,7 +225,7 @@ class Assert
    * throws an assertion error in debug mode if obj is not of type objType.
    */
   @:noUsing
-  public static inline function isType <X>(obj:Dynamic, objType:Dynamic, ret:X, ?message:String, ?posInfos:PosInfos):X
+  public static inline function isType <X>(obj:Dynamic, objType:Dynamic, ?ret:X, ?message:String, ?posInfos:PosInfos):X
   {
     #if debug
     doAssert(Std.is(obj, objType), "assertType", "expected type " + objType + ", but was " + Type.getClass(obj), posInfos);
@@ -237,7 +237,7 @@ class Assert
    * throws an assertion error in debug mode if obj is a class instance.
    */
   @:noUsing
-  public static inline function isClassInstance <X>(obj:Dynamic, ret:X, ?message:String, ?posInfos:PosInfos):X
+  public static inline function isClassInstance <X>(obj:Dynamic, ?ret:X, ?message:String, ?posInfos:PosInfos):X
   {
     #if debug
     var isClassInstance = switch (Type.typeof(obj)) 

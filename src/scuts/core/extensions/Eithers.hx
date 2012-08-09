@@ -8,6 +8,20 @@ import scuts.core.types.Validation;
 class Eithers
 {
   
+  public static function append <L,R> (a1:Either<L,R>, a2:Either<L, R>, appendLeft:L->L->L, appendRight:R->R->R):Either<L, R> return switch (a1) 
+  {
+    case Right(r1): switch (a2) 
+    {
+      case Right(r2): Right(appendRight(r1,r2));
+      case Left(l): Left(l);
+    }
+    case Left(l1): switch (a2) 
+    {
+      case Right(_): Left(l1);
+      case Left(l2): Left(appendLeft(l1, l2));
+    }
+  }
+  
   public static function eq <A,B>(a:Either<A,B>, b:Either<A,B>, eqA:A->A->Bool, eqB:B->B->Bool):Bool return switch (a) 
   {
     case Left(l1): switch (b) 

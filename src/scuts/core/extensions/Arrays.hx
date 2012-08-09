@@ -228,6 +228,7 @@ class Arrays
   public static function flatMap < S, T > (w:Array<S>, f:S->Array<T>):Array<T>
   {
     var res = [];
+    
     for (i in w) 
     {
       for (j in f(i)) 

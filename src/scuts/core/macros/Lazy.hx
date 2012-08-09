@@ -1,6 +1,6 @@
 package scuts.core.macros;
 
-#if (macro || display)
+#if (macro)
 import haxe.macro.Expr.ExprRequire;
 import haxe.macro.Expr;
 import haxe.macro.Type;
@@ -14,7 +14,7 @@ class Lazy
     return mkExpr(ex);
   }
   
-  #if (macro || display)
+  #if (macro)
   public static function mkExpr (ex:Expr):Expr 
   {
     var p = ex.pos;

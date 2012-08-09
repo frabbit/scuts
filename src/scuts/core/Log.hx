@@ -1,12 +1,12 @@
 package scuts.core;
 import haxe.PosInfos;
-#if (macro || display)
+#if macro
 import neko.FileSystem;
 import neko.io.FileOutput;
 #end
 class Log 
 {
-  #if (macro || display)
+  #if macro
   static var logFile = "_scutsLog.txt";
   static var logOutput:FileOutput;
   static var logOutputCreated:Bool = false;
@@ -82,7 +82,7 @@ class Log
     return debugObj(e, debug(e), p);
   }
   
-  #if (macro || display)
+  #if macro
   static function createLogFile ():Bool {
     return if (!logOutputCreated) {
       logOutput = if (!FileSystem.exists(logFile)) 

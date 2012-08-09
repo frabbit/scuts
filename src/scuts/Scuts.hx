@@ -6,7 +6,7 @@ import scuts.core.extensions.PosInfosTools;
 
 using scuts.core.extensions.Arrays;
 using scuts.core.extensions.Strings;
-#if (macro || display)
+#if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
@@ -53,9 +53,18 @@ class Scuts
     return null;
     #end
   }
+  #if macro
+  public static function warning <T>(headline:String, msg:Dynamic, ?p:Position):T 
+  {
+    var p1 = p.nullGetOrElseConst(Context.currentPos());
+   
+    Context.warning(headline + "\n" + msg, p1);
+    return null;
+  }
+  #end
   
   
-  #if (macro || display)
+  #if macro
   
 
   public static function macroError <T>(msg:String, ?p:Position, ?posInfos:PosInfos):T 
@@ -69,7 +78,7 @@ class Scuts
       .filter(function (x) return x.indexOf("scuts/Scuts.hx") == -1 && x.indexOf("haxe/Stack.hx") == -1)
       .join("\n");
     
-    throw new Error
+    new Error
     (
       msg + "\n@" + posInfos.toString() 
       + "\n-----------------------------------------------------------------------------\n" 

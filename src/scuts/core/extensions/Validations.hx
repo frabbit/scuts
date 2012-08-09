@@ -49,7 +49,7 @@ class Validations
     }
     case Failure(f1): switch (v) 
     {
-      case Success(s): Failure(f1);
+      case Success(_): Failure(f1);
       case Failure(f2): Failure(appendFailure(f1, f2));
     }
   }
