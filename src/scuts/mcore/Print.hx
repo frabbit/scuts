@@ -101,6 +101,7 @@ class Print
   
   static function expr1 (ex:Expr, buf:StringBuf, indent:Int, indentStr:String):StringBuf
   {
+    
     #if scutsDebug
     #if printInvalidExpr
     buf.add("INVALID");
@@ -129,6 +130,7 @@ class Print
     }
     
     var add = function (str) { buf.add(str); return buf;} 
+    
     
     return switch(ex.expr) {
       case EConst( c ):
@@ -365,9 +367,11 @@ class Print
         add("throw ");
         expr(e);
       case ECast( e, t  ):
+        
         if (t == null) {
-          add("cast ");
+          add("(cast ");
           expr(e);
+          add(")");
         } else {
           add("cast(");
           expr(e);
@@ -390,8 +394,13 @@ class Print
         add(" : ");
         expr(eelse);
       case ECheckType(e, t):
+        add("(checktype ");
         // TODO what is this exactly
         expr(e);
+        add("( : ");
+        complexType(t);
+        add(" )");
+        
     }
   }
   

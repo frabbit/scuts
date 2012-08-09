@@ -439,6 +439,13 @@ class Check
     case ECast(_,_): true;
     default:         false;
   }
+  
+  //ECast( e : Expr, t : Null<ComplexType> );
+  public static function isUnsafeCast (e:Expr):Bool return switch (e.expr) 
+  {
+    case ECast(_,t): t == null;
+    default:         false;
+  }
 
 	//EDisplay( e : Expr, isCall : Bool );
   public static function isEDisplay (e:Expr):Bool return switch (e.expr) 
