@@ -123,7 +123,7 @@ class LazyLists {
   {
     
     var a = toArray(list);
-    Assert.assertTrue(a.length > 0);
+    Assert.isTrue(a.length > 0);
     var init = a[0];
     for (i in 1...a.length) {
       init = f(init, a[i]);
@@ -138,9 +138,9 @@ class LazyLists {
   
   public static function fromArrayAsView <T> (arr:Array<T>, index:Int = 0, to:Int = -1):LL<T> {
     to = (to == -1) ? arr.length : to;
-    Assert.assertTrue(to <= arr.length);
+    Assert.isTrue(to <= arr.length);
     return Lazy.expr({
-      Assert.assertTrue(to <= arr.length);
+      Assert.isTrue(to <= arr.length);
       if (index < to) {
         LazyCons(arr[index], fromArrayAsView(arr, index+1, to));
       } else {
@@ -150,7 +150,7 @@ class LazyLists {
   }
   
   public static function take <T> (l:LL<T>, num:Int):LL<T> {
-    Assert.assertTrue(num >= 0);
+    Assert.isTrue(num >= 0);
     return Lazy.expr({
       if (num-1 < 0) {
         LazyNil;
@@ -179,7 +179,7 @@ class LazyLists {
   }
   
   public static function insertElemAt <T> (l:LL<T>, el:T, at:Int):LL<T> {
-    #if debug Assert.assertTrue(size(l) >= at, "Position " + at + " must be between 0 and list size (" + size(l) + ")"); #end
+    #if debug Assert.isTrue(size(l) >= at, "Position " + at + " must be between 0 and list size (" + size(l) + ")"); #end
     return insertElemAt1(l, el, at);
   }
   static function insertElemAt1 <T> (l:LL<T>, el:T, at:Int):LL<T> {
@@ -314,7 +314,7 @@ class LazyLists {
   
   public static function mkOneThunk <T>(e:Void->T):LL<T> {
     #if debug
-    Assert.assertEquals(e(), e(), "Thunk should always return the same value");
+    Assert.equals(e(), e(), null, "Thunk should always return the same value");
     #end
     return Lazy.expr(LazyCons(e(), mkEmpty()));
   }
@@ -328,7 +328,7 @@ class LazyLists {
   }
   
   public static function append <T>(a:LL<T>, b:LL<T>):LL<T> {
-    return concat(l, b);
+    return concat(a, b);
   }
   
   public static function appendElem <T>(l:LL<T>, el:T):LL<T> {
@@ -364,7 +364,7 @@ class LazyLists {
     });
   }
   
-  public static function concat <T>(l1:LL<T>, l2:LL<T>) {
+  public static function concat <T>(l1:LL<T>, l2:LL<T>):LL<T> {
     return Lazy.expr({
       switch (l1()) {
         case LazyNil: l2();
