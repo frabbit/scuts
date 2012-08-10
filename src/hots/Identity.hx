@@ -77,6 +77,16 @@ class Identity
     return IR.apply(macro hots.box.ArrayBox.boxFT, [e1]);
   }
   
+  @:macro public static function validationT (e1:ExprOf<Dynamic>):ExprOf<Dynamic>
+  {
+    return IR.apply(macro hots.box.ValidationBox.validationT, [e1]);
+  }
+  
+  @:macro public static function validationFT (e1:ExprOf<Dynamic>):ExprOf<Dynamic>
+  {
+    return IR.apply(macro hots.box.ValidationBox.boxFT, [e1]);
+  }
+  
   
   
   

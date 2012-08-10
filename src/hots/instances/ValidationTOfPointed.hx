@@ -19,9 +19,9 @@ class ValidationTOfPointed<F, M> extends PointedAbstract<OfT<M,Validation<F, In>
 {
   var pointedM:Pointed<M>;
 
-  public function new (pointedM:Pointed<M>) 
+  public function new (pointedM:Pointed<M>, pointed) 
   {
-    super(ValidationTOfFunctor.get(pointedM));
+    super(pointed);
     this.pointedM = pointedM;
   }
 

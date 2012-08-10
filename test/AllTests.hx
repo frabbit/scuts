@@ -28,6 +28,7 @@ class AllTests
     runner.addCase(new MonadsTest());
     runner.addCase(new MonadTransformersTest());
     
+
     
     Report.create(runner);
     

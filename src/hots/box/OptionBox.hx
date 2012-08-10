@@ -14,9 +14,7 @@ class OptionBox
   
   public static inline function runKleisli <M,A,B>(f:KleisliOf<Option<In>,A,B>):A->Option<B> return cast f
   
-  public static function optionT <A,B>(o:Of<A, Option<B>>):OptionTOf<A,B> return boxT(o)
   
-  public static function runT <A,B>(o:OptionTOf<A,B>):Of<A, Option<B>> return unboxT(o) 
   
   public static inline function box <X>(o:Option<X>):OptionOf<X> return cast o
 
@@ -29,6 +27,10 @@ class OptionBox
   public static inline function boxT <A,B>(o:Of<A, Option<B>>):OptionTOf<A,B> return cast o
   
   public static inline function unboxT <A,B>(o:OptionTOf<A,B>):Of<A, Option<B>> return cast o 
+  
+  public static inline function optionT <A,B>(o:Of<A, Option<B>>):OptionTOf<A,B> return boxT(o)
+  
+  public static inline function runT <A,B>(o:OptionTOf<A,B>):Of<A, Option<B>> return unboxT(o) 
   
   public static inline function boxFT <X,A,B>(f:X->Of<A, Option<B>>):X->OptionTOf<A,B> return cast f
   

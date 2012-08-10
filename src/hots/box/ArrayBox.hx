@@ -19,9 +19,7 @@ class ArrayBox
   
   
   
-  public static function arrayT <X,Y>(a:Of<X, Array<Y>>):ArrayTOf<X,Y> return boxT(a)
   
-  public static function runT <X,Y>(a:ArrayTOf<X,Y>):Of<X, Array<Y>> return unboxT(a)
   
   // Normal wrappers
   
@@ -34,6 +32,11 @@ class ArrayBox
   public static inline function unboxF <A,B>(e:A->ArrayOf<B>):A->Array<B> return cast e
   
   // Transformers
+  
+  public static inline function arrayT <X,Y>(a:Of<X, Array<Y>>):ArrayTOf<X,Y> return boxT(a)
+  
+  public static inline function runT <X,Y>(a:ArrayTOf<X,Y>):Of<X, Array<Y>> return unboxT(a)
+  
   
   public static inline function boxT <X,Y>(a:Of<X, Array<Y>>):ArrayTOf<X,Y> return cast a
   

@@ -77,6 +77,10 @@ import hots.instances.ValidationOfApplicative;
 import hots.instances.ValidationOfFunctor;
 import hots.instances.ValidationOfPointed;
 import hots.instances.ValidationSemigroup;
+import hots.instances.ValidationTOfApplicative;
+import hots.instances.ValidationTOfFunctor;
+import hots.instances.ValidationTOfMonad;
+import hots.instances.ValidationTOfPointed;
 import scuts.core.types.Option;
 import scuts.core.types.Tup2;
 import scuts.core.types.Validation;
@@ -139,6 +143,7 @@ class Objects
   
   public static function arrayTFunctor     <M>(base:Functor<M>) return new ArrayTOfFunctor(base)
   public static function optionTFunctor    <M>(base:Functor<M>) return new OptionTOfFunctor(base)
+  public static function validationTFunctor    <M>(base:Functor<M>) return new ValidationTOfFunctor(base)
   
   // pointeds
   
@@ -148,23 +153,27 @@ class Objects
   
   public static function arrayTPointed     <M>(base:Pointed<M>) return new ArrayTOfPointed(base, arrayTFunctor(base))
   public static function optionTPointed    <M>(base:Pointed<M>) return new OptionTOfPointed(base, optionTFunctor(base))
+  public static function validationTPointed    <M>(base:Pointed<M>) return new ValidationTOfPointed(base, validationTFunctor(base))
   
   // applicatives
   
   public static var arrayApplicative           (default, null) = new ArrayOfApplicative(arrayPointed);
   public static var optionApplicative          (default, null) = new OptionOfApplicative(optionPointed);
+  public static function validationApplicative (semiFailure) return new ValidationOfApplicative(semiFailure,validationPointed)
   
   public static function arrayTApplicative  <M>(base:Applicative<M>) return new ArrayTOfApplicative(base, arrayTPointed(base))
   public static function optionTApplicative <M>(base:Applicative<M>) return new OptionTOfApplicative(base, optionTPointed(base))
+  public static function validationTApplicative <M>(base:Applicative<M>) return new ValidationTOfApplicative(base, validationTPointed(base))
   
-  public static function validationApplicative (semiFailure) return new ValidationOfApplicative(semiFailure,validationPointed)
+  
   
   // monads
   public static var arrayMonad                (default, null) = new ArrayOfMonad(arrayApplicative);
   public static var optionMonad               (default, null) = new OptionOfMonad(optionApplicative);
   
-  public static function arrayTMonad <M>(base:Monad<M>)  return new ArrayTOfMonad(base, arrayTApplicative(base))
-  public static function optionTMonad <M>(base:Monad<M>) return new OptionTOfMonad(base, optionTApplicative(base))
+  public static function arrayTMonad      <M>(base:Monad<M>)  return new ArrayTOfMonad(base, arrayTApplicative(base))
+  public static function optionTMonad     <M>(base:Monad<M>) return new OptionTOfMonad(base, optionTApplicative(base))
+  public static function validationTMonad <M>(base:Monad<M>) return new ValidationTOfMonad(base, validationTApplicative(base))
   
   // monadZeros
   public static var arrayMonadZero         (default, null) = new ArrayOfMonadZero(arrayMonad);
@@ -303,12 +312,21 @@ class OptionOf_Monad_Obj
 }
 
 
+private typedef ValidationIn<F> = Validation<F,In>
+
 // Monad Transformers
 
 class OptionTOf_Monad_Obj
 {
   public static inline function implicitObj <M>(_:IOMonad<OfT<M,OptionIn>>, base: IMonad<M>):Monad<OfT<M,OptionIn>> return O.optionTMonad(base)
 }
+
+class ValidationTOf_Monad_Obj
+{
+  public static inline function implicitObj <M,F>(_:IOMonad<OfT<M,ValidationIn<F>>>, base: IMonad<M>):Monad<OfT<M,ValidationIn<F>>> return O.validationTMonad(base)
+}
+
+
 
 class ArrayTOf_Monad_Obj
 {

@@ -12,6 +12,8 @@ using hots.box.ArrayBox;
 using hots.box.OptionBox;
 private typedef A = utest.Assert;
 
+import scuts.core.types.Validation;
+
 class MonadTransformersTest 
 {
 
@@ -22,6 +24,15 @@ class MonadTransformersTest
     var actual = Some([1,2,3]).arrayT().map(function (x) return x + 1);
     A.same(Some([2,3,4]), actual);
   }
+  
+  
+  public function testValidationTransformerMonad () 
+  {
+    var v:Option<Validation<Int, Int>> = Some(Success(1));
+    var actual = v.validationT().map(function (x) return x + 1);
+    A.same(Some(Success(2)), actual);
+  }
+  
   
   
   public function testChainedArrayTransformerMonad () 
@@ -82,10 +93,7 @@ class MonadTransformersTest
     A.same(Some(Some([Some(3)])), actual);
     
   }
-  
-  
-  
-  
+
   public function testChainedFlatMapOptionMonad () 
   {
     
@@ -93,8 +101,9 @@ class MonadTransformersTest
     
     A.same(Some(3), actual);
     
+    
   }
-  
+
   
   
 }
