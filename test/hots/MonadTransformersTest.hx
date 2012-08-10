@@ -28,7 +28,7 @@ class MonadTransformersTest
   
   public function testValidationTransformerMonad () 
   {
-    var v:Option<Validation<Int, Int>> = Some(Success(1));
+    var v = Some(Success(1));
     var actual = v.validationT().map(function (x) return x + 1);
     A.same(Some(Success(2)), actual);
   }
