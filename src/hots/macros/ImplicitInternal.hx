@@ -1,4 +1,5 @@
 package hots.macros;
+import hots.Of;
 
 class ImplicitInternal 
 {
@@ -19,6 +20,8 @@ class ImplicitInternal
   public static inline function removeImplicit <A>(a:Implicit<A>):A return cast a
   
   public static inline function isValidConversionFunction <A,B>(from:A, to:B->Void, res:A->B):Void return null
+  
+  public static inline function neededIsOfType <A>(t:Of<Dynamic, Dynamic>->Void):Void return null
   
     
   public static inline function castCallbackTo0 <A,B>          (f:A->(Void->B),          c:Dynamic):A->B             return cast c

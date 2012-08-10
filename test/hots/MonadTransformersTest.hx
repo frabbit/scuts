@@ -33,6 +33,13 @@ class MonadTransformersTest
     A.same(Some(Success(2)), actual);
   }
   
+  public function testFlatMapOnValidationTransformerMonad () 
+  {
+    var v = Some(Success(1));
+    var actual = v.validationT().flatMap((function (x) return Some(Success(x + 1))).validationFT());
+    A.same(Some(Success(2)), actual);
+  }
+  
   
   
   public function testChainedArrayTransformerMonad () 

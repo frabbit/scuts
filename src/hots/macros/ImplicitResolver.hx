@@ -545,22 +545,35 @@ class ImplicitResolver
     
     
     var upcast = macro $param.implicitUpcast();
+    
+    
+    var neededIsMono = switch (neededToType(needed)) {
+      case TMono(_): true;
+      default: false;
+    }
+    
+    //var neededIsOf = macro $helper.neededIsOfType($needed);
+    // TODO check against of and ofof to make sure that upcast is only done when neccessary
     #if scutsDebug
     trace("-------------- try parameter upcasting first ------------");
     trace("Success: " + isNeeded(upcast, needed));
+    trace("Is Also Normal: " + isNeeded(param, needed));
+    trace("For needed: " + prettyType(neededToType(needed)));
+    trace("Param: " + prettyTypeOfExpr(param));
+    trace("IsOfType: " + isTypeable(macro $helper.neededIsOfType($needed)));
     trace("-----------------------------------------");
     #end
-    return if (isNeeded(upcast, needed)) {
+    return if (!neededIsMono && isNeeded(upcast, needed)) {
       #if scutsDebug
       trace("Upcasted Type: " + prettyTypeOfExpr(upcast));
       #end
       upcast;
     } else {
-      var accept = isNeeded(param, needed);
       
+      var normal = isNeeded(param, needed);
       
       #if scutsDebug
-      if (accept) {
+      if (normal) {
         
         trace("--------------Param accepted-----------------");
         printTypeOfExpr(param, "Found");
@@ -575,7 +588,7 @@ class ImplicitResolver
       }
       #end
       
-      if (accept) {
+      if (normal) {
         
         param;
       } else {

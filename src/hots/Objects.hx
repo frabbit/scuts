@@ -103,7 +103,7 @@ class Objects
   public static function tup2Eq   (eq1, eq2) return new Tup2Eq(eq1, eq2)
   public static function optionEq (eqT)      return new OptionEq(eqT)
   public static function arrayEq  (eqT)      return new ArrayEq(eqT)
-  public static function validationEq  (eqF,eqS) return new ValidationEq(eqF,eqS)
+  public static function validationEq  <F,S>(eqF,eqS):Eq<Validation<F,S>> return new ValidationEq(eqF,eqS)
   
   // enumerations
   
@@ -239,25 +239,35 @@ private typedef IEq<T> = Implicit<Eq<T>>;
 
 class ArrayEq_Obj 
 {
-  public static inline function implicitObj <T>(_:IOEq<Array<T>>, eqT:IEq<T>) return O.arrayEq(eqT)
+  public static inline function implicitObj <T>(_:IOEq<Array<T>>, eqT:IEq<T>):Eq<Array<T>> return O.arrayEq(eqT)
 }
 class OptionEq_Obj
 {
-  public static inline function implicitObj <T>(_:IOEq<Option<T>>,eqT:IEq<T>) return O.optionEq(eqT)
+  public static inline function implicitObj <T>(_:IOEq<Option<T>>,eqT:IEq<T>):Eq<Option<T>> return O.optionEq(eqT)
 }
 class ValidationEq_Obj 
 { 
-  public static inline function implicitObj <F,S>(_:IOEq<Validation<F,S>>,eqF:IEq<F>, eqS:IEq<S>) return O.validationEq(eqF,eqS) 
+  public static inline function implicitObj <F,S>(_:IOEq<Validation<F,S>>,eqF:IEq<F>, eqS:IEq<S>):Eq<Validation<F,S>> return O.validationEq(eqF,eqS) 
 }
 
 class Tup2Eq_Obj 
 { 
-  public static inline function implicitObj <A,B>(_:IOEq<Tup2<A,B>>,eq1:IEq<A>, eq2:IEq<B>) return O.tup2Eq(eq1,eq2) 
+  public static inline function implicitObj <A,B>(_:IOEq<Tup2<A,B>>,eq1:IEq<A>, eq2:IEq<B>):Eq<Tup2<A,B>> return O.tup2Eq(eq1,eq2) 
 }
 
 class IntEq_Obj 
 {
   public static inline function implicitObj <A,B>(_:IOEq<Int>) return O.intEq
+}
+
+class FloatEq_Obj 
+{
+  public static inline function implicitObj <A,B>(_:IOEq<Float>) return O.floatEq
+}
+
+class StringEq_Obj 
+{
+  public static inline function implicitObj <A,B>(_:IOEq<String>) return O.stringEq
 }
 /// SHOWS
 

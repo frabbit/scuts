@@ -6,6 +6,6 @@
 -cp ./../scutsData/src
 -lib utest 
 --connect 127.0.0.1:1978
-
+#-D scutsDebug
 #--times
 #-D macrotimes
