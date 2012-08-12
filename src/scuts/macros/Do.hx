@@ -2,7 +2,7 @@ package scuts.macros;
 
 
 
-#if (macro || display)
+#if macro
 import hots.macros.Implicits;
 import scuts.macros.syntax.DoParser;
 import scuts.macros.syntax.DoGen;

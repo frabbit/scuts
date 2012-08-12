@@ -1,6 +1,6 @@
 package scuts.macros.coreextensions;
 
-#if (macro || display)
+#if macro
 import haxe.macro.Expr;
 import scuts.macros.builder.PartialApplication;
 #end

@@ -1,6 +1,6 @@
 package scuts.macros.syntax;
 
-#if (macro || display)
+#if macro
 
 import scuts.core.extensions.Arrays;
 import scuts.core.types.Tup2;
