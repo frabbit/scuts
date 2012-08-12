@@ -12,7 +12,7 @@ import hots.classes.MonadAbstract;
 
 using hots.box.OptionBox;
 
-class OptionTOfMonad<M> extends MonadAbstract<OfT<M, Option<In>>> {
+class OptionTOfMonad<M> extends MonadAbstract<Of<M, Option<In>>> {
   
   var base:Monad<M>;
   

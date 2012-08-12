@@ -10,7 +10,7 @@ import scuts.core.extensions.Arrays;
 using hots.box.ArrayBox;
 
 
-class ArrayTOfMonad<M> extends MonadAbstract<OfT<M,Array<In>>> {
+class ArrayTOfMonad<M> extends MonadAbstract<Of<M,Array<In>>> {
   
   var monadM:Monad<M>;
 

@@ -1,5 +1,12 @@
 package hots.macros;
 
+// unwanted dependecies
+import scuts.mcore.Check;
+
+import scuts.mcore.Print;
+
+
+
 import haxe.Log;
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -10,11 +17,7 @@ import hots.Implicit;
 import scuts.core.extensions.Arrays;
 import scuts.core.types.Tup2;
 import scuts.core.types.Validation;
-import scuts.mcore.Check;
-import scuts.mcore.extensions.Exprs;
 
-import scuts.mcore.MContext;
-import scuts.mcore.Print;
 import scuts.Scuts;
 using scuts.core.extensions.Arrays;
 import scuts.core.types.Option;
@@ -314,13 +317,20 @@ class ImplicitResolver
     
     
     
-    var f = simplifyFunction(f, params);
+    
+    
     
     //f = f;
-    //printExpr(f);
-    
+    #if scutsDebug
+    trace("-------------passed function-------------");
+    printExpr(f, "Pre Simplify");
+    var f = simplifyFunction(f, params);
+    printExpr(f, "Post Simplify");
+    trace("-------------passed function-------------");
+    #else
+    var f = simplifyFunction(f, params);
+    #end
     //printExprs(params);
-    
     
     
     if (params.any(function (x) return Check.isUnsafeCast(x))) {
@@ -334,7 +344,7 @@ class ImplicitResolver
       
       Scuts.error("null is not allowed as paramter for function" + prettyTypeOfExpr(f));
     } 
-    #if secutsDebug
+    #if scutsDebug1
     trace("------------ Apply Started After Simplify -------------");
     printTypeOfExpr(f, "function Type");
     printTypeOfExprs(params, "param Types");

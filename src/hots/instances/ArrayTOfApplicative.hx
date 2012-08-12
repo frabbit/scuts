@@ -14,7 +14,7 @@ using hots.box.ArrayBox;
 
 
 
-class ArrayTOfApplicative<M> extends ApplicativeAbstract<OfT<M,Array<In>>> {
+class ArrayTOfApplicative<M> extends ApplicativeAbstract<Of<M,Array<In>>> {
   
   var appM:Applicative<M>;
 

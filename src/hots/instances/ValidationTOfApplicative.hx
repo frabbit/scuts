@@ -15,7 +15,7 @@ using hots.box.ValidationBox;
 
 
 
-class ValidationTOfApplicative<M,F> extends ApplicativeAbstract<OfT<M,Validation<F,In>>> 
+class ValidationTOfApplicative<M,F> extends ApplicativeAbstract<Of<M,Validation<F,In>>> 
 {
   
   var applicativeM:Applicative<M>;

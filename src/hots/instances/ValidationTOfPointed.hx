@@ -15,7 +15,7 @@ using scuts.core.extensions.Validations;
 using hots.box.ValidationBox;
 
 
-class ValidationTOfPointed<F, M> extends PointedAbstract<OfT<M,Validation<F, In>>> 
+class ValidationTOfPointed<F, M> extends PointedAbstract<Of<M,Validation<F, In>>> 
 {
   var pointedM:Pointed<M>;
 

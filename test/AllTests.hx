@@ -4,6 +4,7 @@ package;
 
 
 import hots.EqTest;
+import hots.instances.ArrayOfMonadTest;
 import hots.MonadTransformersTest;
 
 import hots.ImplicitScopeTests;
@@ -29,6 +30,7 @@ class AllTests
     runner.addCase(new MonadsTest());
     runner.addCase(new MonadTransformersTest());
     runner.addCase(new EqTest());
+    runner.addCase(new ArrayOfMonadTest());
     
 
     

@@ -10,7 +10,7 @@ import scuts.core.types.Option;
 
 private typedef B = hots.box.OptionBox;
 
-class OptionTOfFunctor<M> extends FunctorAbstract<OfT<M, Option<In>>> {
+class OptionTOfFunctor<M> extends FunctorAbstract<Of<M, Option<In>>> {
   
   var functorM:Functor<M>;
   

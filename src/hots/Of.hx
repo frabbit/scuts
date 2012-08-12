@@ -15,11 +15,13 @@ class Of<M,A> { }
 @:native('Dynamic')
 #end
 */
-//typedef OfT<M,A> = Of<M,A>;
+//typedef Of<M,A> = Of<M,A>;
 
+/*
 #if flash
 @:native('Object')
 #else
 @:native('Dynamic')
 #end
-class OfT<M,A> { }
+*/
+//class OfT<M,A> { }

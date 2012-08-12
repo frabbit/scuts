@@ -12,7 +12,7 @@ import scuts.core.types.Option;
 
 using hots.box.ValidationBox;
 
-class ValidationTOfFunctor<M, F> extends FunctorAbstract<OfT<M, Validation<F, In>>> 
+class ValidationTOfFunctor<M, F> extends FunctorAbstract<Of<M, Validation<F, In>>> 
 {
   
   var functorM:Functor<M>;

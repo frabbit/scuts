@@ -13,7 +13,7 @@ import hots.classes.MonadAbstract;
 
 using hots.box.ValidationBox;
 
-class ValidationTOfMonad<M,F> extends MonadAbstract<OfT<M, Validation<F,In>>> {
+class ValidationTOfMonad<M,F> extends MonadAbstract<Of<M, Validation<F,In>>> {
   
   var base:Monad<M>;
   

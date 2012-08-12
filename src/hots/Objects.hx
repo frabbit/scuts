@@ -328,19 +328,19 @@ private typedef ValidationIn<F> = Validation<F,In>
 
 class OptionTOf_Monad_Obj
 {
-  public static inline function implicitObj <M>(_:IOMonad<OfT<M,OptionIn>>, base: IMonad<M>):Monad<OfT<M,OptionIn>> return O.optionTMonad(base)
+  public static inline function implicitObj <M>(_:IOMonad<Of<M,OptionIn>>, base: IMonad<M>):Monad<Of<M,OptionIn>> return O.optionTMonad(base)
 }
 
 class ValidationTOf_Monad_Obj
 {
-  public static inline function implicitObj <M,F>(_:IOMonad<OfT<M,ValidationIn<F>>>, base: IMonad<M>):Monad<OfT<M,ValidationIn<F>>> return O.validationTMonad(base)
+  public static inline function implicitObj <M,F>(_:IOMonad<Of<M,ValidationIn<F>>>, base: IMonad<M>):Monad<Of<M,ValidationIn<F>>> return O.validationTMonad(base)
 }
 
 
 
 class ArrayTOf_Monad_Obj
 {
-  public static inline function implicitObj <M>(_:IOMonad<OfT<M,ArrayIn>>, base: IMonad<M>):Monad<OfT<M,ArrayIn>> return O.arrayTMonad(base)
+  public static inline function implicitObj <M>(_:IOMonad<Of<M,ArrayIn>>, base: IMonad<M>):Monad<Of<M,ArrayIn>> return O.arrayTMonad(base)
 }
 
 private typedef IArrow<X> = ImplicitObject<Arrow<X>>;

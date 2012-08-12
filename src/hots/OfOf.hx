@@ -9,7 +9,7 @@ import hots.Of;
 #else
 @:native('Dynamic')
 #end
-typedef OfOf<M,A,B> = Of<OfT<M, A>, B>;
+typedef OfOf<M,A,B> = Of<Of<M, A>, B>;
 
 
 

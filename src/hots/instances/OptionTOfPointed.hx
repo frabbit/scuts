@@ -14,7 +14,7 @@ using hots.box.OptionBox;
 
 
 
-class OptionTOfPointed<M> extends PointedAbstract<OfT<M,Option<In>>> {
+class OptionTOfPointed<M> extends PointedAbstract<Of<M,Option<In>>> {
   
   var pointedM:Pointed<M>;
 
