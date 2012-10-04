@@ -7,7 +7,6 @@ import hots.instances.Function1Semigroup;
 
 class Function1Monoid<A,B> extends MonoidAbstract<A->B>
 {
-  
   var monoidB:Monoid<B>;
   
   public function new (monoidB:Monoid<B>, semi) 

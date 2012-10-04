@@ -8,12 +8,12 @@ private typedef A = utest.Assert;
 class ImplicitScopeTests
 {
   
-  static function identity (a:Implicit<Int>) return a
+  static function identity (a:Int) return a
   
-  static var staticScope:Implicit<Int> = 1;
+  @:implicit static var staticScope = 1;
   
   
-  var memberScope:Implicit<Int> = 2;
+  @:implicit var memberScope = 2;
   
   
   public function new () {
@@ -32,25 +32,25 @@ class ImplicitScopeTests
   
   function expectLocalScope() 
   {
-    Hots.implicitVal(4);
+    Hots.implicit(4);
     A.equals(4, identity._());
   }
   
   function expectLocalNestedScope() 
   {
-    Hots.implicitVal(4);
+    Hots.implicit(4);
     {
-      Hots.implicitVal(5);
+      Hots.implicit(5);
       A.equals(5, identity._());
     }
   }
   
   function expectLocalNestedScopeIsIgnored() 
   {
-    Hots.implicitVal(4);
+    Hots.implicit(4);
     
     {
-      Hots.implicitVal(5);
+      Hots.implicit(5);
     }
     
     A.equals(4, identity._());
@@ -69,7 +69,7 @@ class ImplicitScopeTests
   static function expectLocalNestedScopeIsIgnoredAndStaticUsed() 
   {
     {
-      Hots.implicitVal(4);
+      Hots.implicit(4);
     }
     A.equals(staticScope, identity._());
   }

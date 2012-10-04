@@ -1,15 +1,15 @@
 package hots.classes;
-import scuts.core.types.LazyIterator;
-import scuts.data.LazyList;
-import scuts.data.LazyLists; 
+import scuts.core.types.LazyList;
+
 
 import scuts.Scuts;
 
-using scuts.data.LazyLists;
+
 using scuts.core.extensions.Functions;
 using scuts.core.extensions.Ints;
 using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Iterables;
+//using scuts.core.extensions.Iterables;
+using scuts.core.extensions.LazyLists;
 
 class EnumerationAbstract<T> {
   

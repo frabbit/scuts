@@ -6,11 +6,9 @@ import scuts.Scuts;
 
 interface Monoid<A> implements Semigroup<A>
 {
+  /**
+   * Returns an appropriate zero value.
+   */
   public function empty ():A;
-  
-  //public function concatArray (v:Array<A>):A;
-  
-  
-  
 }
 

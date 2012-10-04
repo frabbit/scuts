@@ -2,7 +2,6 @@ package hots.instances;
 
 
 import hots.classes.MonoidAbstract;
-import hots.Objects;
 
 class StringMonoid extends MonoidAbstract<String>
 {

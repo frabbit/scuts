@@ -32,7 +32,7 @@ class TraversableAbstract<T> implements Traversable<T>
   
   public inline function fold <A>(of:Of<T,A>, mon:Monoid<A>):A return fo.fold(of, mon)
   
-  public inline function foldMap <A,B>(of:Of<T,A>, mon:Monoid<B>, f:A->B):B return fo.foldMap(of, mon, f)
+  public inline function foldMap <A,B>(of:Of<T,A>, f:A->B, mon:Monoid<B>):B return fo.foldMap(of, f, mon)
  
   public inline function foldLeft <A,B>(of:Of<T,B>, b:A, f:A->B->A):A return fo.foldLeft(of,b,f)
   

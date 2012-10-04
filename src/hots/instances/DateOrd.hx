@@ -10,26 +10,26 @@ import scuts.core.types.Ordering;
 
 class DateOrd extends OrdAbstract<Date> 
 {
-  var floatEq:FloatOrd;
+  var floatOrd:Ord<Float>;
   
-  public function new (eq:Eq<Date>, floatEq:FloatOrd) 
+  public function new (eq:Eq<Date>, floatOrd:Ord<Float>) 
   {
     super(eq);
-    this.floatEq = floatEq;
+    this.floatOrd = floatOrd;
   }
   
   override public function less (a:Date, b:Date):Bool 
   {
-    return floatEq.less(a.getTime(), b.getTime());
+    return floatOrd.less(a.getTime(), b.getTime());
   }
   
   override public function compare (a:Date, b:Date):Ordering 
   {
-    return floatEq.compare(a.getTime(), b.getTime());
+    return floatOrd.compare(a.getTime(), b.getTime());
   }
   
   override public inline function compareInt (a:Date, b:Date):Int 
   {
-    return floatEq.compareInt(a.getTime(), b.getTime());
+    return floatOrd.compareInt(a.getTime(), b.getTime());
   }
 }

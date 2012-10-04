@@ -8,10 +8,11 @@ import scuts.Scuts;
 interface Functor<F> 
 {
   /**
-   * Maps the function f:A->B over the monadic value F<A>.
+   * Maps the function f over the value x.
+   * 
    * Haskell: fmap :: (a -> b) -> f a -> f b
    */
-  public function map<A,B>(val:Of<F,A>, f:A->B):Of<F,B>;
+  public function map<A,B>(x:Of<F,A>, f:A->B):Of<F,B>;
 }
 
 

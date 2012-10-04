@@ -3,7 +3,6 @@ package hots.instances;
 import hots.classes.FunctorAbstract;
 import hots.classes.Semigroup;
 import hots.classes.SemigroupAbstract;
-import hots.instances.ValidationOf;
 import scuts.core.extensions.Validations;
 import scuts.core.types.Validation;
 import hots.classes.Monad;

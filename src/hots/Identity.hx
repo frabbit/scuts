@@ -1,94 +1,113 @@
 package hots;
+
 #if macro
-private typedef IR = hots.macros.ImplicitResolver;
 import haxe.macro.Expr;
 
+private typedef IR = hots.macros.implicits.Resolver;
 #end
 
-import scuts.core.types.Option;
-
-private typedef Of_<M,A> = Dynamic;
-private typedef OfOf_<M,A,B> = Dynamic;
-
-
+private typedef D = Dynamic;
 
 class Identity 
 {
-  
-  @:macro public static function pure <M,A,B>(e:String):ExprOf<Of_<M,B>> 
+  /*
+   * provides a pure to every instance, the context must be explicitly passed as a String.
+   * 
+   * Example (with using):
+   * 
+   * 5.pure("Array<In>")
+   * 5.pure("Option<In>")
+   */
+  @:macro public static function pure (x:ExprOf<D>, e:String):Expr 
   {
-    return IR.implicitByType("hots.classes.Pointed<"+e+">");
+    var pointed = IR.resolveImplicitObjByType("hots.classes.Pure<" + e + ">");
+    
+    return IR.resolve(macro hots.extensions.Pointeds.pure, [x,pointed]);
   }
   
-  @:macro public static function flatMap <M,A,B>(e:ExprOf<Of_<M,A>>, f:ExprOf<A->Of_<M,B>>):ExprOf<Of_<M,B>> 
+  /*
+   * 
+   */
+  @:macro public static function flatMap (e:ExprOf<D>, f:Expr):Expr 
   {
-    return IR.apply(macro hots.extensions.Monads.flatMap, [e,f]);
+    return IR.resolve(macro hots.extensions.Monads.flatMap, [e,f]);
   }
   
-  @:macro public static function filter <M,A>(e:ExprOf<Of_<M,A>>, f:ExprOf<A->Bool>):ExprOf<Of_<M,A>> 
+  // Functor
+  @:macro public static function map (e:ExprOf<D>, f:Expr):Expr 
   {
-    return IR.apply(macro hots.extensions.MonadZeros.filter, [e,f]);
+    return IR.resolve(macro hots.extensions.Functors.map, [e,f]);
   }
   
-  @:macro public static function map <M,A,B>(e:ExprOf<Of_<M,A>>, f:ExprOf<A->B>):ExprOf<Of_<M,B>> 
+  // Foldable
+  @:macro public static function foldLeft (e:ExprOf<D>, init:Expr, f:Expr):Expr 
   {
-    return IR.apply(macro hots.extensions.Monads.map, [e,f]);
+    return IR.resolve(macro hots.extensions.Foldables.foldLeft, [e,init,f]);
+  }
+  
+  @:macro public static function foldRight (e:ExprOf<D>, init:Expr, f:Expr):Expr 
+  {
+    return IR.resolve(macro hots.extensions.Foldables.foldRight, [e,init,f]);
   }
   
   
-  @:macro public static function eq <T>(e1:ExprOf<T>, e2:ExprOf<T>):ExprOf<Bool> 
+  // Eq
+  @:macro public static function eq (e1:ExprOf<D>, e2:Expr):Expr 
   {
-    return IR.apply(macro hots.extensions.Eqs.eq, [e1,e2]);
+    return IR.resolve(macro hots.extensions.Eqs.eq, [e1,e2]);
   }
 
-  @:macro public static function show <T>(e1:ExprOf<T>):ExprOf<String> 
+  // Show
+  @:macro public static function show (e1:ExprOf<D>):Expr 
   {
-    return IR.apply(macro hots.extensions.Shows.show, [e1]);
+    return IR.resolve(macro hots.extensions.Shows.show, [e1]);
   }
   
-  @:macro public static function append <T>(e1:ExprOf<T>, e2:ExprOf<T>):ExprOf<T> 
+  // Semigroup
+  @:macro public static function append (e1:ExprOf<D>, e2:Expr):Expr 
   {
-    return IR.apply(macro hots.extensions.Monoids.append, [e1,e2]);
+    return IR.resolve(macro hots.extensions.Monoids.append, [e1,e2]);
   }
   
-  @:macro public static function next <M,A,B,C>(e1:ExprOf<OfOf<M,A,B>>, e2:ExprOf<OfOf<M,B,C>>):ExprOf<OfOf<M,A,C>>
+  // Arrow
+  @:macro public static function next (e1:ExprOf<D>, e2:Expr):Expr
   {
-    return IR.apply(macro hots.extensions.Arrows.next, [e1,e2]);
+    return IR.resolve(macro hots.extensions.Arrows.next, [e1,e2]);
+  }
+
+  
+  
+  
+  /**
+   * intoT tries to upcast the passed value e into monad transformer, an implicitUpcastT 
+   * must be available in the using Context for this type.
+   * 
+   * Example:
+   *  [[1]].intoT() // ArrayOfT<Array<In>, Int>
+   *  [Some(1)].intoT() // ArrayOfT<Option<In>, Int>
+   */
+  @:macro public static function intoT (e:ExprOf<D>):Expr
+  {
+    var e1 = IR.applyImplicitUpcast(e, false);
+    var r = IR.applyImplicitUpcastT(e1, true, false);
+    return r;
   }
   
-  @:macro public static function optionT (e1:ExprOf<Dynamic>):ExprOf<Dynamic>
+  /**
+   * runT is the opposite of intoT, it tries to downcast the passed transformer value e into 
+   * its normal representation, an implicitDowncastT must be available in the using Context 
+   * for this type.
+   * 
+   * Example:
+   *  [[1]].intoT().runT()     // Array<Array<Int>>
+   *  [Some(1)].intoT().runT() // Array<Option<Int>>
+   */
+  @:macro public static function runT (e:ExprOf<D>):Expr
   {
-    return IR.apply(macro hots.box.OptionBox.optionT, [e1]);
+    var e1 = IR.applyImplicitDowncastT(e, true, false);
+    
+    return try IR.applyImplicitDowncast(e1, true, false) catch (e:Error) e1;
   }
-  
-  @:macro public static function optionFT (e1:ExprOf<Dynamic>):ExprOf<Dynamic>
-  {
-    return IR.apply(macro hots.box.OptionBox.boxFT, [e1]);
-  }
-  
-  
-  @:macro public static function arrayT (e1:ExprOf<Dynamic>):ExprOf<Dynamic>
-  {
-    return IR.apply(macro hots.box.ArrayBox.arrayT, [e1]);
-  }
-  
-  @:macro public static function arrayFT (e1:ExprOf<Dynamic>):ExprOf<Dynamic>
-  {
-    return IR.apply(macro hots.box.ArrayBox.boxFT, [e1]);
-  }
-  
-  @:macro public static function validationT (e1:ExprOf<Dynamic>):ExprOf<Dynamic>
-  {
-    return IR.apply(macro hots.box.ValidationBox.validationT, [e1]);
-  }
-  
-  @:macro public static function validationFT (e1:ExprOf<Dynamic>):ExprOf<Dynamic>
-  {
-    return IR.apply(macro hots.box.ValidationBox.boxFT, [e1]);
-  }
-  
-  
-  
   
   
 }

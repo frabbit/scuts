@@ -1,4 +1,0 @@
-commonTest.hxml
--main AllTests
--php bin/test/php
-

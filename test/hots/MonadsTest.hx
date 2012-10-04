@@ -3,7 +3,7 @@ import scuts.core.types.Option;
 
 using hots.Identity;
 using hots.ImplicitCasts;
-using hots.Objects;
+using hots.ImplicitInstances;
 
 private typedef A = utest.Assert;
 
@@ -37,13 +37,8 @@ class MonadsTest
   
   public function testChainedFlatMapOptionMonad () 
   {
-    
     var actual = Some(1).flatMap(function (x) return Some(x + 1)).flatMap(function (x) return Some(x + 1));
     
     A.same(Some(3), actual);
-    
   }
-  
-  
-  
 }

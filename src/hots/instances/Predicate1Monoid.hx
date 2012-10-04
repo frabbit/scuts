@@ -7,11 +7,11 @@ using scuts.core.extensions.Predicates;
 
 class Predicate1Monoid<X> extends MonoidAbstract<X->Bool>
 {
-  public function new () super(Predicate1Semigroup.get())
+  public function new (semi:Predicate1Semigroup<X>) super(semi)
   
   
   override public inline function empty ():X->Bool 
   {
-    return Predicates.constTrue0;
+    return Predicates.constTrue1;
   }
 }

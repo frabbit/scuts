@@ -7,6 +7,7 @@ import scuts.core.types.Tup2;
 import scuts.Scuts;
 
 using hots.extensions.Arrows;
+using hots.extensions.Categories;
 
 class ArrowAbstract<AR> implements Arrow<AR>
 {
@@ -15,7 +16,6 @@ class ArrowAbstract<AR> implements Arrow<AR>
   
   // constructor
   function new (category:Category<AR>) this.c = category
-  
   
   public function arr <B,C>(f:B->C):OfOf<AR,B, C> return Scuts.abstractMethod()
   

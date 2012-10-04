@@ -14,9 +14,9 @@ class Tup3Monoid<A,B,C> extends MonoidAbstract<Tup3<A,B,C>>
   private var m2:Monoid<B>;
   private var m3:Monoid<C>;
   
-  public function new (m1:Monoid<A>, m2:Monoid<B>, m3:Monoid<C>) 
+  public function new (semi, m1:Monoid<A>, m2:Monoid<B>, m3:Monoid<C>) 
   {
-    super(Tup3Semigroup.get(m1,m2,m3));
+    super(semi);
     this.m1 = m1;
     this.m2 = m2;
     this.m3 = m3;

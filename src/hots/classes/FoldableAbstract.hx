@@ -20,22 +20,22 @@ import hots.instances.EndoMonoid;
 class FoldableAbstract<F> implements Foldable<F>
 {
 
-  public function fold <A>(of:Of<F,A>, mon:Monoid<A>):A
+  public function fold <A>(x:Of<F,A>, mon:Monoid<A>):A
   {
-    return foldMap(of, mon, Scuts.id);
+    return foldMap(x, Scuts.id, mon);
   }
   
   /**
-   * Haskell Signature: Monoid b => (a -> b) -> f a -> b
+   * 
    */
-  public function foldMap <A,B>(of:Of<F,A>, mon:Monoid<B>, f:A->B ):B
+  public function foldMap <A,B>(x:Of<F,A>, f:A->B, mon:Monoid<B>):B
   {
     var newF = mon.append.curry().compose(f).uncurry();
-    return foldRight(of, mon.empty(), newF);
+    return foldRight(x, mon.empty(), newF);
   }
   
   /**
-   * Haskell Signature: (a -> b -> a) -> a -> f b -> A 
+   * 
    * Haskell Implementation: foldl f z t = appEndo (getDual (foldMap (Dual . Endo . flip f) t)) z
    */
   public function foldLeft <A,B>(of:Of<F,B>, b:A, f:A->B->A):A
@@ -43,27 +43,27 @@ class FoldableAbstract<F> implements Foldable<F>
     var f : B->(A->A)       = f.flip().curry();
     var mon : Monoid<A->A>  = new DualMonoid(EndoMonoid.endo(), new DualSemigroup(EndoMonoid.endo()));
 
-    return foldMap(of, mon, f)(b);
+    return foldMap(of, f, mon)(b);
   }
 
   /**
    * Haskell Implementation: foldr f z t = appEndo (foldMap (Endo . f) t) z
    */
-  public function foldRight <A,B>(of:Of<F,A>, b:B, f:A->B->B):B
+  public function foldRight <A,B>(x:Of<F,A>, b:B, f:A->B->B):B
   {
-    var x = foldMap(of, EndoMonoid.endo(),f.curry());
+    var x = foldMap(x, f.curry(), EndoMonoid.endo());
     
     return x(b);
   }
   
-  public function foldLeft1 <A>(of:Of<F,A>, f:A->A->A):A
+  public function foldLeft1 <A>(x:Of<F,A>, f:A->A->A):A
   {
     var mf = function (o:Option<A>, y) return switch (o) {
       case None: Some(y);
       case Some(x): Some(f(x,y));
     }
     
-    var foldRes = foldLeft(of, None, mf);
+    var foldRes = foldLeft(x, None, mf);
     
     return switch (foldRes) 
     {
@@ -72,7 +72,7 @@ class FoldableAbstract<F> implements Foldable<F>
     }
   }
   
-  public function foldRight1 <A>(of:Of<F,A>, f:A->A->A):A
+  public function foldRight1 <A>(x:Of<F,A>, f:A->A->A):A
   {
     var mf = function (x:A, o:Option<A>) return switch (o) 
     {
@@ -80,7 +80,7 @@ class FoldableAbstract<F> implements Foldable<F>
       case Some(y): Some(f(x,y));
     }
 
-    var foldRes = foldRight(of, None, mf);
+    var foldRes = foldRight(x, None, mf);
     
     return switch (foldRes) 
     {

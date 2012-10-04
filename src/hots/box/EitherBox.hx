@@ -1,31 +1,28 @@
 package hots.box;
 
-import hots.instances.EitherOf;
+import hots.of.EitherOf;
 import scuts.core.types.Either;
 
-extern class EitherBox 
-{
-  public static inline function box <L,R>(a:Either<L,R>):EitherOf<L,R> return cast a
-  
-  public static inline function unbox <L,R>(a:EitherOf<L,R>):Either<L,R> return cast a
-  
-  public static inline function boxF <L,R,RR>(a:R->Either<L,RR>):R->EitherOf<L,RR> return cast a
-  
-  public static inline function unboxF <L,R,RR>(a:R->EitherOf<L,RR>):R->Either<L,RR> return cast a
-  
-}
 
 
 extern class EitherRightProjectionBox {
   
-  public static inline function box <L,R>(a:RightProjection<L,R>):RightProjectionOf<L,R> return cast a
+  public static inline function box <L,R>(a:RightProjection<L,R>):RightProjectionOf<L,R> return a
   
-  public static inline function unbox <L,R>(a:RightProjectionOf<L,R>):RightProjection<L,R> return cast a
+  public static inline function unbox <L,R>(a:RightProjectionOf<L,R>):RightProjection<L,R> return a
+  
+  public static inline function boxF <X,L,R>(a:X->RightProjection<L,R>):X->RightProjectionOf<L,R> return a
+  
+  public static inline function unboxF <X,L,R>(a:X->RightProjectionOf<L,R>):X->RightProjection<L,R> return a
 }
 
 extern class EitherLeftProjectionBox {
   
-  public static inline function box <L,R>(a:LeftProjection<L,R>):LeftProjectionOf<L,R> return cast a
+  public static inline function box <L,R>(a:LeftProjection<L,R>):LeftProjectionOf<L,R> return a
   
-  public static inline function unbox <L,R>(a:LeftProjectionOf<L,R>):LeftProjection<L,R> return cast a
+  public static inline function unbox <L,R>(a:LeftProjectionOf<L,R>):LeftProjection<L,R> return a
+  
+  public static inline function boxF <X,L,R>(a:X->LeftProjection<L,R>):X->LeftProjectionOf<L,R> return a
+  
+  public static inline function unboxF <X,L,R>(a:X->LeftProjectionOf<L,R>):X->LeftProjection<L,R> return a
 }

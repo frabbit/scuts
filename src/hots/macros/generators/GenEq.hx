@@ -1,5 +1,7 @@
 package hots.macros.generators;
 
+#if false
+
 #if macro
 
 import haxe.macro.Expr;
@@ -89,5 +91,7 @@ class GenEq
   }
 
 }
+
+#end
 
 #end

@@ -4,7 +4,7 @@ import scuts.core.types.Tup2;
 
 using hots.Identity;
 using hots.ImplicitCasts;
-using hots.Objects;
+using hots.ImplicitInstances;
 
 import scuts.core.types.Validation;
 

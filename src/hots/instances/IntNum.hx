@@ -6,10 +6,10 @@ import hots.classes.Show;
 
 class IntNum extends NumAbstract<Int>
 {
-  public function new (eq:Eq<Int>, show:Show<Int>) { 
+  public function new (eq:Eq<Int>, show:Show<Int>) 
+  { 
     super(eq, show);
   }
-  
   
   override public inline function plus (a:Int, b:Int):Int return a+b
   override public inline function mul (a:Int, b:Int):Int return a*b

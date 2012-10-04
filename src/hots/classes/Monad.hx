@@ -9,9 +9,21 @@ import scuts.Scuts;
 
 interface Monad<M> implements Applicative<M>
 {
-  public function flatMap<A,B>(val:Of<M,A>, f: A->Of<M,B>):Of<M,B>;
+  /**
+   * maps the function f over the value x and also flattens the result.
+   * 
+   * aka: bind, >>=
+   * 
+   * Haskell: >>= :: (a -> f b) -> f a -> f b
+   */
+  public function flatMap<A,B>(x:Of<M,A>, f:A->Of<M,B>):Of<M,B>;
   
-  public function flatten <A> (val: Of<M, Of<M,A>>):Of<M,A>;
+  /**
+   * flattens a nested monadic value.
+   * 
+   * aka: join
+   */
+  public function flatten <A> (x:Of<M, Of<M,A>>):Of<M,A>;
 }
 
 

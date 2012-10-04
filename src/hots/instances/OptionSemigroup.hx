@@ -1,9 +1,8 @@
 package hots.instances;
 
-import hots.classes.Monoid;
-import hots.classes.MonoidAbstract;
 import hots.classes.Semigroup;
 import hots.classes.SemigroupAbstract;
+
 import scuts.core.extensions.Options;
 import scuts.core.types.Option;
 
@@ -20,5 +19,4 @@ class OptionSemigroup<X> extends SemigroupAbstract<Option<X>>
   {
     return Options.append(a1, a2, semi.append);
   }
-  
 }

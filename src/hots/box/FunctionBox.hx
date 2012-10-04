@@ -2,8 +2,8 @@ package hots.box;
 
 
 import hots.In;
-import hots.instances.FunctionOfOf;
 import hots.Of;
+import hots.of.FunctionOfOf;
 
 class FunctionBox 
 {

@@ -6,7 +6,8 @@ class FloatShow extends ShowAbstract<Float>
 {
   public function new () {}
   
-  override public inline function show (v:Float):String {
-    return Std.string("float: " + v);
+  override public inline function show (v:Float):String 
+  {
+    return Std.string(v);
   }
 }

@@ -15,7 +15,8 @@ class IntSumSemigroup extends SemigroupAbstract<Int>
     this.intNum = intNum;
   }
   
-  override public inline function append (a:Int, b:Int):Int {
+  override public inline function append (a:Int, b:Int):Int 
+  {
     return intNum.plus(a,b);
   }
 }

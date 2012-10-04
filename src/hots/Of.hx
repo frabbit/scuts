@@ -1,27 +1,11 @@
 package hots;
 
 
-// Of is like a newtype, it's compiled as Dynamic, but at compilation time it is a full featured type.
-#if flash
-@:native('Object')
-#else
-@:native('Dynamic')
-#end
-class Of<M,A> { }
 /*
-#if flash
-@:native('Object')
-#else
-@:native('Dynamic')
-#end
-*/
-//typedef Of<M,A> = Of<M,A>;
+ * Represents a type constructor that needs one type to construct a real type.
+ * 
+ * f.e. Array<T> can be represented as Of<Array<In>, T>
+ * 
+ */
 
-/*
-#if flash
-@:native('Object')
-#else
-@:native('Dynamic')
-#end
-*/
-//class OfT<M,A> { }
+abstract Of<M,A> {}

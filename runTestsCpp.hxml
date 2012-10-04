@@ -1,6 +1,0 @@
-commonTest.hxml
--main AllTests
--cpp bin/test/cpp
-
---next
--cmd bin\test\cpp\AllTests.exe

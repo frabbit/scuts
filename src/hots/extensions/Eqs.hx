@@ -1,17 +1,18 @@
 package hots.extensions;
 import hots.classes.Eq;
-import hots.Implicit;
+
 
 
 class Eqs
 {
-
+  /**
+   * Simple Helper Function to create an Eq-Instance from a Function.
+   */
   public static function create <A>(f:A->A->Bool) return new EqByFun(f)
   
-  public static inline function eq<T>(v1:T, v2:T, eq:Implicit<Eq<T>>):Bool return eq.eq(v1, v2)
+  public static inline function eq<T>(v1:T, v2:T, eq:Eq<T>):Bool return eq.eq(v1, v2)
     
-  public static inline function notEq<T>(v1:T, v2:T, eq:Implicit<Eq<T>>):Bool return eq.notEq(v1, v2)
-  
+  public static inline function notEq<T>(v1:T, v2:T, eq:Eq<T>):Bool return eq.notEq(v1, v2)
 }
 
 import hots.classes.EqAbstract;

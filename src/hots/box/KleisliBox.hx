@@ -1,6 +1,6 @@
 package hots.box;
-import hots.instances.KleisliOf;
 import hots.Of;
+import hots.of.KleisliOf;
 
 
 class KleisliBox 

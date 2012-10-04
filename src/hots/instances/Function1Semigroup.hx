@@ -8,6 +8,7 @@ import hots.classes.SemigroupAbstract;
 class Function1Semigroup<A,B> extends SemigroupAbstract<A->B>
 {
   var semigroupB:Semigroup<B>;
+  
   public function new (semigroupB:Semigroup<B>) 
   {
     this.semigroupB = semigroupB;

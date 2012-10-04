@@ -5,7 +5,8 @@ import hots.classes.EqAbstract;
 import scuts.core.extensions.Eithers;
 import scuts.core.types.Either;
 
-class EitherEq<A,B> extends EqAbstract<Either<A,B>> {
+class EitherEq<A,B> extends EqAbstract<Either<A,B>> 
+{
 
   var eqA:Eq<A>;
   var eqB:Eq<B>;
@@ -20,6 +21,4 @@ class EitherEq<A,B> extends EqAbstract<Either<A,B>> {
   {
     return Eithers.eq(a, b, eqA.eq, eqB.eq);
   }
-
-  
 }

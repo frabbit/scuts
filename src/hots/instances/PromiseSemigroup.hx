@@ -4,7 +4,7 @@ package hots.instances;
 import hots.classes.Semigroup;
 import hots.classes.SemigroupAbstract;
 import scuts.core.types.Promise;
-import scuts.macros.Do;
+
 
 using scuts.core.extensions.Promises;
 
@@ -16,11 +16,8 @@ class PromiseSemigroup<X> extends SemigroupAbstract<Promise<X>>
   
   override public function append (a:Promise<X>, b:Promise<X>):Promise<X> 
   {
-    return Do.run(
-      x1 <= a, 
-      x2 <= b, 
-      return semi.append(x1,x2)
-    );
+    return a.zipWith(b, semi.append);
+    
   }
  
 }

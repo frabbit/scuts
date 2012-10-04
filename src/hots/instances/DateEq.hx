@@ -6,9 +6,10 @@ import hots.instances.FloatEq;
 
 class DateEq extends EqAbstract<Date> 
 {
-  var floatEq:FloatEq;
+  var floatEq:Eq<Float>;
   
-  public function new (floatEq) {
+  public function new (floatEq) 
+  {
     this.floatEq = floatEq;
   }
 

@@ -1,191 +1,133 @@
 package hots;
+import haxe.macro.MacroType;
 import hots.box.ArrayBox;
 import hots.box.FunctionBox;
+import hots.box.ImListBox;
+import hots.box.LazyBox;
+import hots.box.LazyListBox;
 import hots.box.OptionBox;
+import hots.box.PromiseBox;
 import hots.box.ValidationBox;
-import hots.instances.ArrayOf;
-import hots.instances.ArrayTOf;
-import hots.instances.FunctionOfOf;
-import hots.instances.OptionOf;
-import hots.instances.OptionTOf;
-import hots.instances.ValidationOf;
-import hots.instances.ValidationTOf;
+import hots.Of;
+import hots.of.ArrayOf;
+import hots.of.ArrayTOf;
+import hots.of.FunctionOfOf;
+import hots.of.ImListOf;
+import hots.of.LazyListOf;
+import hots.of.LazyTOf;
+
+import hots.of.OptionOf;
+import hots.of.OptionTOf;
+import hots.of.PromiseOf;
+import hots.of.ValidationOf;
+import hots.of.ValidationTOf;
+import scuts.core.types.ImList;
+import scuts.core.types.LazyList;
 import scuts.core.types.Option;
+import scuts.core.types.Promise;
 import scuts.core.types.Validation;
 
-// Option Casts
 
-class OptionOf_Casts
-{
-  public static inline function implicitUpcast <T>(a:Option<T>):OptionOf<T> 
-  {
-    return OptionBox.box(a);
-  }
+typedef LazyT_Casts         = MacroType<[hots.Gen.genCastBoxT  (function <M,T>  (x:Void->hots.Of<M, T>)   :hots.of.LazyTOf<M,T> {}, hots.box.LazyBox)]>;
+
+
+
+typedef Validation_Casts = MacroType<[
+  hots.Gen.genCastBox(function <F,S> (x:scuts.core.types.Validation<F,S>):hots.of.ValidationOf<F,S> { }, hots.box.ValidationBox)]>;
+
+typedef Validation_Void_Casts = MacroType<[
+  hots.Gen.genCastBox0(function <F,S> (x:Void->scuts.core.types.Validation<F,S>):Void->hots.of.ValidationOf<F,S> { }, hots.box.ValidationBox)]>;
   
-  public static inline function implicitDowncast <T>(a:OptionOf<T>):Option<T>
-  {
-    return OptionBox.unbox(a);
-  }
-}
-
-class OptionOf_Function_Casts
-{
-  public static inline function implicitUpcast <T,X>(a:X->Option<T>):X->OptionOf<T> 
-  {
-    return OptionBox.boxF(a);
-  }
+typedef Validation_Function_Casts = MacroType<[
+  hots.Gen.genCastBoxF(function <X,F,S> (x:X->scuts.core.types.Validation<F,S>):X->hots.of.ValidationOf<F,S> { }, hots.box.ValidationBox)]>;
   
-  public static inline function implicitDowncast <T,X>(a:X->OptionOf<T>):X->Option<T>
-  {
-    return OptionBox.unboxF(a);
-  }
-}
-
-class OptionTOf_Function_Casts 
-{
-  public static inline function implicitUpcast <M,T,X>(a:X->Of<M, Option<T>>)
-  {  
-    return OptionBox.boxFT(a);
-  }
-  public static inline function implicitDowncast <M,T,X>(a:X->OptionTOf<M,T> ):X->Of<M, Option<T>> 
-  {
-    return OptionBox.unboxFT(a);
-  }
-}
-
-class OptionTOf_Casts
-{
-  public static inline function implicitUpcast <M, T>(a:Of<M, Option<T>>):OptionTOf<M,T>
-  {
-    return OptionBox.boxT(a);
-  }
+typedef ValidationT_Casts         = MacroType<[
+  hots.Gen.genCastBoxT(function <M,F,S>  (x:hots.Of<M, scuts.core.types.Validation<F,S>>)   :hots.of.ValidationTOf<M,F,S> { }, hots.box.ValidationBox)]>;
   
-  public static inline function implicitDowncast <M, T>(a:OptionTOf<M,T>):Of<M, Option<T>>
-  {
-    return OptionBox.unboxT(a);
-  }
-}
+typedef ValidationT_Function_Casts         = MacroType<[
+  hots.Gen.genCastBoxFT(function <M,X,F,S>  (x:X->hots.Of<M, scuts.core.types.Validation<F,S>>)   :X->hots.of.ValidationTOf<M,F,S> {}, hots.box.ValidationBox)]>;
 
-// Validation Casts
 
-class ValidationOf_Casts
-{
-  public static inline function implicitUpcast <F,S>(a:Validation<F,S>):ValidationOf<F,S> 
-  {
-    return ValidationBox.box(a);
-  }
+typedef StateT_Casts         = MacroType<[
+  hots.Gen.genCastBoxT(function <M,ST,X>  (x:hots.Of<M, scuts.core.types.State<ST,X>>)   :hots.of.StateTOf<M,ST,X> { }, hots.box.StateBox)]>;  
+
   
-  public static inline function implicitDowncast <F,S>(a:ValidationOf<F,S>):Validation<F,S>
-  {
-    return ValidationBox.unbox(a);
-  }
-}
-
-class ValidationOf_Function_Casts
-{
-  public static inline function implicitUpcast <F,S,X>(a:X->Validation<F,S>):X->ValidationOf<F,S> 
-  {
-    return ValidationBox.boxF(a);
-  }
-  
-  public static inline function implicitDowncast <F,S,X>(a:X->ValidationOf<F,S>):X->Validation<F,S>
-  {
-    return ValidationBox.unboxF(a);
-  }
-}
-
-class ValidationTOf_Function_Casts 
-{
-  public static inline function implicitUpcast <M,F,S,X>(a:X->Of<M, Validation<F,S>>)
-  {  
-    return ValidationBox.boxFT(a);
-  }
-  public static inline function implicitDowncast <M,F,S,X>(a:X->ValidationTOf<M,F,S> ):X->Of<M, Validation<F,S>> 
-  {
-    return ValidationBox.unboxFT(a);
-  }
-}
-
-class ValidationTOf_Casts
-{
-  public static inline function implicitUpcast <M, F,S>(a:Of<M, Validation<F,S>>):ValidationTOf<M,F,S>
-  {
-    return ValidationBox.boxT(a);
-  }
-  
-  public static inline function implicitDowncast <M, F,S>(a:ValidationTOf<M,F,S>):Of<M, Validation<F,S>>
-  {
-    return ValidationBox.unboxT(a);
-  }
-}
+typedef Array_Casts          = MacroType<[hots.Gen.genCastBox   (function <T>    (x:Array<T>)               :hots.of.ArrayOf<T> {}, hots.box.ArrayBox)]>;
+typedef Array_Void_Casts     = MacroType<[hots.Gen.genCastBox0  (function <T>    (x:Void->Array<T>)         :Void->hots.of.ArrayOf<T> {}, hots.box.ArrayBox)]>;
+typedef Array_Function_Casts = MacroType<[hots.Gen.genCastBoxF  (function <X,T>  (x:X->Array<T>)            :X->hots.of.ArrayOf<T> {}, hots.box.ArrayBox)]>;
+typedef ArrayT_Casts         = MacroType<[hots.Gen.genCastBoxT  (function <M,T>  (x:hots.Of<M, Array<T>>)   :hots.of.ArrayTOf<M,T> {}, hots.box.ArrayBox)]>;
+typedef ArrayT_Function_Casts= MacroType<[hots.Gen.genCastBoxFT (function <M,T,X>(x:X->hots.Of<M, Array<T>>):X->hots.of.ArrayTOf<M,T> { }, hots.box.ArrayBox)]>;
 
 
-// Array Casts
 
-class ArrayTOf_Casts
-{
-  public static inline function implicitUpcast <M,T>(a:Of<M, Array<T>>):ArrayTOf<M,T> 
-  {
-    return ArrayBox.boxT(a);
-  }
-  public static inline function implicitDowncast <M,T>(a:ArrayTOf<M,T> ):Of<M, Array<T>> 
-  {
-    return ArrayBox.unboxT(a);
-  }
+typedef Option_Casts      = MacroType<[
+  hots.Gen.genCastBox  (function <T>    (x:scuts.core.types.Option<T>)               :hots.of.OptionOf<T> {}, hots.box.OptionBox)]>;
+typedef Option_Void_Casts = MacroType<[
+  hots.Gen.genCastBox0 (function <T>    (x:Void->scuts.core.types.Option<T>)         :Void->hots.of.OptionOf<T> {}, hots.box.OptionBox)]>;
+typedef Option_F_Casts    = MacroType<[
+  hots.Gen.genCastBoxF (function <X,T>  (x:X->scuts.core.types.Option<T>)            :X->hots.of.OptionOf<T> {}, hots.box.OptionBox)]>;
+typedef OptionT_Casts     = MacroType<[
+  hots.Gen.genCastBoxT (function <M,T>  (x:hots.Of<M, scuts.core.types.Option<T>>)   :hots.of.OptionTOf<M,T> {}, hots.box.OptionBox)]>;
+typedef OptionT_F_Casts   = MacroType<[
+  hots.Gen.genCastBoxFT(function <M,T,X>(x:X->hots.Of<M, scuts.core.types.Option<T>>):X->hots.of.OptionTOf<M,T> {}, hots.box.OptionBox)]>;
+
   
   
-}
+typedef Promise_Casts      = MacroType<[
+  hots.Gen.genCastBox  (function <T>    (x:scuts.core.types.Promise<T>)               :hots.of.PromiseOf<T> {}, hots.box.PromiseBox)]>;
+typedef Promise_Void_Casts = MacroType<[
+  hots.Gen.genCastBox0 (function <T>    (x:Void->scuts.core.types.Promise<T>)         :Void->hots.of.PromiseOf<T> {}, hots.box.PromiseBox)]>;
+typedef Promise_F_Casts    = MacroType<[
+  hots.Gen.genCastBoxF (function <X,T>  (x:X->scuts.core.types.Promise<T>)            :X->hots.of.PromiseOf<T> {}, hots.box.PromiseBox)]>;
+typedef PromiseT_Casts     = MacroType<[
+  hots.Gen.genCastBoxT (function <M,T>  (x:hots.Of<M, scuts.core.types.Promise<T>>)   :hots.of.PromiseTOf<M,T> {}, hots.box.PromiseBox)]>;
+typedef PromiseT_F_Casts   = MacroType<[
+  hots.Gen.genCastBoxFT(function <M,T,X>(x:X->hots.Of<M, scuts.core.types.Promise<T>>):X->hots.of.PromiseTOf<M,T> {}, hots.box.PromiseBox)]>;
 
-
-
-
-class ArrayTOf_Function_Casts
-{
-  public static inline function implicitUpcast <M,T,X>(a:X->Of<M, Array<T>>)
-  {
-    return ArrayBox.boxFT(a);
-  }
   
-}
-
-
-
-
-
-
-class ArrayOf_Casts
-{
-  public static inline function implicitUpcast <T>(a:Array<T>):ArrayOf<T> 
-  {
-    return ArrayBox.box(a);
-  }
   
-  public static inline function implicitDowncast <T>(a:ArrayOf<T>):Array<T> 
-  {
-    return ArrayBox.unbox(a);
-  }
-}
+typedef LazyList_Casts      = MacroType<[
+  hots.Gen.genCastBox  (function <T>    (x:scuts.core.types.LazyList<T>)               :hots.of.LazyListOf<T> {}, hots.box.LazyListBox)]>;
+typedef LazyList_Void_Casts = MacroType<[
+  hots.Gen.genCastBox0 (function <T>    (x:Void->scuts.core.types.LazyList<T>)         :Void->hots.of.LazyListOf<T> {}, hots.box.LazyListBox)]>;
+typedef LazyList_F_Casts    = MacroType<[
+  hots.Gen.genCastBoxF (function <X,T>  (x:X->scuts.core.types.LazyList<T>)            :X->hots.of.LazyListOf<T> {}, hots.box.LazyListBox)]>;
+typedef LazyListT_Casts     = MacroType<[
+  hots.Gen.genCastBoxT (function <M,T>  (x:hots.Of<M, scuts.core.types.LazyList<T>>)   :hots.of.LazyListTOf<M,T> {}, hots.box.LazyListBox)]>;
+typedef LazyListT_F_Casts   = MacroType<[
+  hots.Gen.genCastBoxFT(function <M,T,X>(x:X->hots.Of<M, scuts.core.types.LazyList<T>>):X->hots.of.LazyListTOf<M,T> { }, hots.box.LazyListBox)]>;
+  
+  
+  
+typedef ImList_Casts      = MacroType<[
+  hots.Gen.genCastBox  (function <T>    (x:scuts.core.types.ImList<T>)               :hots.of.ImListOf<T> {}, hots.box.ImListBox)]>;
+typedef ImList_Void_Casts = MacroType<[
+  hots.Gen.genCastBox0 (function <T>    (x:Void->scuts.core.types.ImList<T>)         :Void->hots.of.ImListOf<T> {}, hots.box.ImListBox)]>;
+typedef ImList_F_Casts    = MacroType<[
+  hots.Gen.genCastBoxF (function <X,T>  (x:X->scuts.core.types.ImList<T>)            :X->hots.of.ImListOf<T> {}, hots.box.ImListBox)]>;
+typedef ImListT_Casts     = MacroType<[
+  hots.Gen.genCastBoxT (function <M,T>  (x:hots.Of<M, scuts.core.types.ImList<T>>)   :hots.of.ImListTOf<M,T> {}, hots.box.ImListBox)]>;
+typedef ImListT_F_Casts   = MacroType<[
+  hots.Gen.genCastBoxFT(function <M,T,X>(x:X->hots.Of<M, scuts.core.types.ImList<T>>):X->hots.of.ImListTOf<M,T> {}, hots.box.ImListBox)]>;
 
-class ArrayOf_Function_Casts
-{
-  public static inline function implicitUpcast <X,T>(a:X->Array<T>):X->ArrayOf<T>
-  {
-    return ArrayBox.boxF(a);
-  }
-  public static inline function implicitDowncast <X,T>(a:X->ArrayOf<T>):X->Array<T>
-  {
-    return ArrayBox.unboxF(a);
-  }
-}
 
-class Function_Arrow_Casts
-{
-  public static inline function implicitUpcast <A,B>(f:A->B):FunctionOfOf<A, B>
-  {
-    return FunctionBox.asArrow(f);
-  }
-  public static inline function implicitDowncast <A,B>(f:FunctionOfOf<A, B>):A->B
-  {
-    return FunctionBox.runArrow(f);
-  }
-}
+// RightProjection Casts
+import hots.of.EitherOf;
+import scuts.core.types.Either;
+import hots.box.EitherBox;
+
+
+////////// NOT YET WORKING ON STATIC PLATTFORMS
+
+#if (!cpp && !flash)
+
+typedef RightProjection_Casts = MacroType<[
+  hots.Gen.genCastBox(function <L,R> (x:scuts.core.types.Either.RightProjection<L,R>)
+  :hots.of.EitherOf.RightProjectionOf<L,R> { }, hots.box.EitherBox.EitherRightProjectionBox)]>;
+
+  
+typedef RightProjection_Function_Casts = MacroType<[
+  hots.Gen.genCastBoxF(function <X,L,R> (x:X->scuts.core.types.Either.RightProjection<L,R>)
+  :X->hots.of.EitherOf.RightProjectionOf<L,R> { }, hots.box.EitherBox.EitherRightProjectionBox)]>;
+  
+#end

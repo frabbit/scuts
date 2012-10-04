@@ -6,37 +6,63 @@ import scuts.Scuts;
 
 
 
-class NumAbstract<A> implements Num<A> 
+class NumAbstract<T> implements Num<T> 
 {
-  
-  var e:Eq<A>;
-  var s:Show<A>;
+  var eqT:Eq<T>;
+  var showT:Show<T>;
     
-  public function new (eq:Eq<A>, show:Show<A>) {
-    this.e = eq;
-    this.s = show;
+  public function new (eqT:Eq<T>, showT:Show<T>) {
+    this.eqT = eqT;
+    this.showT = showT;
   }
   
-  public function minus (a:A, b:A):A 
-  {
-    return minus(a, negate(b));
-  }
+  /**
+   * @see <a href="Num.html">hots.classes.Num</a>
+   */
+  public function minus (a:T, b:T):T return minus(a, negate(b))
   
-  public function plus (a:A, b:A):A return Scuts.abstractMethod()
-  public function mul (a:A, b:A):A return Scuts.abstractMethod()
+  // abstract
   
+  /**
+   * @see <a href="Num.html">hots.classes.Num</a>
+   */
+  public function plus (a:T, b:T):T return Scuts.abstractMethod()
+  /**
+   * @see <a href="Num.html">hots.classes.Num</a>
+   */
+  public function mul (a:T, b:T):T return Scuts.abstractMethod()
   
-  public function negate (a:A):A return Scuts.abstractMethod()
-  public function abs (a:A):A return Scuts.abstractMethod()
-  public function signum (a:A):A return Scuts.abstractMethod()
-  public function fromInt (a:Int):A return Scuts.abstractMethod()
+  /**
+   * @see <a href="Num.html">hots.classes.Num</a>
+   */
+  public function negate (a:T):T return Scuts.abstractMethod()
+  /**
+   * @see <a href="Num.html">hots.classes.Num</a>
+   */
+  public function abs (a:T):T return Scuts.abstractMethod()
+  /**
+   * @see <a href="Num.html">hots.classes.Num</a>
+   */
+  public function signum (a:T):T return Scuts.abstractMethod()
+  /**
+   * @see <a href="Num.html">hots.classes.Num</a>
+   */
+  public function fromInt (a:Int):T return Scuts.abstractMethod()
   
   
   // delegation of Show
-  public inline function show (a:A):String return s.show(a)
+  /**
+   * @see <a href="Show.html">hots.classes.Show</a>
+   */
+  public inline function show (a:T):String return showT.show(a)
   
   // delegation of Eq
-  public inline function eq (a:A, b:A):Bool return e.eq(a,b)
-  
-  public inline function notEq (a:A, b:A):Bool return e.notEq(a,b)
+  /**
+   * @see <a href="Eq.html">hots.classes.Eq</a>
+   */
+  public inline function eq (a:T, b:T):Bool return eqT.eq(a,b)
+  /**
+   * @see <a href="Eq.html">hots.classes.Eq</a>
+   */
+  public inline function notEq (a:T, b:T):Bool return eqT.notEq(a,b)
 }

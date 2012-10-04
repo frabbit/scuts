@@ -1,17 +1,16 @@
 package hots.extensions;
 import hots.classes.Show;
-import hots.Implicit;
 
 
 class Shows
 {
-  public static inline function show<T>(v1:T, s:Implicit<Show<T>>):String return s.show(v1) 
+  public static inline function show<T>(v1:T, s:Show<T>):String return s.show(v1) 
   
   
-  public static inline function create<T>(f:T->String) return new ShowByFun(f)
+  @:noUsing public static function create<T>(f:T->String) return new ShowByFun(f)
 }
 
-class ShowByFun<T> implements Show<T>
+private class ShowByFun<T> implements Show<T>
 {
   
   var f : T->String;

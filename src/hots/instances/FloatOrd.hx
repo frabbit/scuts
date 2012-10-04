@@ -5,7 +5,8 @@ import hots.classes.Ord;
 import hots.classes.OrdAbstract;
 import scuts.core.types.Ordering;
 
-class FloatOrd extends OrdAbstract<Float> {
+class FloatOrd extends OrdAbstract<Float> 
+{
   
   public function new (eq:Eq<Float>) 
   { 

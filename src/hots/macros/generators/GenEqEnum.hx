@@ -1,5 +1,7 @@
 package hots.macros.generators;
 
+#if false
+
 #if macro
 import hots.macros.generators.GenError;
 import haxe.macro.Expr;
@@ -179,3 +181,5 @@ class GenEqEnum
   }
   
 }
+
+#end
