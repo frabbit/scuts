@@ -1,7 +1,10 @@
 package scuts.mcore.extensions;
 
+#if macro
+
 import haxe.macro.Expr;
 import scuts.core.extensions.Strings;
+import scuts.core.types.Option;
 
 class Constants 
 {
@@ -21,4 +24,12 @@ class Constants
     }
   }
   
+  public static function selectCIdentValue (c:Constant):Option<String> return switch (c) 
+  {
+    case CIdent(s): Some(s);
+    default: None;
+  }
+  
 }
+
+#end

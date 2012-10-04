@@ -1,5 +1,7 @@
 package scuts.mcore.extensions;
 
+#if macro
+
 import haxe.macro.Expr;
 
 class Unops 
@@ -15,3 +17,5 @@ class Unops
   }
   
 }
+
+#end

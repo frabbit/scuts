@@ -1,5 +1,7 @@
 package scuts.mcore.extensions;
 
+#if macro
+
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import scuts.core.extensions.Ints;
@@ -12,6 +14,7 @@ class Positions
   {
     return p == null ? Context.currentPos() : p;
   }
+  
   public static function eq (a:Position, b:Position):Bool 
   {
     var infosA = Context.getPosInfos(a);
@@ -23,3 +26,5 @@ class Positions
   }
   
 }
+
+#end

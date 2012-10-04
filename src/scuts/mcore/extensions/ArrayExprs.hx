@@ -1,8 +1,6 @@
 package scuts.mcore.extensions;
 
-#if (!macro && !display)
-#error "Class can only be used inside of macros"
-#elseif (display || macro)
+#if macro
 
 import haxe.macro.Expr;
 import scuts.mcore.Make;

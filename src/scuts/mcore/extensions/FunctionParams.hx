@@ -1,4 +1,7 @@
 package scuts.mcore.extensions;
+
+#if macro
+
 import scuts.core.extensions.Arrays;
 import scuts.core.extensions.Strings;
 import haxe.macro.Expr;
@@ -13,6 +16,6 @@ class FunctionParams
     return Strings.eq(a.name, b.name)
       && Arrays.eq(a.constraints, b.constraints, ComplexTypes.eq);
   }
-  
-  
 }
+
+#end

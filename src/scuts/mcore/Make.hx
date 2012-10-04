@@ -1,19 +1,17 @@
 package scuts.mcore;
 
-#if (!macro && !display)
-#error "Class can only be used inside of macros"
-#elseif (display || macro)
+#if macro
+
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import scuts.core.types.Option;
 import scuts.Scuts;
 using scuts.core.extensions.Dynamics;
 using scuts.core.extensions.Arrays;
+
 class Make
 {
-  //public static inline function func (args:Array<FunctionArg>, 
-  
-    
+
   public static inline function whileExpr (cond:Expr, body:Expr, ?pos:Position):Expr
     return expr(EWhile(cond, body, true), pos)
     
@@ -30,7 +28,7 @@ class Make
     return expr(EField(e, field), pos)
     
   public static function fields (e:Expr, fields:Array<String>, ?pos:Position):Expr
-    return fields.foldLeft(function (acc, cur) return field(acc, cur, pos), e)
+    return fields.foldLeft(e, function (acc, cur) return field(acc, cur, pos))
     
   public static inline function const (const:Constant, ?pos:Position):Expr
     return expr(EConst(const), pos)
@@ -109,7 +107,6 @@ class Make
 		}
 	}
 	
-  
   public static function call (e:Expr, params:Array<Expr>, ?pos:Position)
     return expr(ECall(e, params), pos)
   

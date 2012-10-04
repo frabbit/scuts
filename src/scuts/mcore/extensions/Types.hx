@@ -1,71 +1,77 @@
 package scuts.mcore.extensions;
+
+#if macro
+
+import haxe.macro.Context;
 import haxe.macro.Type;
-import haxe.macro.Expr;
-import scuts.core.extensions.Arrays;
-import scuts.core.types.Tup2;
-import scuts.core.types.Option;
-import scuts.mcore.MType;
-import scuts.mcore.types.InstType;
+import scuts.mcore.Make;
+
 import scuts.Scuts;
 
+import haxe.macro.Expr;
+
+
+
+import scuts.core.types.Tup2;
+import scuts.core.types.Option;
+
+using scuts.core.extensions.Dynamics;
+
 using scuts.core.extensions.Arrays;
+
+using scuts.core.extensions.Strings;
+using scuts.core.extensions.Bools;
+using scuts.core.extensions.Functions;
+
+
+
+using scuts.mcore.extensions.Types;
+
 using scuts.mcore.extensions.ClassTypes;
 using scuts.mcore.extensions.EnumTypes;
 using scuts.mcore.extensions.DefTypes;
 using scuts.mcore.extensions.AnonTypes;
 
-using scuts.core.extensions.Dynamics;
-using scuts.mcore.extensions.Types;
-
-using scuts.core.extensions.Strings;
-using scuts.core.extensions.Bools;
-
-using scuts.core.extensions.Functions;
+enum InstType 
+{
+	ITRegular;
+  ITFunctionParam;
+  ITClassParam;
+}
 
 private typedef TFunArg = {t:Type, name:String, opt:Bool};
 
 class Types 
 {
-
-  public static inline function isTInst (t:Type):Bool return switch t
-  {
-    case TInst(_,_): true;
-    default:         false;
-  }
   
-  public static inline function getInstType (t:Type):Option<InstType> return switch t
-  {
-    case TInst(c,_): Some(MType.getInstType(c.get()));
-    default:         None;
-  }
+ 
 
-  
-  public static function toComplexType (t:Type, wildcards:Array<Type>):ComplexType 
+  public static function isFunction (t:Type):Bool 
   {
-    return if (isTInst(t) && wildcards.any(Types.eq.partial2(t))) switch t
-    {
-      // wildcards must be TInst
-      case TInst(t, _): TPath({ pack: [], name: t.get().name, params: [] });
-      default:          Scuts.unexpected();
-    }
-    else switch t 
-    {
-      case TEnum(t, params): BaseTypes.toComplexType(t.get(), params, wildcards);
-      case TInst(t, params): BaseTypes.toComplexType(t.get(), params, wildcards);
-      case TType(t, params): BaseTypes.toComplexType(t.get(), params, wildcards);
-      case TLazy(t):         toComplexType(t(), wildcards);
-      case TFun(args, ret):  function argToComplex (a) return toComplexType(a.t, wildcards);
-                             ComplexType.TFunction(args.map(argToComplex), toComplexType(ret, wildcards));
-      case TAnonymous(a):    Scuts.notImplemented();
-      case TMono(t):         Scuts.notImplemented();
-      case TDynamic(t):      Scuts.notImplemented();
+    return switch (t) {
+      case TFun(_,_): true;
+      default: false;
     }
   }
   
-  public static function asFunction(t:Type) return switch t 
+  public static function isMono (t:Type):Bool 
   {
-    case TFun(args, ret): Some(Tup2.create(args, ret));
-    default:              None;
+    return switch (t) {
+      case TMono(_): true;
+      default: false;
+    }
+  }
+  
+  public static function getInstType (c:ClassType):InstType
+  {
+    var pack = c.pack;
+    var module = c.module;
+    var packJoined = pack.join(".");
+    
+    return 
+      if (packJoined == module)                  ITClassParam
+      else if (module.indexOf(packJoined) == -1) ITFunctionParam
+      else                                       ITRegular;
   }
   
   public static function eq(type1:Type, type2:Type):Bool 
@@ -86,6 +92,7 @@ class Types
     
     return switch type1 
     {
+      case TAbstract(x,y): Scuts.notImplemented();
       case TAnonymous(a1): switch type2
       { 
         case TAnonymous(a2): a1.get().eq(a2.get()); 
@@ -128,11 +135,6 @@ class Types
       }
     }
   }
-  
-  public static function asClassType (t:Type):Option<Tup2<Ref<ClassType>, Array<Type>>> return switch t 
-  {
-    case TInst(t, params): Some(Tup2.create(t, params));
-    default:               None;
-  }
-  
 }
+
+#end

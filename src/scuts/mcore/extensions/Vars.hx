@@ -1,4 +1,7 @@
 package scuts.mcore.extensions;
+
+#if macro
+
 import scuts.mcore.Make;
 import haxe.macro.Expr;
 
@@ -19,9 +22,8 @@ class Vars
 
 class ArrayVars 
 {
-  public static inline function expr (vars:Array<Var>) return Make.vars(vars)
-  
-  public static function addFront (vars:Array<Var>, name:String, ?type:ComplexType, ?expr:Expr) return [{name:name, type:type, expr:expr}].concat(vars)
-  public static function addBack (vars:Array<Var>, name:String, ?type:ComplexType, ?expr:Expr) return vars.concat([{name:name, type:type, expr:expr}])
-  
+  public static inline function toExpr (vars:Array<Var>) return Make.vars(vars)
+
 }
+
+#end

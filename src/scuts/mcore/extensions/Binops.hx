@@ -1,5 +1,7 @@
 package scuts.mcore.extensions;
 
+#if macro
+
 import haxe.macro.Expr;
 
 class Binops 
@@ -35,3 +37,5 @@ class Binops
   }
   
 }
+
+#end

@@ -1,14 +1,13 @@
 package scuts.mcore.extensions;
-#if (!macro && !display)
-#error "Class can only be used inside of macros"
-#elseif (display || macro)
+
+#if macro
+
 import haxe.macro.Expr;
 import scuts.core.extensions.Strings;
 import scuts.core.types.Option;
 
 class FieldTypes 
 {
-  
   public static function flatCopy(f:FieldType) return switch (f) 
   {
     case FProp(get, set, t, e): FProp(get, set, t, e);
@@ -57,8 +56,6 @@ class FieldTypes
       } 
     }
   }
-    
-  
 }
 
 #end

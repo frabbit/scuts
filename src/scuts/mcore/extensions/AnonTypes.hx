@@ -1,5 +1,7 @@
 package scuts.mcore.extensions;
 
+#if macro
+
 import haxe.macro.Type;
 import scuts.core.extensions.Arrays;
 
@@ -12,3 +14,5 @@ class AnonTypes
   }
   
 }
+
+#end

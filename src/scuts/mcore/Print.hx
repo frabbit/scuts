@@ -1,32 +1,33 @@
 package scuts.mcore;
 
+#if macro
 
-#if (!macro && !display)
-#error "Class can only be used inside of macros"
-#elseif (display || macro)
 
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Iterables;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Expr.Binop;
 import haxe.macro.Type;
 import scuts.Assert;
+
 import scuts.mcore.extensions.Types;
 import scuts.Scuts;
 
-using scuts.Assert;
-using scuts.core.extensions.Arrays;
 using scuts.core.extensions.Dynamics;
+using scuts.core.extensions.Iterables;
+using scuts.core.extensions.Arrays;
 
-private typedef SType = scuts.mcore.Type;
+
+
+using scuts.Assert;
 
 private typedef P = Print;
+
 class Print 
 {
+  public static inline var UNKNOWN_T_MONO = "T_Mono_Unknown";
 
-  //{ region public
+  
   public static function unop (op:Unop, ?indent:Int = 0, ?indentStr = "\t"):String
   {
     return unop1(op, new StringBuf(), indent, indentStr).toString();
@@ -79,12 +80,7 @@ class Print
     return func1(f, new StringBuf(), indent, indentStr, functionName, true);
   }
 
-  //} region public
-  
-  
-  
-  
-  //{ region private
+
   static function newLine (buf:StringBuf, indent:Int,indentStr:String) 
   {
     buf.add("\n");
@@ -101,7 +97,6 @@ class Print
   
   static function expr1 (ex:Expr, buf:StringBuf, indent:Int, indentStr:String):StringBuf
   {
-    
     #if scutsDebug
     #if printInvalidExpr
     buf.add("INVALID");
@@ -288,7 +283,6 @@ class Print
         }
         buf;
       case ESwitch( e, cases, edef ):
-        // switch expr is by default EParenthesis, so we don't need to print them
         add("switch ");
         expr(e);
         add(" {");
@@ -381,13 +375,9 @@ class Print
         }
       case EDisplay( e, isCall ):
         buf;
-        //throw "not implemented yet";
       case EDisplayNew( t ):
-        
-        //throw "not implemented yet";
         buf;
       case ETernary( econd, eif, eelse ):
-      
         expr(econd);
         add(" ? ");
         expr(eif);
@@ -395,7 +385,6 @@ class Print
         expr(eelse);
       case ECheckType(e, t):
         add("(checktype ");
-        // TODO what is this exactly
         expr(e);
         add("( : ");
         complexType(t);
@@ -687,7 +676,7 @@ class Print
       case AccResolve:      add("dynamic");
       case AccCall( m ):    add(m);
       case AccInline:       // should be resolved through access modifiers
-      case AccRequire( r ): // TODO what is this
+      case AccRequire( r, msg ): // TODO what is this
     }
     return buf;
   }
@@ -778,11 +767,11 @@ class Print
     }
   }
   
-  
   static function const1 (c:Constant, buf:StringBuf):StringBuf 
   {
-    #if scutsDebug
-    if (buf == null || c == null) throw "assert";
+    #if debug
+    Assert.notNull(buf);
+    Assert.notNull(c);
     #end
     
     var add = function (str) { buf.add(str); return buf; }
@@ -807,11 +796,35 @@ class Print
     
     var str = switch (t) 
     {
-      
+      case TAbstract(t1,params): 
+        var ct = t1.get();
+        var module = ct.module;
+        var pack = ct.pack;
+        var name = ct.name;
+        
+
+        var moduleName =
+          if (pack.length > 0) 
+            module.substr(pack.join(".").length + 1) 
+          else module;
+        var hasModule = moduleName != "";
+        var hasPack = pack.length > 0;
+        
+        var tName = moduleName + (if (moduleName == name) "" else ("." + name));
+        
+        var foldPack = function (v, a) return v + "." + a;
+        var reduceParams = function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards, short) + "," + a;
+        var reduceFirst = function (v) return P.type1(v, simpleFunctionSignatures, wildcards, short);
+        var res = 
+          pack.foldRight(tName, foldPack) 
+          + if (params.length > 0) 
+              "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
+            else "";
+        res;
       case TLazy(f):
         type1(f(), simpleFunctionSignatures, wildcards, short);
       case TMono(t): 
-        Constants.UNKNOWN_T_MONO;
+        UNKNOWN_T_MONO;
           
       case TEnum( t1, params ): 
         var ct = t1.get();
@@ -833,7 +846,7 @@ class Print
         var reduceParams = function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards, short) + "," + a;
         var reduceFirst = function (v) return P.type1(v, simpleFunctionSignatures, wildcards, short);
         var res = 
-          pack.foldRight(foldPack, tName) 
+          pack.foldRight(tName, foldPack) 
           + if (params.length > 0) 
               "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
             else "";
@@ -851,7 +864,7 @@ class Print
         if (isWildcard) {
           name;
         } else {
-          switch (SType.getInstType(ct)) {
+          switch (Types.getInstType(ct)) {
             case ITRegular:
               var moduleName =
                 if (pack.length > 0) 
@@ -866,7 +879,7 @@ class Print
               var reduceParams = function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards, short) + "," + a;
               var reduceFirst = function (v) return P.type1(v, simpleFunctionSignatures, wildcards, short);
               var res = 
-                pack.foldRight(foldPack, tName) 
+                pack.foldRight(tName, foldPack) 
                 + if (params.length > 0) 
                     "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
                   else "";
@@ -882,8 +895,8 @@ class Print
         var foldPack = function (v, a) return v + "." + a;
         var foldParams = function (v, a,i) return P.type(v, wildcards) + (if (i < params.length-1) "," else "") + a;
         
-        var typeStr = dt.pack.foldRight(foldPack, dt.name);
-        var paramsStr = if (params.length > 0) "<" + params.foldRightWithIndex(foldParams, ">") else "";
+        var typeStr = dt.pack.foldRight(dt.name, foldPack);
+        var paramsStr = if (params.length > 0) "<" + params.foldRightWithIndex(">", foldParams) else "";
         typeStr + paramsStr;
       case TFun( args , ret ):
         
@@ -895,7 +908,7 @@ class Print
             var reduceFirst = function (val) return funArg(val, simpleFunctionSignatures, wildcards, short);
             args.reduceLeft(reduceArgs, reduceFirst);
           }
-        var retIsFun = SType.isFunction(ret);
+        var retIsFun = Types.isFunction(ret);
         var retStr = (retIsFun ? "(" : "") + P.type1(ret,simpleFunctionSignatures, wildcards, short) + (retIsFun ? ")" : "");
         argumentsStr + " -> " + retStr;
       case TAnonymous( a ): 
@@ -925,7 +938,7 @@ class Print
               case TFun(args, ret): 
                 var argStrings = args.map(function (a) return (a.opt ? "?" : "") + a.name + ":" + P.type(a.t));
                 "function " + c.name + " (" + argStrings.join(",") + ")" + ":" + P.type(ret) + ";";
-              default: Scuts.error("Assert");
+              default: Scuts.unexpected();
             }
             
           default: Scuts.notImplemented();
@@ -938,7 +951,6 @@ class Print
         }
         
     }
-    //return 
   }
   
   public static function funArg (arg:{ name : String, opt : Bool, t : Type }, simpleFunctionSignatures:Bool, wildcards:Array<Type>, short:Bool):String 
@@ -955,7 +967,7 @@ class Print
     var argType = if (arg.t != null) P.type1(arg.t, simpleFunctionSignatures, wildcards, short) else "";
     
     // arguments that are functions must be surrounded with parenthesis
-    var isArgFunction = if (arg.t != null) SType.isFunction(arg.t) else false;
+    var isArgFunction = if (arg.t != null) Types.isFunction(arg.t) else false;
     
     return (isArgFunction ? "(" : "") + optPrefix + argName + argType + (isArgFunction ? ")" : "");
   }

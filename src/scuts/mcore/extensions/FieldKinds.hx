@@ -1,5 +1,7 @@
 package scuts.mcore.extensions;
 
+#if macro
+
 import haxe.macro.Type;
 
 class FieldKinds 
@@ -19,3 +21,5 @@ class FieldKinds
   }
   
 }
+
+#end

@@ -1,8 +1,7 @@
 package scuts.mcore.extensions;
 
-#if (!macro && !display)
-#error "Class can only be used inside of macros"
-#elseif (display || macro)
+#if macro
+
 import haxe.macro.Expr;
 import scuts.core.extensions.Arrays;
 import scuts.core.extensions.Strings;
@@ -14,7 +13,6 @@ using scuts.core.extensions.Iterables;
 
 class Fields 
 {
-
   public static function eq (a:Field, b:Field):Bool 
   {
     return Strings.eq(a.name,b.name)
@@ -39,29 +37,6 @@ class Fields
   {
     return f.access.elem(Access.APublic);
   }
-  
-  public static function isMethod (f:Field):Bool 
-  {
-    return getMethod(f).isSome();
-  }
-  
-  public static function flatCopy (f:Field):Field return 
-  {
-    access : f.access,
-    doc: f.doc,
-    kind: f.kind,
-    meta: f.meta,
-    name: f.name,
-    pos: f.pos
-  }
-  
-  public static function getMethod (f:Field):Option<Function> return switch (f.kind) 
-  {
-    case FieldType.FFun(f):        Some(f);
-    case FieldType.FVar(_,_):      None;
-    case FieldType.FProp(_,_,_,_): None;
-  }
-  
 }
 
 #end

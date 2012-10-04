@@ -1,5 +1,7 @@
 package scuts.mcore.extensions;
 
+#if macro
+
 import haxe.macro.Type;
 
 class MethodKinds 
@@ -14,3 +16,5 @@ class MethodKinds
   }
   
 }
+
+#end

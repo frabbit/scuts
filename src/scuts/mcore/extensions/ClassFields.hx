@@ -1,5 +1,7 @@
 package scuts.mcore.extensions;
 
+#if macro
+
 import haxe.macro.Context;
 import haxe.macro.Type;
 import scuts.core.extensions.Arrays;
@@ -13,8 +15,6 @@ class ClassFields
 
   public static function eq(v1:ClassField, v2:ClassField) 
   {
-    // TODO Currently there is no way to compare TypedExpr
-    
     function eqParam (a,b) return Strings.eq(a.name, b.name) && Types.eq(a.t, b.t);
     
     var exprEq = ((v1.expr == null && v2.expr == null) || (v1.expr != null && v2.expr != null));
@@ -30,3 +30,5 @@ class ClassFields
   }
   
 }
+
+#end

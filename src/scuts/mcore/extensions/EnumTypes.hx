@@ -1,5 +1,7 @@
 package scuts.mcore.extensions;
 
+#if macro
+
 import haxe.macro.Type;
 import scuts.core.extensions.Strings;
 
@@ -19,3 +21,4 @@ class EnumTypes
   }
   
 }
+#end
