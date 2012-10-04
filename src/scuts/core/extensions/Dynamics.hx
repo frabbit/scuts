@@ -47,14 +47,8 @@ class Dynamics
   {
     return function () return o;
   }
-  
-  @:macro public static function lazy <T>(e:haxe.macro.Expr.ExprRequire<T>):haxe.macro.Expr.ExprRequire<Void->T>
-  {
-    return scuts.core.macros.Lazy.mkExpr(e);
-  }
-  
-  
-  public static inline function nullEq <T> (v1:T, v2:T, eq:T->T->Bool):Bool {
+
+  public static function nullEq <T> (v1:T, v2:T, eq:T->T->Bool):Bool {
     return (v1 == null && v2 == null)
       || (v1 != null && v2 != null && eq(v1,v2));
   }

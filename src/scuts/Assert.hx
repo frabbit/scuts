@@ -31,13 +31,11 @@ class AssertUsing
     return A.equals(expected, actual, ret, message, posInfos);
   }
   
-
   public static function assertNotNull <X>(ret:X,a:Dynamic, ?message:String = null, ?posInfos:PosInfos):X 
   {
     return A.notNull(a, ret, message, posInfos);
   }
   
-
   public static inline function assertAllNotNull <X>(ret:X,a:Iterable<Dynamic>, ?message:String = null, ?posInfos:PosInfos):X 
   {
     return A.allNotNull(a, ret, message, posInfos);
@@ -77,7 +75,6 @@ class AssertUsing
 
 class Assert
 {
-  
   static inline function doAssert (expr : Bool, assertId : String, ?message : String, ?posInfos:PosInfos):Void
   {
     if (!(expr)) {
@@ -87,7 +84,6 @@ class Assert
       Scuts.error(msg, posInfos);
     } 
   }
-  
   
   /**
    * throws an assertion error in debug mode if expr is not true

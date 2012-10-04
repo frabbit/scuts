@@ -5,9 +5,86 @@ import scuts.core.types.Either;
 import scuts.Scuts;
 import scuts.core.types.Validation;
 
-class Eithers
+
+using scuts.core.extensions.Eithers;
+
+private typedef RP<L,R> = RightProjection<L,R>;
+private typedef LP<L,R> = LeftProjection<L,R>;
+
+
+class LeftProjections
+{
+  static inline function either<L,R>(e:LP<L,R>):Either<L,R> return cast e
+  
+  static inline function eitherF<L,R,LL>(e:L->LP<LL,R>):L->Either<LL,R> return cast e
+  
+  public static inline function rightProjection<L,R>(e:LP<L,R>):RP<L,R> return either(e).rightProjection()
+  
+  public static inline function flatMap < L,R,LL > (e:LP<L,R>, f:L->LP<LL, R>):LP<LL,R>
+  {
+    return e.either().flatMapLeft(eitherF(f)).leftProjection();
+  }
+  
+  public static inline function map <L,R,LL> (e:LP<L,R>, f:L->LL) : LP<LL,R>
+  {
+    return e.either().mapLeft(f).leftProjection();
+  }
+  
+  public static function apply <L,R,LL>(e:LP<L,R>, f:LP<L->LL, R>):LP<LL, R>
+  {
+    return e.either().applyLeft(either(f)).leftProjection();
+  }
+}
+
+class RightProjections 
 {
   
+  static inline function either<L,R>(e:RP<L,R>):Either<L,R> return cast e
+  
+  static inline function eitherF<L,R,RR>(e:R->RP<L,RR>):R->Either<L,RR> return cast e
+  
+  public static inline function leftProjection<L,R>(e:RP<L,R>):LP<L,R> return either(e).leftProjection()
+  
+  public static inline function flatMap < L,R,RR > (e:RP<L,R>, f:R->RP<L, RR>):RP<L,RR>
+  {
+    return e.either().flatMapRight(eitherF(f)).rightProjection();
+  }
+  
+  public static inline function map < L,R,RR > (e:RP<L,R>, f:R->RR):RP<L,RR>
+  {
+    return e.either().mapRight(f).rightProjection();
+  }
+  
+  public static inline function apply <L,R,RR>(e:RP<L,R>, f:RP<L, R->RR>):RP<L, RR>
+  {
+    return e.either().applyRight(either(f)).rightProjection();
+  }
+}
+
+class EitherConvert 
+{
+  /**
+   * Converts v into an Either, based on the nulliness of v.
+   * If v is null, right is used as the Right value for the resulting Either.
+   */
+  public static inline function nullToEither < A,B > (v:Null<B>, left:A):Either<A,B> 
+  {
+    return v == null ? Left(left) : Right(v);
+  }
+  
+  /**
+   * Converts v into a left Either.
+   */
+  public static inline function toLeft < L,R > (l:L):Either<L,R> return Left(l)
+  
+  /**
+   * Converts v into a right Either.
+   */
+  public static inline function toRight < L,R > (r:R):Either<L,R> return Right(r)
+}
+
+class Eithers
+{
   public static function append <L,R> (a1:Either<L,R>, a2:Either<L, R>, appendLeft:L->L->L, appendRight:R->R->R):Either<L, R> return switch (a1) 
   {
     case Right(r1): switch (a2) 
@@ -41,12 +118,12 @@ class Eithers
     case Left(l1): switch (e) 
     {
       case Left(l2): Left(l1(l2)); 
-      case Right(_): cast e; // faster instead of Right(r);
+      case Right(r): Right(r); 
     }
     case Right(r1): switch (e) 
     {
-      case Left(_): cast e;   // faster instead of Left(l);
-      case Right(r2): cast e; // faster instead of Right(r);
+      case Left(l): Right(r1);   
+      case Right(r2): Right(r2); 
     }
   }
   
@@ -54,12 +131,12 @@ class Eithers
   {
     case Left(l1): switch (e) 
     {
-      case Left(_): cast e; 
-      case Right(_): cast e;
+      case Left(l2): Left(l2); 
+      case Right(r): Left(l1);
     }
     case Right(r1): switch (e) 
     {
-      case Left(_): cast e; 
+      case Left(l): Left(l); 
       case Right(r2): Right(r1(r2));
     }
   }
@@ -115,12 +192,12 @@ class Eithers
   public static function ifLeft<L,R,LL>(e:Either<L,R>, f:Void->Either<LL,R>):Either<LL,R> return switch (e) 
   {
     case Left(_): f();
-    case Right(_): cast e;
+    case Right(r): Right(r);
   }
   
   public static function ifRight<L,R,RR>(e:Either<L,R>, f:Void->Either<L,RR>):Either<L,RR> return switch (e) 
   {
-    case Left(_): cast e;
+    case Left(l): Left(l);
     case Right(_): f();
   }
   
@@ -183,7 +260,7 @@ class Eithers
   public static function flatMapLeft < L,R,LL > (e:Either<L,R>, f:L->Either<LL, R>):Either<LL,R> return switch (e) 
   {
     case Left(l): f(l);
-    case Right(_): cast e; // avoids creating a new object
+    case Right(r): Right(r);
   }
   
   
@@ -197,7 +274,7 @@ class Eithers
    */
   public static function flatMapRight < L,R,RR > (e:Either<L,R>, f:R->Either<L, RR>):Either<L,RR> return switch (e) 
   {
-    case Left(_): cast e; // avoids creating a new object
+    case Left(l): Left(l);
     case Right(r): f(r);
   }
     
@@ -225,7 +302,7 @@ class Eithers
   public static function flattenLeft <L,R> (e:Either<Either<L,R>, R>):Either<L,R> return switch (e) 
   {
     case Left(l): l;
-    case Right(_): cast e;
+    case Right(r): Right(r);
   }
   
   /**
@@ -237,7 +314,7 @@ class Eithers
    */
   public static function flattenRight <L,R> (e:Either<L, Either<L,R>>):Either<L,R> return switch (e) 
   {
-    case Left(_): cast e;
+    case Left(l): Left(l);
     case Right(r): r;
   }
   
@@ -252,7 +329,7 @@ class Eithers
   public static function mapLeft < L,R,LL > (e:Either<L,R>, f:L->LL):Either<LL,R> return switch (e) 
   {
     case Left(l): Left(f(l));
-    case Right(r): cast e; // avoids creating a new object
+    case Right(r): Right(r);
   }
   
   /**
@@ -265,7 +342,7 @@ class Eithers
    */
   public static function mapRight < L,R,RR > (e:Either<L,R>, f:R->RR):Either<L,RR> return switch (e) 
   {
-    case Left(l): cast e; // avoids creating a new object
+    case Left(l): Left(l);
     case Right(r): Right(f(r));
   }
   
@@ -283,88 +360,7 @@ class Eithers
     case Right(r): Right(right(r));
   }
   
-  public static inline function right <L,R>(e:Either<L,R>):RightProjection<L,R> return cast e
-  public static inline function left <L,R>(e:Either<L,R>):LeftProjection<L,R> return cast e
+  public static inline function rightProjection <L,R>(e:Either<L,R>):RightProjection<L,R> return e
+  public static inline function leftProjection <L,R>(e:Either<L,R>):LeftProjection<L,R> return e
 }
 
-private typedef E = Eithers;
-
-using scuts.core.extensions.Eithers;
-
-private typedef RP<L,R> = RightProjection<L,R>;
-private typedef LP<L,R> = LeftProjection<L,R>;
-
-
-class LeftProjections
-{
-  
-  static inline function either<L,R>(e:LP<L,R>):Either<L,R> return cast e
-  
-  public static inline function eitherF<L,R,LL>(e:L->LP<LL,R>):L->Either<LL,R> return cast e
-  
-  public static inline function right<L,R>(e:LP<L,R>):RP<L,R> return either(e).right()
-  
-  public static inline function flatMap < L,R,LL > (e:LP<L,R>, f:L->Either<LL, R>):LP<LL,R>
-  {
-    return e.either().flatMapLeft(f).left();
-  }
-  
-  public static inline function map <L,R,LL> (e:LP<L,R>, f:L->LL) : LP<LL,R>
-  {
-    return e.either().mapLeft(f).left();
-  }
-  
-  public static function apply <L,R,LL>(e:LP<L,R>, f:Either<L->LL, R>):LP<LL, R>
-  {
-    return e.either().applyLeft(f).left();
-  }
-  
-  
-}
-
-class RightProjections 
-{
-  
-  public static inline function either<L,R>(e:RP<L,R>):Either<L,R> return cast e
-  
-  public static inline function eitherF<L,R,RR>(e:R->RP<L,RR>):R->Either<L,R> return cast e
-  
-  public static inline function left<L,R>(e:RP<L,R>):LP<L,R> return either(e).left()
-  
-  public static inline function flatMap < L,R,RR > (e:RP<L,R>, f:R->Either<L, RR>):RP<L,RR>
-  {
-    return e.either().flatMapRight(f).right();
-  }
-  
-  public static inline function map < L,R,RR > (e:RP<L,R>, f:R->RR):RP<L,RR>
-  {
-    return e.either().mapRight(f).right();
-  }
-  
-  public static inline function apply <L,R,RR>(e:RP<L,R>, f:Either<L, R->RR>):RP<L, RR>
-  {
-    return e.either().applyRight(f).right();
-  }
-}
-
-class EitherConvert 
-{
-  /**
-   * Converts v into an Either, based on the nulliness of v.
-   * If v is null, right is used as the Right value for the resulting Either.
-   */
-  public static inline function nullToRightConst < A,B > (v:B, left:A):Either<A,B> 
-  {
-    return v == null ? Left(left) : Right(v);
-  }
-  
-  /**
-   * Converts v into a left Either.
-   */
-  public static inline function toLeft < L,R > (l:L):Either<L,R> return Left(l)
-  
-  /**
-   * Converts v into a right Either.
-   */
-  public static inline function toRight < L,R > (r:R):Either<L,R> return Right(r)
-}

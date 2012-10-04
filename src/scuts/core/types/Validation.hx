@@ -6,6 +6,5 @@ enum Validation < F, S > {
   Success(s:S);
 }
 
-// newtype for fail projections
-@:native("scuts.core.types.Validation")
-extern class FailProjection<F,S> {}
+abstract FailProjection<F,S> {}
+

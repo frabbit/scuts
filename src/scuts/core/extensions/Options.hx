@@ -3,6 +3,7 @@ package scuts.core.extensions;
 import haxe.PosInfos;
 import scuts.core.types.Option;
 import scuts.core.types.Either;
+import scuts.core.types.Ordering;
 import scuts.Scuts;
 
 using scuts.core.extensions.Options;
@@ -11,6 +12,34 @@ using scuts.core.extensions.Predicates;
 
 class Options {
 
+  @:noUsing public static function pure <A>(a:A):Option<A> 
+  {
+    return Some(a);
+  }
+  
+  public static function zipWith <A,B,C>(a:Option<A>, b:Option<B>, f:A->B->C):Option<C> return switch (a) 
+  {
+    case Some(v): switch (b) 
+    {
+      case Some(v2): Some(f(v,v2));
+      case None: None;
+    }
+    case None: None;
+  }
+
+  
+  public static function compareBy <T>(a:Option<T>, b:Option<T>, compareT:T->T->Ordering):Ordering return switch(a) 
+  {
+    case None: switch (b) {
+      case None: EQ;
+      case Some(_): LT;
+    }
+    case Some(v1): switch (b) {
+      case None: GT;
+      case Some(v2): compareT(v1,v2);
+    }
+  }
+  
   public static function append <T>(o1:Option<T>, o2:Option<T>, appendT:T->T->T):Option<T> return switch (o1) 
   {
     case Some(s1): switch (o2) 
@@ -147,10 +176,6 @@ class Options {
     case Some(s): f(s);
   }
   
-  public static function withFilter <A> (o:Option<A>, filter:A->Bool) 
-  {
-    return new WithFilter(o,filter);
-  }
   
   public static function toString <A> (o:Option<A>, ?aToString:A->String) 
   {
@@ -162,25 +187,6 @@ class Options {
     }
   }
   
-}
-
-private class WithFilter<A> 
-{
-  private var filter:A -> Bool;
-  
-  private var o:Option<A>;
-  
-  public function new (o:Option<A>, filter:A->Bool) 
-  {
-    this.o = o;
-    this.filter = filter;
-  }
-  
-  public function flatMap <B>(f:A->Option<B>):Option<B> return o.filter(filter).flatMap(f)
-  
-  public function map <B>(f:A->B):Option<B> return o.filter(filter).map(f)
-  
-  public function withFilter (f:A->Bool):WithFilter<A> return o.withFilter(filter.and(f))
 }
 
 class OptionDynamicConversions 

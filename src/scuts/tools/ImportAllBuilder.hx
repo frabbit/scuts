@@ -1,4 +1,4 @@
-package scuts.core.tools;
+package scuts.tools;
 import haxe.macro.Compiler;
 import haxe.macro.Context;
 import neko.FileSystem;
@@ -8,7 +8,7 @@ using scuts.core.extensions.Strings;
 class ImportAllBuilder
 {
 
-  public static function build(packs:Array<String>, target:String) 
+  public static function build(packs:Array<String>, target:String, folder:String) 
   {
     var classPaths = Context.getClassPath();
     
@@ -22,7 +22,14 @@ class ImportAllBuilder
       {
         var folder = cp + packPath;
         
-        for (f in FileSystem.readDirectory(folder)) 
+        var sorted = FileSystem.readDirectory(folder);
+        sorted.sort(function (a, b) {
+          var isDirA = FileSystem.isDirectory(folder + "/" + a);
+          var isDirB = FileSystem.isDirectory(folder + "/" + b);
+          return if (!isDirA && isDirB) -1 else if (isDirA && !isDirB) 1 else 0;
+        });
+        
+        for (f in sorted) 
         {
           var fullPath = folder + "/" + f;
           
@@ -51,7 +58,9 @@ class ImportAllBuilder
     buf.add(target);
     buf.add(" { static function main () {} }");
     
-    var output = File.write(target + ".hx", false);
+    var f = folder == "" ? "" : folder + "/";
+    
+    var output = File.write(f +  target + ".hx", false);
     output.writeString(buf.toString());
   }
   

@@ -5,14 +5,14 @@ import scuts.core.types.Predicate2;
 import scuts.core.types.Thunk;
 
 class Predicates {
-  public static function constTrue0 () return true
-  public static function constFalse0 () return false
+  @:noUsing public static function constTrue0 () return true
+  @:noUsing public static function constFalse0 () return false
   
-  public static function constTrue1  <A>(t:A) return true
-  public static function constFalse1 <A>(t:A) return false
+  @:noUsing public static function constTrue1  <A>(t:A) return true
+  @:noUsing public static function constFalse1 <A>(t:A) return false
   
-  public static function constTrue2  <A,B>(a:A, b:B) return true
-  public static function constFalse2 <A,B>(a:A, b:B) return false
+  @:noUsing public static function constTrue2  <A,B>(a:A, b:B) return true
+  @:noUsing public static function constFalse2 <A,B>(a:A, b:B) return false
 }
 
 class Predicates0 

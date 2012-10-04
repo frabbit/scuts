@@ -12,32 +12,16 @@ using scuts.core.extensions.Options;
 class Function0s 
 {
   
-  public static function map <A,B>(a:Void->A, f:A->B):Void->B
+  public static function map <A,B>(a:Thunk<A>, f:A->B):Thunk<B>
   {
     return function () return f(a());
   }
   
-  public static function flatMap <A,B>(a:Void->A, f:A->(Void->B)):Void->B
+  public static function flatMap <A,B>(a:Thunk<A>, f:A->Thunk<B>):Thunk<B>
   {
     return function () return f(a())();
   }
   
-  /**
-   * Evaluates f inside of a try...catch block and wrapps the result into a Some if no Exceptions are thrown,
-   * None otherwise.
-   */
-  public static function evalToOption <T>(f:Thunk<T>):Option<T>
-  {
-    return try Some(f()) catch (e:Dynamic) None;
-  }
-  
-  /**
-   * Same as evalToOption, but returns a Thunk that evaluates f.
-   */
-  public static function evalToOptionThunk <T>(f:Thunk<T>):Void->Option<T>
-  {
-    return function () return evalToOption(f);
-  }
   
   /**
    * Converts f into a effectful function with no return type.
@@ -46,23 +30,7 @@ class Function0s
   {
     return function () f();
   }
-  /**
-   * Converts a function into a function which caches it's result and returns it from cache.
-   * Useful for computation intensive operations.
-   */
-  public static function lazyThunk <T>(f:Thunk<T>):Thunk<T>
-  {
-    var cur = None;
-    return function () {
-      return switch (cur) {
-        case Some(x): x;
-        case None: 
-          var x = f();
-          cur = Some(x);
-          x;
-      }
-    }
-  }
+  
   /**
    * Promotes a function taking no arguments into a one argument function
    * by simply ignoring it's argument.
@@ -566,6 +534,14 @@ class Function4s
   public static function partial2_3_4 < A, B, C, D, E > (f:A->B->C->D->E, b:B, c:C, d:D):A->E
   {
     return function (a:A) return f(a, b, c, d);
+  }
+  
+  /**
+   * Partially applies the function f with the second parameter.
+   */
+  public static function partial3_4 < A, B, C, D, E > (f:A->B->C->D->E, c:C, d:D):A->B->E
+  {
+    return function (a:A, b:B) return f(a, b, c, d);
   }
   
   /**

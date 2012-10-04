@@ -1,19 +1,18 @@
 package scuts.core.extensions;
-import scuts.core.math.MathConstants;
 
-/**
- * ...
- * @author 
- */
+
 
 class Floats
 {
+  
+  public static inline var EPSILON = 1e-5;
+  
   public static inline function eq(a:Float, b:Float):Bool 
   {
     var diff = a - b;
     
-    return (diff >= 0.0 && diff < MathConstants.EPSILON)
-        || (diff <= 0.0 && diff > -MathConstants.EPSILON);
+    return (diff >= 0.0 && diff < EPSILON)
+        || (diff <= 0.0 && diff > -EPSILON);
   }
   
   public static inline function max(a:Float, b:Float) return a > b ? a : b

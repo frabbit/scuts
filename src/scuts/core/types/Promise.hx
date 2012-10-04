@@ -93,7 +93,7 @@ class Promise<T>
   
   public inline function isDone () return _complete || _cancelled
   
-  public inline function valueOption():Option<T> return _value
+  public function valueOption():Option<T> return _value
   
   public function extract ():T 
   {

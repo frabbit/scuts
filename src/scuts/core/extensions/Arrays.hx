@@ -205,6 +205,7 @@ class Arrays
     }
     return res;
   }
+  
   public static function filterWithIndex <A> (a:Array<A>, filter:A->Int->Bool):Array<A>
   {
     var res = [];
@@ -225,6 +226,7 @@ class Arrays
   {
     return if (a.length == 0) Scuts.error("Array a has no first element") else a[0];
   }
+  
   public static function flatMap < S, T > (w:Array<S>, f:S->Array<T>):Array<T>
   {
     var res = [];
@@ -238,6 +240,7 @@ class Arrays
     }
     return res;
   }
+  
   public static function flatten <T>(a:Array<Array<T>>):Array<T>
   {
     var res = [];
@@ -269,8 +272,10 @@ class Arrays
       res;
     }
   }
-  
-  public static function foldRight<A,B>(arr:Array<A>, f:A->B->B, acc:B):B
+  /**
+   * Folds an Array from the right.
+   */
+  public static function foldRight<A,B>(arr:Array<A>, acc:B, f:A->B->B):B
   {
     var rev = reverseCopy(arr);
     for (i in 0...rev.length) 
@@ -280,7 +285,7 @@ class Arrays
     return acc;
   }
   
-  public static function foldRightWithIndex<A,B>(arr:Array<A>, f:A->B->Int->B, acc:B):B
+  public static function foldRightWithIndex<A,B>(arr:Array<A>, acc:B, f:A->B->Int->B):B
   {
     var rev = reverseCopy(arr);
     for (i in 0...rev.length) 
@@ -290,7 +295,7 @@ class Arrays
     return acc;
   }
   
-  public static function foldLeft<A,B>(arr:Array<A>, f:B->A->B, acc:B):B
+  public static function foldLeft<A,B>(arr:Array<A>, acc:B, f:B->A->B):B
   {
     for (i in 0...arr.length) 
     {
@@ -299,7 +304,7 @@ class Arrays
     return acc;
   }
   
-  public static function foldLeftWithIndex<A,B>(arr:Array<A>, f:B->A->Int->B, acc:B):B
+  public static function foldLeftWithIndex<A,B>(arr:Array<A>, acc:B, f:B->A->Int->B):B
   {
     for (i in 0...arr.length) 
     {
@@ -329,9 +334,7 @@ class Arrays
     }
     return r;
   }
-  
-  
-  
+
   public static function mapWithIndex < A, B > (arr:Array<A>, f:A->Int->B):Array<B> 
   {
     var r = [];
@@ -341,27 +344,7 @@ class Arrays
     }
     return r;
   }
-  
-  public static function reduceLeftWithIndexToString <T>(a:Array<T>, f:String->T->Int->String):String
-  {
-    return reduceLeftWithIndex(a, f, Std.string);
-  }
-  
-  public static function reduceRightWithIndexToString <T>(a:Array<T>, f:T->String->Int->String):String
-  {
-    return reduceRightWithIndex(a, f, Std.string);
-  }
-  
-  public static function reduceLeftToString <T>(a:Array<T>, f:String->T->String):String
-  {
-    return reduceLeft(a, f, Std.string);
-  }
-  
-  public static function reduceRightToString <T>(a:Array<T>, f:T->String->String):String
-  {
-    return reduceRight(a, f, Std.string);
-  }
-  
+
   public static function reduceLeft <T,S>(a:Array<T>, f:S->T->S, first:T->S):S
   {
     if (a.length == 0) Scuts.error("Cannot reduce an empty Array");
@@ -386,30 +369,7 @@ class Arrays
     
     return acc;
   }
-  
-  
-  
-  public static function equals <T>(a1:Array<T>, a2:Array<T>, eqT:T->T->Bool) 
-  {
-    function equalsElements () 
-    {
-      var eq = true;
-      for (i in 0...a1.length) 
-      {
-        if (!eqT(a1[i], a2[i])) 
-        {
-          eq = false;
-          break;
-        }
-      }
-      return eq;
-    };
-    
-    return a1.length == a2.length
-      && equalsElements();
-  }
-  
-  
+
   public static function some <T>(arr:Array<T>, e:T->Bool):Option<T> 
   {
     for (i in arr) 
@@ -447,33 +407,7 @@ class Arrays
     }
     return None;
   }
-  
-  public static function someMappedWithIndex <A,B>(arr:Array<A>, map:A->B, p:B->Bool):Option<Tup2<B, Int>> 
-  {
-    for (i in 0...arr.length) {
-      var elem = arr[i];
-      var mapped = map(elem);
-      
-      if (p(mapped)) return Some(Tup2.create(mapped, i));
-    }
-    return None;
-  }
-    
-  public static function someMapped <A,B>(arr:Array<A>, map:A->B, p:B->Bool):Option<B> 
-  {
-    for (i in 0...arr.length) 
-    {
-      var elem = arr[i];
-      var mapped = map(elem);
-      
-      if (p(mapped)) return Some(mapped);
-    }
-    return None;
-  }
-  
-  
-  
-  
+
   public static function reduceRight <T,S>(a:Array<T>, f:T->S->S, first:T->S):S
   {
     if (a.length == 0) throw "Cannot reduce an empty Array";
@@ -528,18 +462,6 @@ class Arrays
     return r;
   }
   
-  public static function sortToBy<T>(a:Array<T>, ?f:T->T->Ordering):Array<T> 
-  {
-    var res = a.copy();
-    function sortElems (a, b) return switch (f(a,b)) 
-    {
-      case LT: -1;
-      case EQ: 0;
-      case GT: 1;
-    }
-    res.sort(sortElems);
-    return res;
-  }
   
   public static function take<T> (it:Array<T>, numElements:Int):Array<T> 
   {
@@ -553,17 +475,6 @@ class Arrays
     return res;
   }
   
-  public static function toArrayOption <T>(a:Array<T>):Array<Option<T>> 
-  {
-    var res = [];
-    
-    for (e in a) 
-    {
-      res.push(e.toOption());
-    }
-    
-    return res;
-  }
   
   public static function zipWith < A, B, C > (arr1:Array<A>, arr2:Array<B>, f:A->B->C):Array<C>
   {
@@ -733,50 +644,9 @@ class Arrays
     return r;
   }
   
-  public static function withFilter <A> (a:Array<A>, filter:A->Bool) 
-  {
-    return new WithFilter(a, filter);
-  }
+ 
+  
 }
 
-class ArrayConvert 
-{
-  /**
-   * Creates an Array containing the elemen e num times.
-   */
-  public static function replicateToArray<T>(e:T, num:Int):Array<T> 
-  {
-    var res = [];
-    for (_ in 0...num) res.push(e);
-    return res;
-  }
-  
-  public static inline function toArray<T>(i:Iterator<T>):Array<T> 
-  {
-    var res = [];
-    for (e in i) 
-    {
-      res.push(e);
-    }
-    return res;
-  }
-}
-
-private class WithFilter<A> 
-{
-  
-  private var filter:A -> Bool;
-  private var a:Array<A>;
-  
-  public function new (a:Array<A>, filter:A->Bool) 
-  {
-    this.a = a;
-    this.filter = filter;
-  }
-  
-  public function flatMap <B>(f:A->Array<B>):Array<B>  return a.flatMapWithFilter(f, filter)
-  public function map     <B>(f:A->B):Array<B>         return a.mapWithFilter(f, filter)
-  public function withFilter (f:A->Bool):WithFilter<A> return a.withFilter(filter.and(f))
-}
 
   

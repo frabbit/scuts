@@ -11,7 +11,7 @@ class Ios
     return new Io(a.unsafePerformIo.map(f));
   }
   
-  public static function pure<A>(a:A):Io<A>
+  @:noUsing public static function pure<A>(a:A):Io<A>
   {
     return new Io(function () return a);
   }

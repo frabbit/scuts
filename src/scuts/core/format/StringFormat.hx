@@ -11,7 +11,7 @@ class StringFormat
 
   public static function fillLeft(s:String, newLength:Int, fillChar:String = " ") 
   {
-    Assert.assertTrue(fillChar.length == 1);
+    Assert.isTrue(fillChar.length == 1);
     
     while (s.length < newLength) s = fillChar + s;
     
@@ -20,7 +20,7 @@ class StringFormat
   
   public static function fillRight(s:String, newLength:Int, fillChar:String = " ") 
   {
-    Assert.assertTrue(fillChar.length == 1);
+    Assert.isTrue(fillChar.length == 1);
     
     while (s.length < newLength) s = s + fillChar;
     

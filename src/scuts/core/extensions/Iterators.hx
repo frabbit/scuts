@@ -414,20 +414,5 @@ class Iterators
     return Iterators.foldLeft(iter, function(a,v) return a + f(v), 0);
   }
   
-  public static function take<T>(iter:Iterator<T>, numElements:Int):Iterator<T>
-  {
-    var i = 0;
-    return 
-    {
-      hasNext : function () 
-      {
-        return i < numElements && iter.hasNext();
-      },
-      next : function () 
-      {
-        i++;
-        return iter.next();
-      }
-    }
-  }
+  
 }

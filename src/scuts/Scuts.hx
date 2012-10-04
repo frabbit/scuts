@@ -23,7 +23,7 @@ class Scuts
   
   public static function abstractMethod <T>():T 
   {
-    return error("Scuts.abstract: This method is abstract, you must override it");
+    return error("Scuts.abstractMethod: This method is abstract and must be overriden");
   }
   
   public static function notImplemented <T>(?posInfos:PosInfos):T 
@@ -36,14 +36,10 @@ class Scuts
     return error("Scuts.unexpected: This error shoud never occur, please inform the library author to fix this.", posInfos);
   }
   
-  public static function checkNotNull <T>(v:T, ?posInfos:PosInfos):T 
-  {
-    #if debug
-    Assert.notNull(v, posInfos);
-    #end
-    return error("This method is not yet implemented");
-  }
   
+  /**
+   * Throws an Error with the given message.
+   */
   public static function error <T>(msg:Dynamic, ?posInfos:PosInfos):T 
   {
     #if macro
@@ -53,7 +49,13 @@ class Scuts
     return null;
     #end
   }
+  
+  // The following functions are only available in Macro Context
+  
   #if macro
+  /**
+   * Creates a warning in macro mode.
+   */
   public static function warning <T>(headline:String, msg:Dynamic, ?p:Position):T 
   {
     var p1 = p.nullGetOrElseConst(Context.currentPos());
@@ -61,12 +63,10 @@ class Scuts
     Context.warning(headline + "\n" + msg, p1);
     return null;
   }
-  #end
   
-  
-  #if macro
-  
-
+  /**
+   * Creates an error in macro mode.
+   */
   public static function macroError <T>(msg:String, ?p:Position, ?posInfos:PosInfos):T 
   {
     var p1 = p.nullGetOrElseConst(Context.currentPos());
@@ -78,7 +78,7 @@ class Scuts
       .filter(function (x) return x.indexOf("scuts/Scuts.hx") == -1 && x.indexOf("haxe/Stack.hx") == -1)
       .join("\n");
     
-    new Error
+    throw new Error
     (
       msg + "\n@" + posInfos.toString() 
       + "\n-----------------------------------------------------------------------------\n" 
@@ -91,12 +91,13 @@ class Scuts
     return null;
   }
   
+  /**
+   * Creates multiple errors in macro mode.
+   */
   public static function macroErrors <T>(msg:Array<String>, ?p:Position, ?posInfos:PosInfos):T 
   {
     return macroError(msg.join("\n"), p, posInfos);
   }
-  
- 
   #end
   
 }
