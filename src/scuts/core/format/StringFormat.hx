@@ -1,10 +1,6 @@
 package scuts.core.format;
 import scuts.Assert;
 
-/**
- * ...
- * @author 
- */
 
 class StringFormat 
 {
