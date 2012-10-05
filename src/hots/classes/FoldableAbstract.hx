@@ -2,9 +2,9 @@ package hots.classes;
 import hots.instances.DualSemigroup;
 import hots.instances.EndoSemigroup;
 import hots.Of;
-import hots.ImplicitInstances.Objects.dualMonoid;
-import hots.ImplicitInstances.Objects.dualSemigroup;
-import hots.ImplicitInstances.Objects.endoMonoid;
+import hots.ImplicitInstances.InstMonoid.dualMonoid;
+import hots.ImplicitInstances.InstSemigroup.dualSemigroup;
+import hots.ImplicitInstances.InstMonoid.endoMonoid;
 
 import hots.Of;
 import scuts.Scuts;

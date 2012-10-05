@@ -171,11 +171,30 @@ import hots.Of;
  * 
  * 
  */
-class Objects 
-{
-  
-  // eqs
-  @:implicit public static var floatOrd     (default, null):Ord<Float>  = new FloatOrd(floatEq);
+
+// static imports
+
+import hots.ImplicitInstances.InstEq.*;
+import hots.ImplicitInstances.InstOrd.*;
+import hots.ImplicitInstances.InstShow.*;
+import hots.ImplicitInstances.InstFoldable.*;
+import hots.ImplicitInstances.InstBind.*;
+import hots.ImplicitInstances.InstApply.*;
+import hots.ImplicitInstances.InstPure.*;
+import hots.ImplicitInstances.InstZero.*;
+import hots.ImplicitInstances.InstEmpty.*;
+import hots.ImplicitInstances.InstMonadEmpty.*;
+import hots.ImplicitInstances.InstMonad.*;
+import hots.ImplicitInstances.InstFunctor.*;
+import hots.ImplicitInstances.InstArrow.*;
+import hots.ImplicitInstances.InstCategory.*;
+import hots.ImplicitInstances.InstNum.*;
+import hots.ImplicitInstances.InstMonoid.*;
+import hots.ImplicitInstances.InstSemigroup.*;
+import hots.ImplicitInstances.InstApplicative.*;
+
+
+class InstEq {
   @:implicit public static var floatEq      (default, null):Eq<Float> = new FloatEq();
   
   @:implicit public static var intEq        (default, null):Eq<Int> = new IntEq();
@@ -196,8 +215,22 @@ class Objects
   @:implicit public static function optionEq <T>(eqT:Eq<T>):Eq<Option<T>>      return new OptionEq(eqT)
   @:implicit public static function arrayEq  <T>(eqT:Eq<T>):Eq<Array<T>>      return new ArrayEq(eqT)
   @:implicit public static function validationEq  <F,S>(eqF:Eq<F>,eqS:Eq<S>):Eq<Validation<F,S>> return new ValidationEq(eqF,eqS)
+}
+
+class InstOrd {
+  @:implicit public static var floatOrd     (default, null):Ord<Float>  = new FloatOrd(floatEq);
+  @:implicit public static var intOrd       (default, null):Ord<Int>  = new IntOrd(intEq);
   
-  // show
+  @:implicit public static var stringOrd    (default, null)  = new StringOrd(stringEq);
+  @:implicit public static var dateOrd      (default, null)  = new DateOrd(dateEq, floatOrd);
+  @:implicit public static var boolOrd       (default, null) = new BoolOrd(boolEq);
+  
+  @:implicit public static function optionOrd       <A>(a:Ord<A>) return new OptionOrd(a, optionEq(a))
+  @:implicit public static function arrayOrd       <A>(a:Ord<A>) return new ArrayOrd(a, arrayEq(a))
+  @:implicit public static function tup2Ord       <A,B>(a:Ord<A>, b:Ord<B>) return new Tup2Ord(a,b, tup2Eq(a,b))
+}
+
+class InstShow {
   @:implicit public static var stringShow                (default, null):Show<String> = new StringShow();
   @:implicit public static var intShow                   (default, null):Show<Int> = new IntShow();
   @:implicit public static var floatShow                 (default, null):Show<Float> = new FloatShow();
@@ -220,23 +253,13 @@ class Objects
       case Failure(f): "Failure(" + showF.show(f) + ")";
     });
   }
-  // num
-  
+}
+
+class InstNum {
   @:implicit public static var intNum       (default, null) = new IntNum(intEq, intShow);
-  
-  // ords
-  
-  @:implicit public static var intOrd       (default, null):Ord<Int>  = new IntOrd(intEq);
-  
-  @:implicit public static var stringOrd    (default, null)  = new StringOrd(stringEq);
-  @:implicit public static var dateOrd      (default, null)  = new DateOrd(dateEq, floatOrd);
-  @:implicit public static var boolOrd       (default, null) = new BoolOrd(boolEq);
-  
-  @:implicit public static function optionOrd       <A>(a:Ord<A>) return new OptionOrd(a, optionEq(a))
-  @:implicit public static function arrayOrd       <A>(a:Ord<A>) return new ArrayOrd(a, arrayEq(a))
-  @:implicit public static function tup2Ord       <A,B>(a:Ord<A>, b:Ord<B>) return new Tup2Ord(a,b, tup2Eq(a,b))
-  // functor
-  
+}
+
+class InstFunctor {
   @:implicit public static var optionFunctor          (default, null):Functor<Option<In>> = new OptionFunctor();
   
   @:implicit public static function stateFunctor          <S>():Functor<S->Tup2<S,In>> return new StateFunctor()
@@ -253,8 +276,9 @@ class Objects
   @:implicit public static function arrayTFunctor     <M>(base:Functor<M>):Functor<Of<M, Array<In>>> return new ArrayTFunctor(base)
   @:implicit public static function optionTFunctor    <M>(base:Functor<M>):Functor<Of<M, Option<In>>> return new OptionTFunctor(base)
   @:implicit public static function validationTFunctor    <M, F>(base:Functor<M>):Functor<Of<M, Validation<F, In>>> return new ValidationTFunctor(base)
-  
-  // pure
+}
+
+class InstPure {
   @:implicit public static var promisePure         (default, null):Pure<Promise<In>> = new PromisePure();
   @:implicit public static var optionPure          (default, null):Pure<Option<In>> = new OptionPure();
   @:implicit public static var arrayPure           (default, null):Pure<Array<In>> = new ArrayPure();
@@ -267,8 +291,9 @@ class Objects
   @:implicit public static function arrayTPure        <M>(base:Pure<M>):Pure<Of<M, Array<In>>> return new ArrayTPure(base)
   @:implicit public static function optionTPure       <M>(base:Pure<M>):Pure<Of<M, Option<In>>> return new OptionTPure(base)
   @:implicit public static function validationTPure   <M,F>(base:Pure<M>):Pure<Of<M, Validation<F,In>>> return new ValidationTPure(base)
-  
-  // emptys
+}
+
+class InstEmpty {
   @:implicit public static var promiseEmpty         (default, null):Empty<Promise<In>> = new PromiseEmpty();
   @:implicit public static var optionEmpty          (default, null):Empty<Option<In>> = new OptionEmpty();
   @:implicit public static var arrayEmpty           (default, null):Empty<Array<In>> = new ArrayEmpty();
@@ -281,8 +306,9 @@ class Objects
   //@:implicit public static function arrayTEmpty        <M>(base:Pure<M>):Empty<Of<M, Array<In>>> return new ArrayTEmpty(base)
   @:implicit public static function optionTEmpty      <M>(base:Pure<M>):Empty<Of<M, Option<In>>> return new OptionTEmpty(base)
   //@:implicit public static function validationTEmpty   <M,F>(base:Pure<M>):Empty<Of<M, Validation<F,In>>> return new ValidationTEmpty(base)
-  
-  // apply
+}
+
+class InstApply {
   @:implicit public static var promiseApply         (default, null):Apply<Promise<In>> = new PromiseApply();
   @:implicit public static var optionApply          (default, null):Apply<Option<In>> = new OptionApply();
   @:implicit public static var arrayApply           (default, null):Apply<Array<In>> = new ArrayApply();
@@ -301,8 +327,9 @@ class Objects
   @:implicit public static function arrayTApply        <M>(appM:Apply<M>, funcM:Functor<M>):Apply<Of<M, Array<In>>> return new ArrayTApply(appM, funcM)
   @:implicit public static function optionTApply       <M>(appM:Apply<M>, funcM:Functor<M>):Apply<Of<M, Option<In>>> return new OptionTApply(appM, funcM)
   @:implicit public static function validationTApply   <M,F>(funcM:Functor<M>, appM:Apply<M>):Apply<Of<M, Validation<F,In>>> return new ValidationTApply(funcM, appM)
-  
-  // binds
+}
+
+class InstBind {
   @:implicit public static function contBind            <R>():Bind<Cont<In,R>> return new ContBind()
   @:implicit public static var promiseBind         (default, null):Bind<Promise<In>> = new PromiseBind();
   @:implicit public static var optionBind          (default, null):Bind<Option<In>> = new OptionBind();
@@ -316,9 +343,9 @@ class Objects
   @:implicit public static function arrayTBind        <M>(base:Monad<M>):Bind<Of<M, Array<In>>> return new ArrayTBind(base)
   @:implicit public static function optionTBind       <M>(base:Monad<M>):Bind<Of<M, Option<In>>> return new OptionTBind(base)
   @:implicit public static function validationTBind   <M,F>(base:Monad<M>):Bind<Of<M, Validation<F,In>>> return new ValidationTBind(base)
-  
-  // applicatives
-  
+}
+
+class InstApplicative {
   @:implicit public static var arrayApplicative            (default, null):Applicative<Array<In>> = Applicatives.create(arrayPure, arrayApply, arrayFunctor);
   @:implicit public static var promiseApplicative          (default, null):Applicative<Promise<In>> = Applicatives.create(promisePure, promiseApply, promiseFunctor);
   @:implicit public static var optionApplicative           (default, null):Applicative<Option<In>> = Applicatives.create(optionPure, optionApply, optionFunctor);
@@ -341,10 +368,9 @@ class Objects
     
   @:implicit public static function validationTApplicative <M,F>(base:Applicative<M>):Applicative<Of<M,Validation<F,In>>>
     return Applicatives.create(validationTPure(base), validationTApply(base, base), validationTFunctor(base))
-  
-  
-  
-  // monads
+}
+
+class InstMonad {
   @:implicit public static var arrayMonad                (default, null):Monad<Array<In>> = Monads.createFromApplicativeAndBind(arrayApplicative, arrayBind);
   @:implicit public static var optionMonad               (default, null):Monad<Option<In>> = Monads.createFromApplicativeAndBind(optionApplicative, optionBind);
   @:implicit public static var promiseMonad              (default, null):Monad<Promise<In>> = Monads.createFromApplicativeAndBind(promiseApplicative, promiseBind);
@@ -364,23 +390,28 @@ class Objects
     
   @:implicit public static function validationTMonad <M,F>(base:Monad<M>):Monad<Of<M, Validation<F, In>>> 
     return Monads.createFromApplicativeAndBind(validationTApplicative(base), validationTBind(base))
-  
-  // monadZeros
+}
+
+class InstMonadEmpty {
   @:implicit public static var arrayMonadEmpty         (default, null):MonadEmpty<Array<In>> = MonadEmptys.createFromMonadAndEmpty(arrayMonad, arrayEmpty);
   @:implicit public static var promiseMonadEmpty         (default, null):MonadEmpty<Promise<In>> = MonadEmptys.createFromMonadAndEmpty(promiseMonad, promiseEmpty);
   @:implicit public static var lazyListMonadEmpty         (default, null):MonadEmpty<LazyList<In>> = MonadEmptys.createFromMonadAndEmpty(lazyListMonad, lazyListEmpty);
   @:implicit public static var imListMonadEmpty         (default, null):MonadEmpty<ImList<In>> = MonadEmptys.createFromMonadAndEmpty(imListMonad, imListEmpty);
   @:implicit public static var optionMonadEmpty         (default, null):MonadEmpty<Option<In>> = MonadEmptys.createFromMonadAndEmpty(optionMonad, optionEmpty);
-  // categories
+}
+
+class InstCategory {
   @:implicit public static var functionCategory       (default, null):Category<In->In> = new FunctionCategory();
   @:implicit public static function kleisliCategory   (m) return new KleisliCategory(m)
-  
-  // arrows
+}
+
+class InstArrow {
   @:implicit public static var functionArrow          (default, null):Arrow<In->In> = new FunctionArrow(functionCategory);
   
   @:implicit public static function kleisliArrow      <M>(m:Monad<M>):Arrow<In->Of<M, In>> return new KleisliArrow(m, kleisliCategory(m))
-  
-  // semigroups
+}
+
+class InstSemigroup {
   @:implicit public static function arraySemigroup <T>():Semigroup<Array<T>> return new ArraySemigroup()
   
   @:implicit public static var intSumSemigroup           (default, null):Semigroup<Int> = new IntSumSemigroup();
@@ -395,8 +426,9 @@ class Objects
   @:implicit public static function tup3Semigroup       <A,B,C>(semi1:Semigroup<A>, semi2:Semigroup<B>, semi3:Semigroup<C>):Semigroup<Tup3<A,B,C>> return new Tup3Semigroup(semi1, semi2, semi3)
   @:implicit public static function validationSemigroup <F,S>(semiF, semiS):Semigroup<Validation<F,S>>        return new ValidationSemigroup(semiF, semiS)
   @:implicit public static function optionSemigroup     (semiT)               return new OptionSemigroup(semiT)
-  
-  // zeros
+}
+
+class InstZero {
   @:implicit public static var intSumZero              (default, null):Zero<Int> = new IntSumZero();
   
   public static var intProductZero          (default, null):Zero<Int> = new IntProductZero();
@@ -407,10 +439,9 @@ class Objects
   @:implicit public static var endoZero                (default, null) = new EndoZero();
   
   @:implicit public static function optionZero <T>():Zero<Option<T>> return new OptionZero()
-  
-  
-  
-  // monoid
+}
+
+class InstMonoid {
   @:implicit public static var intSumMonoid              (default, null):Monoid<Int> = Monoids.createFromSemiAndZero(intSumSemigroup, intSumZero);
   
   public static var intProductMonoid          (default, null) = Monoids.createFromSemiAndZero(intProductSemigroup, intProductZero);
@@ -422,11 +453,9 @@ class Objects
   
   @:implicit public static function optionMonoid <T>(semiT:Semigroup<T>):Monoid<Option<T>> return Monoids.createFromSemiAndZero(optionSemigroup(semiT), optionZero())
   public static function dualMonoid   <T>(monoidT:Monoid<T>):Monoid<T> return Monoids.createFromSemiAndZero(dualSemigroup(monoidT), monoidT)
-  
-  // foldables
+}
+class InstFoldable {
   @:implicit public static var arrayFoldable             (default, null):Foldable<Array<In>> = new ArrayFoldable();
   @:implicit public static var lazyListFoldable          (default, null):Foldable<LazyList<In>> = new LazyListFoldable();
   @:implicit public static var imListFoldable          (default, null):Foldable<ImList<In>> = new ImListFoldable();
-  
-  
 }

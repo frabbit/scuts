@@ -9,7 +9,7 @@ import hots.extensions.Eqs;
 import hots.extensions.Semigroups;
 import hots.Hots;
 import hots.In;
-import hots.ImplicitInstances;
+
 import hots.Of;
 import hots.of.ValidationOf;
 import hots.of.ValidationTOf;
@@ -24,6 +24,9 @@ using hots.ImplicitCasts;
 using hots.ImplicitInstances;
 using hots.Hots;
 using scuts.core.extensions.Functions;
+
+import hots.ImplicitInstances.InstMonad.*;
+import hots.ImplicitInstances.InstSemigroup.*;
 
 class MonadLawsTest 
 {
@@ -74,9 +77,9 @@ class MonadLawsTest
     
     
  
-    assertLaws(Objects.arrayMonad, mkEq._(ArrayBox.unbox));
-    assertLaws(Objects.optionMonad, mkEq._(OptionBox.unbox));
-    assertLaws(Objects.promiseMonad, mkEq._(PromiseBox.unbox));
+    assertLaws(arrayMonad, mkEq._(ArrayBox.unbox));
+    assertLaws(optionMonad, mkEq._(OptionBox.unbox));
+    assertLaws(promiseMonad, mkEq._(PromiseBox.unbox));
     
     
     function valUnbox<X> (x:ValidationOf<Int, X>):Validation<Int, X> return ValidationBox.unbox(x);
@@ -84,10 +87,10 @@ class MonadLawsTest
     
 
     
-    assertLaws(Objects.validationMonad(Objects.intSumSemigroup), mkEq._(valUnbox));
-    assertLaws(Objects.optionTMonad(Objects.arrayMonad), mkEq._(ArrayBox.unbox.compose(OptionBox.unboxT)));
-    assertLaws(Objects.arrayTMonad(Objects.arrayMonad), mkEq._(ArrayBox.unbox.compose(ArrayBox.unboxT)));
-    assertLaws(Objects.validationTMonad(Objects.arrayMonad), mkEq._(ArrayBox.unbox.compose(valUnboxT)));
+    assertLaws(validationMonad(intSumSemigroup), mkEq._(valUnbox));
+    assertLaws(optionTMonad(arrayMonad), mkEq._(ArrayBox.unbox.compose(OptionBox.unboxT)));
+    assertLaws(arrayTMonad(arrayMonad), mkEq._(ArrayBox.unbox.compose(ArrayBox.unboxT)));
+    assertLaws(validationTMonad(arrayMonad), mkEq._(ArrayBox.unbox.compose(valUnboxT)));
   }
    
 }
