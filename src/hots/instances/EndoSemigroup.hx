@@ -1,13 +1,13 @@
 package hots.instances;
+import hots.classes.Semigroup;
 
 using scuts.core.extensions.Functions;
-import hots.classes.SemigroupAbstract;
 
-class EndoSemigroup<T> extends SemigroupAbstract<T->T>
+class EndoSemigroup<T> implements Semigroup<T->T>
 {
   public function new () {}
   
-  override public function append (a:T->T, b:T->T):T->T 
+  public function append (a:T->T, b:T->T):T->T 
   {
     return a.compose(b);
   }

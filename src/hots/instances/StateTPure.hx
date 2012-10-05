@@ -1,6 +1,5 @@
 package hots.instances;
 import hots.classes.Pure;
-import hots.classes.PureAbstract;
 import hots.In;
 import hots.Of;
 import hots.of.StateTOf;
@@ -10,7 +9,7 @@ import scuts.core.types.Tup2;
 
 
 
-class StateTPure<M,ST> extends PureAbstract<Of<M,State<ST, In>>> {
+class StateTPure<M,ST> implements Pure<Of<M,State<ST, In>>> {
   
   var pureM:Pure<M>;
 
@@ -22,7 +21,7 @@ class StateTPure<M,ST> extends PureAbstract<Of<M,State<ST, In>>> {
   /**
    * aka return
    */
-  override public function pure<A>(x:A):StateTOf<M,ST, A> {
+  public function pure<A>(x:A):StateTOf<M,ST, A> {
     return pureM.pure(States.pure(x));
   }
   

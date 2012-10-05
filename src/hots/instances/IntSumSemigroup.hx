@@ -1,22 +1,18 @@
 package hots.instances;
 
-import hots.classes.MonoidAbstract;
 import hots.classes.Num;
-import hots.classes.SemigroupAbstract;
+import hots.classes.Semigroup;
 
 
 
-class IntSumSemigroup extends SemigroupAbstract<Int>
+
+class IntSumSemigroup implements Semigroup<Int>
 {
-  var intNum:IntNum;
   
-  public function new (intNum:IntNum) 
-  {
-    this.intNum = intNum;
-  }
+  public function new () {}
   
-  override public inline function append (a:Int, b:Int):Int 
+  public inline function append (a:Int, b:Int):Int 
   {
-    return intNum.plus(a,b);
+    return a+b;
   }
 }

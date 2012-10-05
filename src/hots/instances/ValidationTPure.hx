@@ -1,7 +1,7 @@
 package hots.instances;
 
 import hots.classes.Pure;
-import hots.classes.PureAbstract;
+
 import hots.In;
 import hots.Of;
 import hots.of.ValidationTOf;
@@ -15,7 +15,7 @@ using hots.Hots;
 using hots.Identity;
 
 
-class ValidationTPure<F, M> extends PureAbstract<Of<M,Validation<F, In>>> 
+class ValidationTPure<F, M> implements Pure<Of<M,Validation<F, In>>> 
 {
   var pureM:Pure<M>;
 
@@ -27,7 +27,7 @@ class ValidationTPure<F, M> extends PureAbstract<Of<M,Validation<F, In>>>
   /**
    * aka return
    */
-  override public function pure<A>(x:A):ValidationTOf<M,F,A> 
+  public function pure<A>(x:A):ValidationTOf<M,F,A> 
   {
     return pureM.pure(x.toSuccess()).intoT();
   }

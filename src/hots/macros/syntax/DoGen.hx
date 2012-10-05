@@ -74,7 +74,7 @@ class DoGen
       {
         var thenExpr = x._1;
         // create guard expression
-        var ifExpr = Make.ifExpr(x._1, doOpToExpr(x._2, monad, isMonadZero, isUpcasted), monad.field("zero").call([]));
+        var ifExpr = Make.ifExpr(x._1, doOpToExpr(x._2, monad, isMonadZero, isUpcasted), monad.field("empty").call([]));
         
         var newOp = OpFlatMap(ident, val, OpExpr(ifExpr));
         return doOpToExpr(newOp, monad, isMonadZero, isUpcasted);

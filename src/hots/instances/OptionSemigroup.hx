@@ -1,12 +1,11 @@
 package hots.instances;
 
 import hots.classes.Semigroup;
-import hots.classes.SemigroupAbstract;
 
 import scuts.core.extensions.Options;
 import scuts.core.types.Option;
 
-class OptionSemigroup<X> extends SemigroupAbstract<Option<X>>
+class OptionSemigroup<X> implements Semigroup<Option<X>>
 {
   var semi:Semigroup<X>;
   
@@ -15,7 +14,7 @@ class OptionSemigroup<X> extends SemigroupAbstract<Option<X>>
     this.semi = semi;
   }
   
-  override public inline function append (a1:Option<X>, a2:Option<X>):Option<X> 
+  public inline function append (a1:Option<X>, a2:Option<X>):Option<X> 
   {
     return Options.append(a1, a2, semi.append);
   }

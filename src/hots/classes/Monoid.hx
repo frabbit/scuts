@@ -4,11 +4,8 @@ import scuts.Scuts;
 
 
 
-interface Monoid<A> implements Semigroup<A>
+interface Monoid<A> implements Semigroup<A>, implements Zero<A>
 {
-  /**
-   * Returns an appropriate zero value.
-   */
-  public function empty ():A;
+  
 }
 

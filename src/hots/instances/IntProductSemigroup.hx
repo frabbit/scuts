@@ -1,13 +1,12 @@
 package hots.instances;
 
-import hots.classes.MonoidAbstract;
-import hots.classes.SemigroupAbstract;
+import hots.classes.Semigroup;
 
 
-class IntProductSemigroup extends SemigroupAbstract<Int>
+class IntProductSemigroup implements Semigroup<Int>
 {
   public function new () {}
   
-  override public inline function append (a:Int, b:Int):Int return a * b
+  public inline function append (a:Int, b:Int):Int return a * b
   
 }

@@ -1,5 +1,4 @@
 package hots.classes;
-import hots.classes.MonadZero;
 import hots.Of;
 import scuts.Scuts;
 
@@ -9,11 +8,11 @@ import scuts.Scuts;
    * append combines to monadic values into one.
    * MonadPlus is like a Monad and a Monoid in one type.
    */
-interface MonadPlus<M> implements MonadZero<M>
+interface MonadPlus<M> implements MonadEmpty<M>, implements Plus<M>
 {
   
   /**
    * Appends two monadic values, val1 and val2.
    */
-  public function append <A>(val1:Of<M,A>, val2:Of<M,A>):Of<M,A>;
+  public function plus <A>(a:Of<M,A>, b:Of<M,A>):Of<M,A>;
 }

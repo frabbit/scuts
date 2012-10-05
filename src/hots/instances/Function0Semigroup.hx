@@ -1,11 +1,11 @@
 package hots.instances;
 
-import hots.classes.MonoidAbstract;
+
 import hots.classes.Semigroup;
-import hots.classes.SemigroupAbstract;
 
 
-class Function0Semigroup<A> extends SemigroupAbstract<Void->A>
+
+class Function0Semigroup<A> implements Semigroup<Void->A>
 {
   var semigroupA:Semigroup<A>;
   
@@ -14,7 +14,7 @@ class Function0Semigroup<A> extends SemigroupAbstract<Void->A>
     this.semigroupA = semigroupA;
   }
   
-  override public inline function append (f1:Void->A, f2:Void->A):Void->A 
+  public inline function append (f1:Void->A, f2:Void->A):Void->A 
   {
     return function () return semigroupA.append(f1(), f2());
   }

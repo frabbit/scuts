@@ -2,11 +2,12 @@ package hots.instances;
 
 
 
-import hots.classes.SemigroupAbstract;
+import hots.classes.Semigroup;
 
-class BoolSemigroup extends SemigroupAbstract<Bool>
+
+class BoolSemigroup implements Semigroup<Bool>
 {
   public function new () {}
   
-  override public inline function append (a:Bool, b:Bool):Bool return a && b
+  public inline function append (a:Bool, b:Bool):Bool return a && b
 }

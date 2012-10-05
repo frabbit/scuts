@@ -1,10 +1,9 @@
 package hots.instances;
 
 import hots.classes.Show;
-import hots.classes.ShowAbstract;
 import scuts.core.types.Option;
 
-class OptionShow<T> extends ShowAbstract<Option<T>> 
+class OptionShow<T> implements Show<Option<T>> 
 {
   private var showT:Show<T>;
   
@@ -13,7 +12,7 @@ class OptionShow<T> extends ShowAbstract<Option<T>>
     this.showT = showT;
   }
   
-  override public function show (v:Option<T>):String return switch (v) 
+  public function show (v:Option<T>):String return switch (v) 
   {
     case Some(s): "Some(" + showT.show(s) + ")";
     case None: "None";

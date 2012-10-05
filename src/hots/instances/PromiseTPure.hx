@@ -1,6 +1,5 @@
 package hots.instances;
 import hots.classes.Pure;
-import hots.classes.PureAbstract;
 import hots.In;
 import hots.Of;
 import hots.of.PromiseTOf;
@@ -9,7 +8,7 @@ import scuts.core.types.Promise;
 import scuts.core.types.Tup2;
 
 
-class PromiseTPure<M> extends PureAbstract<Of<M,Promise<In>>> {
+class PromiseTPure<M> implements Pure<Of<M,Promise<In>>> {
   
   var pureM:Pure<M>;
 
@@ -21,7 +20,7 @@ class PromiseTPure<M> extends PureAbstract<Of<M,Promise<In>>> {
   /**
    * aka return
    */
-  override public function pure<A>(x:A):PromiseTOf<M,A> {
+  public function pure<A>(x:A):PromiseTOf<M,A> {
     return pureM.pure(Promises.pure(x));
   }
   

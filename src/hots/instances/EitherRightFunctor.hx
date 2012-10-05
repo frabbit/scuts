@@ -1,6 +1,6 @@
 package hots.instances;
 
-import hots.classes.FunctorAbstract;
+import hots.classes.Functor;
 import hots.of.EitherOf;
 import scuts.core.extensions.Eithers;
 
@@ -11,11 +11,11 @@ import scuts.core.types.Either;
 import scuts.core.extensions.Eithers;
 
 
-class EitherRightFunctor<L> extends FunctorAbstract<RightProjection<L,In>> 
+class EitherRightFunctor<L> implements Functor<RightProjection<L,In>> 
 {
   public function new () {}
   
-  override public function map<R,RR>(of:RightProjectionOf<L,R>, f:R->RR):RightProjectionOf<L,RR> 
+  public function map<R,RR>(of:RightProjectionOf<L,R>, f:R->RR):RightProjectionOf<L,RR> 
   {
     return RightProjections.map(of, f);
   }

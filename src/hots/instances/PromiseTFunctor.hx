@@ -1,7 +1,7 @@
 package hots.instances;
 
 import hots.classes.Functor;
-import hots.classes.FunctorAbstract;
+
 import hots.In;
 import hots.Of;
 import hots.of.PromiseTOf;
@@ -15,7 +15,7 @@ using hots.Identity;
 
 using hots.box.StateBox;
 
-class PromiseTFunctor<M> extends FunctorAbstract<Of<M, Promise<In>>> {
+class PromiseTFunctor<M> implements Functor<Of<M, Promise<In>>> {
   
   var functorM:Functor<M>;
   
@@ -24,7 +24,7 @@ class PromiseTFunctor<M> extends FunctorAbstract<Of<M, Promise<In>>> {
     this.functorM = functorM;
   }
 
-  override public function map<A,B>(v:PromiseTOf<M, A>, f:A->B):PromiseTOf<M, B> 
+  public function map<A,B>(v:PromiseTOf<M, A>, f:A->B):PromiseTOf<M, B> 
   {
     function f1 (x) return Promises.map(x, f);
 

@@ -1,7 +1,7 @@
 package hots.instances;
 
 import hots.classes.Functor;
-import hots.classes.FunctorAbstract;
+
 import hots.In;
 import hots.Of;
 import hots.of.OptionTOf;
@@ -13,7 +13,7 @@ using hots.ImplicitCasts;
 using hots.Hots;
 using hots.Identity;
 
-class OptionTFunctor<M> extends FunctorAbstract<Of<M, Option<In>>> {
+class OptionTFunctor<M> implements Functor<Of<M, Option<In>>> {
   
   var functorM:Functor<M>;
   
@@ -22,7 +22,7 @@ class OptionTFunctor<M> extends FunctorAbstract<Of<M, Option<In>>> {
     this.functorM = functorM;
   }
 
-  override public function map<A,B>(v:OptionTOf<M, A>, f:A->B):OptionTOf<M, B> 
+  public function map<A,B>(v:OptionTOf<M, A>, f:A->B):OptionTOf<M, B> 
   {
     function f1 (x) return Options.map(x, f);
 

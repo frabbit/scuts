@@ -1,16 +1,16 @@
 package hots.instances;
 
-import hots.classes.PureAbstract;
+import hots.classes.Pure;
 import hots.of.LazyListOf;
 import scuts.core.extensions.LazyLists;
 import scuts.core.types.LazyList;
 import hots.In;
 
-class LazyListPure extends PureAbstract<LazyList<In>>
+class LazyListPure implements Pure<LazyList<In>>
 {
   public function new () {}
   
-  override public function pure<B>(b:B):LazyListOf<B> 
+  public function pure<B>(b:B):LazyListOf<B> 
   {
     return LazyLists.mkOne(b);
   }

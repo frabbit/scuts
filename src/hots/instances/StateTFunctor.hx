@@ -1,7 +1,7 @@
 package hots.instances;
 
 import hots.classes.Functor;
-import hots.classes.FunctorAbstract;
+
 import hots.In;
 import hots.Of;
 import hots.of.StateOf;
@@ -17,7 +17,7 @@ using hots.Identity;
 
 using hots.box.StateBox;
 
-class StateTFunctor<M,ST> extends FunctorAbstract<Of<M, State<ST,In>>> {
+class StateTFunctor<M,ST> implements Functor<Of<M, State<ST,In>>> {
   
   var functorM:Functor<M>;
   
@@ -26,7 +26,7 @@ class StateTFunctor<M,ST> extends FunctorAbstract<Of<M, State<ST,In>>> {
     this.functorM = functorM;
   }
 
-  override public function map<A,B>(v:StateTOf<M, ST, A>, f:A->B):StateTOf<M, ST, B> 
+  public function map<A,B>(v:StateTOf<M, ST, A>, f:A->B):StateTOf<M, ST, B> 
   {
     function f1 (x) return States.map(x, f);
 

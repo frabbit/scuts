@@ -1,12 +1,12 @@
 package hots.instances;
-import hots.classes.ShowAbstract;
+import hots.classes.Show;
 
 
-class FloatShow extends ShowAbstract<Float> 
+class FloatShow implements Show<Float> 
 {
   public function new () {}
   
-  override public inline function show (v:Float):String 
+  public inline function show (v:Float):String 
   {
     return Std.string(v);
   }

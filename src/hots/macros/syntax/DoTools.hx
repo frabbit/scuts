@@ -32,12 +32,12 @@ class DoTools {
   {
     return try 
     {
-      var x = if (zero) macro $helper.getMonadZero($expr) else macro $helper.getMonad($expr);
+      var x = if (zero) macro $helper.getMonadEmpty($expr) else macro $helper.getMonad($expr);
       Resolver.resolveImplicitObj(x);
     } 
     catch (e:Error) 
     {
-      var id = if (zero) "MonadZero (required for filter) " else "Monad";
+      var id = if (zero) "MonadEmpty (required for filter) " else "Monad";
       Scuts.warning("Do-Comprehension build error", 
         "No " + id + " instance in scope for expr " + Tools.prettyExpr(expr) + " of Type " + Tools.prettyTypeOfExpr(expr));
     }
@@ -46,7 +46,7 @@ class DoTools {
   /**
    * Checks if the expressions of a Do-Operation actually require a MonadZero-Instance.
    */
-  static function requiresMonadZero (exprs:Array<Expr>) 
+  static function requiresMonadEmpty (exprs:Array<Expr>) 
   {
     return exprs.any(function (e) 
     {
@@ -71,7 +71,7 @@ class DoTools {
       var o = e.extractBinOpRightExpr(function (b) return b == Binop.OpLte).getOrElseConst(e);
       var upcast = try Tup2.create(Resolver.applyImplicitUpcast(o, false, true), true) catch (e:Error) Tup2.create(o, false);
       
-      var isZero = requiresMonadZero(exprs);
+      var isZero = requiresMonadEmpty(exprs);
       var monadExpr = getMonadExpr(upcast._1, isZero);
 
       var res = buildWithMonad(monadExpr, exprs, upcast._2, isZero);

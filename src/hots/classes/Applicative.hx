@@ -27,15 +27,9 @@ import scuts.Scuts;
  *   (<*) :: f a -> f b -> f a
  *   (<*) = liftA2 const
  */
-interface Applicative<M> implements Pure<M>, implements Functor<M>
+interface Applicative<M> implements Pointed<M>, implements Apply<M>
 {
-  /**
-   * Sequential Application. (Haskell Source)
-   * 
-   * Haskell: (<*>) :: f (a -> b) -> f a -> f b
-   */
-  public function apply<A,B>(f:Of<M,A->B>, val:Of<M,A>):Of<M,B>;
-  
+    
   /**
    * Sequence actions, discarding the value of the first argument. (Haskell Source)
    * 

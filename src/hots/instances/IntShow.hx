@@ -1,12 +1,12 @@
 package hots.instances;
-import hots.classes.ShowAbstract;
+import hots.classes.Show;
 
 
-class IntShow extends ShowAbstract<Int> 
+class IntShow implements Show<Int> 
 {
   public function new () {}
   
-  override public inline function show (v:Int):String {
+  public inline function show (v:Int):String {
     return Std.string(v);
   }
 }

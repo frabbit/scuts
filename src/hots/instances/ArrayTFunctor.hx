@@ -1,5 +1,4 @@
 package hots.instances;
-import hots.classes.FunctorAbstract;
 import hots.of.ArrayTOf;
 
 
@@ -12,7 +11,7 @@ import hots.classes.Functor;
 using hots.ImplicitCasts;
 using hots.Identity;
 
-class ArrayTFunctor<M> extends FunctorAbstract<Of<M,Array<In>>> 
+class ArrayTFunctor<M> implements Functor<Of<M,Array<In>>> 
 {
   var functorM:Functor<M>;
   
@@ -21,7 +20,7 @@ class ArrayTFunctor<M> extends FunctorAbstract<Of<M,Array<In>>>
     this.functorM = functorM;
   }
 
-  override public function map<A,B>(v:ArrayTOf<M, A>,f:A->B):ArrayTOf<M, B> 
+  public function map<A,B>(v:ArrayTOf<M, A>,f:A->B):ArrayTOf<M, B> 
   {
     var f1 = function (x) return Arrays.map(x,f);
     

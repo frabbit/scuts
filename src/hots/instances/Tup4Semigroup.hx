@@ -2,13 +2,13 @@ package hots.instances;
 
 
 import hots.classes.Monoid;
-import hots.classes.MonoidAbstract;
+
 import hots.classes.Semigroup;
-import hots.classes.SemigroupAbstract;
+
 
 import scuts.core.types.Tup4;
 
-class Tup4Semigroup<A,B,C,D> extends SemigroupAbstract<Tup4<A,B,C,D>>
+class Tup4Semigroup<A,B,C,D> implements Semigroup<Tup4<A,B,C,D>>
 {
   private var s1:Semigroup<A>;
   private var s2:Semigroup<B>;
@@ -23,7 +23,7 @@ class Tup4Semigroup<A,B,C,D> extends SemigroupAbstract<Tup4<A,B,C,D>>
     this.s4 = s4;
   }
   
-  override public inline function append (a:Tup4<A,B,C,D>, b:Tup4<A,B,C,D>):Tup4<A,B,C,D> 
+  public inline function append (a:Tup4<A,B,C,D>, b:Tup4<A,B,C,D>):Tup4<A,B,C,D> 
   {
     return Tup4.create(s1.append(a._1, b._1), s2.append(a._2, b._2), s3.append(a._3, b._3), s4.append(a._4, b._4));
   }

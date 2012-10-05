@@ -2,10 +2,6 @@ package hots.classes;
 import hots.Of;
 import scuts.Scuts;
 
-/**
- * ...
- * @author 
- */
 
 class CollectionAbstract<M> implements Collection<M>
 {

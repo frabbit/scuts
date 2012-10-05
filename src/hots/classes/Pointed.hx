@@ -3,7 +3,7 @@ import hots.Of;
 
 
 
-interface Pointed<F> implements Functor<F>
+interface Pointed<F> implements Functor<F>, implements Pure<F>
 {
-  public function pure <A>(v:A):Of<F,A>;
+  
 }

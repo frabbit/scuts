@@ -2,13 +2,13 @@ package hots.instances;
 
 
 
-import hots.classes.SemigroupAbstract;
+import hots.classes.Semigroup;
 
-class StringSemigroup extends SemigroupAbstract<String>
+class StringSemigroup implements Semigroup<String>
 {
   public function new () {}
   
-  override public inline function append (a:String, b:String):String {
+  public inline function append (a:String, b:String):String {
     return a + b;
   }
 

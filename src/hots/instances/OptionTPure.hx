@@ -1,6 +1,5 @@
 package hots.instances;
 import hots.classes.Pure;
-import hots.classes.PureAbstract;
 import hots.In;
 import hots.Of;
 import hots.classes.Functor;
@@ -13,7 +12,7 @@ using hots.box.OptionBox;
 
 
 
-class OptionTPure<M> extends PureAbstract<Of<M,Option<In>>> {
+class OptionTPure<M> implements Pure<Of<M,Option<In>>> {
   
   var pureM:Pure<M>;
 
@@ -25,7 +24,7 @@ class OptionTPure<M> extends PureAbstract<Of<M,Option<In>>> {
   /**
    * aka return
    */
-  override public function pure<A>(x:A):OptionTOf<M,A> {
+  public function pure<A>(x:A):OptionTOf<M,A> {
     return pureM.pure(Options.pure(x));
   }
   
