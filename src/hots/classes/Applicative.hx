@@ -5,31 +5,9 @@ import hots.Of;
 
 import scuts.Scuts;
 
-/**
- * 
- * In Contrast to the Haskell type class Applicative is the function pure 
- * part of the type class Pure.
- * 
- * The applicative type class in haskell.
- * 
- * class Functor f => Applicative f where
- *   -- | Lift a value.
- *   pure :: a -> f a
- *
- *   -- | Sequential application.
- *   (<*>) :: f (a -> b) -> f a -> f b
- *
- *   -- | Sequence actions, discarding the value of the first argument.
- *   (*>) :: f a -> f b -> f b
- *   (*>) = liftA2 (const id)
- *
- *   -- | Sequence actions, discarding the value of the second argument.
- *   (<*) :: f a -> f b -> f a
- *   (<*) = liftA2 const
- */
+
 interface Applicative<M> implements Pointed<M>, implements Apply<M>
 {
-    
   /**
    * Sequence actions, discarding the value of the first argument. (Haskell Source)
    * 
@@ -38,7 +16,7 @@ interface Applicative<M> implements Pointed<M>, implements Apply<M>
   public function thenRight<A,B>(val1:Of<M,A>, val2:Of<M,B>):Of<M,B>;
   
   /**
-   * Sequence actions, discarding the value of the second argument.
+   * Sequence actions, discarding the value of the second argument. (Haskell Source)
    * 
    * haskell: (<*) :: f a -> f b -> f a
    */

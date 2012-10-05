@@ -17,6 +17,7 @@ import hots.classes.Semigroup;
 import hots.classes.Show;
 import hots.classes.Zero;
 import hots.extensions.Applicatives;
+import hots.extensions.Applys;
 import hots.extensions.Eqs;
 import hots.extensions.MonadEmptys;
 import hots.extensions.Monads;
@@ -32,6 +33,8 @@ import hots.instances.ArrayTBind;
 import hots.instances.ArrayTPure;
 import hots.instances.ArrayZero;
 import hots.instances.BoolOrd;
+import hots.instances.ContBind;
+import hots.instances.ContFunctor;
 import hots.instances.EndoZero;
 import hots.instances.ImListApply;
 import hots.instances.ImListBind;
@@ -59,6 +62,7 @@ import hots.instances.ValidationBind;
 import hots.instances.ValidationEmpty;
 import hots.instances.ValidationTApply;
 import hots.instances.ValidationTBind;
+import scuts.core.types.Cont;
 
 import hots.instances.ImListFoldable;
 import hots.instances.ImListFunctor;
@@ -237,7 +241,7 @@ class Objects
   
   @:implicit public static function stateFunctor          <S>():Functor<S->Tup2<S,In>> return new StateFunctor()
   
-  
+  @:implicit public static function contFunctor         <R>():Functor<Cont<In,R>> return new ContFunctor()
   @:implicit public static var promiseFunctor          (default, null):Functor<Promise<In>> = new PromiseFunctor();
   @:implicit public static var arrayFunctor           (default, null):Functor<Array<In>> = new ArrayFunctor();
   @:implicit public static var lazyListFunctor           (default, null):Functor<LazyList<In>> = new LazyListFunctor();
@@ -284,6 +288,12 @@ class Objects
   @:implicit public static var arrayApply           (default, null):Apply<Array<In>> = new ArrayApply();
   @:implicit public static var lazyListApply        (default, null):Apply<LazyList<In>> = new LazyListApply();
   @:implicit public static var imListApply          (default, null):Apply<ImList<In>> = new ImListApply();
+  
+  
+  
+  
+  @:implicit public static function contApply            <R>():Apply<Cont<In,R>> return Applys.createFromFunctorAndBind(contFunctor(), contBind())
+  
   @:implicit public static function validationApply <F>(failureSemi:Semigroup<F>):Apply<Validation<F,In>> return new ValidationApply(failureSemi)
   
   @:implicit public static function stateApply <S>():Apply<S->Tup2<S,In>> return new StateApply()
@@ -293,6 +303,7 @@ class Objects
   @:implicit public static function validationTApply   <M,F>(funcM:Functor<M>, appM:Apply<M>):Apply<Of<M, Validation<F,In>>> return new ValidationTApply(funcM, appM)
   
   // binds
+  @:implicit public static function contBind            <R>():Bind<Cont<In,R>> return new ContBind()
   @:implicit public static var promiseBind         (default, null):Bind<Promise<In>> = new PromiseBind();
   @:implicit public static var optionBind          (default, null):Bind<Option<In>> = new OptionBind();
   @:implicit public static var arrayBind           (default, null):Bind<Array<In>> = new ArrayBind();
