@@ -277,7 +277,7 @@ class Arrays
    */
   public static function foldRight<A,B>(arr:Array<A>, acc:B, f:A->B->B):B
   {
-    var rev = reverseCopy(arr);
+    var rev = reversed(arr);
     for (i in 0...rev.length) 
     {
       acc = f(rev[i], acc);
@@ -287,7 +287,7 @@ class Arrays
   
   public static function foldRightWithIndex<A,B>(arr:Array<A>, acc:B, f:A->B->Int->B):B
   {
-    var rev = reverseCopy(arr);
+    var rev = reversed(arr);
     for (i in 0...rev.length) 
     {
       acc = f(rev[i], acc, rev.length -1 -i);
@@ -412,7 +412,7 @@ class Arrays
   {
     if (a.length == 0) throw "Cannot reduce an empty Array";
     
-    var a1 = reverseCopy(a);
+    var a1 = reversed(a);
     
     var acc = first(a1[0]);
     for (i in 1...a1.length) 
@@ -427,7 +427,7 @@ class Arrays
   {
     if (a.length == 0) throw "Cannot reduce an empty Array";
     
-    var a1 = reverseCopy(a);
+    var a1 = reversed(a);
     
     var acc = first(a1[0]);
     for (i in 1...a1.length) 
@@ -437,7 +437,7 @@ class Arrays
     return acc;
   }
   
-  public static function reverseCopy <A> (a:Array<A>):Array<A>
+  public static function reversed <A> (a:Array<A>):Array<A>
   {
     var c = a.length;
     var res = [];
@@ -641,6 +641,13 @@ class Arrays
   {
     var r = [];
     for (i in a) if (filter(i)) r.push(map(i));
+    return r;
+  }
+  
+  @:noUsing public static function fromIterable <A>(a:Iterable<A>):Array<A>
+  {
+    var r = [];
+    for (i in a) r.push(i);
     return r;
   }
   

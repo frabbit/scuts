@@ -2,20 +2,121 @@ package scuts.core.extensions;
 
 import scuts.core.types.Ordering;
 import scuts.core.types.Option;
+import scuts.Scuts;
 
 import scuts.core.types.Tup2;
 import scuts.core.types.Tup3;
 
 class Iterables 
 {
-  public static function toLazyIterator<T>(i:Iterable<T>) 
+  
+  
+  public static function toArray<T>(i:Iterable<T>) 
   {
-    return function () return i.iterator();
+    return Arrays.fromIterable(i);
   }
   
   public static function any<T>(iter:Iterable<T>, f:T->Bool):Bool 
   {
     return Iterators.any(iter.iterator(), f);
+  }
+  
+  public static function map<A,B>(iter:Iterable<A>, f:A->B):Iterable<B> 
+  {
+    var r = [];
+    for (i in iter) r.push(f(i));
+    return r;
+  }
+  
+  public static function and(iter:Iterable<Bool>):Bool 
+  {
+    for (i in iter) if (!i) return false;
+    return true;
+  }
+  
+  public static function or(iter:Iterable<Bool>):Bool 
+  {
+    for (i in iter) if (i) return true;
+    return false;
+  }
+  
+  public static function cons<A>(iter:Iterable<A>, e:A):Iterable<A>
+  {
+    return Arrays.cons(Arrays.fromIterable(iter), e);
+  }
+  
+  public static function head<A>(iter:Iterable<A>):A
+  {
+    var it = iter.iterator();
+    return if (it.hasNext()) {
+      it.next();
+    } else {
+      Scuts.error("Cannot extract head from empty Iterable");
+    }
+  }
+  
+  public static function headOption<A>(iter:Iterable<A>):Option<A>
+  {
+    var it = iter.iterator();
+    return if (it.hasNext()) {
+      Some(it.next());
+    } else {
+      None;
+    }
+  }
+  
+  public static function reversed<A>(iter:Iterable<A>):Iterable<A>
+  {
+    var r = [];
+    for ( i in iter) {
+      r.unshift(i);
+    }
+    return r;
+  }
+  
+  public static function tail<A>(iter:Iterable<A>):Iterable<A>
+  {
+    var it = iter.iterator();
+    return if (it.hasNext()) {
+      {
+        iterator : function () {
+          var it = iter.iterator();
+          it.next();
+          return it;
+        }
+      }
+    } else {
+      Scuts.error("Cannot extract tail from empty Iterable");
+    }
+  }
+  
+  public static function tailOption<A>(iter:Iterable<A>):Option<Iterable<A>>
+  {
+    var it = iter.iterator();
+    return if (it.hasNext()) {
+      Some( {
+        iterator : function () {
+          var it = iter.iterator();
+          it.next();
+          return it;
+        }
+      });
+    } else {
+      None;
+    }
+  }
+  
+  
+  public static function elemAt<A>(iter:Iterable<A>, pos:Int):A
+  {
+    var cur = 0;
+    
+    for (i in iter) {
+      if (cur++ == pos) {
+        return i;
+      }
+    }
+    return Scuts.error("invalid position: " + pos);
   }
   
   public static function dropToArray<T>(a:Iterable<T>, num:Int):Array<T>
@@ -266,7 +367,7 @@ class Iterables
     return res;
   }
   
-  public static function zipWith2 < A, B, C, D > (arr1:Iterable<A>, arr2:Iterable<B>, arr3:Iterable<C>, f:A->B->C->D):Iterable<D>
+  public static function zipWith3 < A, B, C, D > (arr1:Iterable<A>, arr2:Iterable<B>, arr3:Iterable<C>, f:A->B->C->D):Iterable<D>
   {
     var it1 = arr1.iterator(), it2 = arr2.iterator(), it3 = arr3.iterator();
     var res = [];
@@ -290,7 +391,7 @@ class Iterables
     return res;
   }
   
-  public static function zip2 < A, B, C, D > (arr1:Iterable<A>, arr2:Iterable<B>, arr3:Iterable<C>):Iterable<Tup3<A,B,C>>
+  public static function zip3 < A, B, C, D > (arr1:Iterable<A>, arr2:Iterable<B>, arr3:Iterable<C>):Iterable<Tup3<A,B,C>>
   {
     var it1 = arr1.iterator(), it2 = arr2.iterator(), it3 = arr3.iterator();
     var res = [];

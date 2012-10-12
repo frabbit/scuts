@@ -246,13 +246,13 @@ class Validations
   
   public static inline function fail <A,B>(v:VD<A,B>):FailProjection<A,B> return cast v
   
-  static function zipVal1 <F,S1,S2>(s1:S1, v2:VD<F,S2>):VD<F,Tup2<S1,S2>> return switch v2
+  static function zipVal2 <F,S1,S2>(s1:S1, v2:VD<F,S2>):VD<F,Tup2<S1,S2>> return switch v2
   {
     case Success(s2): Success(Tup2.create(s1,s2));
     case Failure(f):  Failure(f);
   }
   
-  static function zipVal2 <F,S1,S2,S3>(s1:S1, s2:S2, v:VD<F,S3>):VD<F,Tup3<S1,S2, S3>> return switch v
+  static function zipVal3 <F,S1,S2,S3>(s1:S1, s2:S2, v:VD<F,S3>):VD<F,Tup3<S1,S2, S3>> return switch v
   {
     case Success(s3): Success(Tup3.create(s1,s2,s3));
     case Failure(f):  Failure(f);
@@ -270,21 +270,21 @@ class Validations
   
   public static function zip <F,S1,S2>(v1:VD<F,S1>, v2:VD<F,S2>):VD<F,Tup2<S1,S2>> return switch v1
   {
-    case Success(s1): zipVal1(s1, v2);
+    case Success(s1): zipVal2(s1, v2);
     case Failure(f):  Failure(f);
   }
   
   public static function zipLazy <F,S1,S2>(v1:VD<F,S1>, v2:Void->VD<F,S2>):VD<F,Tup2<S1,S2>> return switch v1
   {
-    case Success(s1): zipVal1(s1, v2());
+    case Success(s1): zipVal2(s1, v2());
     case Failure(f):  Failure(f);
   }
   
-  public static function zipLazy2 <F,S1,S2,S3>(v1:VD<F,S1>, v2:Void->VD<F,S2>, v3:Void->VD<F,S3>):VD<F,Tup3<S1,S2,S3>> return switch v1
+  public static function zipLazy3 <F,S1,S2,S3>(v1:VD<F,S1>, v2:Void->VD<F,S2>, v3:Void->VD<F,S3>):VD<F,Tup3<S1,S2,S3>> return switch v1
   {
     case Success(s1): switch v2() 
     {
-      case Success(s2): zipVal2(s1, s2, v3());
+      case Success(s2): zipVal3(s1, s2, v3());
       case Failure(f): Failure(f);
     }
     case Failure(f):  Failure(f);
@@ -293,7 +293,7 @@ class Validations
   
   public static function zip2 <F,S1,S2,S3>(v1:VD<F,S1>, v2:VD<F,S2>, v3:VD<F,S3>):VD<F,Tup3<S1,S2,S3>>
   {
-    return zipLazy2(v1, Dynamics.thunk(v2), Dynamics.thunk(v3));
+    return zipLazy3(v1, Dynamics.thunk(v2), Dynamics.thunk(v3));
   }
 }
 

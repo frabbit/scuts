@@ -156,12 +156,12 @@ class Iterators
   
   public static function foldRight<A,B>(iter:Iterator<A>, f:A->B->B, acc:B):B
   {
-    return foldLeft(reverseCopy(iter), Function2s.flip(f), acc);
+    return foldLeft(reversed(iter), Function2s.flip(f), acc);
   }
   
   public static function foldRightWithIndex<A,B>(iter:Iterator<A>, f:A->B->Int->B, acc:B):B
   {
-    return foldLeftWithIndex(reverseCopy(iter), Function3s.flip(f), acc);
+    return foldLeftWithIndex(reversed(iter), Function3s.flip(f), acc);
   }
   
   /*
@@ -175,29 +175,7 @@ class Iterators
     return acc;
     
   }
-  #if (!macro && scuts_multithreaded)
-  public static function foldLeftParallel<A,B>(iter:Iterator<A>, f:B->A->B, acc:B):B
-  {
-    //var acc1 = acc.toFuture();
-    //var mAcc = new MVar(acc1);
-    var lifted = f.liftWithFuture();
-    
-    var task:TaskA<B> = new AtomicTask(function () return acc);
-    Tasks.runTaskAAsync(task);
-    var fut = null;
-    
-    for (e in iter) 
-    {
-      var a = new AtomicTask(function () return e);
-      task = new BinaryTask(f, task, a);
-      Tasks.runTaskAAsync( a );
-      fut = Tasks.runTaskAAsync( task );
-      
-    }
-    return fut.value(true);
-    
-  }
-  #end
+  
   
   public static function foldLeftWithIndex<A,B>(iter:Iterator<A>, f:B->A->Int->B, acc:B):B
   {
@@ -372,28 +350,28 @@ class Iterators
   
   public static function reduceRight <T,S>(a:Iterator<T>, f:T->S->S, first:T->S):S
   {
-    return Arrays.reduceLeft(reverseCopyToArray(a), f.flip(), first);
+    return Arrays.reduceLeft(reversedToArray(a), f.flip(), first);
   }
   
   public static function reduceRightWithIndex <T,S>(a:Iterator<T>, f:T->S->Int->S, first:T->S):S
   {
-    return Arrays.reduceLeftWithIndex(reverseCopyToArray(a), f.flip(), first);
+    return Arrays.reduceLeftWithIndex(reversedToArray(a), f.flip(), first);
   }
   
   // reverse on Iterators is slow, because it builds up a new 
   // iterable
-  public static inline function reverseCopy <A> (a:Iterator<A>):Iterator<A>
+  public static inline function reversed <A> (a:Iterator<A>):Iterator<A>
   {
-    return reverseCopyToArray(a).iterator();
+    return reversedToArray(a).iterator();
   }
   
-  public static function reverseCopyToArray <A> (a:Iterator<A>):Array<A>
+  public static function reversedToArray <A> (a:Iterator<A>):Array<A>
   {
     var res = [];
     
     for (e in a) res.push(e);
     
-    return Arrays.reverseCopy(res);
+    return Arrays.reversed(res);
   }
   
   public static function size<T>(iter:Iterator<T>):Int

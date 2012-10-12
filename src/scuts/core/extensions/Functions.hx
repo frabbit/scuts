@@ -22,6 +22,11 @@ class Function0s
     return function () return f(a())();
   }
   
+  @:noUsing public static function pure <A>(a:A):Thunk<A>
+  {
+    return function () return a;
+  }
+  
   
   /**
    * Converts f into a effectful function with no return type.
@@ -580,7 +585,26 @@ class Function5Opt1s
 
 class Function5s 
 {
-  
+  /**
+   * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
+   */
+  public static function curry < A, B, C, D, E,Z > (f:A->B->C->D->E->Z):A->(B->(C->(D->(E->Z))))
+  {
+    return function (a:A) 
+      return function (b:B) 
+        return function(c:C) 
+          return function(d:D) 
+            return function(e:E) 
+              return f(a, b, c, d, e);
+  }
+
+  /**
+   * Converts a curried function into a function taking multiple arguments.
+   */
+  public static function uncurry <A,B,C,D,E, Z>(f:A->(B->(C->(D->(E->Z))))):A->B->C->D->E->Z
+  {
+    return function (a,b,c,d,e) return f(a)(b)(c)(d)(e);
+  }
   /**
    * Reverses the first 2 arguments of f.
    */
@@ -667,5 +691,30 @@ class Function5s
   public static function partial1_2_3_4_5 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A, b:B, c:C, d:D, e:E):Thunk<F>
   {
     return function () return f(a, b, c, d, e);
+  }
+}
+
+class Function6s 
+{
+  /**
+   * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
+   */
+  public static function curry < A, B, C, D, E, F, Z > (f:A->B->C->D->E->F->Z):A->(B->(C->(D->(E->(F->Z)))))
+  {
+    return function (a:A) 
+      return function (b:B) 
+        return function(c:C) 
+          return function(d:D) 
+            return function(e:E) 
+              return function(f1:F) 
+                return f(a, b, c, d, e, f1);
+  }
+
+  /**
+   * Converts a curried function into a function taking multiple arguments.
+   */
+  public static function uncurry <A,B,C,D,E,F,Z>(f:A->(B->(C->(D->(E->(F->Z)))))):A->B->C->D->E->F->Z
+  {
+    return function (a,b,c,d,e,f1) return f(a)(b)(c)(d)(e)(f1);
   }
 }

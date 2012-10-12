@@ -93,10 +93,10 @@ class LazyLists {
     return new LazyListIter(l);
   }
   
-  public static function reverseCopy <T> (l:LL<T>):LL<T> 
+  public static function reversed <T> (l:LL<T>):LL<T> 
   {
     var a = toArray(l);
-    var rev = Arrays.reverseCopy(a);
+    var rev = Arrays.reversed(a);
     return fromArrayAsView(rev);
     
   }

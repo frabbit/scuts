@@ -31,6 +31,11 @@ class Promises
   {
     return new Promise().complete(s);
   }
+  
+  @:noUsing public static function mk <S>(s:S):Promise<S> 
+  {
+    return new Promise();
+  }
 
   public static function flatMap < S,T > (p:Promise<S>, f:S->Promise<T>):Promise<T>
   {
@@ -98,13 +103,13 @@ class Promises
   }
   
   public static function 
-  zip2<A,B,C>(a:Promise<A>, b:Promise<B>, c:Promise<C>):Promise<Tup3<A,B,C>>
+  zip3<A,B,C>(a:Promise<A>, b:Promise<B>, c:Promise<C>):Promise<Tup3<A,B,C>>
   {
     return Tup3.create.liftPromiseF3()(a,b,c);
   }
   
   public static function 
-  zip3<A,B,C,D>(a:Promise<A>, b:Promise<B>, c:Promise<C>, d:Promise<D>):Promise<Tup4<A,B,C,D>>
+  zip4<A,B,C,D>(a:Promise<A>, b:Promise<B>, c:Promise<C>, d:Promise<D>):Promise<Tup4<A,B,C,D>>
   {
     return Tup4.create.liftPromiseF4()(a,b,c,d);
   }
@@ -116,13 +121,13 @@ class Promises
   }
   
   public static function 
-  zipWith2<A,B,C,D>(a:Promise<A>, b:Promise<B>, c:Promise<C>, f:A->B->C->D):Promise<D>
+  zipWith3<A,B,C,D>(a:Promise<A>, b:Promise<B>, c:Promise<C>, f:A->B->C->D):Promise<D>
   {
     return f.liftPromiseF3()(a,b,c);
   }
   
   public static function 
-  zipWith3<A,B,C,D,E>(a:Promise<A>, b:Promise<B>, c:Promise<C>, d:Promise<D>, f:A->B->C->D->E):Promise<E>
+  zipWith4<A,B,C,D,E>(a:Promise<A>, b:Promise<B>, c:Promise<C>, d:Promise<D>, f:A->B->C->D->E):Promise<E>
   {
     return f.liftPromiseF4()(a,b,c,d);
   }

@@ -12,54 +12,7 @@ private typedef RP<L,R> = RightProjection<L,R>;
 private typedef LP<L,R> = LeftProjection<L,R>;
 
 
-class LeftProjections
-{
-  static inline function either<L,R>(e:LP<L,R>):Either<L,R> return cast e
-  
-  static inline function eitherF<L,R,LL>(e:L->LP<LL,R>):L->Either<LL,R> return cast e
-  
-  public static inline function rightProjection<L,R>(e:LP<L,R>):RP<L,R> return either(e).rightProjection()
-  
-  public static inline function flatMap < L,R,LL > (e:LP<L,R>, f:L->LP<LL, R>):LP<LL,R>
-  {
-    return e.either().flatMapLeft(eitherF(f)).leftProjection();
-  }
-  
-  public static inline function map <L,R,LL> (e:LP<L,R>, f:L->LL) : LP<LL,R>
-  {
-    return e.either().mapLeft(f).leftProjection();
-  }
-  
-  public static function apply <L,R,LL>(e:LP<L,R>, f:LP<L->LL, R>):LP<LL, R>
-  {
-    return e.either().applyLeft(either(f)).leftProjection();
-  }
-}
 
-class RightProjections 
-{
-  
-  static inline function either<L,R>(e:RP<L,R>):Either<L,R> return cast e
-  
-  static inline function eitherF<L,R,RR>(e:R->RP<L,RR>):R->Either<L,RR> return cast e
-  
-  public static inline function leftProjection<L,R>(e:RP<L,R>):LP<L,R> return either(e).leftProjection()
-  
-  public static inline function flatMap < L,R,RR > (e:RP<L,R>, f:R->RP<L, RR>):RP<L,RR>
-  {
-    return e.either().flatMapRight(eitherF(f)).rightProjection();
-  }
-  
-  public static inline function map < L,R,RR > (e:RP<L,R>, f:R->RR):RP<L,RR>
-  {
-    return e.either().mapRight(f).rightProjection();
-  }
-  
-  public static inline function apply <L,R,RR>(e:RP<L,R>, f:RP<L, R->RR>):RP<L, RR>
-  {
-    return e.either().applyRight(either(f)).rightProjection();
-  }
-}
 
 class EitherConvert 
 {
@@ -362,5 +315,54 @@ class Eithers
   
   public static inline function rightProjection <L,R>(e:Either<L,R>):RightProjection<L,R> return e
   public static inline function leftProjection <L,R>(e:Either<L,R>):LeftProjection<L,R> return e
+}
+
+class LeftProjections
+{
+  static inline function either<L,R>(e:LP<L,R>):Either<L,R> return cast e
+  
+  static inline function eitherF<L,R,LL>(e:L->LP<LL,R>):L->Either<LL,R> return cast e
+  
+  public static inline function rightProjection<L,R>(e:LP<L,R>):RP<L,R> return either(e).rightProjection()
+  
+  public static inline function flatMap < L,R,LL > (e:LP<L,R>, f:L->LP<LL, R>):LP<LL,R>
+  {
+    return e.either().flatMapLeft(eitherF(f)).leftProjection();
+  }
+  
+  public static inline function map <L,R,LL> (e:LP<L,R>, f:L->LL) : LP<LL,R>
+  {
+    return e.either().mapLeft(f).leftProjection();
+  }
+  
+  public static function apply <L,R,LL>(e:LP<L,R>, f:LP<L->LL, R>):LP<LL, R>
+  {
+    return e.either().applyLeft(either(f)).leftProjection();
+  }
+}
+
+class RightProjections 
+{
+  
+  static inline function either<L,R>(e:RP<L,R>):Either<L,R> return cast e
+  
+  static inline function eitherF<L,R,RR>(e:R->RP<L,RR>):R->Either<L,RR> return cast e
+  
+  public static inline function leftProjection<L,R>(e:RP<L,R>):LP<L,R> return either(e).leftProjection()
+  
+  public static inline function flatMap < L,R,RR > (e:RP<L,R>, f:R->RP<L, RR>):RP<L,RR>
+  {
+    return e.either().flatMapRight(eitherF(f)).rightProjection();
+  }
+  
+  public static inline function map < L,R,RR > (e:RP<L,R>, f:R->RR):RP<L,RR>
+  {
+    return e.either().mapRight(f).rightProjection();
+  }
+  
+  public static inline function apply <L,R,RR>(e:RP<L,R>, f:RP<L, R->RR>):RP<L, RR>
+  {
+    return e.either().applyRight(either(f)).rightProjection();
+  }
 }
 

@@ -1,10 +1,6 @@
 package scuts.core.extensions;
 import haxe.PosInfos;
 
-/**
- * ...
- * @author 
- */
 
 class PosInfosTools
 {
