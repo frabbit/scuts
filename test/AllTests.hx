@@ -7,11 +7,8 @@ package;
 #if macro
 import neko.Lib;
 import neko.Sys;
-
-
-
-
 #else 
+import scuts.core.reactive.BehavioursTest;
 import scuts.core.extensions.StringsTest;
 import scuts.core.extensions.PromisesTest;
 #end
@@ -37,6 +34,7 @@ class AllTests
       #else
       runner.addCase(new StringsTest());
       runner.addCase(new PromisesTest());
+      runner.addCase(new BehavioursTest());
       #end
       
       Report.create(runner);
