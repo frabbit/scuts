@@ -1,8 +1,8 @@
-package scuts.data;
-import scuts.data.LazyList;
-using scuts.data.LazyLists;
+package scuts.ds;
+import scuts.ds.LazyList;
+using scuts.ds.LazyLists;
 
-using scuts.data.LazyStacks;
+using scuts.ds.LazyStacks;
 
 class LazyStacks 
 {

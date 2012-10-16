@@ -4,13 +4,13 @@ private typedef StaxList<T> = haxe.data.collections.List<T>;
 import haxe.FastList;
 import haxe.Timer;
 import hots.instances.IntShow;
-import scuts.data.List;
+import scuts.ds.List;
 
-private typedef L = scuts.data.Lists;
-private typedef LL = scuts.data.LazyLists;
+private typedef L = scuts.ds.Lists;
+private typedef LL = scuts.ds.LazyLists;
 
-using scuts.data.Lists;
-using scuts.data.LazyLists;
+using scuts.ds.Lists;
+using scuts.ds.LazyLists;
 
 class ListSample 
 {

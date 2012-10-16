@@ -1,16 +1,16 @@
 package ;
 import haxe.Timer;
 //import hots.instances.IntShow;
-import scuts.core.types.Option;
-import scuts.data.LazyList;
-import scuts.data.LazyLists;
+import scuts.core.Option;
+import scuts.ds.LazyList;
+import scuts.ds.LazyLists;
 
 /**
  * ...
  * @author 
  */
 
-using scuts.data.LazyLists;
+using scuts.ds.LazyLists;
 
 
 private typedef LL = LazyLists;
