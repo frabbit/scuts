@@ -8,7 +8,6 @@ package;
 import neko.Lib;
 import neko.Sys;
 #else 
-import scuts.core.reactive.BehavioursTest;
 import scuts.core.StringsTest;
 import scuts.core.PromisesTest;
 #end
@@ -34,7 +33,6 @@ class AllTests
       #else
       runner.addCase(new StringsTest());
       runner.addCase(new PromisesTest());
-      runner.addCase(new BehavioursTest());
       #end
       
       Report.create(runner);
