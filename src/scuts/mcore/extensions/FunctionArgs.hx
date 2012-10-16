@@ -2,8 +2,8 @@ package scuts.mcore.extensions;
 
 #if macro
 
-import scuts.core.extensions.Bools;
-import scuts.core.extensions.Strings;
+import scuts.core.Bools;
+import scuts.core.Strings;
 
 import haxe.macro.Expr;
 

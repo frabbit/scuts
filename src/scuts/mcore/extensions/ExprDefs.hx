@@ -3,12 +3,12 @@ package scuts.mcore.extensions;
 #if macro
 
 import haxe.macro.Expr;
-import scuts.core.extensions.Arrays;
-import scuts.core.extensions.Bools;
-import scuts.core.extensions.Strings;
+import scuts.core.Arrays;
+import scuts.core.Bools;
+import scuts.core.Strings;
 import scuts.mcore.Make;
 
-using scuts.core.extensions.Functions;
+using scuts.core.Functions;
 
 import scuts.mcore.extensions.Exprs;
 

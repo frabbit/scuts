@@ -2,8 +2,8 @@ package scuts.mcore.extensions;
 
 #if macro
 
-import scuts.core.extensions.Arrays;
-import scuts.core.extensions.Strings;
+import scuts.core.Arrays;
+import scuts.core.Strings;
 import haxe.macro.Expr;
 
 private typedef MetadataEntry = { name : String, params : Array<Expr>, pos : Position };

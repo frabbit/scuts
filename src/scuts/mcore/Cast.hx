@@ -14,7 +14,7 @@ import scuts.core.Log;
 
 using scuts.mcore.extensions.Exprs;
 using scuts.mcore.extensions.Strings;
-using scuts.core.extensions.Arrays;
+using scuts.core.Arrays;
 
 
 class Cast

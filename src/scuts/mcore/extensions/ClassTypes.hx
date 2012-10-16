@@ -3,11 +3,11 @@ package scuts.mcore.extensions;
 #if macro
 
 import haxe.macro.Type;
-import scuts.core.extensions.Strings;
+import scuts.core.Strings;
 
-using scuts.core.extensions.Strings;
-using scuts.core.extensions.Bools;
-using scuts.core.extensions.Arrays;
+using scuts.core.Strings;
+using scuts.core.Bools;
+using scuts.core.Arrays;
 class ClassTypes 
 {
 

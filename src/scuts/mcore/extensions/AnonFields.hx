@@ -3,7 +3,7 @@ package scuts.mcore.extensions;
 #if macro
 
 import haxe.macro.Expr;
-import scuts.core.extensions.Strings;
+import scuts.core.Strings;
 import scuts.mcore.Make;
 
 private typedef AnonField = { field : String, expr : Expr };

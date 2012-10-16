@@ -8,18 +8,18 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Expr.Binop;
 import haxe.macro.Type;
-import scuts.Assert;
+import scuts.core.debug.Assert;
 
 import scuts.mcore.extensions.Types;
 import scuts.Scuts;
 
-using scuts.core.extensions.Dynamics;
-using scuts.core.extensions.Iterables;
-using scuts.core.extensions.Arrays;
+using scuts.core.Dynamics;
+using scuts.core.Iterables;
+using scuts.core.Arrays;
 
 
 
-using scuts.Assert;
+using scuts.core.debug.Assert;
 
 private typedef P = Print;
 
@@ -840,7 +840,7 @@ class Print
         var hasModule = moduleName != "";
         var hasPack = pack.length > 0;
         
-        var tName = moduleName + (if (moduleName == name) "" else ("." + name));
+        var tName = moduleName + (if (moduleName == name) "" else ((if (hasModule) "." else "") + name));
         
         var foldPack = function (v, a) return v + "." + a;
         var reduceParams = function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards, short) + "," + a;
@@ -873,7 +873,7 @@ class Print
               var hasModule = moduleName != "";
               var hasPack = pack.length > 0;
               
-              var tName = moduleName + (if (moduleName == name) "" else ("." + name));
+              var tName = moduleName + (if (moduleName == name) "" else ((if (hasModule) "." else "") + name));
               
               var foldPack = function (v, a) return v + "." + a;
               var reduceParams = function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards, short) + "," + a;
@@ -890,14 +890,30 @@ class Print
         
       case TType( t , params ): 
         
-        var dt = t.get();
+        var ct = t.get();
+        var module = ct.module;
+        var pack = ct.pack;
+        var name = ct.name;
         
+
+        var moduleName =
+          if (pack.length > 0) 
+            module.substr(pack.join(".").length + 1) 
+          else module;
+        var hasModule = moduleName != "";
+        var hasPack = pack.length > 0;
+        
+        
+        var tName = moduleName + (if (moduleName == name) "" else ((if (hasModule) "." else "") + name));
         var foldPack = function (v, a) return v + "." + a;
-        var foldParams = function (v, a,i) return P.type(v, wildcards) + (if (i < params.length-1) "," else "") + a;
-        
-        var typeStr = dt.pack.foldRight(dt.name, foldPack);
-        var paramsStr = if (params.length > 0) "<" + params.foldRightWithIndex(">", foldParams) else "";
-        typeStr + paramsStr;
+        var reduceParams = function (v, a) return P.type1(v, simpleFunctionSignatures, wildcards, short) + "," + a;
+        var reduceFirst = function (v) return P.type1(v, simpleFunctionSignatures, wildcards, short);
+        var res = 
+          pack.foldRight(tName, foldPack) 
+          + if (params.length > 0) 
+              "<" + params.reduceRight(reduceParams, reduceFirst) + ">";
+            else "";
+        res;
       case TFun( args , ret ):
         
         var argumentsStr =

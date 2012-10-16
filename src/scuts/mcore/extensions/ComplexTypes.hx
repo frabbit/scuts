@@ -5,16 +5,20 @@ package scuts.mcore.extensions;
 import haxe.macro.Context;
 import haxe.macro.Type;
 import haxe.macro.Expr;
-import scuts.core.extensions.Arrays;
+import scuts.core.Arrays;
 import scuts.Scuts;
-using scuts.core.extensions.Arrays;
+using scuts.core.Arrays;
 
 class ComplexTypes 
 {
   @:noUsing public static function fromString(s:String):ComplexType {
-    var x = "{ var x : " + s + "; x;}";
+    var x = "{ var x : " + s + " = null; x;}";
     return switch (Context.parse(x, Context.currentPos()).expr) {
-      case EVars(v): v[0].type;
+      case EBlock(b):
+        switch (b[0].expr) {
+          case EVars(v): v[0].type;
+          default: Scuts.unexpected();
+        }
       default: Scuts.unexpected();
     }
   }

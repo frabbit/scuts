@@ -4,10 +4,10 @@ package scuts.mcore;
 
 import haxe.macro.Expr;
 import haxe.macro.Context;
-import scuts.core.types.Option;
+import scuts.core.Option;
 import scuts.Scuts;
-using scuts.core.extensions.Dynamics;
-using scuts.core.extensions.Arrays;
+using scuts.core.Dynamics;
+using scuts.core.Arrays;
 
 class Make
 {

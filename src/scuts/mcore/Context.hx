@@ -6,33 +6,33 @@ package scuts.mcore;
 
 //using scuts.Core;
 import haxe.macro.Compiler;
-import scuts.core.extensions.Arrays;
-import scuts.core.extensions.Ints;
-import scuts.core.extensions.Predicates;
-import scuts.core.extensions.Strings;
+import scuts.core.Arrays;
+import scuts.core.Ints;
+import scuts.core.Predicates;
+import scuts.core.Strings;
 import scuts.core.Log;
-import scuts.core.types.Validation;
+import scuts.core.Validation;
 import scuts.CoreTypes;
 import scuts.mcore.extensions.Types;
 import scuts.Scuts;
 
 
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Options;
+using scuts.core.Arrays;
+using scuts.core.Options;
 
 import haxe.macro.Expr;
 import haxe.macro.Type;
 import haxe.Stack;
 import neko.FileSystem;
 import neko.io.File;
-using scuts.core.extensions.Ints;
-using scuts.core.extensions.Dynamics;
-using scuts.core.extensions.Options;
+using scuts.core.Ints;
+using scuts.core.Dynamics;
+using scuts.core.Options;
 using scuts.core.Log;
 using scuts.mcore.extensions.Types;
-using scuts.core.extensions.Strings;
-using scuts.core.extensions.Validations;
-using scuts.core.extensions.Functions;
+using scuts.core.Strings;
+using scuts.core.Validations;
+using scuts.core.Functions;
 private typedef Ctx = haxe.macro.Context;
 
 private typedef TypeCacheKey = { name:String, type:TypeKind, isPrivate:Bool };

@@ -3,13 +3,13 @@ package scuts.mcore.extensions;
 #if macro
 
 import haxe.macro.Expr;
-import scuts.core.extensions.Arrays;
-import scuts.core.extensions.Strings;
-import scuts.core.types.Option;
+import scuts.core.Arrays;
+import scuts.core.Strings;
+import scuts.core.Option;
 import scuts.mcore.extensions.Accesses;
-using scuts.core.extensions.Options;
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Iterables;
+using scuts.core.Options;
+using scuts.core.Arrays;
+using scuts.core.Iterables;
 
 class Fields 
 {

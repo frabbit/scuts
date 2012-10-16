@@ -3,8 +3,8 @@ package scuts.mcore.extensions;
 #if macro
 
 import haxe.macro.Expr;
-import scuts.core.extensions.Arrays;
-import scuts.core.extensions.Strings;
+import scuts.core.Arrays;
+import scuts.core.Strings;
 
 class TypePaths 
 {

@@ -3,7 +3,7 @@ package scuts.mcore.extensions;
 #if macro
 
 import haxe.macro.Expr;
-import scuts.core.extensions.Arrays;
+import scuts.core.Arrays;
 
 
 class Functions 

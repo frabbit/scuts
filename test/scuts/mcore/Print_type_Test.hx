@@ -2,7 +2,7 @@ package scuts.mcore;
 
 #if macro
 import haxe.macro.Expr;
-using scuts.core.extensions.Options;
+using scuts.core.Options;
 import scuts.Scuts;
 #end
 

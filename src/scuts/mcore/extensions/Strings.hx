@@ -6,7 +6,7 @@ import scuts.mcore.Convert;
 import scuts.mcore.Make;
 import scuts.mcore.Parse;
 
-using scuts.core.extensions.Dynamics;
+using scuts.core.Dynamics;
 
 class Strings 
 {

@@ -6,7 +6,7 @@ package scuts.mcore.cache;
 
 import haxe.macro.Context;
 import neko.FileSystem;
-import scuts.core.types.Option;
+import scuts.core.Option;
 
 import neko.io.File;
 

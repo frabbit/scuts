@@ -4,7 +4,9 @@ package scuts.mcore.extensions;
 
 import haxe.macro.Context;
 import haxe.macro.Type;
+import scuts.core.Validation;
 import scuts.mcore.Make;
+import scuts.mcore.Print;
 
 import scuts.Scuts;
 
@@ -12,16 +14,16 @@ import haxe.macro.Expr;
 
 
 
-import scuts.core.types.Tup2;
-import scuts.core.types.Option;
+import scuts.core.Tup2;
+import scuts.core.Option;
 
-using scuts.core.extensions.Dynamics;
+using scuts.core.Dynamics;
 
-using scuts.core.extensions.Arrays;
+using scuts.core.Arrays;
 
-using scuts.core.extensions.Strings;
-using scuts.core.extensions.Bools;
-using scuts.core.extensions.Functions;
+using scuts.core.Strings;
+using scuts.core.Bools;
+using scuts.core.Functions;
 
 
 
@@ -135,6 +137,13 @@ class Types
       }
     }
   }
+  
+  public static function toComplexType (t:Type, ?pos:Position):Validation<Error, ComplexType>
+	{
+    var p = if (pos == null) Context.currentPos() else pos;
+    var s = Print.type( t, true);
+		return Success(ComplexTypes.fromString(s));
+	}
 }
 
 #end

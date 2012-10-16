@@ -4,8 +4,8 @@ package scuts.mcore.extensions;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import scuts.core.extensions.Ints;
-import scuts.core.extensions.Strings;
+import scuts.core.Ints;
+import scuts.core.Strings;
 
 class Positions 
 {

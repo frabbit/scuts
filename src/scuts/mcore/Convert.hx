@@ -8,17 +8,17 @@ package scuts.mcore;
 private typedef MType = haxe.macro.Type;
 import haxe.macro.Expr;
 import haxe.macro.Context;
-import scuts.core.types.Option;
-import scuts.core.types.Validation;
+import scuts.core.Option;
+import scuts.core.Validation;
 import scuts.Scuts;
 
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Eithers;
+using scuts.core.Arrays;
+using scuts.core.Eithers;
 
 
-using scuts.core.extensions.Validations;
-using scuts.core.extensions.Functions;
-using scuts.core.extensions.Options;
+using scuts.core.Validations;
+using scuts.core.Functions;
+using scuts.core.Options;
 
 class Convert 
 {
@@ -153,12 +153,7 @@ class Convert
     }
   }
   
-	public static function typeToComplexType (t:MType, ?pos:Position):Validation<Error, ComplexType>
-	{
-    var p = if (pos == null) Context.currentPos() else pos;
-    var s = Print.type( t, true);
-		return stringToComplexType(s, p);
-	}
+	
 	
 	
 	public static function exprToType (e:Expr):Option<ComplexType> return switch (e.expr) 

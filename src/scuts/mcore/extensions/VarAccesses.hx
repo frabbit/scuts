@@ -3,7 +3,7 @@ package scuts.mcore.extensions;
 #if macro
 
 import haxe.macro.Type;
-import scuts.core.extensions.Strings;
+import scuts.core.Strings;
 
 class VarAccesses 
 {

@@ -3,9 +3,9 @@ package scuts.mcore;
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
 
-using scuts.core.extensions.Arrays;
+using scuts.core.Arrays;
 
-using scuts.core.extensions.Iterables;
+using scuts.core.Iterables;
 
 
 
@@ -20,12 +20,12 @@ import scuts.mcore.types.InstType;
 
 import haxe.macro.Type.Ref;
 import haxe.macro.Context;
-import scuts.core.extensions.Arrays;
-import scuts.core.extensions.Strings;
-import scuts.core.types.Tup2;
+import scuts.core.Arrays;
+import scuts.core.Strings;
+import scuts.core.Tup2;
 import scuts.Scuts;
-import scuts.core.types.Option;
-using scuts.core.extensions.Options;
+import scuts.core.Option;
+using scuts.core.Options;
 
 private typedef MType = haxe.macro.Type;
 
@@ -36,26 +36,8 @@ private typedef MType = haxe.macro.Type;
 class Type 
 {
   
-  public static function isFunction (t:MType):Bool 
-  {
-    return switch (t) {
-      case TFun(_,_): true;
-      default: false;
-    }
-  }
   
-  public static function getInstType (c:ClassType):InstType
-  {
-    var pack = c.pack;
-    var module = c.module;
-    var packJoined = pack.join(".");
-    
-    return 
-      if (packJoined == module)                  ITClassParam
-      else if (module.indexOf(packJoined) == -1) ITFunctionParam
-      else                                       ITRegular;
-    
-  }
+  
   
   public static function isContextFunctionTypeParameter(type:MType):Bool
   {
@@ -127,37 +109,7 @@ class Type
     return type.pack.join("_") + (if (type.pack.length > 0) "_" else "") + type.name;
   }
   
-  public static function getFullQualifiedTypeName (type:BaseType):String 
-  {
-    var module = getModule(type);
-    return type.pack.join(".") + (if (type.pack.length > 0) "." else "") + (module != type.name ? module + "." : "") + type.name;
-  }
   
-  public static function getFullQualifiedTypeNameWithParams (type:BaseType):String 
-  {
-    var typeName = getFullQualifiedTypeName(type);
-	  if (type.params.length > 0) 
-    {
-      typeName += "<";
-      var foldParams = function (acc, val, index) 
-      {
-        return acc + (index > 0 ? "," : "") + val.name;
-      }
-      typeName += type.params.foldLeftWithIndex(foldParams, "");
-      typeName += ">";
-	  }
-	  return typeName;
-  }
-  
-  public static function getFullQualifiedImportName (type:BaseType):String 
-  {
-    return getFullQualifiedTypeName(type);
-  }
-  
-  public static function getModule (type:BaseType):String 
-  {
-    return type.module.split(".").last();
-  }
   
   public static function getType (s:String):Option<MType>
   {

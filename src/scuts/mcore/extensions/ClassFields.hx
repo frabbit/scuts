@@ -4,11 +4,11 @@ package scuts.mcore.extensions;
 
 import haxe.macro.Context;
 import haxe.macro.Type;
-import scuts.core.extensions.Arrays;
-import scuts.core.extensions.Bools;
-import scuts.core.extensions.Strings;
+import scuts.core.Arrays;
+import scuts.core.Bools;
+import scuts.core.Strings;
 
-using scuts.core.extensions.Strings;
+using scuts.core.Strings;
 
 class ClassFields 
 {

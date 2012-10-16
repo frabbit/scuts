@@ -3,8 +3,8 @@ package scuts.mcore.extensions;
 #if macro
 
 import haxe.macro.Expr;
-import scuts.core.extensions.Strings;
-import scuts.core.types.Option;
+import scuts.core.Strings;
+import scuts.core.Option;
 
 class Constants 
 {

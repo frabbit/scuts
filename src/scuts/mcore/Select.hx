@@ -5,13 +5,13 @@ package scuts.mcore;
 #elseif (display || macro)
 
 import haxe.macro.Expr;
-import scuts.core.types.Pair;
-import scuts.core.types.Option;
-import scuts.core.types.Tup2;
+import scuts.core.Pair;
+import scuts.core.Option;
+import scuts.core.Tup2;
 //using scuts.Core;
-using scuts.core.extensions.Options;
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Dynamics;
+using scuts.core.Options;
+using scuts.core.Arrays;
+using scuts.core.Dynamics;
 
 //import scuts.CoreTypes;
 

@@ -5,12 +5,12 @@ package scuts.mcore.extensions;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import scuts.core.macros.Lazy;
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 import scuts.mcore.Make;
-import scuts.core.types.Option;
-using scuts.core.extensions.Options;
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Dynamics;
+import scuts.core.Option;
+using scuts.core.Options;
+using scuts.core.Arrays;
+using scuts.core.Dynamics;
 private typedef M = Make;
 
 class Exprs 
