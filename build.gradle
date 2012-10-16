@@ -1,0 +1,29 @@
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.2'
+	jarFile = 'gradle/wrapper/gradle-wrapper.jar'
+}
+
+task test (type:Exec) {
+  
+  def valueList = ['haxe', 
+    '-cp', 'src', '-cp', 'test', '-cp', 'src', '-lib', 'utest', '--no-output', '--macro', 'AllTests.main()', '--times', '-D', 'macrotimes', '--connect', '1978']
+  
+	commandLine valueList
+    
+  
+  def values2 = [
+    'haxe',
+    '-cp', 'src',
+    '-cp', 'test',
+    '-cp', 'src',
+    '-lib', 'utest',
+    '-main', 'AllTests',
+    '-x', 'bin/test/testNeko',
+    '--times',
+    '-D', 'macrotimes',
+    '--connect', '1978'
+    ]
+  commandLine values2
+    
+
+}

@@ -1,0 +1,22 @@
+-cp src 
+-cp test 
+-cp ./../scutsCore/src
+-lib utest 
+--no-output 
+--macro AllTests.main()
+--times
+-D macrotimes
+--connect 1978
+
+--next
+-cp src 
+-cp test 
+-cp ./../scutsCore/src
+-lib utest 
+-main AllTests
+-neko bin/test/testNeko.n
+--times
+-D macrotimes
+--next
+-cmd neko bin/test/testNeko.n
+--connect 1978
