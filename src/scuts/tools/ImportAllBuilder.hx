@@ -3,7 +3,7 @@ import haxe.macro.Compiler;
 import haxe.macro.Context;
 import neko.FileSystem;
 import neko.io.File;
-using scuts.core.extensions.Strings;
+using scuts.core.Strings;
 
 class ImportAllBuilder
 {

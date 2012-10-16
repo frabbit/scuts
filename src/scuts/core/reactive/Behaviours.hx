@@ -17,18 +17,18 @@ package scuts.core.reactive;
 
 import scuts.core.reactive.BehavioursBool;
 import scuts.core.reactive.Streams;
-import scuts.core.types.Tup3;
-import scuts.core.types.Tup4;
-import scuts.core.types.Tup5;
+import scuts.core.Tup3;
+import scuts.core.Tup4;
+import scuts.core.Tup5;
 
 import scuts.core.reactive.Reactive;
 
 //import haxe.data.collections.Collection;
 import scuts.core.reactive.Behaviour;
 import scuts.core.reactive.Stream;
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 
-using scuts.core.extensions.Iterables;
+using scuts.core.Iterables;
 using scuts.core.reactive.Streams;
 using scuts.core.reactive.Behaviours;
 //using haxe.data.collections.IterableExtensions;
@@ -391,10 +391,16 @@ class Behaviours
     b.sendSignal(x);
     return b;
   }
+  
+  public static function modify<T>(b:Beh<T>, f:T->T):Beh<T> 
+  {
+    b.set(f(b.get()));
+    return b;
+  }
     
   public static function flatMap<T,Z> (b:Beh<T>, f : T->Beh<Z>):Beh<Z>
   {
-    return flatten(b.changes().map(f).startsWith(f(b.valueNow())));
+    return flatten(b.changes().map(f).startsWith(f(b.get())));
   }
     
   /**

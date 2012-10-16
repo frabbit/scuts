@@ -1,7 +1,7 @@
-package scuts.core.extensions;
+package scuts.core;
 
-using scuts.core.extensions.Functions;
-using scuts.core.extensions.Promises;
+using scuts.core.Functions;
+using scuts.core.Promises;
 class PromisesTest 
 {
 

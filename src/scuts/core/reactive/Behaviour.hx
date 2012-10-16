@@ -2,9 +2,9 @@ package scuts.core.reactive;
 
 import scuts.core.reactive.Reactive;
 import scuts.core.reactive.Streams;
-import scuts.core.types.Tup3;
-import scuts.core.types.Tup4;
-import scuts.core.types.Tup5;
+import scuts.core.Tup3;
+import scuts.core.Tup4;
+import scuts.core.Tup5;
 
 using scuts.core.reactive.Behaviours;
 using scuts.core.reactive.Streams;

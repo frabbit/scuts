@@ -1,6 +1,6 @@
-package scuts.core.extensions;
+package scuts.core;
 
-import scuts.core.extensions.Strings;
+import scuts.core.Strings;
 import utest.Assert;
 
 private typedef S = Strings;

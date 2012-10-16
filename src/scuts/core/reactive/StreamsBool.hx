@@ -15,14 +15,14 @@
 */
 package scuts.core.reactive;
 
-import scuts.core.extensions.Bools;
-import scuts.core.extensions.Predicates;
+import scuts.core.Bools;
+import scuts.core.Predicates;
 import scuts.core.reactive.Reactive;
 import scuts.core.reactive.Stream;
 
 using scuts.core.reactive.Streams;
 
-using scuts.core.extensions.Iterables;
+using scuts.core.Iterables;
 
 
 class StreamsBool 

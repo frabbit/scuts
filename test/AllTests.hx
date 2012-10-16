@@ -9,8 +9,8 @@ import neko.Lib;
 import neko.Sys;
 #else 
 import scuts.core.reactive.BehavioursTest;
-import scuts.core.extensions.StringsTest;
-import scuts.core.extensions.PromisesTest;
+import scuts.core.StringsTest;
+import scuts.core.PromisesTest;
 #end
 
 

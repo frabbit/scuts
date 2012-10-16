@@ -18,7 +18,7 @@ package scuts.core.reactive;
 
 import scuts.core.reactive.Reactive;
 
-using scuts.core.extensions.Iterables;
+using scuts.core.Iterables;
 using scuts.core.reactive.Streams;
 using scuts.core.reactive.Behaviours;
 

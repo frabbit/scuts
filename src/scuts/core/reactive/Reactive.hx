@@ -19,7 +19,7 @@ import haxe.Timer;
 import scuts.core.reactive.Streams;
 
 
-using scuts.core.extensions.Iterables;
+using scuts.core.Iterables;
 
 typedef Timeout = Timer;
 

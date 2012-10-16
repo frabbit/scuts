@@ -1,5 +1,5 @@
 package scuts.core.format;
-import scuts.Assert;
+import scuts.core.debug.Assert;
 
 
 class StringFormat 

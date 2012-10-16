@@ -4,7 +4,7 @@ package scuts.core.macros;
 import haxe.macro.Expr.ExprRequire;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-import scuts.core.types.Option;
+import scuts.core.Option;
 #end
 class Lazy 
 {

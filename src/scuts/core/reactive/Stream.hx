@@ -1,14 +1,14 @@
 package scuts.core.reactive;
 
 import scuts.core.reactive.Reactive;
-import scuts.core.types.Tup2;
-import scuts.core.types.Tup3;
-import scuts.core.types.Tup4;
-import scuts.core.types.Tup5;
+import scuts.core.Tup2;
+import scuts.core.Tup3;
+import scuts.core.Tup4;
+import scuts.core.Tup5;
 
 private typedef Beh<T> = Behaviour<T>;
 
-using scuts.core.extensions.Iterables;
+using scuts.core.Iterables;
 
 using scuts.core.reactive.Behaviours;
 using scuts.core.reactive.Streams;

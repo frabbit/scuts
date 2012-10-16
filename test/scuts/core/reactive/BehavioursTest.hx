@@ -1,7 +1,7 @@
 package scuts.core.reactive;
 
 
-using scuts.core.extensions.Functions;
+using scuts.core.Functions;
 using scuts.core.reactive.Behaviours;
 class BehavioursTest 
 {
