@@ -3,9 +3,9 @@ package hots.instances;
 import hots.classes.Pure;
 import hots.In;
 import hots.of.IoOf;
-import scuts.core.extensions.Ios;
+import scuts.core.Ios;
 
-import scuts.core.types.Io;
+import scuts.core.Io;
 
 
 class IoPointed implements Pure<Io<In>>

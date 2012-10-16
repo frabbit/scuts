@@ -1,7 +1,7 @@
 package hots.classes;
 
 
-import scuts.core.types.LazyList;
+import scuts.core.LazyList;
 
 
 

@@ -4,7 +4,7 @@ import hots.classes.Bind;
 import hots.In;
 import hots.Of;
 import hots.of.ValidationTOf;
-import scuts.core.types.Validation;
+import scuts.core.Validation;
 import hots.classes.Monad;
 
 using hots.ImplicitCasts;

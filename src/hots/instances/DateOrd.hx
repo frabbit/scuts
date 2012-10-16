@@ -5,7 +5,7 @@ import hots.classes.Ord;
 import hots.classes.OrdAbstract;
 import hots.instances.DateEq;
 import hots.instances.FloatOrd;
-import scuts.core.types.Ordering;
+import scuts.core.Ordering;
 
 
 class DateOrd extends OrdAbstract<Date> 

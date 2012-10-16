@@ -2,10 +2,10 @@ package hots.macros.syntax;
 
 #if macro
 
-import scuts.core.extensions.Arrays;
-import scuts.core.types.Tup2;
-import scuts.core.types.Option;
-import scuts.core.types.Validation;
+import scuts.core.Arrays;
+import scuts.core.Tup2;
+import scuts.core.Option;
+import scuts.core.Validation;
 
 import hots.macros.syntax.DoParser;
 import scuts.mcore.Make;
@@ -16,9 +16,9 @@ import scuts.Scuts;
 
 import hots.macros.syntax.DoData;
 
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Options;
-using scuts.core.extensions.Validations;
+using scuts.core.Arrays;
+using scuts.core.Options;
+using scuts.core.Validations;
 
 using hots.macros.syntax.DoTools;
 using scuts.mcore.extensions.Exprs;

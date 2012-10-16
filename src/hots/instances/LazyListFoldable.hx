@@ -3,8 +3,8 @@ import hots.classes.FoldableAbstract;
 import hots.In;
 import hots.Of;
 import hots.of.LazyListOf;
-import scuts.core.types.LazyList;
-import scuts.core.extensions.LazyLists;
+import scuts.core.LazyList;
+import scuts.core.LazyLists;
 
 
 class LazyListFoldable extends FoldableAbstract<LazyList<In>>

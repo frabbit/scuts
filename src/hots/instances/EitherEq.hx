@@ -2,8 +2,8 @@ package hots.instances;
 
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
-import scuts.core.extensions.Eithers;
-import scuts.core.types.Either;
+import scuts.core.Eithers;
+import scuts.core.Either;
 
 class EitherEq<A,B> extends EqAbstract<Either<A,B>> 
 {

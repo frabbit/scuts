@@ -3,10 +3,10 @@ package hots.instances;
 import hots.classes.Semigroup;
 
 import hots.instances.EitherSemigroup;
-import scuts.core.extensions.Eithers;
-import scuts.core.types.Either;
+import scuts.core.Eithers;
+import scuts.core.Either;
 
-using scuts.core.extensions.Eithers;
+using scuts.core.Eithers;
 
 class EitherSemigroup<L,R> implements Semigroup<Either<L,R>> 
 {

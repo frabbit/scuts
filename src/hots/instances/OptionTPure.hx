@@ -4,8 +4,8 @@ import hots.In;
 import hots.Of;
 import hots.classes.Functor;
 import hots.of.OptionTOf;
-import scuts.core.extensions.Options;
-import scuts.core.types.Option;
+import scuts.core.Options;
+import scuts.core.Option;
 
 
 using hots.box.OptionBox;

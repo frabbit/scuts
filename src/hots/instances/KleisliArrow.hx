@@ -8,10 +8,10 @@ import hots.instances.KleisliCategory;
 import hots.Of;
 import hots.of.KleisliOf;
 
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 import scuts.Scuts;
 
-using scuts.core.extensions.Functions;
+using scuts.core.Functions;
 
 private typedef B = hots.box.KleisliBox;
 

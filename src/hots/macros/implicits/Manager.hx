@@ -10,7 +10,7 @@ import scuts.mcore.Make;
 import scuts.mcore.extensions.Exprs;
 import scuts.mcore.extensions.Types;
 import scuts.mcore.Print;
-import scuts.Assert;
+import scuts.core.debug.Assert;
 import scuts.Scuts;
 import haxe.Stack;
 
@@ -21,11 +21,11 @@ import haxe.macro.Type;
 import haxe.PosInfos;
 
 
-import scuts.core.types.Tup2;
-import scuts.core.types.Validation;
-import scuts.core.types.Option;
+import scuts.core.Tup2;
+import scuts.core.Validation;
+import scuts.core.Option;
 
-using scuts.core.extensions.Arrays;
+using scuts.core.Arrays;
 
 
 class Manager 
@@ -91,7 +91,7 @@ class Manager
       if (a.pos.max < curPos.min) filtered.push(a.e);
     }
     
-    return filtered.reverseCopy();
+    return filtered.reversed();
   }
   
   /**

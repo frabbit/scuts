@@ -2,7 +2,7 @@ package hots.instances;
 
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
-import scuts.core.extensions.Floats;
+import scuts.core.Floats;
 
 class FloatEq extends EqAbstract<Float> 
 {

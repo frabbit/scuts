@@ -4,7 +4,7 @@ import hots.classes.Bind;
 import hots.In;
 import hots.Of;
 import hots.of.OptionTOf;
-import scuts.core.types.Option;
+import scuts.core.Option;
 
 import hots.classes.Monad;
 

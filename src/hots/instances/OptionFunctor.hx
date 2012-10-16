@@ -3,8 +3,8 @@ package hots.instances;
 import hots.classes.Functor;
 import hots.In;
 import hots.of.OptionOf;
-import scuts.core.extensions.Options;
-import scuts.core.types.Option;
+import scuts.core.Options;
+import scuts.core.Option;
 
 
 class OptionFunctor implements Functor<Option<In>>

@@ -5,7 +5,7 @@ import hots.of.ArrayTOf;
 
 import hots.In;
 import hots.Of;
-import scuts.core.extensions.Arrays;
+import scuts.core.Arrays;
 
 using hots.ImplicitCasts;
 using hots.Hots;

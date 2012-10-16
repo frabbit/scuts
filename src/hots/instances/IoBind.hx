@@ -3,8 +3,8 @@ package hots.instances;
 import hots.classes.Bind;
 import hots.In;
 import hots.of.IoOf;
-import scuts.core.extensions.Ios;
-import scuts.core.types.Io;
+import scuts.core.Ios;
+import scuts.core.Io;
 
 using hots.box.IoBox;
 

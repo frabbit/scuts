@@ -3,8 +3,8 @@ package hots.instances;
 import hots.classes.Bind;
 import hots.In;
 import hots.of.StateOf;
-import scuts.core.extensions.States;
-import scuts.core.types.State;
+import scuts.core.States;
+import scuts.core.State;
 
 using hots.box.StateBox;
 

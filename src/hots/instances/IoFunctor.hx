@@ -1,10 +1,10 @@
 package hots.instances;
 import hots.classes.Functor;
 import hots.of.IoOf;
-import scuts.core.extensions.Ios;
-import scuts.core.types.Io;
+import scuts.core.Ios;
+import scuts.core.Io;
 
-using scuts.core.extensions.Ios;
+using scuts.core.Ios;
 using hots.box.IoBox;
 
 class IoFunctor implements Functor<Io<In>>

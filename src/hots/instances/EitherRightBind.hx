@@ -5,10 +5,10 @@ import hots.classes.Bind;
 import hots.classes.Monad;
 import hots.In;
 import hots.of.EitherOf;
-import scuts.core.extensions.Eithers;
-import scuts.core.types.Either;
+import scuts.core.Eithers;
+import scuts.core.Either;
 
-import scuts.core.extensions.Eithers;
+import scuts.core.Eithers;
 
 class EitherRightBind<L> implements Bind<RightProjection<L,In>> 
 {

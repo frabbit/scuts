@@ -1,7 +1,7 @@
 package hots.instances;
 import hots.classes.Show;
 
-using scuts.core.extensions.Arrays;
+using scuts.core.Arrays;
 
 class ArrayShow<T> implements Show<Array<T>> 
 {

@@ -3,9 +3,9 @@ import haxe.Http;
 import haxe.Md5;
 import hots.box.PromiseBox;
 import hots.Identity;
-import scuts.core.types.Unit;
-import scuts.core.types.Promise;
-import scuts.core.types.Validation;
+import scuts.core.Unit;
+import scuts.core.Promise;
+import scuts.core.Validation;
 import hots.Do;
 
 using hots.Identity;
@@ -13,7 +13,7 @@ using hots.ImplicitInstances;
 using hots.ImplicitCasts;
 
 
-using scuts.core.extensions.Promises;
+using scuts.core.Promises;
 using hots.Hots;
 
 class Promises 

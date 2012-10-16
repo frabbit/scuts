@@ -2,8 +2,8 @@ package hots.instances;
 
 import hots.classes.Pure;
 import hots.of.ContOf;
-import scuts.core.extensions.Conts;
-import scuts.core.types.Cont;
+import scuts.core.Conts;
+import scuts.core.Cont;
 import hots.In;
 
 

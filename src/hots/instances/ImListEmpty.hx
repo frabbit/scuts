@@ -4,8 +4,8 @@ import hots.classes.Empty;
 import hots.classes.Monad;
 import hots.In;
 import hots.of.ImListOf;
-import scuts.core.extensions.ImLists;
-import scuts.core.types.ImList;
+import scuts.core.ImLists;
+import scuts.core.ImList;
 
 
 

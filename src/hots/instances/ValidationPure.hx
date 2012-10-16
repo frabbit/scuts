@@ -4,12 +4,12 @@ package hots.instances;
 import hots.classes.Pure;
 import hots.In;
 import hots.of.ValidationOf;
-import scuts.core.extensions.Validations;
-import scuts.core.types.Validation;
+import scuts.core.Validations;
+import scuts.core.Validation;
 
 
 
-using scuts.core.extensions.Validations;
+using scuts.core.Validations;
 using hots.box.ValidationBox;
 
 class ValidationPure<F> implements Pure<Validation<F,In>> 

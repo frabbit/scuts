@@ -8,7 +8,7 @@ import hots.classes.Applicative;
 import hots.of.ArrayOf;
 import hots.of.ContOf;
 import hots.of.ContOf;
-import scuts.core.types.Cont;
+import scuts.core.Cont;
 
 using hots.box.ArrayBox;
 

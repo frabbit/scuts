@@ -5,9 +5,9 @@ import hots.classes.Functor;
 import hots.In;
 import hots.Of;
 import hots.of.PromiseTOf;
-import scuts.core.extensions.Promises;
-import scuts.core.types.Promise;
-import scuts.core.types.Tup2;
+import scuts.core.Promises;
+import scuts.core.Promise;
+import scuts.core.Tup2;
 
 using hots.ImplicitCasts;
 using hots.Hots;

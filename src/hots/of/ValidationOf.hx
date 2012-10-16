@@ -2,7 +2,7 @@ package hots.of;
 import hots.In;
 
 import hots.Of;
-import scuts.core.types.Validation;
+import scuts.core.Validation;
 
 
 abstract ValidationOf<F,S> => Validation<F,S>, <= Validation<F,S>, => Of<Validation<F, In>, S>, <= Of<Validation<F, In>, S> {}

@@ -3,9 +3,9 @@ import hots.classes.Pure;
 import hots.In;
 import hots.Of;
 import hots.of.StateTOf;
-import scuts.core.extensions.States;
-import scuts.core.types.State;
-import scuts.core.types.Tup2;
+import scuts.core.States;
+import scuts.core.State;
+import scuts.core.Tup2;
 
 
 

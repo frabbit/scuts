@@ -4,8 +4,8 @@ import hots.classes.Empty;
 import hots.classes.Monad;
 import hots.In;
 import hots.of.LazyListOf;
-import scuts.core.extensions.LazyLists;
-import scuts.core.types.LazyList;
+import scuts.core.LazyLists;
+import scuts.core.LazyList;
 
 using hots.box.LazyListBox;
 

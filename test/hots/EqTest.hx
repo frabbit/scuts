@@ -1,12 +1,12 @@
 package hots;
-import scuts.core.types.Option;
-import scuts.core.types.Tup2;
+import scuts.core.Option;
+import scuts.core.Tup2;
 
 using hots.Identity;
 using hots.ImplicitCasts;
 using hots.ImplicitInstances;
 
-import scuts.core.types.Validation;
+import scuts.core.Validation;
 
 private typedef A = utest.Assert;
 

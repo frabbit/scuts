@@ -3,9 +3,9 @@ package hots.instances;
 import hots.classes.Functor;
 import hots.In;
 import hots.of.ContOf;
-import scuts.core.extensions.Conts;
-import scuts.core.types.Cont;
-using scuts.core.extensions.Functions;
+import scuts.core.Conts;
+import scuts.core.Cont;
+using scuts.core.Functions;
 
 class ContFunctor<R> implements Functor<Cont<In, R>>
 {

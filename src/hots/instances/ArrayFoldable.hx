@@ -2,7 +2,7 @@ package hots.instances;
 import hots.classes.FoldableAbstract;
 import hots.In;
 import hots.of.ArrayOf;
-import scuts.core.extensions.Arrays;
+import scuts.core.Arrays;
 
 
 class ArrayFoldable extends FoldableAbstract<Array<In>> 

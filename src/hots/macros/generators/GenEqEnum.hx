@@ -8,7 +8,7 @@ import haxe.macro.Expr;
 import haxe.macro.Type;
 import neko.FileSystem;
 import neko.io.File;
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 import scuts.mcore.Context;
 import scuts.mcore.extensions.Exprs;
 import scuts.mcore.extensions.Types;
@@ -18,15 +18,15 @@ import scuts.mcore.MType;
 import scuts.mcore.Print;
 import scuts.Scuts;
 
-import scuts.core.types.Option;
-import scuts.core.types.Either;
+import scuts.core.Option;
+import scuts.core.Either;
 
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Iterators;
-using scuts.core.extensions.Options;
-using scuts.core.extensions.Eithers;
+using scuts.core.Arrays;
+using scuts.core.Iterators;
+using scuts.core.Options;
+using scuts.core.Eithers;
 using scuts.mcore.extensions.Exprs;
-using scuts.core.extensions.Hashs;
+using scuts.core.Hashs;
 
 #end
 

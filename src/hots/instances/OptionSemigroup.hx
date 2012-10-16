@@ -2,8 +2,8 @@ package hots.instances;
 
 import hots.classes.Semigroup;
 
-import scuts.core.extensions.Options;
-import scuts.core.types.Option;
+import scuts.core.Options;
+import scuts.core.Option;
 
 class OptionSemigroup<X> implements Semigroup<Option<X>>
 {

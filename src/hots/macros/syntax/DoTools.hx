@@ -6,19 +6,19 @@ import haxe.macro.Expr;
 import haxe.PosInfos;
 import hots.macros.implicits.Resolver;
 import hots.macros.implicits.Tools;
-import scuts.core.types.Option;
-import scuts.core.types.Tup2;
+import scuts.core.Option;
+import scuts.core.Tup2;
 import scuts.mcore.Make;
 import scuts.mcore.Print;
 import hots.macros.syntax.DoData;
 import scuts.Scuts;
 
-using scuts.core.extensions.Options;
-using scuts.core.extensions.Arrays;
+using scuts.core.Options;
+using scuts.core.Arrays;
 
 using scuts.mcore.extensions.Exprs;
-using scuts.core.extensions.Functions;
-using scuts.core.extensions.Validations;
+using scuts.core.Functions;
+using scuts.core.Validations;
 
 class DoTools {
   

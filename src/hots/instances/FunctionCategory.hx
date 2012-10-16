@@ -4,7 +4,7 @@ import hots.classes.CategoryAbstract;
 import hots.In;
 import hots.of.FunctionOfOf;
 
-using scuts.core.extensions.Functions;
+using scuts.core.Functions;
 
 using hots.box.FunctionBox;
 

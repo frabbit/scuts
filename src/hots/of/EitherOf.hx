@@ -1,7 +1,7 @@
 package hots.of;
 import hots.In;
 import hots.Of;
-import scuts.core.types.Either;
+import scuts.core.Either;
 
 
 abstract RightProjectionOf<L, R> => RightProjection<L,R>, <= RightProjection<L,R>, => Of<RightProjection<L, In>, R>, <= Of<RightProjection<L, In>, R> { }

@@ -1,7 +1,7 @@
 package hots.instances;
 import hots.classes.Show;
-import scuts.core.extensions.LazyLists;
-import scuts.core.types.LazyList;
+import scuts.core.LazyLists;
+import scuts.core.LazyList;
 
 
 class LazyListShow<T> implements Show<LazyList<T>> 

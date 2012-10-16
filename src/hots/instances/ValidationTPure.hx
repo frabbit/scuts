@@ -5,10 +5,10 @@ import hots.classes.Pure;
 import hots.In;
 import hots.Of;
 import hots.of.ValidationTOf;
-import scuts.core.types.Option;
-import scuts.core.types.Validation;
+import scuts.core.Option;
+import scuts.core.Validation;
 
-using scuts.core.extensions.Validations;
+using scuts.core.Validations;
 
 using hots.ImplicitCasts;
 using hots.Hots;

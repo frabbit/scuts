@@ -5,9 +5,9 @@ import hots.In;
 import hots.Of;
 import hots.classes.Functor;
 import hots.of.ValidationTOf;
-import scuts.core.extensions.Validations;
+import scuts.core.Validations;
 
-import scuts.core.types.Validation;
+import scuts.core.Validation;
 
 
 using hots.ImplicitCasts;

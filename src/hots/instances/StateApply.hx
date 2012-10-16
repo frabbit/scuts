@@ -4,8 +4,8 @@ import hots.classes.Apply;
 import hots.classes.Pure;
 import hots.In;
 import hots.of.StateOf;
-import scuts.core.types.State;
-import scuts.core.types.Tup2;
+import scuts.core.State;
+import scuts.core.Tup2;
 
 using hots.box.StateBox;
 

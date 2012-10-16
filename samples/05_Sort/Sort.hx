@@ -5,11 +5,11 @@ import haxe.Timer;
 import hots.classes.Ord;
 
 import hots.Hots;
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 
-import scuts.core.extensions.ImLists;
-import scuts.core.types.ImList;
-import scuts.core.types.Option;
+import scuts.core.ImLists;
+import scuts.core.ImList;
+import scuts.core.Option;
 
 using hots.Hots;
 // Identity stellt unter anderem die Funktion show bereit

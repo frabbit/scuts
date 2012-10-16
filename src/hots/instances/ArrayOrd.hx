@@ -3,7 +3,7 @@ package hots.instances;
 import hots.classes.Ord;
 import hots.classes.OrdAbstract;
 import hots.instances.BoolEq;
-import scuts.core.types.Ordering;
+import scuts.core.Ordering;
 
 class ArrayOrd<T> extends OrdAbstract<Array<T>> 
 {

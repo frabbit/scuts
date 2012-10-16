@@ -1,5 +1,5 @@
 package hots;
-import scuts.core.types.Option;
+import scuts.core.Option;
 
 using hots.Identity;
 using hots.ImplicitCasts;

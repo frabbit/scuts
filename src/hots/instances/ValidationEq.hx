@@ -2,10 +2,10 @@ package hots.instances;
 
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
-import scuts.core.extensions.Tup2s;
-import scuts.core.extensions.Validations;
-import scuts.core.types.Tup2;
-import scuts.core.types.Validation;
+import scuts.core.Tup2s;
+import scuts.core.Validations;
+import scuts.core.Tup2;
+import scuts.core.Validation;
 
 
 class ValidationEq<F,S> extends EqAbstract<Validation<F,S>> 

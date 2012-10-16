@@ -6,8 +6,8 @@ import hots.classes.Monoid;
 import hots.In;
 import hots.Of;
 import hots.of.ValidationOf;
-import scuts.core.extensions.Validations;
-import scuts.core.types.Validation;
+import scuts.core.Validations;
+import scuts.core.Validation;
 
 using hots.box.ValidationBox;
 

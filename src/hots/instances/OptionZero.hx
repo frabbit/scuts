@@ -2,7 +2,7 @@ package hots.instances;
 
 
 import hots.classes.Zero;
-import scuts.core.types.Option;
+import scuts.core.Option;
 
 class OptionZero<X> implements Zero<Option<X>>
 {

@@ -2,8 +2,8 @@ package hots.instances;
 
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
-import scuts.core.extensions.Tup2s;
-import scuts.core.types.Tup2;
+import scuts.core.Tup2s;
+import scuts.core.Tup2;
 
 
 class Tup2Eq<A,B> extends EqAbstract<Tup2<A,B>> 

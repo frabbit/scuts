@@ -3,8 +3,8 @@ package ;
 import hots.classes.Eq;
 import hots.extensions.Eqs;
 import hots.Hots;
-import scuts.core.types.Tup2;
-import scuts.core.types.Tup3;
+import scuts.core.Tup2;
+import scuts.core.Tup3;
 
 using hots.Hots;
 using hots.Identity;

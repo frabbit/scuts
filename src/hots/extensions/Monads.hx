@@ -4,7 +4,7 @@ package hots.extensions;
 import hots.classes.MonadEmpty;
 
 import hots.Of;
-import scuts.core.extensions.Arrays;
+import scuts.core.Arrays;
 import hots.classes.Monad;
 
 typedef MonadExtApplicativeExt = hots.extensions.Applicatives;

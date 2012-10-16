@@ -5,7 +5,7 @@ import hots.Of;
 import hots.of.KleisliOf;
 import hots.of.OptionOf;
 import hots.of.OptionTOf;
-import scuts.core.types.Option;
+import scuts.core.Option;
 
 
 class OptionBox 

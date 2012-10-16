@@ -3,8 +3,8 @@ package hots.instances;
 import hots.classes.Eq;
 import hots.classes.Ord;
 import hots.classes.OrdAbstract;
-import scuts.core.types.Ordering;
-import scuts.core.types.Tup2;
+import scuts.core.Ordering;
+import scuts.core.Tup2;
 
 
 class Tup2Ord<A,B> extends OrdAbstract<Tup2<A,B>> 

@@ -2,7 +2,7 @@ package hots.classes;
 import hots.Of;
 import scuts.Scuts;
 
-using scuts.core.extensions.Functions;
+using scuts.core.Functions;
 
 
 

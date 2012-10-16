@@ -6,7 +6,7 @@ import hots.classes.Monoid;
 import hots.classes.Semigroup;
 
 
-import scuts.core.types.Tup4;
+import scuts.core.Tup4;
 
 class Tup4Semigroup<A,B,C,D> implements Semigroup<Tup4<A,B,C,D>>
 {

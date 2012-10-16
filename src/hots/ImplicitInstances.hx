@@ -1,4 +1,25 @@
 package hots;
+
+
+
+@:build(scuts.macros.builder.StaticExtend.extend("hots.Y"))
+class X {
+  
+  
+  
+}
+
+class Z {
+  
+  public function new () {
+    X.z;
+    var x : StdTypes.Int;
+  }
+  
+}
+
+
+
 import hots.classes.Applicative;
 import hots.classes.Apply;
 import hots.classes.Arrow;
@@ -62,7 +83,8 @@ import hots.instances.ValidationBind;
 import hots.instances.ValidationEmpty;
 import hots.instances.ValidationTApply;
 import hots.instances.ValidationTBind;
-import scuts.core.types.Cont;
+import scuts.core.Cont;
+
 
 import hots.instances.ImListFoldable;
 import hots.instances.ImListFunctor;
@@ -87,12 +109,12 @@ import hots.instances.Tup2Ord;
 
 import hots.instances.ValidationPure;
 import hots.instances.ValidationTPure;
-import scuts.core.types.Either;
-import scuts.core.types.ImList;
-import scuts.core.types.LazyList;
-import scuts.core.types.LazyList;
-import scuts.core.types.State;
-import scuts.core.types.Tup3;
+import scuts.core.Either;
+import scuts.core.ImList;
+import scuts.core.LazyList;
+import scuts.core.LazyList;
+import scuts.core.State;
+import scuts.core.Tup3;
 
 
 
@@ -152,10 +174,10 @@ import hots.instances.ValidationSemigroup;
 import hots.instances.ValidationTFunctor;
 
 
-import scuts.core.types.Option;
-import scuts.core.types.Promise;
-import scuts.core.types.Tup2;
-import scuts.core.types.Validation;
+import scuts.core.Option;
+import scuts.core.Promise;
+import scuts.core.Tup2;
+import scuts.core.Validation;
 
 import hots.extensions.Shows;
 
@@ -173,6 +195,7 @@ import hots.Of;
  */
 
 // static imports
+
 
 import hots.ImplicitInstances.InstEq.*;
 import hots.ImplicitInstances.InstOrd.*;
@@ -192,6 +215,8 @@ import hots.ImplicitInstances.InstNum.*;
 import hots.ImplicitInstances.InstMonoid.*;
 import hots.ImplicitInstances.InstSemigroup.*;
 import hots.ImplicitInstances.InstApplicative.*;
+
+
 
 
 class InstEq {
@@ -215,6 +240,13 @@ class InstEq {
   @:implicit public static function optionEq <T>(eqT:Eq<T>):Eq<Option<T>>      return new OptionEq(eqT)
   @:implicit public static function arrayEq  <T>(eqT:Eq<T>):Eq<Array<T>>      return new ArrayEq(eqT)
   @:implicit public static function validationEq  <F,S>(eqF:Eq<F>,eqS:Eq<S>):Eq<Validation<F,S>> return new ValidationEq(eqF,eqS)
+}
+
+@:build(scuts.macros.builder.StaticExtend.extend("InstOrd"))
+@:build(scuts.macros.builder.StaticExtend.extend("InstFunctor"))
+@:build(scuts.macros.builder.StaticExtend.extend("InstPure"))
+class All {
+  
 }
 
 class InstOrd {

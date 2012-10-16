@@ -1,7 +1,7 @@
 package hots.classes;
 
 
-import scuts.core.types.Ordering;
+import scuts.core.Ordering;
 
 
 interface Ord<T> implements Eq<T> 

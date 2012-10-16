@@ -6,7 +6,7 @@ import hots.classes.Pure;
 import hots.In;
 import hots.Of;
 import hots.of.ArrayTOf;
-import scuts.core.extensions.Arrays;
+import scuts.core.Arrays;
 import hots.classes.Functor;
 
 

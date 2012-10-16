@@ -4,9 +4,9 @@ import hots.classes.Apply;
 import hots.In;
 import hots.of.EitherOf;
 
-import scuts.core.types.Either;
+import scuts.core.Either;
 
-import scuts.core.extensions.Eithers;
+import scuts.core.Eithers;
 
 class EitherRightApply<L> implements Apply<RightProjection<L,In>> 
 {

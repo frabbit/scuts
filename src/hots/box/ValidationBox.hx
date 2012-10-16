@@ -3,7 +3,7 @@ package hots.box;
 import hots.Of;
 import hots.of.ValidationOf;
 import hots.of.ValidationTOf;
-import scuts.core.types.Validation;
+import scuts.core.Validation;
 
 class ValidationBox 
 {

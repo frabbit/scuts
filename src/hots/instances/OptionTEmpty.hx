@@ -6,7 +6,7 @@ import hots.In;
 import hots.of.OptionTOf;
 
 import hots.Of;
-import scuts.core.types.Option;
+import scuts.core.Option;
 import hots.classes.Monad;
 
 using hots.Identity;

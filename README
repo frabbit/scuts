@@ -1,80 +1,45 @@
 (h)igher (o)rder (t)ype(s) and type classes for haxe
 ====================================================
-Haxe lacks type constructor polymorphism, which is essential for the implementation of High Order Types.
-To circumvent this missing piece we introduce two special abstract types "Of" and "In". "Of" is a type constructor which takes two types, the wrapper type and the inner type.
-The abstract haskell type "f a" translates to the haxe type "Of<F,A>". A type class is represented by an interface and a corresponding abstract class which implements default implementations. Every type class has an abstract base class, even if there is no implementation (this may change in further revisions).
 
-Functor translation example: haskell -> haxe
---------------------------------------------
+Folder Structure of hots
 
-    class Functor f where
-       fmap :: (a -> b) -> f a -> f b
-    
-    interface Functor<F> implements hots.TC {
-    	pulic function map <A,B> (A->B, f:Of<F,A>):Of<F,B>;
-    }
+  bin - Binary folder for compiled samples and tests
+  compiler - Haxe Compiler and NekoVM
+  docs - folder for generated files
+  lib - the library scuts
+  samples - some samples of hots
+  src  - source code of hots
+  test - test files of hots
 
-    @:tcAbstract class FunctorAbstract<F> implements Functor<F>
-    {
-      public function map<A,B>(f:A->B, val:Of<F,A>):Of<F,B> return Scuts.abstractMethod()
-    }
+Compilation and Running of Samples
 
+  1. Before compilation you have to start the Haxe Compilation Server with "run server"
+  2. Compile a Sample with run x y ( x is the sample id and y the target plattform)
+    x can be sort, carthesian1, carthesian2, promise, animation (only js) or equals
+    y can be neko, flash, php, cpp, js (to compile and run the programm directly in the console there are also nekox and cppx)
+  
+    Examples:
+    run animation js  (compiles the animation example for javascript)
+    run promise neko  (compiles the promises example for neko)
+    run promise nekox (compiles and runs the promises example with neko)
+    run carthesian1 cppx (compiles and runs the promises example with cpp)
+     
+Creating Documentation
 
-In Order to represent concrete wrapper types like Option<T> or Array<T> we use a combination of "Of" and "In". Option<T> can also be represented by Of<Option<In>, T>. Special boxing functions are needed to convert the type Option<T> into the type Of<Option<In>, T> and visa versa. This must be done to pass the type to a type class that abstracts over the container.
+  1. Start the compilation server if not already running with "run server"
+  2. run docs (generates the documentation based on chxdoc (not really good)
 
-Example OptionFunctor:
---------------------------------------------
+Clean up
 
-    // Typedef for a wrapped Option
-    typedef OptionOf<A> = Of<Option<In>, A>
-    
-    // The concrete OptionFunctor
-    class OptionFunctorImpl extends FunctorAbstract<Option<In>>
-    {
-      public function new () {}
-      
-      override public function map<A,B>(f:A->B, val:OptionOf<A>):OptionOf<B> {
-        return OptionExt.map(val.unbox(), f).box();
-      }
-    }
-    // OptionBox does the wrapping and unwrapping of Option types.
-    class OptionBox 
-    {
-      public static inline function box <A>(m:Option<A>):OptionOf<A> return cast m
-      public static inline function unbox <A>(m:OptionOf<A>):Option<A> return cast m
-    }
+  just "run clean"
+
+Unit testing
+
+  1. Start the compilation server if not already running with "run server"
+  2. run test y
+     y can be neko, flash, php, cpp, js (to compile and run the programm directly in the console there are also nekox and cppx)
 
 
 
-Another important feature of type classes are constraints for type parameters. This is achieved by interface inheritance and delegation inside of the abstract class.
 
-The class Applicative in haxe for example has the constraint that the wrapped inner type must be a Functor instance:
---------------------------------------------
 
-    interface Applicative<M> implements Functor<M>, implements TC
-    {
-      public function ret<A>(x:A):Of<M,A>;
-    
-      public function apply<A,B>(f:Of<M,A->B>, val:Of<M,B>):Of<M,B>;
-      
-      public function thenRight<A,B>(val1:Of<M,A>, val2:Of<M,B>):Of<M,B>;
-      
-      public function thenLeft<A,B>(val1:Of<M,A>, val2:Of<M,B>):Of<M,A>;
-    }
-    
-    @:tcAbstract class ApplicativeAbstract<M> implements Applicative<M>
-    {
-      // constraint
-      var functor:Functor<M>;
-      
-      // constraint delegation
-      @:final public inline function map<A,B>(f:A->B, val:Of<M,A>):Of<M,B> return functor.map(f, val)
-      
-      function new (functor:Functor<M>) { this.functor = functor; }
-      
-      // functions 
-      public function ret<A>(x:A):Of<M,A> return Scuts.abstractMethod()
-      public function apply<A,B>(f:Of<M,A->B>, val:Of<M,B>):Of<M,B> return Scuts.abstractMethod()
-      public function thenRight<A,B>(val1:Of<M,A>, val2:Of<M,B>):Of<M,B> return val2
-      public function thenLeft<A,B>(val1:Of<M,A>, val2:Of<M,B>):Of<M,A> return val1
-    }

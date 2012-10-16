@@ -1,8 +1,8 @@
 package hots.instances;
 
 import hots.classes.EqAbstract;
-import scuts.core.extensions.Options;
-import scuts.core.types.Option;
+import scuts.core.Options;
+import scuts.core.Option;
 import hots.classes.Eq;
 
 

@@ -4,7 +4,7 @@ package hots.instances;
 import hots.classes.Monoid;
 import hots.classes.Zero;
 import hots.instances.Tup2Semigroup;
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 
 class Tup2Zero<A,B> implements Zero<Tup2<A,B>>
 {

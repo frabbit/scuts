@@ -6,7 +6,7 @@ package hots.macros.implicits;
 import scuts.mcore.extensions.Exprs;
 import scuts.mcore.extensions.Types;
 import scuts.mcore.Print;
-import scuts.Assert;
+import scuts.core.debug.Assert;
 import scuts.Scuts;
 import haxe.Stack;
 
@@ -17,17 +17,17 @@ import haxe.macro.Type;
 import haxe.PosInfos;
 import hots.macros.implicits.Data;
 
-import scuts.core.types.Tup2;
-import scuts.core.types.Validation;
-import scuts.core.types.Option;
+import scuts.core.Tup2;
+import scuts.core.Validation;
+import scuts.core.Option;
 
 import hots.macros.implicits.Data;
 
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Strings;
-using scuts.core.extensions.Validations;
-using scuts.core.extensions.Options;
-using scuts.core.extensions.Functions;
+using scuts.core.Arrays;
+using scuts.core.Strings;
+using scuts.core.Validations;
+using scuts.core.Options;
+using scuts.core.Functions;
 
 class Tools 
 {

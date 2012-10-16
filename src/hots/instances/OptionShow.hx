@@ -1,7 +1,7 @@
 package hots.instances;
 
 import hots.classes.Show;
-import scuts.core.types.Option;
+import scuts.core.Option;
 
 class OptionShow<T> implements Show<Option<T>> 
 {

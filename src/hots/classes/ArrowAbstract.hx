@@ -2,8 +2,8 @@ package hots.classes;
 
 import hots.OfOf;
 
-import scuts.core.extensions.Tup2s;
-import scuts.core.types.Tup2;
+import scuts.core.Tup2s;
+import scuts.core.Tup2;
 import scuts.Scuts;
 
 using hots.extensions.Arrows;

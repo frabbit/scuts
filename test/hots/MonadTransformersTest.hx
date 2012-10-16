@@ -3,7 +3,7 @@ package hots;
 import hots.classes.Monad;
 import hots.of.ArrayOf;
 import hots.of.OptionOf;
-import scuts.core.types.Option;
+import scuts.core.Option;
 import hots.Of;
 using hots.Identity;
 using hots.Hots;
@@ -11,7 +11,7 @@ using hots.ImplicitCasts;
 using hots.ImplicitInstances;
 private typedef A = utest.Assert;
 
-import scuts.core.types.Validation;
+import scuts.core.Validation;
 
 class MonadTransformersTest 
 {

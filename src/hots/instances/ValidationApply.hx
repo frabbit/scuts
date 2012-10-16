@@ -6,9 +6,9 @@ import hots.classes.Monoid;
 import hots.classes.Semigroup;
 import hots.In;
 import hots.of.ValidationOf;
-import scuts.core.extensions.Validations;
+import scuts.core.Validations;
 
-import scuts.core.types.Validation;
+import scuts.core.Validation;
 
 
 

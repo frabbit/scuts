@@ -2,13 +2,13 @@ package hots.instances;
 
 import hots.classes.Functor;
 import hots.of.EitherOf;
-import scuts.core.extensions.Eithers;
+import scuts.core.Eithers;
 
 import hots.classes.Monad;
 
 import hots.In;
-import scuts.core.types.Either;
-import scuts.core.extensions.Eithers;
+import scuts.core.Either;
+import scuts.core.Eithers;
 
 
 class EitherRightFunctor<L> implements Functor<RightProjection<L,In>> 

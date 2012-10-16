@@ -2,10 +2,10 @@ package hots.instances;
 
 
 import hots.classes.Semigroup;
-import scuts.core.types.Promise;
+import scuts.core.Promise;
 
 
-using scuts.core.extensions.Promises;
+using scuts.core.Promises;
 
 class PromiseSemigroup<X> implements Semigroup<Promise<X>>
 {

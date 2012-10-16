@@ -4,7 +4,7 @@ import hots.of.KleisliOf;
 import hots.of.PromiseOf;
 import hots.of.PromiseTOf;
 
-import scuts.core.types.Promise;
+import scuts.core.Promise;
 
 class PromiseBox 
 {

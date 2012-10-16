@@ -3,7 +3,7 @@ package hots.instances;
 import hots.classes.Functor;
 import hots.In;
 import hots.of.ArrayOf;
-import scuts.core.extensions.Arrays;
+import scuts.core.Arrays;
 
 
 class ArrayFunctor implements Functor<Array<In>>

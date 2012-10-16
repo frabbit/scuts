@@ -3,10 +3,10 @@ package hots.instances;
 import hots.classes.Empty;
 import hots.In;
 import hots.of.PromiseOf;
-import scuts.core.extensions.Promises;
+import scuts.core.Promises;
 
 
-import scuts.core.types.Promise;
+import scuts.core.Promise;
 
 
 class PromiseEmpty implements Empty<Promise<In>>

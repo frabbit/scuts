@@ -2,9 +2,9 @@ package hots.instances;
 import hots.In;
 import hots.classes.ArrowAbstract;
 import hots.of.FunctionOfOf;
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 import hots.instances.FunctionCategory;
-using scuts.core.extensions.Functions;
+using scuts.core.Functions;
 
 private typedef B = hots.box.FunctionBox;
  

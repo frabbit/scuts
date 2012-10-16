@@ -8,7 +8,7 @@ import scuts.Scuts;
 import haxe.macro.Expr;
 import hots.macros.implicits.Data;
 
-using scuts.core.extensions.Arrays;
+using scuts.core.Arrays;
 
 /**
  * Error Logging

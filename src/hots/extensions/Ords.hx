@@ -1,7 +1,7 @@
 package hots.extensions;
 import hots.classes.Ord;
 import hots.classes.OrdAbstract;
-import scuts.core.types.Ordering;
+import scuts.core.Ordering;
 
 
 class Ords

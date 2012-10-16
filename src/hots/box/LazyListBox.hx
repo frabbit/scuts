@@ -2,7 +2,7 @@ package hots.box;
 import hots.Of;
 import hots.of.LazyListOf;
 import hots.of.LazyListTOf;
-import scuts.core.types.LazyList;
+import scuts.core.LazyList;
 
 
 class LazyListBox 

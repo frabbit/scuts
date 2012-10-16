@@ -4,8 +4,8 @@ import hots.classes.Apply;
 import hots.In;
 import hots.of.LazyListOf;
 
-import scuts.core.types.LazyList;
-import scuts.core.extensions.LazyLists;
+import scuts.core.LazyList;
+import scuts.core.LazyLists;
 
 class LazyListApply implements Apply<LazyList<In>>
 {

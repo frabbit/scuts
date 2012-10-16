@@ -1,7 +1,7 @@
 package hots.box;
 import hots.of.ImListOf;
 import hots.of.ImListTOf;
-import scuts.core.types.ImList;
+import scuts.core.ImList;
 
 
 class ImListBox 

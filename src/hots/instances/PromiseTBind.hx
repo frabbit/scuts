@@ -6,7 +6,7 @@ import hots.Of;
 
 import hots.of.PromiseTOf;
 
-import scuts.core.types.Promise;
+import scuts.core.Promise;
 
 import hots.classes.Monad;
 

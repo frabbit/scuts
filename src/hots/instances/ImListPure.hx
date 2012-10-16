@@ -2,8 +2,8 @@ package hots.instances;
 
 import hots.classes.Pure;
 import hots.of.ImListOf;
-import scuts.core.extensions.ImLists;
-import scuts.core.types.ImList;
+import scuts.core.ImLists;
+import scuts.core.ImList;
 import hots.In;
 
 

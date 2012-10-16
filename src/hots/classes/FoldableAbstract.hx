@@ -8,10 +8,10 @@ import hots.ImplicitInstances.InstMonoid.endoMonoid;
 
 import hots.Of;
 import scuts.Scuts;
-import scuts.core.types.Option;
+import scuts.core.Option;
 import hots.classes.Monoid;
 
-using scuts.core.extensions.Functions;
+using scuts.core.Functions;
 
 
 

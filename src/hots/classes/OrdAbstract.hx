@@ -1,7 +1,7 @@
 package hots.classes;
 
 
-import scuts.core.types.Ordering;
+import scuts.core.Ordering;
 
 class OrdAbstract<T> implements Ord<T> {
   

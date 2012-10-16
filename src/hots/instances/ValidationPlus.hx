@@ -7,10 +7,10 @@ import hots.classes.Semigroup;
 import hots.In;
 import hots.Of;
 import hots.of.ValidationOf;
-import scuts.core.extensions.Validations; 
-import scuts.core.types.Validation;
+import scuts.core.Validations; 
+import scuts.core.Validation;
 
-using scuts.core.extensions.Validations;
+using scuts.core.Validations;
 
 using hots.ImplicitCasts;
 using hots.Hots;

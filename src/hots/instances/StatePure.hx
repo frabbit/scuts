@@ -4,9 +4,9 @@ package hots.instances;
 import hots.classes.Pure;
 import hots.In;
 import hots.of.StateOf;
-import scuts.core.extensions.States;
-import scuts.core.types.State;
-import scuts.core.types.Tup2;
+import scuts.core.States;
+import scuts.core.State;
+import scuts.core.Tup2;
 
 
 class StatePure<S> implements Pure<State<S,In>>

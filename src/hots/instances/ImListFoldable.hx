@@ -4,8 +4,8 @@ import hots.classes.FoldableAbstract;
 import hots.In;
 import hots.Of;
 import hots.of.ImListOf;
-import scuts.core.extensions.ImLists;
-import scuts.core.types.ImList;
+import scuts.core.ImLists;
+import scuts.core.ImList;
 
 
 class ImListFoldable extends FoldableAbstract<ImList<In>>

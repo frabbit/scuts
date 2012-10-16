@@ -3,8 +3,8 @@ package hots.instances;
 import hots.classes.Bind;
 import hots.In;
 import hots.of.LazyListOf;
-import scuts.core.extensions.LazyLists;
-import scuts.core.types.LazyList;
+import scuts.core.LazyLists;
+import scuts.core.LazyList;
 
 
 class LazyListBind implements Bind<LazyList<In>>

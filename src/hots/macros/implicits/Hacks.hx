@@ -6,8 +6,8 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import scuts.mcore.extensions.Exprs;
 
-using scuts.core.extensions.Strings;
-using scuts.core.extensions.Arrays;
+using scuts.core.Strings;
+using scuts.core.Arrays;
 
 class Hacks 
 {

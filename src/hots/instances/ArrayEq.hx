@@ -2,7 +2,7 @@ package hots.instances;
 
 import hots.classes.Eq;
 import hots.classes.EqAbstract;
-import scuts.core.extensions.Arrays;
+import scuts.core.Arrays;
 
 
 class ArrayEq<T> extends EqAbstract<Array<T>> 

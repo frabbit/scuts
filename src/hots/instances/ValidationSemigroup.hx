@@ -1,8 +1,8 @@
 package hots.instances;
 
 import hots.classes.Semigroup;
-import scuts.core.extensions.Validations;
-import scuts.core.types.Validation;
+import scuts.core.Validations;
+import scuts.core.Validation;
 import hots.classes.Monad;
 import hots.In;
 

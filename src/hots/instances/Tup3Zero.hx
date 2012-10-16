@@ -3,10 +3,10 @@ package hots.instances;
 
 import hots.classes.Monoid;
 import hots.classes.Zero;
-import scuts.core.types.Tup3;
-import scuts.core.types.Tup3;
+import scuts.core.Tup3;
+import scuts.core.Tup3;
 
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 
 class Tup3Zero<A,B,C> implements Zero<Tup3<A,B,C>>
 {

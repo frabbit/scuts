@@ -2,7 +2,7 @@ package hots.instances;
 import hots.classes.Monoid;
 import hots.classes.Semigroup;
 
-using scuts.core.extensions.Predicates;
+using scuts.core.Predicates;
 
 class Predicate1Semigroup<X> implements Semigroup<X->Bool>
 {

@@ -2,8 +2,8 @@ package hots.instances;
 
 import hots.classes.Pure;
 import hots.of.LazyListOf;
-import scuts.core.extensions.LazyLists;
-import scuts.core.types.LazyList;
+import scuts.core.LazyLists;
+import scuts.core.LazyList;
 import hots.In;
 
 class LazyListPure implements Pure<LazyList<In>>

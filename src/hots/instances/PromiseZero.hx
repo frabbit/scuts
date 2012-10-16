@@ -5,8 +5,8 @@ package hots.instances;
 
 import hots.classes.Semigroup;
 import hots.classes.Zero;
-import scuts.core.extensions.Promises;
-import scuts.core.types.Promise;
+import scuts.core.Promises;
+import scuts.core.Promise;
 
 class PromiseZero<X> implements Zero<Promise<X>>
 {

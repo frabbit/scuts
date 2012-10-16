@@ -5,7 +5,7 @@ import hots.of.ArrayOf;
 
 import hots.In;
 
-import scuts.core.types.Option;
+import scuts.core.Option;
 
 
 class ArrayPure implements Pure<Array<In>>

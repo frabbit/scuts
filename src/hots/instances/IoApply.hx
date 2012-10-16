@@ -3,10 +3,10 @@ package hots.instances;
 import hots.classes.Apply;
 import hots.In;
 import hots.of.IoOf;
-import scuts.core.extensions.Ios;
-import scuts.core.extensions.Options;
-import scuts.core.types.Io;
-import scuts.core.types.Option;
+import scuts.core.Ios;
+import scuts.core.Options;
+import scuts.core.Io;
+import scuts.core.Option;
 
 using hots.box.IoBox;
 

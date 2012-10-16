@@ -5,13 +5,13 @@ import hots.In;
 import hots.Of;
 import hots.classes.Functor;
 import hots.of.PromiseTOf;
-import scuts.core.types.Promise;
+import scuts.core.Promise;
 
 using hots.ImplicitCasts;
 using hots.Hots;
 using hots.Identity;
 
-using scuts.core.extensions.Promises;
+using scuts.core.Promises;
 
 class PromiseTApply<M> implements Apply<Of<M,Promise<In>>> 
 {

@@ -41,7 +41,7 @@ package hots.classes;
 
 import hots.OfOf;
 
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 import scuts.Scuts;
 
 

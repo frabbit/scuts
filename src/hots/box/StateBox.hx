@@ -2,7 +2,7 @@ package hots.box;
 import hots.In;
 import hots.of.StateOf;
 import hots.of.StateTOf;
-import scuts.core.types.State;
+import scuts.core.State;
 
 import hots.Of;
 

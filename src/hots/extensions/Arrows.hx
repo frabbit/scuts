@@ -3,7 +3,7 @@ package hots.extensions;
 import hots.classes.Arrow;
 import hots.classes.Category;
 import hots.OfOf;
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 
 class Arrows 
 {

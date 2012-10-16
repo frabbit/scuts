@@ -1,8 +1,8 @@
 package hots.instances;
 import hots.classes.Show;
 import hots.instances.ImListShow;
-import scuts.core.extensions.ImLists;
-import scuts.core.types.ImList;
+import scuts.core.ImLists;
+import scuts.core.ImList;
 
 class ImListShow<T> implements Show<ImList<T>> 
 {

@@ -1,6 +1,6 @@
 package hots.instances;
 
-using scuts.core.extensions.Functions;
+using scuts.core.Functions;
 
 import hots.classes.Monoid;
 import hots.classes.Zero;

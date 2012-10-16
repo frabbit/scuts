@@ -5,7 +5,7 @@ import hots.of.KleisliOf;
 
 
 import hots.Of;
-import scuts.core.types.Io;
+import scuts.core.Io;
 
 
 class IoBox 

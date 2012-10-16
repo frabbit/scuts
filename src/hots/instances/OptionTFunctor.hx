@@ -5,9 +5,9 @@ import hots.classes.Functor;
 import hots.In;
 import hots.Of;
 import hots.of.OptionTOf;
-import scuts.core.extensions.Options;
+import scuts.core.Options;
 
-import scuts.core.types.Option;
+import scuts.core.Option;
 
 using hots.ImplicitCasts;
 using hots.Hots;

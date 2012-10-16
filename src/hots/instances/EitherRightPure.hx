@@ -5,9 +5,9 @@ package hots.instances;
 import hots.classes.Pure;
 import hots.In;
 import hots.of.EitherOf;
-import scuts.core.types.Either;
+import scuts.core.Either;
 
-using scuts.core.extensions.Eithers;
+using scuts.core.Eithers;
 
 using hots.box.EitherBox;
 

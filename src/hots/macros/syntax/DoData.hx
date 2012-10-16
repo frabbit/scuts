@@ -3,8 +3,8 @@ package hots.macros.syntax;
 #if macro
 
 import haxe.macro.Expr;
-import scuts.core.types.Option;
-import scuts.core.types.Validation;
+import scuts.core.Option;
+import scuts.core.Validation;
 
 /**
  * The abstract Datatype of a Do-Operation.

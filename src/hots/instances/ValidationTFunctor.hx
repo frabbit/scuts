@@ -1,13 +1,13 @@
 package hots.instances;
 
 import hots.of.ValidationTOf;
-import scuts.core.extensions.Validations;
-import scuts.core.types.Validation;
+import scuts.core.Validations;
+import scuts.core.Validation;
 import hots.classes.Functor;
 import hots.In;
 import hots.Of;
 
-import scuts.core.types.Option;
+import scuts.core.Option;
 
 using hots.ImplicitCasts;
 using hots.Hots;

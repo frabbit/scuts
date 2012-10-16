@@ -3,9 +3,9 @@ package hots.instances;
 
 import hots.classes.Monoid;
 import hots.classes.Semigroup;
-import scuts.core.types.Tup3;
+import scuts.core.Tup3;
 
-import scuts.core.types.Tup2;
+import scuts.core.Tup2;
 
 class Tup3Semigroup<A,B,C> implements Semigroup<Tup3<A,B,C>>
 {

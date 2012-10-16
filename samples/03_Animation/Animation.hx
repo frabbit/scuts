@@ -12,12 +12,12 @@ import js.Dom;
 // Import der Do-Syntax
 import hots.Do;
 // other classes
-import scuts.core.types.Unit;
+import scuts.core.Unit;
 
 // Promises
-import scuts.core.types.Promise;
+import scuts.core.Promise;
 
-using scuts.core.extensions.Promises;
+using scuts.core.Promises;
 
 class Animation 
 {

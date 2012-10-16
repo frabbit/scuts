@@ -1,6 +1,6 @@
 package hots.instances;
 import hots.classes.EqAbstract;
-import scuts.core.extensions.Ints;
+import scuts.core.Ints;
 
 class IntEq extends EqAbstract<Int> {
   

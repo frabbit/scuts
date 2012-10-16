@@ -1,7 +1,7 @@
 package hots.box;
 
 import hots.of.EitherOf;
-import scuts.core.types.Either;
+import scuts.core.Either;
 
 
 

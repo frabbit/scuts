@@ -14,16 +14,16 @@ import hots.Of;
 import hots.of.ValidationOf;
 import hots.of.ValidationTOf;
 import hots.OfOf;
-import scuts.core.extensions.LazyLists;
-import scuts.core.types.Promise;
-import scuts.core.types.Validation;
+import scuts.core.LazyLists;
+import scuts.core.Promise;
+import scuts.core.Validation;
 import utest.Assert;
 
 using hots.Identity;
 using hots.ImplicitCasts;
 using hots.ImplicitInstances;
 using hots.Hots;
-using scuts.core.extensions.Functions;
+using scuts.core.Functions;
 
 import hots.ImplicitInstances.InstMonad.*;
 import hots.ImplicitInstances.InstSemigroup.*;

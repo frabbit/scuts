@@ -6,9 +6,9 @@ package hots.macros.syntax;
 import hots.macros.implicits.Manager;
 import scuts.Scuts;
 
-import scuts.core.types.Option;
-import scuts.core.types.Tup2;
-import scuts.core.extensions.Arrays;
+import scuts.core.Option;
+import scuts.core.Tup2;
+import scuts.core.Arrays;
 
 import scuts.mcore.extensions.Types;
 import scuts.mcore.extensions.Exprs;
@@ -28,10 +28,10 @@ import hots.macros.syntax.DoData;
 
 using scuts.mcore.extensions.Exprs;
 
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Options;
-using scuts.core.extensions.Functions;
-using scuts.core.extensions.Validations;
+using scuts.core.Arrays;
+using scuts.core.Options;
+using scuts.core.Functions;
+using scuts.core.Validations;
 
 using hots.macros.syntax.DoTools;
 

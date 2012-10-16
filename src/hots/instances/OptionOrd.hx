@@ -2,9 +2,9 @@ package hots.instances;
 
 import hots.classes.Ord;
 import hots.classes.OrdAbstract;
-import scuts.core.extensions.Options;
-import scuts.core.types.Option;
-import scuts.core.types.Ordering;
+import scuts.core.Options;
+import scuts.core.Option;
+import scuts.core.Ordering;
 
 class OptionOrd<T> extends OrdAbstract<Option<T>> 
 {

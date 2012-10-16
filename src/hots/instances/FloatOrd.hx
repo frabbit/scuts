@@ -3,7 +3,7 @@ package hots.instances;
 import hots.classes.Eq;
 import hots.classes.Ord;
 import hots.classes.OrdAbstract;
-import scuts.core.types.Ordering;
+import scuts.core.Ordering;
 
 class FloatOrd extends OrdAbstract<Float> 
 {
