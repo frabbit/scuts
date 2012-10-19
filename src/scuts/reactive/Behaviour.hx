@@ -1,17 +1,17 @@
-package scuts.core.reactive;
+package scuts.reactive;
 
-import scuts.core.reactive.Reactive;
-import scuts.core.reactive.Streams;
+import scuts.reactive.Reactive;
+import scuts.reactive.Streams;
 import scuts.core.Tup3;
 import scuts.core.Tup4;
 import scuts.core.Tup5;
 
-using scuts.core.reactive.Behaviours;
-using scuts.core.reactive.Streams;
+using scuts.reactive.Behaviours;
+using scuts.reactive.Streams;
 
 private typedef Beh<T> = Behaviour<T>;
 
-@:allow(scuts.core.reactive.Behaviours)
+@:allow(scuts.reactive.Behaviours)
 class Behaviour<T> 
 {
   private var _underlyingRaw: Stream<Dynamic>;
