@@ -1,9 +1,9 @@
 package hots;
 import scuts.core.Option;
 
-using hots.Identity;
-using hots.ImplicitCasts;
-using hots.ImplicitInstances;
+using scuts1.Identity;
+using scuts1.ImplicitCasts;
+using scuts1.ImplicitInstances;
 
 private typedef A = utest.Assert;
 

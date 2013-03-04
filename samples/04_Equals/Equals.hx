@@ -1,15 +1,15 @@
 package ;
 
-import hots.classes.Eq;
-import hots.extensions.Eqs;
-import hots.Hots;
+import scuts1.classes.Eq;
+import scuts1.syntax.Eqs;
+import scuts1.core.Hots;
 import scuts.core.Tup2;
 import scuts.core.Tup3;
 
-using hots.Hots;
-using hots.Identity;
-using hots.ImplicitInstances;
-using hots.ImplicitCasts;
+using scuts1.core.Hots;
+using scuts1.Identity;
+using scuts1.ImplicitInstances;
+using scuts1.ImplicitCasts;
 
 typedef Point = {
   x:Int,

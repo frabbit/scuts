@@ -1,14 +1,14 @@
 package hots;
 
-import hots.classes.Monad;
-import hots.of.ArrayOf;
-import hots.of.OptionOf;
+import scuts1.classes.Monad;
+import scuts1.instances.std.ArrayOf;
+import scuts1.instances.std.OptionOf;
 import scuts.core.Option;
-import hots.Of;
-using hots.Identity;
-using hots.Hots;
-using hots.ImplicitCasts;
-using hots.ImplicitInstances;
+import scuts1.core.Of;
+using scuts1.Identity;
+using scuts1.core.Hots;
+using scuts1.ImplicitCasts;
+using scuts1.ImplicitInstances;
 private typedef A = utest.Assert;
 
 import scuts.core.Validation;

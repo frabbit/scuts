@@ -1,7 +1,7 @@
 package hots;
 import utest.Assert;
 
-using hots.Hots;
+using scuts1.core.Hots;
 
 private typedef A = utest.Assert;
 

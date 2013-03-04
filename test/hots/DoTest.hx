@@ -1,9 +1,9 @@
 package hots;
-import hots.Do;
+import scuts1.Do;
 import utest.Assert;
 
-using hots.ImplicitCasts;
-using hots.ImplicitInstances;
+using scuts1.ImplicitCasts;
+using scuts1.ImplicitInstances;
 
 class DoTest 
 {

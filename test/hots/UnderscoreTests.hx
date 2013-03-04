@@ -1,10 +1,10 @@
 package hots;
 import utest.Assert;
 
-using hots.Hots;
+using scuts1.core.Hots;
 
-using hots.UnderscoreTests;
-using hots.UnderscoreTests.PrivateAccess;
+using scuts1.UnderscoreTests;
+using scuts1.UnderscoreTests.PrivateAccess;
 
 class UnderscoreTests
 {

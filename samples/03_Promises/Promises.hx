@@ -1,20 +1,20 @@
 package ;
 import haxe.Http;
 import haxe.Md5;
-import hots.box.PromiseBox;
-import hots.Identity;
+import scuts1.box.PromiseBox;
+import scuts1.Identity;
 import scuts.core.Unit;
 import scuts.core.Promise;
 import scuts.core.Validation;
-import hots.Do;
+import scuts1.Do;
 
-using hots.Identity;
-using hots.ImplicitInstances;
-using hots.ImplicitCasts;
+using scuts1.Identity;
+using scuts1.ImplicitInstances;
+using scuts1.ImplicitCasts;
 
 
 using scuts.core.Promises;
-using hots.Hots;
+using scuts1.core.Hots;
 
 class Promises 
 {

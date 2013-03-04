@@ -1,8 +1,8 @@
 package ;
 
 // hots classes
-using hots.ImplicitInstances;
-using hots.ImplicitCasts;
+using scuts1.ImplicitInstances;
+using scuts1.ImplicitCasts;
 
 // Javascript API
 import js.JQuery;
@@ -10,7 +10,7 @@ import js.Lib;
 import js.Dom;
 
 // Import der Do-Syntax
-import hots.Do;
+import scuts1.Do;
 // other classes
 import scuts.core.Unit;
 

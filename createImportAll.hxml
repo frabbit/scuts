@@ -1,6 +1,4 @@
--cp test 
 -cp ../scutsCore/src
 -cp src 
-#--connect 1978
---macro scuts.tools.ImportAllBuilder.build(['hots', 'scuts'], 'ImportAll', 'bin') 
+--macro scuts.core.tools.ImportAllBuilder.build(['hots', 'scuts'], 'ImportAll', 'test') 
 --no-output

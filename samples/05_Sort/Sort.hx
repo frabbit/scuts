@@ -2,22 +2,22 @@ package ;
 
 // Import der Do-Syntax
 import haxe.Timer;
-import hots.classes.Ord;
+import scuts1.classes.Ord;
 
-import hots.Hots;
+import scuts1.core.Hots;
 import scuts.core.Tup2;
 
 import scuts.core.ImLists;
 import scuts.core.ImList;
 import scuts.core.Option;
 
-using hots.Hots;
+using scuts1.core.Hots;
 // Identity stellt unter anderem die Funktion show bereit
-using hots.Identity;
+using scuts1.Identity;
 // Hinzufügen aller Typklasseninstanzen in den Using-Scope
-using hots.ImplicitInstances;
+using scuts1.ImplicitInstances;
 // Hinzufügen aller Casts in den Using-Scope
-using hots.ImplicitCasts;
+using scuts1.ImplicitCasts;
 
 class Sort
 {

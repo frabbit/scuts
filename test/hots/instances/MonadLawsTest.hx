@@ -1,32 +1,32 @@
-package hots.instances;
-import hots.box.ArrayBox;
-import hots.box.OptionBox;
-import hots.box.PromiseBox;
-import hots.box.ValidationBox;
-import hots.classes.Eq;
-import hots.classes.Monad;
-import hots.extensions.Eqs;
-import hots.extensions.Semigroups;
-import hots.Hots;
-import hots.In;
+package scuts1.instances.std;
+import scuts1.box.ArrayBox;
+import scuts1.box.OptionBox;
+import scuts1.box.PromiseBox;
+import scuts1.box.ValidationBox;
+import scuts1.classes.Eq;
+import scuts1.classes.Monad;
+import scuts1.syntax.Eqs;
+import scuts1.syntax.Semigroups;
+import scuts1.core.Hots;
+import scuts1.core.In;
 
-import hots.Of;
-import hots.of.ValidationOf;
-import hots.of.ValidationTOf;
-import hots.OfOf;
+import scuts1.core.Of;
+import scuts1.instances.std.ValidationOf;
+import scuts1.instances.std.ValidationTOf;
+import scuts1.core.OfOf;
 import scuts.core.LazyLists;
 import scuts.core.Promise;
 import scuts.core.Validation;
 import utest.Assert;
 
-using hots.Identity;
-using hots.ImplicitCasts;
-using hots.ImplicitInstances;
-using hots.Hots;
+using scuts1.Identity;
+using scuts1.ImplicitCasts;
+using scuts1.ImplicitInstances;
+using scuts1.core.Hots;
 using scuts.core.Functions;
 
-import hots.ImplicitInstances.InstMonad.*;
-import hots.ImplicitInstances.InstSemigroup.*;
+import scuts1.ImplicitInstances.InstMonad.*;
+import scuts1.ImplicitInstances.InstSemigroup.*;
 
 class MonadLawsTest 
 {
