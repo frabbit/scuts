@@ -1,14 +1,30 @@
 package scuts.core;
 
-import scuts.core.Option;
-import scuts.core.Tup2;
-import scuts.core.Tup3;
-import scuts.core.Validation;
-import scuts.Scuts;
-import scuts.core.Either;
 
+
+
+
+import scuts.Scuts;
+
+using scuts.core.Tuples;
+using scuts.core.Eithers;
+using scuts.core.Options;
+using scuts.core.Validations;
 
 private typedef VD<F,S> = Validation<F,S>;
+
+enum Validation < F, S > {
+  Failure(f:F);
+  Success(s:S);
+}
+
+abstract FailProjection<F,S>(VD < F, S >) to VD<F,S> {
+
+  public function new (v:VD<F,S>) {
+    this = v;
+  }
+
+}
 
 class Validations
 {
@@ -26,6 +42,18 @@ class Validations
     }
   }
   
+  public static function catIfAllSuccess <F,S>(x:Array<VD<F,S>>):VD<F, Array<S>>
+  {
+    var res = [];
+    for (i in x) {
+      switch (i) {
+        case Success(v): res.push(v);
+        case Failure(f): return Failure(f);
+      }
+    }
+    return Success(res);
+  }
+
   public static function either<F,S>(v:VD<F,S>):Either<F,S> return switch (v) 
   {
     case Failure(f): Left(f);
@@ -64,7 +92,7 @@ class Validations
     }
     case Failure(f1): switch (a2) 
     {
-      case Success(s): Failure(f1);
+      case Success(_): Failure(f1);
       case Failure(f2): Failure(appendFailure(f1, f2));
     }
   }
@@ -244,7 +272,7 @@ class Validations
     case Success(s): Success(s);
   }
   
-  public static inline function fail <A,B>(v:VD<A,B>):FailProjection<A,B> return cast v
+  public static inline function fail <A,B>(v:VD<A,B>):FailProjection<A,B> return cast v;
   
   static function zipVal2 <F,S1,S2>(s1:S1, v2:VD<F,S2>):VD<F,Tup2<S1,S2>> return switch v2
   {
@@ -298,13 +326,13 @@ class Validations
 }
 
 
-using scuts.core.Validations;
+
 
 private typedef FP<F,S> = FailProjection<F,S>;
 
 class FailProjectionExt 
 {
-  public static inline function success <F,S>(v:FP<F,S>):VD<F,S> return cast v
+  public static inline function success <F,S>(v:FP<F,S>):VD<F,S> return cast v;
   
   public static inline function map <F,S,FF> (v:FP<F,S> , f:F->FF):FP<FF,S> 
   {

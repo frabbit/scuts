@@ -1,13 +1,16 @@
 package scuts.core;
 
+import org.hamcrest.core.IsEqual;
+import org.hamcrest.MatchersBase;
+
 using scuts.core.Functions;
 using scuts.core.Promises;
-class PromisesTest 
+class PromisesTest extends MatchersBase
 {
 
-  public function new () { }
+
  
-  
+  @Test
   public function testApply () {
     //> return f `ap` x1 `ap` ... `ap` xn is equivalent to > liftMn f x1 x2 ... xn 
     
@@ -29,7 +32,7 @@ class PromisesTest
         r = x;
       });
       
-      utest.Assert.same(6, r);
+      assertThat(r, equalTo(6));
     }
     {
       function f (a:Int, b:Int, c:Int, d:Int, e:Int, f:Int):Int {
@@ -42,8 +45,7 @@ class PromisesTest
       result.onComplete(function (x) {
         r = x;
       });
-      
-      utest.Assert.same(12, r);
+      assertThat(r, equalTo(12));
     }
     
   }

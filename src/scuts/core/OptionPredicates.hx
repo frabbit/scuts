@@ -1,8 +1,8 @@
 package scuts.core;
-import scuts.core.Option;
+
 import scuts.core.Tup2;
 import scuts.core.Unit;
-import scuts.core.Either;
+import scuts.core.Eithers.Either;
 
 using scuts.core.Options;
 

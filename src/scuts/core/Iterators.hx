@@ -1,7 +1,7 @@
 package scuts.core;
 
 import scuts.core.Ordering;
-import scuts.core.Option;
+import scuts.core.Options;
 
 import scuts.core.Functions;
 using scuts.core.Functions;
@@ -101,7 +101,7 @@ class Iterators
     return cast doFilter(it, filter, res);
   }
   
-  static function doFilter < A > (it:Iterator<A>, filter:A->Bool, cont: { function push (a:A):Dynamic; } ) {
+  static function doFilter < A,X:{ function push (a:A):Void; } > (it:Iterator<A>, filter:A->Bool, cont: X ):X {
     for (e in it) 
     {
       if (filter(e)) cont.push(e);
@@ -113,7 +113,7 @@ class Iterators
   {
     var res = new List();
     // TODO cast can be solved with type parameter constraints
-    return cast doFilter(it, filter, res); 
+    return doFilter(it, filter, res); 
   }
   public static function findIndex<T>(iter:Iterator<T>, f:T->Bool):Option<Int>
   {

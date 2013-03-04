@@ -1,9 +1,12 @@
-package scuts.tools;
+package scuts.core.tools;
+
 import haxe.macro.Compiler;
 import haxe.macro.Context;
-import neko.FileSystem;
-import neko.io.File;
+import sys.FileSystem;
+import sys.io.File;
+
 using scuts.core.Strings;
+//using StringTools;
 
 class ImportAllBuilder
 {
@@ -62,6 +65,7 @@ class ImportAllBuilder
     
     var output = File.write(f +  target + ".hx", false);
     output.writeString(buf.toString());
+	  output.close();
   }
   
 }

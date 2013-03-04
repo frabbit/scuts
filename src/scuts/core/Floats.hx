@@ -15,16 +15,16 @@ class Floats
         || (diff <= 0.0 && diff > -EPSILON);
   }
   
-  public static inline function max(a:Float, b:Float) return a > b ? a : b
+  public static inline function max(a:Float, b:Float) return a > b ? a : b;
   
-  public static inline function min(a:Float, b:Float) return a < b ? a : b
+  public static inline function min(a:Float, b:Float) return a < b ? a : b;
   
-  public static inline function round(v:Float) return Math.round(v)
+  public static inline function round(v:Float) return Math.round(v);
   
-  public static inline function ceil(v:Float) return Math.ceil(v)
+  public static inline function ceil(v:Float) return Math.ceil(v);
   
-  public static inline function floor(v:Float) return Math.floor(v)
+  public static inline function floor(v:Float) return Math.floor(v);
   
-  public static inline function abs(v:Float) return Math.abs(v)
+  public static inline function abs(v:Float) return Math.abs(v);
   
 }

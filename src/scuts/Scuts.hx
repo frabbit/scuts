@@ -1,7 +1,7 @@
 package scuts;
 
 import haxe.PosInfos;
-import haxe.Stack;
+import haxe.CallStack;
 import scuts.core.PosInfosTools;
 
 using scuts.core.Arrays;
@@ -14,12 +14,13 @@ using scuts.core.Dynamics;
 using scuts.core.PosInfosTools;
 #end
 
+
 class Scuts 
 {
   
-  public static function id <T> (a:T):T return a
+  public static function id <T> (a:T):T return a;
   
-  public static function posInfos <T>(?p:PosInfos):PosInfos return p
+  public static function posInfos <T>(?p:PosInfos):PosInfos return p;
   
   public static function abstractMethod <T>():T 
   {
@@ -72,10 +73,10 @@ class Scuts
     var p1 = p.nullGetOrElseConst(Context.currentPos());
     #if scutsDebug
     var stack = 
-      Stack.toString(Stack.callStack())
+      CallStack.toString(CallStack.callStack())
       .trim().split("\n")
-      .reverseCopy()
-      .filter(function (x) return x.indexOf("scuts/Scuts.hx") == -1 && x.indexOf("haxe/Stack.hx") == -1)
+      .reversed()
+      .filter(function (x) return x.indexOf("scuts/Scuts.hx") == -1 && x.indexOf("haxe/CallStack.hx") == -1)
       .join("\n");
     
     throw new Error

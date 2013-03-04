@@ -4,6 +4,18 @@ import scuts.core.Io;
 
 using scuts.core.Functions;
 
+
+class Io<T>
+{
+  public var unsafePerformIo(default, null) : Void->T;
+  
+  public function new (unsafe : Void->T) 
+  {
+    this.unsafePerformIo = unsafe;
+  }
+}
+
+
 class Ios 
 {
   public static function map<A,B>(a:Io<A>, f:A->B):Io<B>

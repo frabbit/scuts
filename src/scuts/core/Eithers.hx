@@ -1,12 +1,36 @@
 package scuts.core;
 
-import scuts.core.Option;
-import scuts.core.Either;
+import scuts.core.Options;
+
 import scuts.Scuts;
-import scuts.core.Validation;
+import scuts.core.Validations;
 
 
 using scuts.core.Eithers;
+
+enum Either < L, R > {
+  Left(l:L);
+  Right(r:R);
+}
+
+// newtype wrapper for left projections
+abstract LeftProjection<L,R>(Either<L,R>) to Either<L,R> {
+
+  public function new (e:Either<L,R>) {
+    this = e;
+  }
+
+}
+
+// newtype wrapper for right projections
+abstract RightProjection<L,R>(Either<L,R>) to Either<L,R> {
+
+  public function new (e:Either<L,R>) {
+    this = e;
+  }
+
+}
+
 
 private typedef RP<L,R> = RightProjection<L,R>;
 private typedef LP<L,R> = LeftProjection<L,R>;
@@ -28,12 +52,12 @@ class EitherConvert
   /**
    * Converts v into a left Either.
    */
-  public static inline function toLeft < L,R > (l:L):Either<L,R> return Left(l)
+  public static inline function toLeft < L,R > (l:L):Either<L,R> return Left(l);
   
   /**
    * Converts v into a right Either.
    */
-  public static inline function toRight < L,R > (r:R):Either<L,R> return Right(r)
+  public static inline function toRight < L,R > (r:R):Either<L,R> return Right(r);
 }
 
 class Eithers
@@ -54,6 +78,10 @@ class Eithers
   
   public static function eq <A,B>(a:Either<A,B>, b:Either<A,B>, eqA:A->A->Bool, eqB:B->B->Bool):Bool return switch (a) 
   {
+
+
+
+
     case Left(l1): switch (b) 
     { 
       case Left(l2): eqA(l1, l2); 
@@ -75,23 +103,16 @@ class Eithers
     }
     case Right(r1): switch (e) 
     {
-      case Left(l): Right(r1);   
+      case Left(_): Right(r1);   
       case Right(r2): Right(r2); 
     }
   }
   
-  public static function applyRight <L,R,RR>(e:Either<L,R>, f:Either<L, R->RR>):Either<L, RR> return switch (f) 
+  public static function applyRight <L,R,RR>(e:Either<L,R>, f:Either<L, R->RR>):Either<L, RR> return switch [f,e]
   {
-    case Left(l1): switch (e) 
-    {
-      case Left(l2): Left(l2); 
-      case Right(r): Left(l1);
-    }
-    case Right(r1): switch (e) 
-    {
-      case Left(l): Left(l); 
-      case Right(r2): Right(r1(r2));
-    }
+    case [Left(_),  Left(l)] | [Left(l),  _] | [_, Left(l)  ]: Left(l);
+    case [Right(r1), Right(r2)]: Right(r1(r2));
+    
   }
   
   public static function bool<L,R>(e:Either<L,R>):Bool return switch (e) 
@@ -313,17 +334,17 @@ class Eithers
     case Right(r): Right(right(r));
   }
   
-  public static inline function rightProjection <L,R>(e:Either<L,R>):RightProjection<L,R> return e
-  public static inline function leftProjection <L,R>(e:Either<L,R>):LeftProjection<L,R> return e
+  public static inline function rightProjection <L,R>(e:Either<L,R>):RightProjection<L,R> return new RightProjection(e);
+  public static inline function leftProjection <L,R>(e:Either<L,R>):LeftProjection<L,R> return new LeftProjection(e);
 }
 
 class LeftProjections
 {
-  static inline function either<L,R>(e:LP<L,R>):Either<L,R> return cast e
+  static inline function either<L,R>(e:LP<L,R>):Either<L,R> return e;
   
-  static inline function eitherF<L,R,LL>(e:L->LP<LL,R>):L->Either<LL,R> return cast e
+  static inline function eitherF<L,R,LL>(e:L->LP<LL,R>):L->Either<LL,R> return e;
   
-  public static inline function rightProjection<L,R>(e:LP<L,R>):RP<L,R> return either(e).rightProjection()
+  public static inline function rightProjection<L,R>(e:LP<L,R>):RP<L,R> return either(e).rightProjection();
   
   public static inline function flatMap < L,R,LL > (e:LP<L,R>, f:L->LP<LL, R>):LP<LL,R>
   {
@@ -344,11 +365,11 @@ class LeftProjections
 class RightProjections 
 {
   
-  static inline function either<L,R>(e:RP<L,R>):Either<L,R> return cast e
+  static inline function either<L,R>(e:RP<L,R>):Either<L,R> return e;
   
-  static inline function eitherF<L,R,RR>(e:R->RP<L,RR>):R->Either<L,RR> return cast e
+  static inline function eitherF<L,R,RR>(e:R->RP<L,RR>):R->Either<L,RR> return e;
   
-  public static inline function leftProjection<L,R>(e:RP<L,R>):LP<L,R> return either(e).leftProjection()
+  public static inline function leftProjection<L,R>(e:RP<L,R>):LP<L,R> return either(e).leftProjection();
   
   public static inline function flatMap < L,R,RR > (e:RP<L,R>, f:R->RP<L, RR>):RP<L,RR>
   {

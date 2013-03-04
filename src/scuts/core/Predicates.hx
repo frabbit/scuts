@@ -1,18 +1,23 @@
 package scuts.core;
-import scuts.core.Predicate0;
-import scuts.core.Predicate1;
-import scuts.core.Predicate2;
+
+
 import scuts.core.Thunk;
 
+typedef Predicate0 = Void->Bool;
+typedef Predicate1<A> = A->Bool;
+typedef Predicate2<A,B> = A->B->Bool;
+typedef Predicate3<A,B,C> = A->B->C->Bool;
+typedef Predicate4<A,B,C,D> = A->B->C->D->Bool;
+
 class Predicates {
-  @:noUsing public static function constTrue0 () return true
-  @:noUsing public static function constFalse0 () return false
+  @:noUsing public static function constTrue0 () return true;
+  @:noUsing public static function constFalse0 () return false;
   
-  @:noUsing public static function constTrue1  <A>(t:A) return true
-  @:noUsing public static function constFalse1 <A>(t:A) return false
+  @:noUsing public static function constTrue1  <A>(t:A) return true;
+  @:noUsing public static function constFalse1 <A>(t:A) return false;
   
-  @:noUsing public static function constTrue2  <A,B>(a:A, b:B) return true
-  @:noUsing public static function constFalse2 <A,B>(a:A, b:B) return false
+  @:noUsing public static function constTrue2  <A,B>(a:A, b:B) return true;
+  @:noUsing public static function constFalse2 <A,B>(a:A, b:B) return false;
 }
 
 class Predicates0 

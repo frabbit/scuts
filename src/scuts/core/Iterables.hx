@@ -1,11 +1,10 @@
 package scuts.core;
 
 import scuts.core.Ordering;
-import scuts.core.Option;
+import scuts.core.Options;
 import scuts.Scuts;
 
-import scuts.core.Tup2;
-import scuts.core.Tup3;
+import scuts.core.Tuples;
 
 class Iterables 
 {

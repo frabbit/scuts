@@ -1,9 +1,11 @@
 package scuts.core;
 
-import scuts.core.Option;
+
 import scuts.core.Ordering;
-import scuts.core.Tup2;
+
 import scuts.Scuts;
+
+import scuts.core.Tuples;
 
 using scuts.core.Functions;
 using scuts.core.Ints;
@@ -39,7 +41,8 @@ class Arrays
    * Returns an Array that contains all elements from a which are not elements of b.
    * If a contains duplicates, the resulting Array contains duplicates.
    */
-  public static function difference <T>(a:Array<T>, b:Array<T>, eq:T->T->Bool) {
+  public static function difference <T>(a:Array<T>, b:Array<T>, eq:T->T->Bool) 
+  {
     var res = [];
     for (e in a) {
       if (!any(b, function (x) return eq(x, e))) res.push(e);
@@ -108,8 +111,8 @@ class Arrays
   /**
    * Converts an Array into an IntHash. The hash-key is generated with the help of the key function.
    */
-  public static function toIntHash <T>(arr:Array<T>, key:T->Int):IntHash<T> {
-    var h = new IntHash();
+  public static function toIntHash <T>(arr:Array<T>, key:T->Int):Map<Int, T> {
+    var h = new Map();
     for (a in arr) {
       h.set(key(a), a);
     }
@@ -342,7 +345,7 @@ class Arrays
     return if (arr.length == 0) None else Some(arr[arr.length - 1]);
   } 
   
-  public static inline function map < A, B > (arr:Array<A>, f:A->B):Array<B> 
+  public static function map < A, B > (arr:Array<A>, f:A->B):Array<B> 
   {
     var r = [];
     for (i in arr) 
@@ -392,6 +395,16 @@ class Arrays
     for (i in arr) 
     {
       if (e(i)) return Some(i);
+    }
+    return None;
+  }
+
+  public static function mapThenSome <T,S>(arr:Array<T>, map:T->S, e:S->Bool):Option<S> 
+  {
+    for (i in arr) 
+    {
+      var x = map(i);
+      if (e(x)) return Some(x);
     }
     return None;
   }

@@ -2,11 +2,10 @@ package scuts.core;
 
 
 import haxe.PosInfos;
-import scuts.core.Option;
-import scuts.core.Either;
+
+using scuts.core.Eithers;
 import scuts.core.Thunk;
-import scuts.core.Tup2;
-import scuts.core.Tup3;
+import scuts.core.Tuples;
 using scuts.core.Options;
 
 class Function0s 
@@ -50,10 +49,7 @@ class Function0s
 class Function1Opts 
 {
 
-  public static function _0_ < A, B, C,D > (f:?A->C):Void->C
-  {
-    return function () return f();
-  }
+  
 }
 
 
@@ -113,13 +109,7 @@ class Function1s
     return function (x) f(x);
   }
   
-  /**
-   * Partially applies the function f with the first parameter and returns a thunk.
-   */
-  public static function _1 < A, B > (f:A->B, a:A):Thunk<B>
-  {
-    return function () return f(a);
-  }
+  
 }
 
 class Function2OptsPosInfos 
@@ -128,10 +118,7 @@ class Function2OptsPosInfos
   {
     return function (a:A) return f1(f2(a));
   }
-  public static function _0_ < A, B, C,D > (f:A->?PosInfos->C):A->C
-  {
-    return function (a:A) return f(a);
-  }
+ 
   
 }
 
@@ -142,10 +129,7 @@ class Function2Opts
     return function (a:A) return f1(f2(a));
   }
   
-  public static function _0_ < A, B, C,D > (f:A->?B->C):A->C
-  {
-    return function (a:A) return f(a);
-  }
+ 
   
   
 }
@@ -177,29 +161,7 @@ class Function2s
     return function (a:A, b:B) return f(a)(b);
   }
   
-  /**
-   * Partially applies the function f with the first parameter.
-   */
-  public static function _1 < A, B, C > (f:A->B->C, a:A):B->C
-  {
-    return function (b:B) return f(a, b);
-  }
   
-  /**
-   * Partially applies the function f with the second parameter.
-   */
-  public static function _2 < A, B, C > (f:A->B->C, b:B):A->C
-  {
-    return function (a:A) return f(a, b);
-  }
-  
-  /**
-   * Partially applies the function f with the first and second parameter and returns a thunk.
-   */
-  public static function _12 < A, B, C > (f:A->B->C, a:A, b:B):Thunk<C>
-  {
-    return function () return f(a, b);
-  }
   
   
 
@@ -238,66 +200,13 @@ class Function2s
   }
 }
 
-class Function3Opts2PosInfos 
-{
-  
-  public static function _0_ < A, B,C,D > (f:A->?B->?PosInfos->D):A->D
-  {
-    return function (a:A) return f(a);
-  }
-  
-  public static function _1_ < A, B,C,D > (f:A->?B->?PosInfos->D, a:A):B->D
-  {
-    return function (b:B) return f(a,b);
-  }
-  
-  
-  
-}
 
 
-class Function3Opts1PosInfos 
-{
-  
-  public static function _0_ < A, B,C,D > (f:A->B->?PosInfos->D):A->B->D
-  {
-    return function (a:A, b:B) return f(a,b);
-  }
-  
-  public static function _1_ < A, B,C,D > (f:A->B->?PosInfos->D, a:A):B->D
-  {
-    return function (b:B) return f(a,b);
-  }
-  
-  public static function _2_ < A, B,C,D > (f:A->B->?PosInfos->D, b:B):A->D
-  {
-    return function (a:A) return f(a,b);
-  }
-  public static function _12_ < A, B,C,D > (f:A->B->?PosInfos->D, a:A, b:B):Void->D
-  {
-    return function () return f(a,b);
-  }
-  
-}
 
-class Function3Opts3
-{
-  public static function _0_ < A, B, C,D > (f:?A->?B->?C->D):Void->D
-  {
-    return function () return f();
-  }
-}
+
 class Function3Opts2
 {
-  public static function _0_ < A, B, C,D > (f:A->?B->?C->D):A->D
-  {
-    return function (a:A) return f(a);
-  }
-  
-  public static function _1_ < A, B, C,D > (f:A->?B->?C->D, a:A):Void->D
-  {
-    return function () return f(a);
-  }
+ 
   
   public static function compose < A, B, C,D,X > (f1:A->?B->?C->D, f2:X->A):X->D
   {
@@ -308,24 +217,7 @@ class Function3Opts2
 
 class Function3Opts1
 {
-  public static function _0_ < A, B,C,D > (f:A->B->?C->D):A->B->D
-  {
-    return function (a:A, b:B) return f(a,b);
-  }
   
-  public static function _1_ < A, B,C,D > (f:A->B->?C->D, a:A):B->D
-  {
-    return function (b:B) return f(a,b);
-  }
-  
-  public static function _2_ < A, B,C,D > (f:A->B->?C->D, b:B):A->D
-  {
-    return function (a:A) return f(a,b);
-  }
-  public static function _12_ < A, B,C,D > (f:A->B->?C->D, a:A, b:B):Void->D
-  {
-    return function () return f(a,b);
-  }
   
 }
 
@@ -380,83 +272,14 @@ class Function3s
     return function (a,b,c) f(a,b,c);
   }
   
-  /**
-   * Partially applies the function f with the first parameter.
-   */
+ 
   
-  public static function _1 < A, B, C, D > (f:A->B->C->D, a:A):B->C->D
-  {
-    return function (b,c) return f(a,b,c);
-  }
-  
-  /**
-   * Partially applies the function f with the first and third parameter.
-   */
-    
-  public static function _13 < A, B, C, D > (f:A->B->C->D, a:A, c:C):B->D
-  {
-    return function (b) return f(a,b,c);
-  }
-  
-  /**
-   * Partially applies the function f with the first and second parameter.
-   */
-    
-  public static function _12 < A, B, C, D > (f:A->B->C->D, a:A, b:B):C->D
-  {
-    return function (c) return f(a,b,c);
-  }
-  
-  /**
-   * Partially applies the function f with the second and third parameter.
-   */
-    
-  public static function _23 < A, B, C, D > (f:A->B->C->D, b:B, c:C):A->D
-  {
-    return function (a) return f(a,b,c);
-  }
-  
-  /**
-   * Partially applies the function f with the second parameter.
-   */
-    
-  public static function _2 < A, B, C, D > (f:A->B->C->D, b:B):A->C->D
-  {
-    return function (a,c) return f(a,b,c);
-  }
-  
-  /**
-   * Partially applies the function f with the second parameter.
-   */
-    
-  public static function _3 < A, B, C, D > (f:A->B->C->D, c:C):A->B->D
-  {
-    return function (a,b) return f(a,b,c);
-  }
-  
-  
-  
-  /**
-   * Partially applies the function f with the all parameter and returns a thunk.
-   */
-  
-  
-  public static function _123 < A, B, C,D > (f:A->B->C->D, a:A, b:B, c:C):Thunk<D>
-  {
-    return function () return f(a,b,c);
-  }
 
 }
 
 class Function4Opt1s {
   
-  /**
-   * Partially applies the function f with the first, second and third parameter.
-   */
-  public static function _123_ < A, B, C, D, E > (f:A->B->C->?D->E, a:A, b:B, c:C):Void->E
-  {
-    return function () return f(a, b, c);
-  }
+  
 }
 
 class Function4s 
@@ -498,111 +321,11 @@ class Function4s
     return function (a,b,c,d) f(a,b,c,d);
   }
   
-  /**
-   * Partially applies the function f with the first parameter.
-   */
-  public static function _1 < A, B, C, D, E > (f:A->B->C->D->E, a:A):B->C->D->E
-  {
-    return function (b:B, c:C, d:D) return f(a, b, c, d);
-  }
   
-  /**
-   * Partially applies the function f with the second parameter.
-   */
-  public static function _2 < A, B, C, D, E > (f:A->B->C->D->E, b:B):A->C->D->E
-  {
-    return function (a:A, c:C, d:D) return f(a, b, c, d);
-  }
-  
-  /**
-   * Partially applies the function f with the second parameter.
-   */
-  public static function _3 < A, B, C, D, E > (f:A->B->C->D->E, c:C):A->B->D->E
-  {
-    return function (a:A, b:B, d:D) return f(a, b, c, d);
-  }
-  
-  /**
-   * Partially applies the function f with the second parameter.
-   */
-  public static function _4 < A, B, C, D, E > (f:A->B->C->D->E, d:D):A->B->C->E
-  {
-    return function (a:A, b:B, c:C) return f(a, b, c, d);
-  }
-  
-   /**
-   * Partially applies the function f with the first and second parameter.
-   */
-  public static function _12 < A, B, C, D, E > (f:A->B->C->D->E, a:A, b:B):C->D->E
-  {
-    return function (c:C, d:D) return f(a, b, c, d);
-  }
-  
-  /**
-   * Partially applies the function f with the first, second and third parameter.
-   */
-  public static function _123 < A, B, C, D, E > (f:A->B->C->D->E, a:A, b:B, c:C):D->E
-  {
-    return function (d:D) return f(a, b, c, d);
-  }
-  
-  /**
-   * Partially applies the function f with the second parameter.
-   */
-  public static function _124 < A, B, C, D, E > (f:A->B->C->D->E, a:A, b:B, d:D):C->E
-  {
-    return function (c:C) return f(a, b, c, d);
-  }
-  
-  /**
-   * Partially applies the function f with the second parameter.
-   */
-  public static function _234 < A, B, C, D, E > (f:A->B->C->D->E, b:B, c:C, d:D):A->E
-  {
-    return function (a:A) return f(a, b, c, d);
-  }
-  
-  /**
-   * Partially applies the function f with the second parameter.
-   */
-  public static function _34 < A, B, C, D, E > (f:A->B->C->D->E, c:C, d:D):A->B->E
-  {
-    return function (a:A, b:B) return f(a, b, c, d);
-  }
-  
-  /**
-   * Partially applies the function f with the all parameter and returns a thunk.
-   */
-  public static function _1234 < A, B, C,D,E > (f:A->B->C->D->E, a:A, b:B, c:C, d:D):Thunk<E>
-  {
-    return function () return f(a, b, c, d);
-  }
   
 }
 
-class Function5Opt2s 
-{
-  
-  /**
-   * Partially applies the function f with the first to third parameter and applying the default arguments.
-   */
-  public static function _123_ < A, B, C, D, E, F > (f:A->B->C->?D->?E->F, a:A, b:B, c:C):Void->F
-  {
-    return function () return f(a, b, c);
-  }
-}
 
-class Function5Opt1s 
-{
-  
-  /**
-   * Partially applies the function f with the first to third parameter and applying the default arguments.
-   */
-  public static function _123_ < A, B, C, D, E, F > (f:A->B->C->D->?E->F, a:A, b:B, c:C):D->F
-  {
-    return function (d:D) return f(a, b, c, d);
-  }
-}
 
 class Function5s 
 {
@@ -634,85 +357,7 @@ class Function5s
     return function (b, a, c, d, e) return f(a, b, c, d, e);
   }
   
-  /**
-   * Partially applies the function f with the first parameter.
-   */
-  public static function _1 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A):B->C->D->E->F
-  {
-    return function (b:B, c:C, d:D, e:E) return f(a, b, c, d, e);
-  }
   
-  /**
-   * Partially applies the function f with the second parameter.
-   */
-  public static function _2 < A, B, C, D, E, F > (f:A->B->C->D->E->F, b:B):A->C->D->E->F
-  {
-    return function (a:A, c:C, d:D, e:E) return f(a, b, c, d, e);
-  }
-  
-  /**
-   * Partially applies the function f with the third parameter.
-   */
-  public static function _3 < A, B, C, D, E, F > (f:A->B->C->D->E->F, c:C):A->B->D->E->F
-  {
-    return function (a:A, b:B, d:D, e:E) return f(a, b, c, d, e);
-  }
-  
-  /**
-   * Partially applies the function f with the fourth parameter.
-   */
-  public static function _4 < A, B, C, D, E, F > (f:A->B->C->D->E->F, d:D):A->B->C->E->F
-  {
-    return function (a:A, b:B, c:C, e:E) return f(a, b, c, d, e);
-  }
-  
-  /**
-   * Partially applies the function f with the fifth parameter.
-   */
-  public static function _5 < A, B, C, D, E, F > (f:A->B->C->D->E->F, e:E):A->B->C->D->F
-  {
-    return function (a:A, b:B, c:C, d:D) return f(a, b, c, d, e);
-  }
-  
-  /**
-   * Partially applies the function f with the first to forth parameters.
-   */
-  public static function _1234 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A, b:B, c:C, d:D):E->F
-  {
-    return function (e:E) return f(a, b, c, d, e);
-  }
-  
-  /**
-   * Partially applies the function f with the first to third parameter.
-   */
-  public static function _123 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A, b:B, c:C):D->E->F
-  {
-    return function (d:D, e:E) return f(a, b, c, d, e);
-  }
-  
-  /**
-   * Partially applies the function f with the first and second parameter.
-   */
-  public static function _12 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A, b:B):C->D->E->F
-  {
-    return function (c:C, d:D, e:E) return f(a, b, c, d, e);
-  }
-  
-  /**
-   * Partially applies the function f with the second to fifth parameters.
-   */
-  public static function _2345 < A, B, C, D, E, F > (f:A->B->C->D->E->F, b:B, c:C, d:D, e:E):A->F
-  {
-    return function (a:A) return f(a, b, c, d, e);
-  }
-  
-  /**
-   * Partially applies the function f with all parameters and returns a thunk.
-   */
-  public static function _12345 < A, B, C, D, E, F > (f:A->B->C->D->E->F, a:A, b:B, c:C, d:D, e:E):Thunk<F>
-  {
-    return function () return f(a, b, c, d, e);
-  }
 }
 
 class Function6s 

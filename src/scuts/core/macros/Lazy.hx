@@ -1,15 +1,15 @@
 package scuts.core.macros;
 
 #if (macro)
-import haxe.macro.Expr.ExprRequire;
+import haxe.macro.Expr.ExprOf;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-import scuts.core.Option;
+import scuts.core.Options;
 #end
 class Lazy 
 {
 
-  @:macro public static function expr(ex:Expr):Expr 
+  macro public static function expr(ex:Expr):Expr 
   {
     return mkExpr(ex);
   }
@@ -38,10 +38,10 @@ class Lazy
               var m = cget.module;
               var modStdTypes = m == "StdTypes";
               
-              switch (true) {
-                case n == "Int"    && modStdTypes: EConst(CInt("0"));
-                case n == "Float"  && modStdTypes: EConst(CFloat("0.0"));
-                case n == "String" && modStdTypes: EConst(CString(""));
+              switch (n) {
+                case "Int"    if (modStdTypes): EConst(CInt("0"));
+                case "Float"  if (modStdTypes): EConst(CFloat("0.0"));
+                case "String" if (modStdTypes): EConst(CString(""));
                 default:                           constNull;
               }
             case TEnum(et, _):

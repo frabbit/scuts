@@ -1,17 +1,16 @@
 package scuts.core;
 
 import haxe.PosInfos;
-import scuts.core.Option;
-import scuts.core.Either;
+import scuts.core.Eithers;
 import scuts.core.Ordering;
-import scuts.core.Tup2;
+import scuts.core.Tuples;
 import scuts.Scuts;
 
 using scuts.core.Options;
 
 using scuts.core.Predicates;
 
-
+typedef Option<T> = haxe.ds.Option<T>;
 
 class Options {
 
@@ -199,6 +198,8 @@ class Options {
       case None:    "None";
     }
   }
+
+  
   
 }
 

@@ -1,18 +1,238 @@
 package scuts.core;
 import scuts.core.debug.Assert;
-import scuts.core.Promise;
-import scuts.core.Tup2;
-import scuts.core.Tup3;
-import scuts.core.Tup4;
+
+import scuts.core.Tuples;
+
 import scuts.Scuts;
 
-import scuts.core.Option;
 
 using scuts.core.Options;
 using scuts.core.Promises;
 using scuts.core.Predicates;
 
 using scuts.core.Functions;
+
+
+
+#if scuts_multithreaded
+typedef Mutex = 
+  #if cpp
+  cpp.vm.Mutex 
+  #elseif neko 
+  neko.vm.Mutex 
+  #else 
+  #error "not implemented" 
+  #end
+
+#end
+
+private typedef Percent = Float;
+
+class Promise<T> 
+{
+  
+  #if scuts_multithreaded
+  var mutex:Mutex;
+  #end
+  
+  inline function lock () 
+  {
+    #if scuts_multithreaded
+    mutex.acquire(); 
+    #end
+  }
+  
+  inline function unlock () 
+  {
+    #if scuts_multithreaded 
+    mutex.release(); 
+    #end
+  }
+  
+  inline function initMutex () 
+  {
+    #if scuts_multithreaded
+    mutex = new Mutex();
+    #end
+    
+  }
+  
+  inline function isCompleteDoubleCheck() 
+  {
+    #if scuts_multithreaded
+    return isCompleteDoubleCheck();
+    #else
+    return false;
+    #end
+  }
+  
+  inline function isDoneDoubleCheck() 
+  {
+    #if scuts_multithreaded
+    return isDone();
+    #else
+    return false;
+    #end
+  }
+  
+  inline function isCancelledDoubleCheck() 
+  {
+    #if scuts_multithreaded
+    return isCancelled();
+    #else
+    return false;
+    #end
+  }
+  
+  
+  var _completeListeners:Array<T->Void>;
+  var _cancelListeners:Array<Void->Void>;
+  
+  var _progressListeners:Array<Percent->Void>;
+  
+  var _value:Option<T>;
+  var _complete:Bool;
+  var _cancelled:Bool;
+
+  public inline function isComplete () return _complete;
+  
+  public inline function isCancelled () return _cancelled;
+  
+  public inline function isDone () return _complete || _cancelled;
+  
+  public function valueOption():Option<T> return _value;
+  
+  public function extract ():T 
+  {
+    return _value.getOrError("error result is not available");
+  }
+  
+  public function new () 
+  {
+    initMutex();
+    
+    _complete = false;
+    _cancelled = false;
+    _value = None;
+    
+    clearListeners();
+  }
+  
+  /*
+  public function await ():T {
+    
+  }
+  */
+
+  public function onProgress (f:Percent->Void):Promise<T> 
+  {
+    if (isComplete()) f(1.0)
+    else if (!isCancelled()) 
+    {
+      lock();
+      if (!isDoneDoubleCheck()) _progressListeners.push(f)
+      else onProgress(f);
+      unlock();
+    } 
+    return this;
+  }
+  
+  public function progress (percent:Percent):Promise<T>
+  {
+    Assert.isTrue(percent >= 0.0 && percent <= 1.0, null);
+    for (l in _progressListeners) l(percent);
+    return this;
+  }
+
+  public function complete (val:T):Promise<T> 
+  {
+    return if (isDone()) this
+    else 
+    {
+      lock();
+      if (!isDoneDoubleCheck()) 
+      {
+        _value = Some(val);
+        _complete = true;
+        
+        progress(1.0);
+        
+        for (c in _completeListeners) c(val);
+        
+        clearListeners();
+      }
+      unlock();
+      this;
+    }
+  }
+  
+  function clearListeners () 
+  {
+    _completeListeners = [];
+    _cancelListeners = [];
+    _progressListeners = [];
+  }
+  
+  public function cancel ():Bool 
+  {
+    return if (!isComplete() && !isCancelled()) 
+    {
+      lock(); 
+      if (!isDoneDoubleCheck()) 
+      {
+        _cancelled = true;
+        
+        for (c in _cancelListeners) c();
+
+        clearListeners();
+      }
+      unlock();
+      isCancelled();
+    } 
+    else false;
+  }
+  
+  public function onComplete (f:T->Void) 
+  {
+    if (isComplete()) 
+    {
+      f(extract());
+    } 
+    else if (!isCancelled()) 
+    {
+      lock();
+      if (!isDoneDoubleCheck()) _completeListeners.push(f);
+      else onComplete(f);
+      unlock();
+    } 
+    
+    return this;
+  }
+  
+  public function onCancelled (f:Void->Void) 
+  {
+    if (!isComplete()) 
+    {
+      if (isCancelled()) f();
+      else 
+      {
+        lock();
+        if (!isDoneDoubleCheck()) _cancelListeners.push(f);
+        else onCancelled(f);
+        unlock();
+      }
+    }
+    return this;
+  }
+
+  public function toString () {
+    return 
+      if (isComplete())       "Promise(" + _value + ")"
+      else if (isCancelled()) "Cancelled Promise";
+      else                    "Unfullfilled Promise";
+  }
+
+}
 
 class Promises
 {
@@ -127,7 +347,11 @@ class Promises
   {
     var res = new Promise();
 
-    p.onComplete (f.next(res.complete))
+    trace(f);
+    trace(res.complete);
+    var x = f.next(res.complete);
+    trace(p);
+    p.onComplete (x)
      .onCancelled(res.cancel)
      .onProgress (res.progress);
       

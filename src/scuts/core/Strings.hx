@@ -1,7 +1,7 @@
 package scuts.core;
 
-import scuts.core.Option;
-import scuts.Scuts;
+import scuts.core.Options;
+//import scuts.Scuts;
 
 class Strings
 {
@@ -19,27 +19,27 @@ class Strings
   /**
    * Trims surrounding whitespace of a string.
    */
-  public static inline function trim (s:String) return StringTools.trim(s)
+  public static inline function trim (s:String) return StringTools.trim(s);
   
   /**
    * Trims surrounding whitespace from the left side of a string.
    */
-  public static inline function trimLeft (s:String) return StringTools.ltrim(s)
+  public static inline function trimLeft (s:String) return StringTools.ltrim(s);
   
   /**
    * Trims surrounding whitespace from the right side of a string.
    */
-  public static inline function trimRight (s:String) return StringTools.rtrim(s)
+  public static inline function trimRight (s:String) return StringTools.rtrim(s);
   
   /**
    * Pads the string c from the left to string s while the length of s is smaller than length.
    */
-  public static inline function padLeft (s:String, c:String, length:Int) return StringTools.lpad(s, c, length)
+  public static inline function padLeft (s:String, c:String, length:Int) return StringTools.lpad(s, c, length);
   
   /**
    * Pads the string c from the right to string s while the length of s is smaller than length.
    */
-  public static inline function padRight (s:String, c:String, length:Int) return StringTools.rpad(s, c, length)
+  public static inline function padRight (s:String, c:String, length:Int) return StringTools.rpad(s, c, length);
   
   /**
    * Adds the indent s to each line of s.

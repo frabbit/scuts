@@ -1,44 +1,62 @@
 package;
 
-//import scuts.mcore.CheckTest;
+import massive.munit.client.RichPrintClient;
+import massive.munit.client.HTTPClient;
+import massive.munit.client.SummaryReportClient;
+import massive.munit.TestRunner;
 
-//import scuts.mcore.TypeTest;
+import ImportAll;
 
-#if macro
-import neko.Lib;
-import neko.Sys;
-#else 
-import scuts.core.StringsTest;
-import scuts.core.PromisesTest;
-#end
+//import scuts.core.StringsTest;
+//import scuts.core.PromisesTest;
 
 
-
-import utest.Runner;
-import utest.ui.Report;
-
-/**
- * ...
- * @author $(DefaultUser)
- */
+import massive.munit.TestSuite;
 
 class AllTests 
 {
   
   public static function main() 
+  {
+    var suites = new Array();
+    suites.push(TestSuite);
+    var client = new RichPrintClient();
+    var httpClient = new HTTPClient(new SummaryReportClient());
+    
+    var runner = new TestRunner(client);
+    runner.addResultClient(httpClient);
+
+    runner.completionHandler = completionHandler;
+    runner.run(suites);
+  }
+
+  private static function completionHandler(successful:Bool):Void
+  {
+    try
     {
-      var runner = new Runner();
-      #if macro
-      
+      #if flash
+      flash.external.ExternalInterface.call("testResult", successful);
+      #elseif js
+      js.Lib.eval("testResult(" + successful + ");");
       #else
-      runner.addCase(new StringsTest());
-      runner.addCase(new PromisesTest());
+      Sys.exit(0);
       #end
-      
-      Report.create(runner);
-      #if macro
-      Lib.println("---------------------------------------------------------------------------------------------");
-      #end
-      runner.run();
     }
+    // if run from outside browser can get error which we can ignore
+    catch (e:Dynamic) {}
+  }
+}
+
+
+
+
+class TestSuite extends massive.munit.TestSuite
+{ 
+
+  public function new()
+  {
+    super();
+    add(scuts.core.PromisesTest);
+    add(scuts.core.StringsTest);
+  }
 }

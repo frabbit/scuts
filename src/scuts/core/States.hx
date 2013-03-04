@@ -1,8 +1,8 @@
 package scuts.core;
-import scuts.core.State;
-import scuts.core.Tup2;
 
+import scuts.core.Tuples;
 
+typedef State<ST,X> = ST->Tup2<ST, X>
 
 class States 
 {
