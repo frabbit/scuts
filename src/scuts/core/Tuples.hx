@@ -1,6 +1,22 @@
 
 package scuts.core;
 
+class Tuples {
+  public static function tup2 <A,B>(a:A, b:B):Tup2<A,B> {
+    return Tup2.create(a,b);
+  }
+
+  public static function tup3 <A,B,C>(_1:A, _2:B, _3:C) 
+  {
+    return Tup3.create(_1, _2, _3);
+  }
+
+  public static function tup4 <A,B,C,D>(_1:A, _2:B, _3:C, _4:D) 
+  {
+    return Tup4.create(_1, _2, _3, _4);
+  }
+}
+
 class Tup2<A,B> 
 {
   public var _1(default, null):A;
@@ -163,10 +179,4 @@ class Tup6<A,B,C,D,E,F>
                + s(_6) + ")";
   }
   
-}
-
-class Tuples {
-
-	
-
 }

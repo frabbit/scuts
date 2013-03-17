@@ -11,7 +11,7 @@ using scuts.core.Promises;
 using scuts.core.Predicates;
 
 using scuts.core.Functions;
-
+using scuts.core.Promises;
 
 
 #if scuts_multithreaded
@@ -28,6 +28,7 @@ typedef Mutex =
 
 private typedef Percent = Float;
 
+@:allow(scuts.core.Promises)
 class Promise<T> 
 {
   
@@ -94,18 +95,6 @@ class Promise<T>
   var _complete:Bool;
   var _cancelled:Bool;
 
-  public inline function isComplete () return _complete;
-  
-  public inline function isCancelled () return _cancelled;
-  
-  public inline function isDone () return _complete || _cancelled;
-  
-  public function valueOption():Option<T> return _value;
-  
-  public function extract ():T 
-  {
-    return _value.getOrError("error result is not available");
-  }
   
   public function new () 
   {
@@ -118,125 +107,139 @@ class Promise<T>
     clearListeners();
   }
   
-  /*
-  public function await ():T {
-    
-  }
-  */
-
-  public function onProgress (f:Percent->Void):Promise<T> 
-  {
-    if (isComplete()) f(1.0)
-    else if (!isCancelled()) 
-    {
-      lock();
-      if (!isDoneDoubleCheck()) _progressListeners.push(f)
-      else onProgress(f);
-      unlock();
-    } 
-    return this;
-  }
-  
-  public function progress (percent:Percent):Promise<T>
-  {
-    Assert.isTrue(percent >= 0.0 && percent <= 1.0, null);
-    for (l in _progressListeners) l(percent);
-    return this;
-  }
-
-  public function complete (val:T):Promise<T> 
-  {
-    return if (isDone()) this
-    else 
-    {
-      lock();
-      if (!isDoneDoubleCheck()) 
-      {
-        _value = Some(val);
-        _complete = true;
-        
-        progress(1.0);
-        
-        for (c in _completeListeners) c(val);
-        
-        clearListeners();
-      }
-      unlock();
-      this;
-    }
-  }
-  
   function clearListeners () 
   {
     _completeListeners = [];
     _cancelListeners = [];
     _progressListeners = [];
   }
-  
-  public function cancel ():Bool 
-  {
-    return if (!isComplete() && !isCancelled()) 
-    {
-      lock(); 
-      if (!isDoneDoubleCheck()) 
-      {
-        _cancelled = true;
-        
-        for (c in _cancelListeners) c();
 
-        clearListeners();
-      }
-      unlock();
-      isCancelled();
-    } 
-    else false;
-  }
-  
-  public function onComplete (f:T->Void) 
-  {
-    if (isComplete()) 
-    {
-      f(extract());
-    } 
-    else if (!isCancelled()) 
-    {
-      lock();
-      if (!isDoneDoubleCheck()) _completeListeners.push(f);
-      else onComplete(f);
-      unlock();
-    } 
+  /*
+  public function await ():T {
     
-    return this;
   }
-  
-  public function onCancelled (f:Void->Void) 
-  {
-    if (!isComplete()) 
-    {
-      if (isCancelled()) f();
-      else 
-      {
-        lock();
-        if (!isDoneDoubleCheck()) _cancelListeners.push(f);
-        else onCancelled(f);
-        unlock();
-      }
-    }
-    return this;
-  }
-
-  public function toString () {
-    return 
-      if (isComplete())       "Promise(" + _value + ")"
-      else if (isCancelled()) "Cancelled Promise";
-      else                    "Unfullfilled Promise";
-  }
+  */
 
 }
 
 class Promises
 {
   
+  public static function extract <T>(p:Promise<T>):T 
+  {
+    return p._value.getOrError("error result is not available");
+  }
+
+  public inline static function isComplete <T>(p:Promise<T>) return p._complete;
+  
+  public inline static function isCancelled <T>(p:Promise<T>) return p._cancelled;
+  
+  public inline static function isDone <T>(p:Promise<T>) return isComplete(p) || isCancelled(p);
+  
+  public static function valueOption <T>(p:Promise<T>):Option<T> return p._value;
+
+  public static function onProgress <T>(p:Promise<T>,f:Percent->Void):Promise<T> 
+  {
+    if (isComplete(p)) f(1.0)
+    else if (!isCancelled(p)) 
+    {
+      p.lock();
+      if (!p.isDoneDoubleCheck()) p._progressListeners.push(f)
+      else p.onProgress(f);
+      p.unlock();
+    } 
+    return p;
+  }
+  
+  public static function progress <T>(p:Promise<T>,percent:Percent):Promise<T>
+  {
+    Assert.isTrue(percent >= 0.0 && percent <= 1.0, null);
+    for (l in p._progressListeners) l(percent);
+    return p;
+  }
+
+  public static function complete <T>(p:Promise<T>,val:T):Promise<T> 
+  {
+    return if (isDone(p)) p
+    else 
+    {
+      p.lock();
+      if (!p.isDoneDoubleCheck()) 
+      {
+        p._value = Some(val);
+        p._complete = true;
+        
+        p.progress(1.0);
+        
+        for (c in p._completeListeners) c(val);
+        
+        p.clearListeners();
+      }
+      p.unlock();
+      p;
+    }
+  }
+  
+
+  public static function cancel <T>(p:Promise<T>):Bool 
+  {
+    return if (!isComplete(p) && !isCancelled(p)) 
+    {
+      p.lock(); 
+      if (!p.isDoneDoubleCheck()) 
+      {
+        p._cancelled = true;
+        
+        for (c in p._cancelListeners) c();
+
+        p.clearListeners();
+      }
+      p.unlock();
+      p.isCancelled();
+    } 
+    else false;
+  }
+  
+  public static function onComplete <T>(p:Promise<T>,f:T->Void) 
+  {
+    if (p.isComplete()) 
+    {
+      f(p.extract());
+    } 
+    else if (!p.isCancelled()) 
+    {
+      p.lock();
+      if (!p.isDoneDoubleCheck()) p._completeListeners.push(f);
+      else p.onComplete(f);
+      p.unlock();
+    } 
+    
+    return p;
+  }
+  
+  public static function onCancelled <T>(p:Promise<T>,f:Void->Void) 
+  {
+    if (!p.isComplete()) 
+    {
+      if (p.isCancelled()) f();
+      else 
+      {
+        p.lock();
+        if (!p.isDoneDoubleCheck()) p._cancelListeners.push(f);
+        else p.onCancelled(f);
+        p.unlock();
+      }
+    }
+    return p;
+  }
+
+  public static function toString <T>(p:Promise<T>) {
+    return 
+      if (isComplete(p))       "Promise(" + p._value + ")"
+      else if (isCancelled(p)) "Cancelled Promise";
+      else                     "Unfullfilled Promise";
+  }
+
   public static function combineIterableWith <A,B> (a:Iterable<Promise<A>>, f:Iterable<A>->B):Promise<B>
   {
     
@@ -372,7 +375,7 @@ class Promises
   {
     var res = new Promise();
     
-    function complete (x) {
+    function complete (x:Promise<T>) {
       x.onComplete (res.complete)
        .onCancelled(res.cancel)
        .onProgress (res.progress);

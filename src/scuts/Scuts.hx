@@ -1,11 +1,13 @@
 package scuts;
 
+
 import haxe.PosInfos;
 import haxe.CallStack;
 import scuts.core.PosInfosTools;
 
 using scuts.core.Arrays;
 using scuts.core.Strings;
+
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
