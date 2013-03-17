@@ -1,15 +1,15 @@
 (h)igher (o)rder (t)ype(s) and type classes for haxe
 ====================================================
 
-Folder Structure of hots
+Folder Structure of scuts.ht
 
   bin - Binary folder for compiled samples and tests
   compiler - Haxe Compiler and NekoVM
   docs - folder for generated files
   lib - the library scuts
-  samples - some samples of hots
-  src  - source code of hots
-  test - test files of hots
+  samples - some samples of scuts.ht
+  src  - source code of scuts.ht
+  test - test files of scuts.ht
 
 Compilation and Running of Samples
 

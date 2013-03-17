@@ -1,60 +1,69 @@
 package ;
 
-// Import der Do-Syntax
-import haxe.Timer;
-import scuts1.classes.Ord;
 
-import scuts1.core.Hots;
-import scuts.core.Tup2;
 
-import scuts.core.ImLists;
-import scuts.core.ImList;
-import scuts.core.Option;
+import scuts.core.Tuples;
+import scuts.core.Options;
+import scuts.ht.syntax.OrdBuilder;
+import scuts.ht.syntax.ShowBuilder;
 
-using scuts1.core.Hots;
-// Identity stellt unter anderem die Funktion show bereit
-using scuts1.Identity;
-// Hinzufügen aller Typklasseninstanzen in den Using-Scope
-using scuts1.ImplicitInstances;
-// Hinzufügen aller Casts in den Using-Scope
-using scuts1.ImplicitCasts;
+using scuts.ht.Context;
+
+typedef Person = {
+  name : String,
+  age : Int
+}
 
 class Sort
 {
-  public static function sort <A> (list:ImList<A>, ord:Ord<A>) 
+  public static function sort <A> (list:Array<A>, ord:Ord<A>) 
   {
-    Hots.implicit(ord);
-    // Insertion Sort
-    function insert (x:A, l:ImList<A>) 
-    {
-      return switch (l) {
-        case Nil : ImLists.mkOne(x);
-        case Cons(y, ys): 
-          if (ord.greater(x,y)) 
-            Cons(y, insert(x, ys)) 
-          else Cons(x, l);
-      }
-    }
-    
-    return switch (list) {
-      case Nil: Nil;
-      case Cons(x, xs): insert(x, sort._(xs));
-    }
+    var res = list.copy();
+    res.sort(ord.compareInt);
+    return res;
   }
   
   public static function main() 
   {
     
-    var tupleList = ImLists.fromArray([Tup2.create(4, 2.2), Tup2.create(1, 2.0), Tup2.create(1, 2.2), Tup2.create(0, 10.0)]);
-    var intList = ImLists.fromArray([1,4,5,6,2]);
-    var floatList = ImLists.fromArray([4.0,1.4,1.5,1.6,1.2]);
-    var stringList = ImLists.fromArray(["paul", "bettina", "jerome", "kirstin"]);
-    var arrayList = ImLists.fromArray([[Some(4)], [Some(2)], [Some(1)]]);
+    var tuples = [Tup2.create(4, 2.2), Tup2.create(1, 2.0), Tup2.create(1, 2.2), Tup2.create(0, 10.0)];
+    var ints = [1,4,5,6,2];
+    var floats = [4.0,1.4,1.5,1.6,1.2];
+    var strings = ["paul", "bettina", "jerome", "kirstin"];
+    var arrayOfArrays = [[Some(4)], [Some(2)], [Some(1)]];
+    var complexArrays = [[[[Some(4)]]], [[[Some(2)]]], [[[Some(1)]]]];
+
     
-    trace(sort._(intList).show());
-    trace(sort._(stringList).show());
-    trace(sort._(floatList).show());
-    trace(sort._(tupleList).show());
-    trace(sort._(arrayList).show());
+    trace(strings.show._() + " -> " + sort._(strings).show._());
+    trace(floats.show._() + " -> " + sort._(floats).show._());
+    trace(ints.show._() + " -> " + sort._(ints).show._());
+    trace(arrayOfArrays.show._() + " -> " + sort._(arrayOfArrays).show._());
+    trace(tuples.show._() + " -> " + sort._(tuples).show._());
+    trace(complexArrays.show._() + " -> " + sort._(complexArrays).show._());
+    
+
+    var persons = [{ name : "jimmy", age : 17}, { name : "alf", age : 27}];
+    var personsComplex = [Some(Tup2.create("x", { name : "jimmy", age : 17})), Some(Tup2.create("x", { name : "alf", age : 27}))];
+    
+
+    Hots.implicit(ShowBuilder.create(function (p1:Person) return '{ name : ${p1.name}, age : ${p1.age}}'));
+
+    var byNameDesc = OrdBuilder.createByIntCompare(function (p1:Person, p2:Person) return p1.name.compareInt._(p2.name));
+    Hots.implicit(byNameDesc);
+
+    trace("persons by name: " + persons.show._() + " -> " + sort._(persons).show._());
+    
+    trace("personsComplex by name: " + personsComplex.show._() + " -> " + sort._(personsComplex).show._());
+
+
+     
+    var byAgeDesc = OrdBuilder.createByIntCompare(function (p1:Person, p2:Person) return p1.age.compareInt._(p2.age));
+    Hots.implicit(byAgeDesc);
+
+    trace("persons by age: " + persons.show._() + " -> " + sort._(persons).show._());
+
+    trace("personsComplex by age: " + personsComplex.show._() + " -> " + sort._(personsComplex).show._());
+
+
   }
 }

@@ -1,20 +1,18 @@
 package ;
-import haxe.Http;
-import haxe.Md5;
-import scuts1.box.PromiseBox;
-import scuts1.Identity;
-import scuts.core.Unit;
-import scuts.core.Promise;
-import scuts.core.Validation;
-import scuts1.Do;
 
-using scuts1.Identity;
-using scuts1.ImplicitInstances;
-using scuts1.ImplicitCasts;
+import haxe.Http;
+import haxe.crypto.Md5;
+
+
+import scuts.core.Unit;
+import scuts.core.Validations;
+
+
+using scuts.ht.Context;
 
 
 using scuts.core.Promises;
-using scuts1.core.Hots;
+
 
 class Promises 
 {
@@ -41,23 +39,23 @@ class Promises
   
   public static function main() 
   {
-    function load (url) return loadData(url).intoT();
+    inline function load (url) return loadData(url).validationT();
     
     function getTwo () return Do.run(
-      s <= load("http://spiegeloffline.de/moin/"),
-      p <= load("http://spiegeloffline.de/moin/"),
+      s <= load("testfile.txt"),
+      p <= load("testfile.txt"),
       pure( { s : Md5.encode(s), p:Md5.encode(p) } )
     );
     
     var p = Do.run(
-      x <= load("http://spiegeloffline.de/moin/"),
+      x <= load("testfile.txt"),
       y <= getTwo(),
-      z <= load("http://spiegeloffline.de/moin/"),
+      z <= load("testfile.txt"),
       pure( { x: Md5.encode(x), y:y, z:Md5.encode(z) } )
     ).runT();
     
 
-    p.onComplete(function (x) trace(x));
+    p.onComplete(function (x) trace(Std.string(x)));
     
   }
   

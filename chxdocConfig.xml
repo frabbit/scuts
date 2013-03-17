@@ -52,7 +52,7 @@
     <filter policy="deny" path="cpp.*"/>
     <filter policy="deny" path="sys.*"/>
     <filter policy="deny" path="utest.*" />
-    <filter policy="allow" path="scuts1.*"/>
+    <filter policy="allow" path="scuts.ht.*"/>
     <filter policy="allow" path="scuts.*" />
 
   </filters>

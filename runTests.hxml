@@ -12,11 +12,11 @@
 -main AllTests
 --times
 -D macro_times
--D dump=pretty
+#-D dump=pretty
 -x bin/nekoTest
 #-D scutsDebug
 #-D scutsLog
-#-D hotsDebug
+#-D scuts.htDebug
 -dce no
 
 

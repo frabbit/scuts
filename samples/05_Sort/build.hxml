@@ -1,0 +1,13 @@
+-cp .
+-cp ../../src
+-cp ../../../scutsCore/src
+-cp ../../../scutsMCore/src
+-main Sort
+
+
+#-js bin/main.js
+#--next
+#-neko bin/neko
+#-swf bin/flash
+#-java bin/java
+-cpp bin/cpp
