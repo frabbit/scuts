@@ -1,6 +1,7 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Apply;
+import scuts.ht.classes.ApplyAbstract;
 import scuts.ht.core.In;
 import scuts.ht.instances.std.IoOf;
 import scuts.core.Ios;
@@ -9,11 +10,13 @@ import scuts.core.Options;
 
 
 
-class IoApply implements Apply<Io<In>>
+class IoApply extends ApplyAbstract<Io<In>>
 {
-  public function new () {}
+  public function new (func) {
+  	super(func);
+  }
   
-  public function apply<B,C>(f:IoOf<B->C>, of:IoOf<B>):IoOf<C> 
+  override public function apply<B,C>(of:IoOf<B>, f:IoOf<B->C>):IoOf<C> 
   {
     var res = function () return f.unbox().unsafePerformIo()(of.unbox().unsafePerformIo());
     return new Io(res);

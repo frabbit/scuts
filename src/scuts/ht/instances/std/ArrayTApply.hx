@@ -1,6 +1,7 @@
 package scuts.ht.instances.std;
 import scuts.ht.classes.Applicative;
 import scuts.ht.classes.Apply;
+import scuts.ht.classes.ApplyAbstract;
 import scuts.ht.core.In;
 import scuts.ht.core.Of;
 import scuts.ht.instances.std.ArrayTOf;
@@ -13,13 +14,14 @@ import scuts.ht.classes.Functor;
 
 
 
-class ArrayTApply<M> implements Apply<Of<M,Array<In>>> {
+class ArrayTApply<M> extends ApplyAbstract<Of<M,Array<In>>> {
   
   var appM:Apply<M>;
   var funcM:Functor<M>;
 
-  public function new (appM, funcM) 
+  public function new (appM, funcM, func) 
   {
+    super(func);
     this.appM = appM;
     this.funcM = funcM;
   }
@@ -27,7 +29,7 @@ class ArrayTApply<M> implements Apply<Of<M,Array<In>>> {
   /**
    * aka <*>
    */
-  public function apply<A,B>(f:ArrayTOf<M,A->B>, of:ArrayTOf<M,A>):ArrayTOf<M,B> 
+  override public function apply<A,B>(of:ArrayTOf<M,A>, f:ArrayTOf<M,A->B>):ArrayTOf<M,B> 
   {
     function f1 (x:Array<A->B>) 
     {
@@ -36,7 +38,7 @@ class ArrayTApply<M> implements Apply<Of<M,Array<In>>> {
     
     var newF = funcM.map(f, f1);
     
-    return appM.apply(newF, of);
+    return appM.apply(of, newF);
   }
 
 }

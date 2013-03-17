@@ -1,6 +1,8 @@
 package scuts.ht.classes;
 import scuts.ht.core.Of;
 
+private typedef MyOf<F,A> = Of<F,A>;
+
 interface Pure<F>
 {
   /**
@@ -8,5 +10,5 @@ interface Pure<F>
    * 
    * aka: return
    */
-  public function pure <A>(v:A):Of<F,A>;
+  public function pure <A>(v:A):MyOf<F,A>;
 }

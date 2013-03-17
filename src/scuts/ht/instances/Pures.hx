@@ -2,12 +2,14 @@
 package scuts.ht.instances;
 
 import scuts.core.Ios;
+import scuts.core.Lazy;
 import scuts.ht.classes.Pure;
 import scuts.ht.instances.std.ArrayPure;
 import scuts.ht.instances.std.ArrayTPure;
 import scuts.ht.instances.std.ImListPure;
 import scuts.ht.instances.std.IoPure;
 import scuts.ht.instances.std.LazyListPure;
+import scuts.ht.instances.std.LazyPure;
 import scuts.ht.instances.std.OptionPure;
 import scuts.ht.instances.std.OptionTPure;
 import scuts.ht.instances.std.PromisePure;
@@ -32,6 +34,7 @@ class Pures {
   @:implicit @:noUsing public static var ioPure           (default, null):Pure<Io<In>> = new IoPure();
   @:implicit @:noUsing public static var lazyListPure        (default, null):Pure<LazyList<In>> = new LazyListPure();
   @:implicit @:noUsing public static var imListPure          (default, null):Pure<ImList<In>> = new ImListPure();
+  @:implicit @:noUsing public static var lazyPure          (default, null):Pure<Lazy<In>> = new LazyPure();
   @:implicit @:noUsing public static function validationPure <F>():Pure<Validation<F,In>> return new ValidationPure();
   
   @:implicit @:noUsing public static function statePure <S>():Pure<S->Tup2<S,In>> return new StatePure();

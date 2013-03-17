@@ -8,6 +8,7 @@ package;
 import haxe.Http;
 import scuts.core.Ios;
 
+import scuts.core.Lazy;
 import scuts.core.Unit;
 import scuts.ht.Context.Applicative;
 import scuts.ht.instances.std.ContOf;
@@ -21,6 +22,7 @@ import scuts.core.Tuples;
 
 
 using scuts.ht.Context;
+import scuts.ht.Context.Hots.*;
 using scuts.core.Options;
 using scuts.core.Validations;
 
@@ -28,7 +30,14 @@ using scuts.core.Validations;
 
 import scuts.core.Iteratee;
 
+interface Z {
+  public function foo (s:String):Void;
+}
 
+@:build(scuts.macros.builder.InterfaceDelegation.build())
+class F {
+  @:forward var x : Z;
+}
 
 
 
@@ -86,41 +95,80 @@ class AllTests
 
 
 
-   function log (s:String):Io<Unit> 
-   {
-    return new Io( function () {
-      trace(s);
-      return Unit;
-    });
-   }
+   // function log (s:String):Io<Unit> 
+   // {
+   //  return new Io( function () {
+   //    trace(s);
+   //    return Unit;
+   //  });
+   // }
 
 
    
-   var monad = Hots.implicitByType("Monad<Of<Of<Io<In>, Promise<In>>, Validation<String, In>>>");
+   // var monad = Hots.implicitByType("Monad<Of<Of<Io<In>, Promise<In>>, Validation<String, In>>>");
 
 
-   var monad2 = Hots.implicitByType("Monad<OfOf<Io<In>, Promise<In>, Validation<String, In>>>");
+   var monad2 = implicitByType("Monad<Array<In>>");
+
+   trace(monad2.map([1], function (x) return x + 2));
    
 
-   //var myMap = [1].map_(_);
+
+   // var myMap = [1].map_(_);
+
+   // var f = scuts.ht.syntax.Binds.flatMap._([1], _);
+
+   // trace(myMap( function (x) return x + 1));
+
+   function f (x:Int, y:Int) return x + y;
+
+
+   // var f1 = f.lift2_("Promise<In>");
+
+   // var f2 = f.lift2_("Array<In>");
+
+   // var f3 = f.lift2_("Option<In>");
+   // var f4 = f.lift2_("Lazy<In>");
+
+   var f5 = f.lift2_("Of<Option<In>, Option<In>>");
+
+   var pureLift = PuresM.pure_(_, "Of<Option<In>, Option<In>>");
+
+   // var z = 97.pure_("Of<Option<In>, Option<In>>");
+
+   // trace(pureLift(197));
+   // trace(z);
+
+   // var lifter = ApplicativesM.lift2_(_, "Of<Of<Option<In>, Option<In>>, Option<In>>");
+
+   // var f6 = f.lift2_("Of<Of<Option<In>, Option<In>>, Option<In>>");
+
+   // $type(lifter(f));
+
+   trace(f5(Some(Some(2)).optionT(), Some(Some(3)).optionT()));
+   // trace(f6(Some(Some(Some(2))).optionT().optionT(), Some(Some(Some(3))).optionT().optionT()));
+
+   // f1(Promises.pure(1), Promises.pure(2)).onComplete(function (x) trace(x));
+   // trace(f2([1], [2]));
+   // trace(f3(Some(1), Some(2)));
+   // var z : Void->Int = f4(function () return 1, function () return 2);
+   // trace(z());
+
+//    function f (a:Int, b:Int):Int return a + b;
+
+//   Hots.implicitByType("Monad<Array<In>>");   
+//   Hots.implicitByType("Pure<Array<In>>");
+// Applicative;
+// scuts.ht.instances.Applicatives;
+//    var app = Hots.implicitByType("Applicative<Array<In>>");
+//    trace(f.lift2(app)([1],[2]));
 
 
 
-   function f (a:Int, b:Int):Int return a + b;
 
-  Hots.implicitByType("Monad<Array<In>>");   
-  Hots.implicitByType("Pure<Array<In>>");
-Applicative;
-scuts.ht.instances.Applicatives;
-   var app = Hots.implicitByType("Applicative<Array<In>>");
-   trace(f.lift2(app)([1],[2]));
-
-
-
-
-   monad.pure(log);
-   var m = new Io(function () return Promises.pure(Success("5")));
-   $type(m.promiseT().validationT());
+//    monad.pure(log);
+//    var m = new Io(function () return Promises.pure(Success("5")));
+//    $type(m.promiseT().validationT());
 
 
 

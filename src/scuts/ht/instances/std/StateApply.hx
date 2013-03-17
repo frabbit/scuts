@@ -1,6 +1,7 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Apply;
+import scuts.ht.classes.ApplyAbstract;
 import scuts.ht.classes.Pure;
 import scuts.ht.core.In;
 import scuts.ht.instances.std.StateOf;
@@ -10,11 +11,11 @@ import scuts.core.Tuples;
 
 
 
-class StateApply<S> implements Apply<State<S,In>>
+class StateApply<S> extends ApplyAbstract<State<S,In>>
 {
-  public function new () {}
+  public function new (func) super(func);
   
-  public function apply<A,B>(f:StateOf<S,A->B>, x:StateOf<S, A>):StateOf<S,B> 
+  override public function apply<A,B>(x:StateOf<S, A>, f:StateOf<S,A->B>):StateOf<S,B> 
   {
     return function (s:S) 
     {

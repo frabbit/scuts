@@ -2,6 +2,7 @@
 package scuts.ht.instances;
 
 import scuts.core.Ios;
+import scuts.core.Lazy;
 import scuts.ht.classes.Applicative;
 import scuts.ht.classes.Apply;
 import scuts.ht.classes.Functor;
@@ -32,6 +33,7 @@ class Applicatives
   @:implicit @:noUsing public static var optionApplicative           (default, null):Applicative<Option<In>> = AB.create(optionPure, optionApply, optionFunctor);
   @:implicit @:noUsing public static var lazyListApplicative         (default, null):Applicative<LazyList<In>> = AB.create(lazyListPure, lazyListApply, lazyListFunctor);
   @:implicit @:noUsing public static var imListApplicative           (default, null):Applicative<ImList<In>> = AB.create(imListPure, imListApply, imListFunctor);
+  @:implicit @:noUsing public static var lazyApplicative           (default, null):Applicative<Lazy<In>> = AB.create(lazyPure, lazyApply, lazyFunctor);
   
   @:implicit @:noUsing public static function stateApplicative           <S>():Applicative<State<S,In>> 
     return AB.create(statePure(), stateApply(), stateFunctor());

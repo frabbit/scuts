@@ -1,6 +1,7 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Apply;
+import scuts.ht.classes.ApplyAbstract;
 import scuts.ht.core.In;
 import scuts.ht.instances.std.ImListOf;
 import scuts.ds.ImLists;
@@ -8,11 +9,13 @@ import scuts.ds.ImLists;
 
 using scuts.ht.core.Hots;
 
-class ImListApply implements Apply<ImList<In>>
+class ImListApply extends ApplyAbstract<ImList<In>>
 {
-  public function new () {}
+  public function new (func) {
+  	super(func);
+  }
   
-  public function apply<B,C>(f:ImListOf<B->C>, v:ImListOf<B>):ImListOf<C> 
+  override public function apply<B,C>( v:ImListOf<B>, f:ImListOf<B->C>):ImListOf<C> 
   {
     return ImLists.flatMap(f, function (f1) 
     {

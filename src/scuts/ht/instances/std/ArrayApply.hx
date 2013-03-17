@@ -1,17 +1,20 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Apply;
+import scuts.ht.classes.ApplyAbstract;
 import scuts.ht.core.In;
 import scuts.ht.classes.Applicative;
 import scuts.ht.instances.std.ArrayOf;
 
 using scuts.ht.syntax.Arrays;
 
-class ArrayApply implements Apply<Array<In>>
+class ArrayApply extends ApplyAbstract<Array<In>>
 {
-  public function new () {}
+  public function new (func) {
+  	super(func);
+  }
   
-  public function apply<B,C>(f:ArrayOf<B->C>, v:ArrayOf<B>):ArrayOf<C> 
+  override public function apply<B,C>(v:ArrayOf<B>, f:ArrayOf<B->C>):ArrayOf<C> 
   {
     var res = [];
     

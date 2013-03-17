@@ -6,7 +6,7 @@ import scuts.ht.core.Of;
 import scuts.Scuts;
 
 
-interface Applicative<M> extends Pure<M> extends Functor<M> extends Apply<M>
+interface Applicative<M> extends Pure<M> extends Apply<M>
 {
   /**
    * Sequence actions, discarding the value of the first argument. (Haskell Source)

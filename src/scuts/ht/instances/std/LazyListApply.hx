@@ -1,16 +1,19 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Apply;
+import scuts.ht.classes.ApplyAbstract;
 import scuts.ht.core.In;
 import scuts.ht.instances.std.LazyListOf;
 
 import scuts.ds.LazyLists;
 
-class LazyListApply implements Apply<LazyList<In>>
+class LazyListApply extends  ApplyAbstract<LazyList<In>>
 {
-  public function new () {}
+  public function new (func) {
+  	super(func);
+  }
   
-  public function apply<B,C>(f:LazyListOf<B->C>, v:LazyListOf<B>):LazyListOf<C> 
+  override public function apply<B,C>(v:LazyListOf<B>, f:LazyListOf<B->C>):LazyListOf<C> 
   {
     return LazyLists.flatMap(f, function (f1) 
     {

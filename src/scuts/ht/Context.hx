@@ -23,11 +23,14 @@ typedef OrdInstances = scuts.ht.instances.Ords;
 typedef NumInstances = scuts.ht.instances.Nums;
 
 typedef Pures = scuts.ht.syntax.Pures;
+typedef PuresM = scuts.ht.syntax.PuresM;
 
 typedef Applicatives = scuts.ht.syntax.Applicatives;
+typedef ApplicativesM = scuts.ht.syntax.ApplicativesM;
 typedef Monads = scuts.ht.syntax.Monads;
 typedef MonadsM = scuts.ht.syntax.MonadsM;
 typedef Applys = scuts.ht.syntax.Applys;
+typedef ApplysM = scuts.ht.syntax.ApplysM;
 typedef Functors = scuts.ht.syntax.Functors;
 typedef FunctorsM = scuts.ht.syntax.FunctorsM;
 typedef Eqs = scuts.ht.syntax.Eqs;
@@ -36,6 +39,7 @@ typedef Shows = scuts.ht.syntax.Shows;
 typedef Binds = scuts.ht.syntax.Binds;
 typedef BindsM = scuts.ht.syntax.BindsM;
 typedef Foldables = scuts.ht.syntax.Foldables;
+
 
 typedef Monoids = scuts.ht.syntax.Monoids;
 typedef Semigroups = scuts.ht.syntax.Semigroups;

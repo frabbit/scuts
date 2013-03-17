@@ -72,8 +72,30 @@ class MonadFromApplicativeAndBind<M> implements Monad<M>
   /**
    * @see <a href="Applicative.html#apply()">scuts.ht.classes.Applicative</a>
    */
-  public inline function apply<A,B>(f:Of<M,A->B>, val:Of<M,A>):Of<M,B> return applicative.apply(f,val);
+  public inline function apply<A,B>(val:Of<M,A>, f:Of<M,A->B>):Of<M,B> return applicative.apply(val, f);
   
+  public inline function apply2 <A,B,C>(fa:Of<M,A>, fb:Of<M,B>, f:A->B->C):Of<M,C> 
+  {
+    return applicative.apply2(fa,fb,f);
+  }
+
+  public inline function apply3 <A,B,C,D>(fa:Of<M,A>, fb:Of<M,B>, fc:Of<M,C>, f:A->B->C->D):Of<M,D> 
+  {
+    return applicative.apply3(fa,fb,fc, f);
+  }
+  
+  public inline function lift2<A, B, C>(f: A -> B -> C): Of<M,A> -> Of<M,B> -> Of<M,C>
+    return applicative.lift2(f);
+
+  public inline function lift3<A, B, C,D>(f: A -> B -> C ->D): Of<M,A> -> Of<M,B> -> Of<M,C> -> Of<M,D>
+    return applicative.lift3(f);
+  
+  
+  public function ap<A,B>(f:Of<M, A->B>):Of<M, A>->Of<M,B> 
+  {
+    return applicative.ap(f);
+  }
+
   /**
    * @see <a href="Applicative.html#thenRight()">scuts.ht.classes.Applicative</a>
    */

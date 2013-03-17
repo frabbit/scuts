@@ -2,12 +2,14 @@
 package scuts.ht.instances;
 
 import scuts.core.Ios;
+import scuts.core.Lazy;
 import scuts.ht.classes.Functor;
 import scuts.ht.instances.std.ArrayFunctor;
 import scuts.ht.instances.std.ArrayTFunctor;
 import scuts.ht.instances.std.ContFunctor;
 import scuts.ht.instances.std.ImListFunctor;
 import scuts.ht.instances.std.IoFunctor;
+import scuts.ht.instances.std.LazyFunctor;
 import scuts.ht.instances.std.LazyListFunctor;
 import scuts.ht.instances.std.LazyTFunctor;
 import scuts.ht.instances.std.OptionFunctor;
@@ -40,6 +42,7 @@ class Functors {
   @:implicit @:noUsing public static var arrayFunctor           (default, null):Functor<Array<In>> = new ArrayFunctor();
   @:implicit @:noUsing public static var lazyListFunctor           (default, null):Functor<LazyList<In>> = new LazyListFunctor();
   @:implicit @:noUsing public static var imListFunctor           (default, null):Functor<ImList<In>> = new ImListFunctor();
+  @:implicit @:noUsing public static var lazyFunctor           (default, null):Functor<Lazy<In>> = new LazyFunctor();
   @:implicit @:noUsing public static function validationFunctor  <F>():Functor<Validation<F,In>> return new ValidationFunctor();
   
   @:implicit @:noUsing public static function lazyTFunctor          <M>(f:Functor<M>):Functor<Of<M, Void->In>> return new LazyTFunctor(f);

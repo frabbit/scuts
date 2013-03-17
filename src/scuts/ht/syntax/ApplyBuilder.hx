@@ -1,5 +1,6 @@
 package scuts.ht.syntax;
 import scuts.ht.classes.Apply;
+import scuts.ht.classes.ApplyAbstract;
 import scuts.ht.classes.Bind;
 import scuts.ht.classes.Functor;
 import scuts.ht.core.Of;
@@ -19,19 +20,20 @@ class ApplyBuilder
   
 }
 
-class FunctorBindApply<X> implements Apply<X>{
-  private var t:Functor<X>;
+class FunctorBindApply<X> extends ApplyAbstract<X> implements Apply<X>{
+  
   private var b:Bind<X>;
     
   public function new (t:Functor<X>, b:Bind<X>)
   {
-    this.t = t;
+    super(t);
+    
     this.b = b;
   }
   
-  public function apply<A,B>(f:Of<X,A->B>, a:Of<X,A>):Of<X,B> {
+  override public function apply<A,B>(a:Of<X,A>, f:Of<X,A->B>):Of<X,B> {
     
-    function z (g:A->B) return t.map(a, function (x) return g(x));
+    function z (g:A->B) return map(a, function (x) return g(x));
     return b.flatMap( f, z);
   }
 }

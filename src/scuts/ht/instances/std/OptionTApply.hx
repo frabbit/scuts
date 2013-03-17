@@ -1,6 +1,7 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Apply;
+import scuts.ht.classes.ApplyAbstract;
 import scuts.ht.core.In;
 import scuts.ht.core.Of;
 import scuts.ht.classes.Functor;
@@ -10,13 +11,14 @@ import scuts.core.Options;
 
 
 
-class OptionTApply<M> implements Apply<Of<M,Option<In>>> 
+class OptionTApply<M> extends ApplyAbstract<Of<M,Option<In>>> 
 {
   var functorM:Functor<M>;
   var applyM:Apply<M>;
 
-  public function new (applyM, functorM) 
+  public function new (applyM, functorM, func) 
   {
+    super(func);
     this.functorM = functorM;
     this.applyM = applyM;
   }
@@ -24,7 +26,7 @@ class OptionTApply<M> implements Apply<Of<M,Option<In>>>
   /**
    * aka <*>
    */
-  public function apply<A,B>(f:OptionTOf<M,A->B>, val:OptionTOf<M,A>):OptionTOf<M,B> 
+  override public function apply<A,B>(val:OptionTOf<M,A>, f:OptionTOf<M,A->B>):OptionTOf<M,B> 
   {
     function f1 (f)
     {
@@ -33,7 +35,7 @@ class OptionTApply<M> implements Apply<Of<M,Option<In>>>
     
     var newF = functorM.map(f.runT(), f1);
     
-    return applyM.apply(newF, val.runT());
+    return applyM.apply(val.runT(), newF);
   }
 
 }
