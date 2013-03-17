@@ -23,6 +23,7 @@ import haxe.macro.Type;
 import haxe.PosInfos;
 import scuts.ht.macros.implicits.Data;
 
+import scuts.core.Tuples.*;
 import scuts.core.Tuples;
 
 
@@ -252,7 +253,7 @@ class Resolver
     if (resolve1Cache.exists(id)) return resolve1Cache.get(id);
 
 
-    //var isBind = false;
+    var isBind = false;
     // trace("----r1");
     // trace(args.map(ExprTools.toString));
     // trace(ExprTools.toString(f));
@@ -289,14 +290,14 @@ class Resolver
     if (args.length > numParams) {
       RE.tooManyFunctionParams(f, args, numParams);
     }
-    // for (a in args) {
-    //   if (!isBind) {
-    //     isBind = switch (a.expr) {
-    //       case EConst(CIdent("_")): true;
-    //       case _ : false;
-    //     }
-    //   }
-    // }
+    for (a in args) {
+      if (!isBind) {
+        isBind = switch (a.expr) {
+          case EConst(CIdent("_")): true;
+          case _ : false;
+        }
+      }
+    }
     
     //trace(Context.typeof(f));
 
@@ -304,17 +305,11 @@ class Resolver
     var res = adjustArgs(f, args, numParams, scopes, lastNeeded, None);
     
 
-    //f = isBind ? macro ($f).bind : f;
+    f = isBind ? macro ($f).bind : f;
     // create the function call expression
     var callExpr = Make.call(f, res._1, f.pos);
   
     // eventually apply a resulting cast
-    
-    // var resultingExpr = switch (res._2) {
-    //   case Upcast:   applyImplicitDowncast(callExpr,tagged);
-    //   case Downcast: applyImplicitUpcast(callExpr,tagged);
-    //   case None:  Hacks.makeTaggedCast(callExpr);
-    // }
     
     var resultingExpr = callExpr;
 
@@ -323,6 +318,8 @@ class Resolver
     // trace(TypeTools.toString(Context.typeof(f)));
 
     resolve1Cache.set(id, resultingExpr);
+
+    trace(ExprTools.toString(resultingExpr));
 
     return resultingExpr;
   }
@@ -383,23 +380,24 @@ class Resolver
         else 
         {
           if (Context.defined("display")) {
-            Tup2.create(macro null, argAdjustment);
+            tup3(macro null, macro null, argAdjustment);
           } else {
-
-            Tup2.create(resolveImplicitObj1(required, scopes, lastRequired), argAdjustment);
+            var impExpr = resolveImplicitObj1(required, scopes, lastRequired);
+            tup3(impExpr, impExpr, argAdjustment);
           }
         }
       
       
-      var adjustedExpr = adjustedArg._1;
+      var adjustedExpr = adjustedArg._2;
+      var typeExpr = adjustedArg._1;
       // store upcasting direction
-      argAdjustment = adjustedArg._2;
+      argAdjustment = adjustedArg._3;
       newArgs.push(adjustedExpr);
       // next required Type
-      curried = macro $curried($adjustedExpr);
+      curried = macro $curried($typeExpr);
     }
     // return resulting argumentlist and casting direction
-    return Tup2.create(newArgs, argAdjustment);
+    return tup2(newArgs, argAdjustment);
   }
   
   /**
@@ -411,21 +409,14 @@ class Resolver
    */
   static function adjustArg (arg:Expr, required:Expr, argAdjustment:ArgumentAdjustment) 
   {
-    function tryUpcast () 
-    {
-      var casted = macro $arg.implicitUpcast();
-      return if (Tools.isCompatible(casted, required)) Some(Tup2.create(casted, Upcast)) else Option.None;
-    }
-    
-    function tryDowncast () 
-    {
-      var casted = macro $arg.implicitDowncast();
-      return if (Tools.isCompatible(casted, required)) Some(Tup2.create(casted, Downcast)) else Option.None;
-    }
     
     function tryRegular () 
     {
-      return if (Tools.isCompatible(arg, required)) Some(Tup2.create(arg, argAdjustment)) else Option.None;
+      return switch (arg.expr) {
+        case EConst(CIdent("_")): Some(tup3(macro null, arg, argAdjustment));
+        case _ : if (Tools.isCompatible(arg, required)) Some(tup3(arg, arg, argAdjustment)) else Option.None;
+      }
+      
     }
     
     function errorParamIncompatible () return RE.functionParameterIsIncompatible(arg, required);
@@ -434,9 +425,9 @@ class Resolver
 
     return switch (argAdjustment) 
     {
-      case Upcast:   tryRegular().orElse(tryUpcast).getOrElse(errorParamIncompatible);
-      case Downcast: tryRegular().orElse(tryDowncast).getOrElse(errorParamIncompatible);
-      case None:  tryRegular().orElse(tryUpcast).orElse(tryDowncast).getOrElse(errorParamIncompatible);
+      case Upcast:   tryRegular().getOrElse(errorParamIncompatible);
+      case Downcast: tryRegular().getOrElse(errorParamIncompatible);
+      case None:     tryRegular().getOrElse(errorParamIncompatible);
     }
   }
   
@@ -459,10 +450,9 @@ class Resolver
   static function resolveImplicitObj1 (required:Expr, scopes:Scopes, lastRequired:Array<Expr>) 
   {
     var id = Context.signature([required, scopes, lastRequired]);
-    if (impObj1Cache.exists(id)) {
-      return impObj1Cache.get(id);
-    }
-    //trace("search for " + haxe.macro.TypeTools.toString(Context.typeof(required)));
+    if (impObj1Cache.exists(id)) return impObj1Cache.get(id);
+
+    
     checkForCircularDependency(required, lastRequired);
     
     function getImplicitFromUsingContext () 
@@ -487,11 +477,8 @@ class Resolver
     
     var res = switch (found) 
     {
-      case Success(s): switch (s) 
-      {
-        case Some(v): v.expr;
-        case Option.None:    getImplicitFromUsingContext();
-      }
+      case Success(Some(v)): v.expr;
+      case Success(None) : getImplicitFromUsingContext();
       case Failure(f): RE.handleAmbiguityError(f);
     }
     
@@ -597,7 +584,7 @@ class Resolver
             case 4: macro $helper.ret4($parsed);
             case 5: macro $helper.ret5($parsed);
             case 6: macro $helper.ret6($parsed);
-            default: trace("error");  Scuts.notImplemented();
+            case _: trace("error");  Scuts.notImplemented();
           }
           
           
@@ -613,7 +600,7 @@ class Resolver
               case 4: macro $helper.typed4($parsed, $required);
               case 5: macro $helper.typed5($parsed, $required);
               case 6: macro $helper.typed6($parsed, $required);
-              default: trace("error"); Scuts.notImplemented();
+              case _: trace("error"); Scuts.notImplemented();
             }
             return Success(if (args.length == 0) macro $parsed() else resolve1(typed, [], scopes, lastRequired.concat([required]),false));
 
@@ -624,9 +611,6 @@ class Resolver
       
     }
     
-    //trace("not found");
-    
-    //trace(res);
     
     
     // Converts an Expr with Type X to an Expr with Type ImplicitObject<X>
