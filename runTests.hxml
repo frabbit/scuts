@@ -1,0 +1,16 @@
+-cp src 
+-cp test 
+-cp ./../scutsCore/src
+-lib utest 
+--no-output 
+#--connect 127.0.0.1:8889
+--macro AllTests.main()
+
+--next
+-cp src 
+-cp test 
+-cp ./../scutsCore/src
+-lib utest 
+-main AllTests
+#--connect 127.0.0.1:8889
+-neko bin/test/testNeko.n
