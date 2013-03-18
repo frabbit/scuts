@@ -1,8 +1,8 @@
-package scuts.mcore.extensions;
+package scuts.mcore.ast;
 
 import haxe.macro.Expr;
 
-import scuts.mcore.extensions.ExprDefs;
+import scuts.mcore.ast.ExprDefs;
 import utest.Assert;
 
 private typedef E = ExprDefs;

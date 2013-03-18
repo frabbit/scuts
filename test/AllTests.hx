@@ -7,7 +7,7 @@ package;
 #if macro
 import neko.Lib;
 import neko.Sys;
-import scuts.mcore.extensions.ExprDefsTest;
+import scuts.mcore.ast.ExprDefsTest;
 import scuts.mcore.ParseTest;
 import scuts.mcore.CheckTest;
 import scuts.mcore.TypeTest;
