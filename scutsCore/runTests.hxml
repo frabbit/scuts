@@ -1,0 +1,13 @@
+
+-cp src 
+-cp test 
+-cp ./../scutsCore/src
+-cp ../MassiveUnit/core/src
+-cp ../MassiveLib/haxe/src
+-cp ../hamcrest-haxe/src/main
+#-cp ../mockatoo\src
+-main AllTests
+--times
+-D macrotimes
+-x bin/test/testNeko
+
