@@ -2,7 +2,7 @@ package scuts.ht.instances.std;
 
 import scuts.ht.core.Of;
 import scuts.ht.core.In;
-import scuts.core.Cont;
+import scuts.core.Conts;
 abstract ContOf<A,R>(Cont<A,R>) from Cont<A,R> to Cont<A,R> 
 {
 

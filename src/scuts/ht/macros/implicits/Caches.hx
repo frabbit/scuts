@@ -13,7 +13,7 @@ class Caches {
 
 	public static function get_doCache () {
 		if (RealCache._doCache == null) {
-			trace("create Do cache");
+			//trace("create Do cache");
 	    	RealCache._doCache = new Cache();
 		}
 		return RealCache._doCache;

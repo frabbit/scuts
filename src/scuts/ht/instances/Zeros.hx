@@ -2,7 +2,7 @@
 package scuts.ht.instances;
 
 
-
+import scuts.ht.classes.Zero;
 
 import scuts.ht.instances.std.ArrayZero;
 import scuts.ht.instances.std.EndoZero;

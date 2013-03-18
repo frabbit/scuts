@@ -3,9 +3,9 @@ import scuts.ht.core.In;
 import scuts.ht.classes.ArrowAbstract;
 import scuts.ht.instances.std.ContOfOf;
 import scuts.ht.instances.std.FunctionOfOf;
-import scuts.core.Cont;
+
 import scuts.core.Conts;
-import scuts.core.Tup2;
+import scuts.core.Tuples;
 import scuts.ht.instances.std.FunctionCategory;
 using scuts.core.Functions;
 

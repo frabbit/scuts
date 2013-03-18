@@ -12,11 +12,11 @@ private typedef Val<F,S> = Validation<F,S>;
 abstract ValidationOf<F,S>(Val<F,S>) to Val<F,S> from Val<F,S> 
 {
 
-	public function new (x) this = x;
+	public function new (x:Val<F,S>) this = x;
 
-	@:from static function fromOf (x:Of<Val<F,In>, S>):ValidationOf<F,S> return new ValidationOf(cast x);
+	@:from static function fromOf <F, S> (x:Of<Val<F,In>, S>):ValidationOf<F,S> return new ValidationOf(cast x);
 
-	@:to function toOf ():Of<Val<F,In>, S> return new Of(this);
+	@:to static function toOf <F,S>(x:Val<F,S>):Of<Val<F,In>, S> return new Of(x);
 
 }
 
@@ -24,7 +24,7 @@ abstract FailProjectionOf<F,S>(FP<F,S>) to FP<F,S> from FP<F,S> {
 
 	public function new (x) this = x;
 
-	@:from static function fromOf (x:Of<FP<In, S>, F>):FailProjectionOf<F,S> return new FailProjectionOf(cast x);
+	@:from static function fromOf <F, S>(x:Of<FP<In, S>, F>):FailProjectionOf<F,S> return new FailProjectionOf(cast x);
 
 
 

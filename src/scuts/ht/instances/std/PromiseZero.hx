@@ -6,7 +6,7 @@ package scuts.ht.instances.std;
 import scuts.ht.classes.Semigroup;
 import scuts.ht.classes.Zero;
 import scuts.core.Promises;
-import scuts.core.Promise;
+
 
 class PromiseZero<X> implements Zero<Promise<X>>
 {

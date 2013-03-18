@@ -1,29 +1,30 @@
 package scuts.ht.instances.std;
 import scuts.ht.core.In;
 import scuts.ht.core.Of;
-import scuts.core.Either;
+import scuts.core.Eithers;
 
 
-private typedef RP<L,R> = RightProjection<L,R>
-private typedef LP<L,R> = LeftProjection<L,R>
 
-abstract RightProjectionOf<L, R>(RP<L,R>) 
+
+abstract EitherOf<L, R>(Of<Either<L,In>, R>) 
 { 
 
-	public inline function new (x:RP<L,R>) this = x;
+	public inline function new (x:Either<L,R>) this = x;
 
-	@:to public function toRP ():RP<L, R> return this;
+	@:to public function toRP ():Either<L, R> return this;
 
-	@:from public static function fromRP (x:RP<L,R>) return new RightProjectionOf(x);
+	@:from public static function fromEither (x:Either<L,R>) return new EitherOf(cast x);
 
-	@:to public function toEither ():Either<L, R> return this;
+	@:to public function toEither ():Either<L, R> return cast this;
 
 	
 
-	@:to static inline function toOf <L,R>(x:RP<L,R>):Of<RP<L, In>, R> return new Of(x);
+	@:to static inline function toOf <L,R>(x:Of<Either<L,In>, R>):Of<Either<L, In>, R> return x;
 
-	@:from static inline function fromOf (x:Of<RP<L,In>, R>) return new RightProjectionOf(cast x);
+	@:from static inline function fromOf (x:Of<Either<L,In>, R>) return new EitherOf(x);
 }
+
+private typedef LP<L,R> = LeftProjection<L,R>
 
 abstract LeftProjectionOf<L, R>(LP<L,R>) 
 { 

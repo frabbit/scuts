@@ -1,31 +1,40 @@
 package scuts.ht;
-import scuts.core.Option;
-import scuts.core.Tup2;
 
-using scuts.ht.Identity;
-using scuts.ht.ImplicitCasts;
-using scuts.ht.ImplicitInstances;
+import massive.munit.Assert;
+import org.hamcrest.core.IsEqual;
+import org.hamcrest.MatchersBase;
 
-import scuts.core.Validation;
+import scuts.core.Options;
+import scuts.core.Tuples;
+import scuts.core.Validations.Validation;
 
-private typedef A = utest.Assert;
+using scuts.ht.Context;
 
-class EqTest 
+
+
+
+
+class EqTest extends MatchersBase
 {
 
-  public function new() { }
+  public function new() super();
  
-  
-  public static function testNestedStructure () 
+  @Test
+  public function testNestedStructure () 
   {
     var a = Some([Tup2.create(1,2), Tup2.create(2,3)]);
     var b = Some([Tup2.create(1,2), Tup2.create(2,3)]);
     var c = Some([Tup2.create(3,2), Tup2.create(2,3)]);
     
-    A.isTrue(a.eq(b));
-    A.isTrue(!a.eq(c));
+    //Assert.areEqual(a, b);
+    scuts.Assert.isTrue(a.eq_(b));
+    scuts.Assert.isTrue(a.notEq_(c));
+    
+    
   }
-  public static function testNestedStructure2 () 
+
+  @Test
+  public function testNestedStructure2 () 
   {
     var d:Validation<String,String> = Success("gh");
     
@@ -33,8 +42,9 @@ class EqTest
     var b = Some([Tup2.create(1,Some(Tup2.create(d,1.1))), Tup2.create(3,Some(Tup2.create(d,1.1)))]);
     var c = Some([Tup2.create(1,Some(Tup2.create(d,1.1))), Tup2.create(3,Some(Tup2.create(d,1.2)))]);
     
-    A.isTrue(a.eq(b));
-    A.isTrue(!a.eq(c));
+    scuts.Assert.isTrue(a.eq_(b));
+    scuts.Assert.isTrue(a.notEq_(c));
+
   }
   
   

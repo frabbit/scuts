@@ -79,7 +79,7 @@ class DoTools {
 
     var id = Context.signature(exprs);
     if (Caches.doCache.exists(id)) return Caches.doCache.get(id);
-    trace("Do.build");
+    
     var res = if (exprs.length > 0) 
     {
       var e = exprs[0];

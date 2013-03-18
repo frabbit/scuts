@@ -4,7 +4,7 @@ import scuts.ht.classes.Empty;
 import scuts.ht.core.In;
 import scuts.ht.instances.std.PromiseTOf;
 import scuts.core.Promises;
-import scuts.core.Promise;
+
 
 import scuts.ht.core.Of;
 

@@ -10,9 +10,9 @@ class FunctorsM
 {
 
   #if display
-  public static function map_ <F,A,B> (x:Of<F, A>, f:A->B):Of<F,B> return null;
+  public static inline function map_ <F,A,B> (x:Of<F, A>, f:A->B):Of<F,B> return null;
   #else
-  macro public static function map_ <F,A,B> (x:ExprOf<Of<F, A>>, f:ExprOf<A->B>):ExprOf<Of<F,B>> 
+  macro public static inline function map_ <F,A,B> (x:ExprOf<Of<F, A>>, f:ExprOf<A->B>):ExprOf<Of<F,B>> 
   	return Resolver.resolve(macro scuts.ht.syntax.Functors.map, [x, f]);
   #end
 }

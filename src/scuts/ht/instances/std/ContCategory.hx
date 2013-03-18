@@ -2,7 +2,7 @@ package scuts.ht.instances.std;
 import scuts.ht.classes.CategoryAbstract;
 import scuts.ht.instances.std.ContOfOf;
 import scuts.core.Conts;
-import scuts.core.Cont;
+
 
 import scuts.ht.core.In;
 

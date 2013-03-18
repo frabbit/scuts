@@ -19,7 +19,7 @@ import scuts.ht.instances.std.PromiseTApply;
 import scuts.ht.instances.std.StateApply;
 import scuts.ht.instances.std.ValidationApply;
 import scuts.ht.instances.std.ValidationTApply;
-import scuts.core.Cont;
+import scuts.core.Conts;
 import scuts.core.Options;
 import scuts.core.Promises;
 import scuts.core.Tuples;

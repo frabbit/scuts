@@ -1,15 +1,17 @@
 package scuts.ht;
-import scuts.ht.Do;
-import utest.Assert;
 
-using scuts.ht.ImplicitCasts;
-using scuts.ht.ImplicitInstances;
+import massive.munit.Assert;
+import org.hamcrest.core.IsEqual;
+import org.hamcrest.MatchersBase;
 
-class DoTest 
+using scuts.ht.Context;
+
+
+class DoTest extends MatchersBase
 {
-  public function new () { }
+  public function new () super();
   
-  public function testSimple() 
+  @:test public function testSimple() 
   {
     var r = Do.run
     (
@@ -18,9 +20,10 @@ class DoTest
       pure(a + b)
     );
     
-    Assert.same(r, [3]);
+    assertThat(r, equalTo([3]));
   }
   
+  @Test
   public function testWithFilter() 
   {
     var r = Do.run
@@ -31,9 +34,10 @@ class DoTest
       pure(a + b)
     );
     
-    Assert.same(r, [4]);
+    assertThat(r, equalTo([4]));
   }
-  
+
+  @Test
   public function testWithMultipleFilter() 
   {
     var r = Do.run
@@ -45,9 +49,9 @@ class DoTest
       pure(a + b)
     );
     
-    Assert.same(r, [3]);
+    assertThat(r, equalTo([3]));
   }
-  
+  @Test
   public function testMixed() 
   {
     var r = Do.run
@@ -56,18 +60,17 @@ class DoTest
       [1, 2],
       pure(a)
     );
-    
-    Assert.same(r, [1,1]);
+    assertThat(r, equalTo([1,1]));
   }
-  
+
+  @Test  
   public function testOneExpr() 
   {
     var r = Do.run
     (
       [1,2]
     );
-    
-    Assert.same(r, [1,2]);
+    assertThat(r, equalTo([1,2]));
   }
   
   public function testNoAssigns() 
@@ -78,17 +81,18 @@ class DoTest
       [2,2],
       pure(5)
     );
-    
-    Assert.same(r, [5,5]);
+    Assert.areEqual([5,5], r);
+    //assertThat(r, equalTo());
   }
   
+  @Test
   public function testNoAssignsNoPure() 
   {
     var r = Do.run
     (
       [1]
     );
+    assertThat(r, equalTo([1]));
     
-    Assert.same(r, [1]);
   }
 }

@@ -3,7 +3,7 @@ package scuts.ht.instances.std;
 import scuts.ht.core.In;
 import scuts.ht.core.OfOf;
 import scuts.ht.core.Of;
-import scuts.ds.LazyList;
+import scuts.ds.LazyLists;
 
 abstract LazyListTOf<M,A>(Of<M, LazyList<A>>) to Of<M, LazyList<A>> from Of<M, LazyList<A>> { 
 

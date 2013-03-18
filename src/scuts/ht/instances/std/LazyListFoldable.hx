@@ -3,8 +3,8 @@ import scuts.ht.classes.FoldableAbstract;
 import scuts.ht.core.In;
 import scuts.ht.core.Of;
 import scuts.ht.instances.std.LazyListOf;
-import scuts.ds.LazyList;
 import scuts.ds.LazyLists;
+
 
 
 class LazyListFoldable extends FoldableAbstract<LazyList<In>>

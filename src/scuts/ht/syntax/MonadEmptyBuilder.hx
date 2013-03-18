@@ -53,7 +53,30 @@ class MonadEmptyDefault<M> implements MonadEmpty<M>
   /**
    * @see <a href="Applicative.html">scuts.ht.classes.Applicative</a>
    */
-  public inline function apply<A,B>(f:Of<M,A->B>, val:Of<M,A>):Of<M,B> return monad.apply(f,val);
+  public inline function apply<A,B>(val:Of<M,A>, f:Of<M,A->B>):Of<M,B> return monad.apply(val, f);
+
+  public inline function apply2 <A,B,C>(fa:Of<M,A>, fb:Of<M,B>, f:A->B->C):Of<M,C> 
+  {
+    return monad.apply2(fa,fb,f);
+  }
+
+  public inline function apply3 <A,B,C,D>(fa:Of<M,A>, fb:Of<M,B>, fc:Of<M,C>, f:A->B->C->D):Of<M,D> 
+  {
+    return monad.apply3(fa,fb,fc, f);
+  }
+  
+  public inline function lift2<A, B, C>(f: A -> B -> C): Of<M,A> -> Of<M,B> -> Of<M,C>
+    return monad.lift2(f);
+
+  public inline function lift3<A, B, C,D>(f: A -> B -> C ->D): Of<M,A> -> Of<M,B> -> Of<M,C> -> Of<M,D>
+    return monad.lift3(f);
+  
+  
+  public function ap<A,B>(f:Of<M, A->B>):Of<M, A>->Of<M,B> 
+  {
+    return monad.ap(f);
+  }
+
   /**
    * @see <a href="Applicative.html">scuts.ht.classes.Applicative</a>
    */

@@ -5,7 +5,7 @@ import scuts.ht.core.Of;
 import scuts.ht.core.OfOf;
 
 
-import scuts.core.Cont;
+import scuts.core.Conts;
 
 
 abstract ContOfOf<R,A,B>(A->ContOf<B, R>) from A->ContOf<B, R> to A->ContOf<B, R> 

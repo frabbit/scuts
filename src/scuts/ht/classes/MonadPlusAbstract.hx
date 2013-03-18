@@ -3,7 +3,7 @@ import scuts.ht.core.Of;
 import scuts.Scuts;
 
 
-
+#if false
 class MonadPlusAbstract<M>
 {
   var monad:Monad<M>;
@@ -70,3 +70,5 @@ class MonadPlusAbstract<M>
   public inline function flatten <A> (val: Of<M, Of<M,A>>):Of<M,A> return monad.flatten(val);
   
 }
+
+#end

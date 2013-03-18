@@ -1,8 +1,10 @@
 
 package scuts.ht.classes;
 
-interface CoBind<F> {
+import scuts.ht.core.Of;
 
-	public function coBind <A,B>(x:Of<F,A>, f: Of<F,A> -> B): Of<F,B>;
+interface Cobind<W> extends Functor<W>{
+
+	public function cobind <A,B>(x:Of<W,A>, f: Of<W,A> -> B): Of<W,B>;
 
 }

@@ -2,10 +2,11 @@ package scuts.ht.core;
 
 using scuts.core.Validations;
 
+import scuts.core.Eithers.Either;
 import scuts.core.Ios;
 import scuts.ht.core.Hots;
 import scuts.ht.instances.std.LazyOf;
-import scuts.core.Cont;
+import scuts.core.Conts;
 import scuts.core.Lazy;
 import scuts.core.Options;
 import scuts.core.Promises;
@@ -56,10 +57,14 @@ abstract Of<M,A>(OfI<M,A>)
 	@:from public static inline function fromMapElem <K>(x:Map<K, A>):Of<Map<K, In>, A> return new Of(x);
 	@:to public static function toMapElem <K,A>(x:OfI<Map<K, In>, A>):Map<K, A> return Hots.preservedCast(cast x);
 	
-	@:from public static function fromValidation <F>(x:Validation<F,A>):Of<Validation<F, In>, A> return Hots.preservedCheckType(var _ :  Of<Validation<F, In>, A> = new Of(x));
+	@:from public static function fromValidation <F,A>(x:Validation<F,A>):Of<Validation<F, In>, A> return Hots.preservedCheckType(var _ :  Of<Validation<F, In>, A> = new Of(x));
 	@:to public static function toValidation <F,A>(x:OfI<Validation<F, In>, A>):Validation<F, A> return Hots.preservedCast(cast x);
 
 	@:from public static function fromLazy (x:Lazy<A>):Of<Void->In, A> return new Of(x);
 	@:to public static function toLazy <A>(x:OfI<Void->In, A>):Lazy<A> return Hots.preservedCast(cast x);
+
+	@:from public static function fromEither <L,R>(x:Either<L,R>):Of<Either<L, In>, R> return Hots.preservedCheckType(var _ :  Of<Either<L, In>, R> = new Of(x));
+	@:to public static function toEither <L,R>(x:OfI<Either<L, In>, R>):Either<L, R> return Hots.preservedCast(cast x);
+
 
 }

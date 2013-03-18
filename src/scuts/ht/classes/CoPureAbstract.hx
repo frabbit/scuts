@@ -14,7 +14,7 @@ using scuts.core.Functions;
   duplicate = extend id
  
   */
-class CoPureAbstract<W> implements CoPure<W> 
+class CopureAbstract<W> implements Copure<W> 
 {
   
   var f:Functor<W>;

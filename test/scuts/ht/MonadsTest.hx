@@ -1,43 +1,54 @@
 package scuts.ht;
-import scuts.core.Option;
 
-using scuts.ht.Identity;
-using scuts.ht.ImplicitCasts;
-using scuts.ht.ImplicitInstances;
+import org.hamcrest.core.IsEqual;
+import org.hamcrest.MatchersBase;
 
-private typedef A = utest.Assert;
+using scuts.ht.Context;
 
-class MonadsTest 
+import scuts.core.Options;
+
+typedef A = scuts.Assert;
+
+
+
+class MonadsTest extends MatchersBase
 {
 
-  public function new() { }
+  public function new() 
+  { 
+    super();
+  }
  
+  @Test
   public function testArrayMonad () 
   {
-    var actual = [1,2,3].map(function (x) return x + 1);
+    var actual = [1,2,3].map_(function (x) return x + 1);
     
     A.same([2,3,4], actual);
   }
   
+  @Test
   public function testChainedArrayMonad () 
   {
-    var actual = [1,2,3].map(function (x) return x + 1).map(function (x) return x + 1);
+    var actual = [1,2,3].map_(function (x) return x + 1).map_(function (x) return x + 1);
     
     A.same([3,4,5], actual);
     
   }
   
+  @Test
   public function testChainedFlatMapArrayMonad () 
   {
-    var actual = [1,2,3].flatMap(function (x) return [x + 1]).flatMap(function (x) return [x + 1]);
+    var actual = [1,2,3].flatMap_(function (x) return [x + 1]).flatMap_(function (x) return [x + 1]);
     
     A.same([3,4,5], actual);
     
   }
   
+  @Test
   public function testChainedFlatMapOptionMonad () 
   {
-    var actual = Some(1).flatMap(function (x) return Some(x + 1)).flatMap(function (x) return Some(x + 1));
+    var actual = Some(1).flatMap_(function (x) return Some(x + 1)).flatMap_(function (x) return Some(x + 1));
     
     A.same(Some(3), actual);
   }

@@ -3,7 +3,7 @@ import scuts.ht.core.Of;
 import scuts.Scuts;
 
 
-
+#if false
 
 class MonadOrAbstract<M> implements MonadOr<M>
 {
@@ -33,3 +33,5 @@ class MonadOrAbstract<M> implements MonadOr<M>
   public inline function thenLeft<A,B>(val1:Of<M,A>, val2:Of<M,B>):Of<M,A> return me.thenLeft(val1, val2);
   
 }
+
+#end

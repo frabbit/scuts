@@ -4,7 +4,7 @@ package scuts.ht.instances.std;
 import scuts.ht.classes.Monoid;
 import scuts.ht.classes.Zero;
 import scuts.ht.instances.std.Tup2Semigroup;
-import scuts.core.Tup2;
+import scuts.core.Tuples;
 
 class Tup2Zero<A,B> implements Zero<Tup2<A,B>>
 {

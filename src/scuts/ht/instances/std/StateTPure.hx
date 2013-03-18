@@ -4,8 +4,8 @@ import scuts.ht.core.In;
 import scuts.ht.core.Of;
 import scuts.ht.instances.std.StateTOf;
 import scuts.core.States;
-import scuts.core.State;
-import scuts.core.Tup2;
+
+import scuts.core.Tuples;
 
 
 

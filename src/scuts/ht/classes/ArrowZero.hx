@@ -41,7 +41,7 @@ package scuts.ht.classes;
 
 import scuts.ht.core.OfOf;
 
-import scuts.core.Tup2;
+import scuts.core.Tuples;
 import scuts.Scuts;
 
 

@@ -3,7 +3,7 @@ import scuts.ht.core.Of;
 
 
 
-interface Cojoin<W>
+interface Cojoin<W> extends Functor<W>
 {
-  public function coJoin<A>(f:Of<W,A>):Of<W, Of<W, A>>;
+  public function cojoin<A>(f:Of<W,A>):Of<W, Of<W, A>>;
 }

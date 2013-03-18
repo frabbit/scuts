@@ -37,8 +37,8 @@ class Hots
     return macro (function () return $e)();
   }
 
-  public static function identity <T>(t:T):T {
-    return t;
+  @:noUsing public static function identity <T>(t:T):T {
+     return t;
   }
 
   @:noUsing 

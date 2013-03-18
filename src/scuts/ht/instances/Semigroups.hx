@@ -48,10 +48,10 @@ class Semigroups
   }
   
   @:implicit @:noUsing 
-  public static function validationSemigroup <F,S>(semiF, semiS):SG<Validation<F,S>>        
+  public static function validationSemigroup <F,S>(semiF:SG<F>, semiS:SG<S>):SG<Validation<F,S>>        
     return new ValidationSemigroup(semiF, semiS);
   
   @:implicit @:noUsing 
-  public static function optionSemigroup (semiT) 
+  public static function optionSemigroup <X>(semiT:SG<X>):SG<Option<X>> 
     return new OptionSemigroup(semiT);
 }

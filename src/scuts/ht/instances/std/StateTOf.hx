@@ -2,7 +2,7 @@ package scuts.ht.instances.std;
 
 import scuts.ht.core.In;
 import scuts.ht.core.Of;
-import scuts.core.State;
+import scuts.core.States;
 import scuts.ht.core.OfOf;
 
 abstract StateTOf<M,ST,A>(OfOf<M, State<ST, In>, A>) from OfOf<M, State<ST, In>, A> to OfOf<M, State<ST, In>, A>

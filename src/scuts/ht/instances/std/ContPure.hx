@@ -3,7 +3,7 @@ package scuts.ht.instances.std;
 import scuts.ht.classes.Pure;
 import scuts.ht.instances.std.ContOf;
 import scuts.core.Conts;
-import scuts.core.Cont;
+
 import scuts.ht.core.In;
 
 

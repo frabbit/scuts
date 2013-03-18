@@ -319,7 +319,7 @@ class Resolver
 
     resolve1Cache.set(id, resultingExpr);
 
-    trace(ExprTools.toString(resultingExpr));
+    //trace(ExprTools.toString(resultingExpr));
 
     return resultingExpr;
   }

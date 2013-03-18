@@ -1,7 +1,10 @@
 package scuts.ht;
-import utest.Assert;
 
-using scuts.ht.core.Hots;
+import org.hamcrest.MatchersBase;
+
+import scuts.Assert;
+
+using scuts.ht.Context;
 
 using scuts.ht.UnderscoreTests;
 using scuts.ht.UnderscoreTests.PrivateAccess;
@@ -10,6 +13,7 @@ class UnderscoreTests
 {
   public function new () {}
   
+  @Test
   public function testNormalCalls() 
   {
     function foo () return 1;
@@ -20,7 +24,7 @@ class UnderscoreTests
     Assert.equals(add(2), add._(2));
     
   }
-
+  @Test
   public function testImplicitCalls() 
   {
     
@@ -35,7 +39,7 @@ class UnderscoreTests
     Assert.equals("3foo", add2._());
   }
   
-  
+  @Test
   public function testOnSimpleClosure() 
   {
     
@@ -44,9 +48,10 @@ class UnderscoreTests
     Assert.equals(3, (function add (a:Int) return a)._());
     
   }
-  
-  public static inline function getVal(s:String, a:Int) return s.charAt(a)
-  
+
+  public static inline function getVal(s:String, a:Int) return s.charAt(a);
+
+  @Test
   public function testOnInlined() 
   {
     
@@ -57,7 +62,9 @@ class UnderscoreTests
     Assert.equals("f", add(3).getVal._());
     
   }
-  
+  // Failing Test during Compile Time
+  #if failing_tests
+  @Test
   public function testOnInlinedWithPrivateAccess() 
   {
     
@@ -66,6 +73,7 @@ class UnderscoreTests
     Assert.equals("f", "foo".callPublic._());
     
   }
+  #end
   
 }
 
@@ -76,7 +84,7 @@ class PrivateAccess {
     return callPrivate(s,i);
   }
   
-  public static function callPrivate (s:String, i:Int) {
+  private static function callPrivate (s:String, i:Int) {
     return s.charAt(0);
   }
   

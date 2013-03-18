@@ -1,32 +1,32 @@
-package scuts.ht.instances.std;
-import scuts.ht.box.ArrayBox;
-import scuts.ht.box.OptionBox;
-import scuts.ht.box.PromiseBox;
-import scuts.ht.box.ValidationBox;
+package scuts.ht.instances;
+
 import scuts.ht.classes.Eq;
 import scuts.ht.classes.Monad;
-import scuts.ht.syntax.Eqs;
-import scuts.ht.syntax.Semigroups;
-import scuts.ht.core.Hots;
+
 import scuts.ht.core.In;
 
 import scuts.ht.core.Of;
+import scuts.ht.instances.std.ArrayOf;
+import scuts.ht.instances.std.ArrayTOf;
+import scuts.ht.instances.std.OptionTOf;
 import scuts.ht.instances.std.ValidationOf;
 import scuts.ht.instances.std.ValidationTOf;
 import scuts.ht.core.OfOf;
-import scuts.core.LazyLists;
-import scuts.core.Promise;
-import scuts.core.Validation;
-import utest.Assert;
+import scuts.ds.LazyLists;
 
-using scuts.ht.Identity;
-using scuts.ht.ImplicitCasts;
-using scuts.ht.ImplicitInstances;
-using scuts.ht.core.Hots;
+import scuts.core.Validations;
+import scuts.Assert;
+import scuts.ht.syntax.EqBuilder;
+
+using scuts.core.Promises;
+using scuts.core.Options;
+
+using scuts.ht.Context;
+
 using scuts.core.Functions;
 
-import scuts.ht.ImplicitInstances.InstMonad.*;
-import scuts.ht.ImplicitInstances.InstSemigroup.*;
+import scuts.ht.instances.Monads.*;
+import scuts.ht.instances.Semigroups.*;
 
 class MonadLawsTest 
 {
@@ -66,31 +66,44 @@ class MonadLawsTest
     
   }
   
+  @Test
   public function testLawsForInstances () 
   {
-    function mkEq <M,X> (f:Of<M,Int>->X, eqX:Eq<X>) return Eqs.create(function (a:Of<M,Int>, b:Of<M,Int>) return eqX.eq(f(a), f(b)));
+    function mkEq <M,X> (f:Of<M,Int>->X, eqX:Eq<X>):Eq<Of<M, Int>> return EqBuilder.create(function (a:Of<M,Int>, b:Of<M,Int>) return eqX.eq(f(a), f(b)));
     
     
-    Hots.implicit(Eqs.create._(function (p1:Promise<Int>, p2:Promise<Int>) {
-      return (p1.isDone() == p2.isDone()) && p1.valueOption().eq(p2.valueOption());
+    Hots.implicit(EqBuilder.create(function (p1:Promise<Int>, p2:Promise<Int>) {
+      return (p1.isDone() == p2.isDone()) && p1.valueOption().eq_(p2.valueOption());
     }));
     
     
  
-    assertLaws(arrayMonad, mkEq._(ArrayBox.unbox));
-    assertLaws(optionMonad, mkEq._(OptionBox.unbox));
-    assertLaws(promiseMonad, mkEq._(PromiseBox.unbox));
+    assertLaws(arrayMonad, mkEq._(function (a:Of<Array<In>, Int>):Array<Int> return a));
+    assertLaws(optionMonad, mkEq._(function (a:Of<Option<In>, Int>):Option<Int> return a));
+    assertLaws(promiseMonad, mkEq._(function (a:Of<Promise<In>, Int>):Promise<Int> return a));
     
     
-    function valUnbox<X> (x:ValidationOf<Int, X>):Validation<Int, X> return ValidationBox.unbox(x);
-    function valUnboxT<X, M> (x:ValidationTOf<M, Int, X>):Of<M, Validation<Int, X>> return ValidationBox.unboxT(x);
-    
+    function valUnbox <S>(x:ValidationOf<Int, S>):Validation<Int, S> return x;
 
+    function valUnboxT<S, M> (x:ValidationTOf<M, Int, S>):Of<M, Validation<Int, S>> return x.runT();
     
-    assertLaws(validationMonad(intSumSemigroup), mkEq._(valUnbox));
-    assertLaws(optionTMonad(arrayMonad), mkEq._(ArrayBox.unbox.compose(OptionBox.unboxT)));
-    assertLaws(arrayTMonad(arrayMonad), mkEq._(ArrayBox.unbox.compose(ArrayBox.unboxT)));
-    assertLaws(validationTMonad(arrayMonad), mkEq._(ArrayBox.unbox.compose(valUnboxT)));
+    function arrayUnbox <X>(x:ArrayOf<X>):Array<X> return x;
+
+    function arrayTUnbox <M>(x:ArrayTOf<M, Int>):Of<M, Array<Int>> return x.runT();
+    
+    function optionTUnbox <M>(x:OptionTOf<M, Int>):Of<M, Option<Int>> return x.runT();
+    
+    arrayUnbox.compose;
+    
+    $type(validationMonad(intSumSemigroup));
+    $type(valUnbox);
+    var eq = mkEq._(valUnbox);
+    var mon = validationMonad(intSumSemigroup);
+    $type(mon);
+    assertLaws(mon, eq);
+    assertLaws(optionTMonad(arrayMonad), mkEq._(arrayUnbox.compose(optionTUnbox)));
+    assertLaws(arrayTMonad(arrayMonad), mkEq._(arrayUnbox.compose(arrayTUnbox)));
+    assertLaws(validationTMonad(arrayMonad), mkEq._(arrayUnbox.compose(valUnboxT)));
   }
    
 }

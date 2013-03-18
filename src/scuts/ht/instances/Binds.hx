@@ -10,7 +10,7 @@ import scuts.ht.classes.Monad;
 import scuts.ht.core.In;
 
 import scuts.ht.instances.std.*;
-import scuts.core.Cont;
+import scuts.core.Conts;
 import scuts.core.Options;
 import scuts.core.Promises;
 import scuts.core.Tuples;

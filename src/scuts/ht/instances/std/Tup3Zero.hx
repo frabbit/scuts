@@ -3,10 +3,10 @@ package scuts.ht.instances.std;
 
 import scuts.ht.classes.Monoid;
 import scuts.ht.classes.Zero;
-import scuts.core.Tup3;
-import scuts.core.Tup3;
+import scuts.core.Tuples;
 
-import scuts.core.Tup2;
+
+
 
 class Tup3Zero<A,B,C> implements Zero<Tup3<A,B,C>>
 {

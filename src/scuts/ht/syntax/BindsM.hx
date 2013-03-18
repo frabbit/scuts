@@ -1,12 +1,10 @@
 package scuts.ht.syntax;
 
-
+import scuts.ht.core.Of;
 
 #if macro
 import haxe.macro.Expr;
 import scuts.ht.macros.implicits.Resolver;
-#else
-import scuts.ht.core.Of;
 #end
 
 class BindsM {

@@ -8,6 +8,7 @@ typedef OfOf<M,A,B> = scuts.ht.core.OfOf<M,A,B>;
 typedef In = scuts.ht.core.In;
 
 typedef MonadInstances = scuts.ht.instances.Monads;
+typedef MonadEmptyInstances = scuts.ht.instances.MonadEmptys;
 typedef ApplicativeInstances = scuts.ht.instances.Applicatives;
 typedef BindInstances = scuts.ht.instances.Binds;
 typedef SemigroupInstances = scuts.ht.instances.Semigroups;

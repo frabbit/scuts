@@ -5,8 +5,8 @@ import scuts.ht.classes.Foldable;
 import scuts.ht.instances.std.ArrayFoldable;
 import scuts.ht.instances.std.ImListFoldable;
 import scuts.ht.instances.std.LazyListFoldable;
-import scuts.ds.ImList;
-import scuts.ds.LazyList;
+import scuts.ds.ImLists;
+import scuts.ds.LazyLists;
 
 import scuts.ht.core.In;
 

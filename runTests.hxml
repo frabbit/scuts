@@ -4,7 +4,6 @@
 -cp ../scutsMacros/src
 -cp src 
 -cp test 
--cp ../tinkerbell/src
 -cp ../MassiveUnit/core/src
 -cp ../MassiveLib/haxe/src
 -cp ../hamcrest-haxe/src/main
@@ -12,7 +11,6 @@
 -main AllTests
 --times
 -D macro_times
--D dump=pretty
 -x bin/nekoTest
 #-D scutsDebug
 #-D scutsLog

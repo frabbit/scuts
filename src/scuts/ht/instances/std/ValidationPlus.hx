@@ -7,8 +7,8 @@ import scuts.ht.classes.Semigroup;
 import scuts.ht.core.In;
 import scuts.ht.core.Of;
 import scuts.ht.instances.std.ValidationOf;
-import scuts.core.Validations; 
-import scuts.core.Validation;
+
+
 
 using scuts.core.Validations;
 

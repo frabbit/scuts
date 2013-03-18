@@ -5,7 +5,7 @@ import scuts.ht.classes.Monoid;
 import scuts.ht.classes.Zero;
 import scuts.ht.instances.std.Tup4Semigroup;
 
-import scuts.core.Tup4;
+import scuts.core.Tuples;
 
 class Tup4Zero<A,B,C,D> implements Zero<Tup4<A,B,C,D>>
 {

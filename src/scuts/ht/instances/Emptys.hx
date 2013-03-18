@@ -11,11 +11,11 @@ import scuts.ht.instances.std.OptionEmpty;
 import scuts.ht.instances.std.OptionTEmpty;
 import scuts.ht.instances.std.PromiseEmpty;
 import scuts.ht.instances.std.ValidationEmpty;
-import scuts.core.Option;
-import scuts.core.Promise;
-import scuts.core.Validation;
-import scuts.ds.ImList;
-import scuts.ds.LazyList;
+import scuts.core.Options;
+import scuts.core.Promises;
+import scuts.core.Validations;
+import scuts.ds.ImLists;
+import scuts.ds.LazyLists;
 import scuts.ht.core.In;
 import scuts.ht.core.Of;
 

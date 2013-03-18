@@ -3,7 +3,7 @@ package scuts.ht.instances.std;
 import scuts.ht.core.In;
 import scuts.ht.core.OfOf;
 import scuts.ht.core.Of;
-import scuts.ds.ImList;
+import scuts.ds.ImLists;
 
 abstract ImListTOf<M,A>(Of<M, ImList<A>>) to Of<M, ImList<A>> from Of<M, ImList<A>> { 
 	

@@ -1,4 +1,7 @@
 package scuts.ht.classes;
+import scuts.ht.classes.Cobind;
+import scuts.ht.classes.Cojoin;
+import scuts.ht.classes.Copure;
 import scuts.ht.core.Of;
 import scuts.Scuts;
 
@@ -19,7 +22,7 @@ import scuts.Scuts;
   duplicate = extend id
 
 */
-interface CoMonad<W> extends CoJoin<W> extends CoBind<W> extends CoPure<W>
+interface Comonad<W> extends Cojoin<W> extends Cobind<W> extends Copure<W>
 {
   //public function coJoin <A>(f:Of<W,A>):Of<W, Of<W, A>>;
 }
