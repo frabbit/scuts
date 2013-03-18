@@ -1,0 +1,20 @@
+-cp ../scutsDs/src
+-cp ../scutsCore/src
+-cp ../scutsMCore/src
+-cp ../scutsMacros/src
+-cp src 
+-cp test 
+-cp ../MassiveUnit/core/src
+-cp ../MassiveLib/haxe/src
+-cp ../hamcrest-haxe/src/main
+#-cp ../mockatoo\src
+-main AllTests
+--times
+-D macro_times
+-x bin/nekoTest
+#-D scutsDebug
+#-D scutsLog
+#-D scuts.htDebug
+-dce no
+
+
