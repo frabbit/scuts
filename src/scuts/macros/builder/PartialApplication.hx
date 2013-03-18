@@ -3,15 +3,15 @@ package scuts.macros.builder;
 
 #if macro
 
-import scuts.core.extensions.Arrays;
-import scuts.core.extensions.Iterables;
+import scuts.core.Arrays;
+import scuts.core.Iterables;
 
-using scuts.core.extensions.Arrays;
-using scuts.core.extensions.Options;
+using scuts.core.Arrays;
+using scuts.core.Options;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
-import scuts.core.extensions.Dynamics;
+import scuts.core.Dynamics;
 import scuts.mcore.Check;
 import scuts.mcore.Parse;
 import scuts.mcore.Print;
