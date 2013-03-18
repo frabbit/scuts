@@ -22,17 +22,9 @@ abstract LeftProjection<L,R>(Either<L,R>) to Either<L,R> {
 
 }
 
-// newtype wrapper for right projections
-abstract RightProjection<L,R>(Either<L,R>) to Either<L,R> {
-
-  public function new (e:Either<L,R>) {
-    this = e;
-  }
-
-}
 
 
-private typedef RP<L,R> = RightProjection<L,R>;
+
 private typedef LP<L,R> = LeftProjection<L,R>;
 
 
@@ -334,7 +326,7 @@ class Eithers
     case Right(r): Right(right(r));
   }
   
-  public static inline function rightProjection <L,R>(e:Either<L,R>):RightProjection<L,R> return new RightProjection(e);
+  
   public static inline function leftProjection <L,R>(e:Either<L,R>):LeftProjection<L,R> return new LeftProjection(e);
 }
 
@@ -344,7 +336,6 @@ class LeftProjections
   
   static inline function eitherF<L,R,LL>(e:L->LP<LL,R>):L->Either<LL,R> return e;
   
-  public static inline function rightProjection<L,R>(e:LP<L,R>):RP<L,R> return either(e).rightProjection();
   
   public static inline function flatMap < L,R,LL > (e:LP<L,R>, f:L->LP<LL, R>):LP<LL,R>
   {
@@ -361,29 +352,3 @@ class LeftProjections
     return e.either().applyLeft(either(f)).leftProjection();
   }
 }
-
-class RightProjections 
-{
-  
-  static inline function either<L,R>(e:RP<L,R>):Either<L,R> return e;
-  
-  static inline function eitherF<L,R,RR>(e:R->RP<L,RR>):R->Either<L,RR> return e;
-  
-  public static inline function leftProjection<L,R>(e:RP<L,R>):LP<L,R> return either(e).leftProjection();
-  
-  public static inline function flatMap < L,R,RR > (e:RP<L,R>, f:R->RP<L, RR>):RP<L,RR>
-  {
-    return e.either().flatMapRight(eitherF(f)).rightProjection();
-  }
-  
-  public static inline function map < L,R,RR > (e:RP<L,R>, f:R->RR):RP<L,RR>
-  {
-    return e.either().mapRight(f).rightProjection();
-  }
-  
-  public static inline function apply <L,R,RR>(e:RP<L,R>, f:RP<L, R->RR>):RP<L, RR>
-  {
-    return e.either().applyRight(either(f)).rightProjection();
-  }
-}
-

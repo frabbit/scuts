@@ -1,6 +1,6 @@
 package scuts.core;
 
-import scuts.core.Tup2;
+import scuts.core.Tuples;
 import scuts.core.Unit;
 import scuts.core.Eithers.Either;
 

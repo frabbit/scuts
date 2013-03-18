@@ -68,18 +68,12 @@ class Validations
   
   
   public static function 
-  apply <F,S,SS> (v:VD<F,S>, f:VD<F, S->SS>, appendFailure:F->F->F):VD<F, SS> return switch (f) 
+  apply <F,S,SS> (v:VD<F,S>, f:VD<F, S->SS>, appendFailure:F->F->F):VD<F, SS> return switch [v, f] 
   {
-    case Success(s1): switch (v) 
-    {
-      case Success(s2): Success(s1(s2));
-      case Failure(f): Failure(f);
-    }
-    case Failure(f1): switch (v) 
-    {
-      case Success(_): Failure(f1);
-      case Failure(f2): Failure(appendFailure(f1, f2));
-    }
+    case [Success(s),  Success(f) ]: Success(f(s));
+    case [Failure(e),  Success(_) ]: Failure(e);
+    case [Success(_),  Failure(e) ]: Failure(e);
+    case [Failure(e1), Failure(e2)]: Failure(appendFailure(e2, e1));
   }
   
   public static function 

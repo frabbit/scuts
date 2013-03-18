@@ -1,8 +1,10 @@
 package scuts.core;
-import scuts.core.Cont;
+import scuts.core.Conts;
 
 using scuts.core.Functions;
 
+
+typedef Cont<A,R> = (A->R)->R;
 
 class Conts 
 {

@@ -7,9 +7,9 @@ using scuts.ds.LazyStacks;
 abstract LazyStack<T>(LazyList<T>) 
 {
   public function new (x) this = x;
-  public static inline function fromLazyList <T>(l:LazyList<T>):LazyStack<T> return l;
+  public static inline function fromLazyList <T>(l:LazyList<T>):LazyStack<T> return new LazyStack(l);
   
-  public static inline function toLazyList <T>(s:LazyStack<T>):LazyList<T> return s;
+  public inline function toLazyList <T>():LazyList<T> return this;
 
 }
 
@@ -19,9 +19,9 @@ class LazyStacks
   
   static inline function unbox <T>(l:LazyStack<T>):LazyList<T> return l.toLazyList();
   
-  static inline function box <T>(l:LazyList<T>):LazyStack<T> return l.fromLazyList();
+  static inline function box <T>(l:LazyList<T>):LazyStack<T> return LazyStack.fromLazyList(l);
   
-  public static function mkEmpty <T>():LazyStack<T> return LazyLists.mkEmpty().box()
+  public static function mkEmpty <T>():LazyStack<T> return LazyLists.mkEmpty().box();
   
   public static function push <T>(l:LazyStack<T>, el:T):LazyStack<T> 
   {

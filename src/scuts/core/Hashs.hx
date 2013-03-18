@@ -1,6 +1,6 @@
 package scuts.core;
-import scuts.core.Option;
-import scuts.core.Tup2;
+
+import scuts.core.Tuples;
 
 using scuts.core.Options;
 using scuts.core.Dynamics;
