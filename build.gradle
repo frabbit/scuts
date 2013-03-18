@@ -1,5 +1,5 @@
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.2'
+    gradleVersion  = '1.2'
 	jarFile = 'gradle/wrapper/gradle-wrapper.jar'
 }
 
@@ -12,7 +12,7 @@ task test (type:Exec) {
     
   
   def values2 = [
-    'haxe',
+     'haxe',
     '-cp', 'src',
     '-cp', 'test',
     '-cp', 'src',
