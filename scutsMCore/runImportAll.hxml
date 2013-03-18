@@ -1,0 +1,7 @@
+-cp src 
+-cp test 
+-cp .
+-cp ./../scutsCore/src
+-debug
+--macro ImportAll.main()
+
