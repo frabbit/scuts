@@ -4,9 +4,9 @@ package scuts.mcore;
 #error "Class can only be used inside of macros"
 #elseif (display || macro)
 import haxe.macro.Expr;
+import scuts.core.Options;
 
 
-import scuts.CoreTypes;
 
 
 class Extract 
@@ -40,7 +40,7 @@ class Extract
   
   public static function extractBinOpRightExpr (e:Expr, filter:Binop->Bool ):Option<Expr> return switch (e.expr) 
   {
-    case EBinop(b, e1, e2): if (filter(b)) Some(e2) else None;
+    case EBinop(b, _, e2): if (filter(b)) Some(e2) else None;
     default:                None;
   }
 

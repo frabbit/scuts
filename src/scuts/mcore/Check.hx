@@ -1,18 +1,19 @@
 package scuts.mcore;
 
-#if (!macro && !display)
-#error "Class can only be used inside of macros"
-#elseif (display || macro)
-using scuts.core.Arrays;
-using scuts.core.Iterables;
+#if macro
+
+
+
 using scuts.core.Dynamics;
 using scuts.core.Options;
+using scuts.core.Iterables;
+using scuts.core.Arrays;
 
 import haxe.macro.Expr;
 import haxe.macro.Type;
 import scuts.core.Predicates;
 
-import scuts.CoreTypes;
+
 
 
 class Check 
@@ -127,7 +128,7 @@ class Check
         e != null;
       case ExprDef.EWhile(econd, e, _):
         has(econd) || has(e);
-      case EVars(_), EThrow(_), EType(_,_), ENew(_,_), EField(_,_), EDisplayNew(_), EDisplay(_), EContinue, EBreak:
+      case EVars(_), EThrow(_), EField(_,_), EDisplayNew(_), EDisplay(_), EContinue, EBreak:
         false;
       default: false;
     }
@@ -144,7 +145,7 @@ class Check
         switch (lastExpr.expr) 
         {
           case EReturn(ret): ret == null;
-          case EBlock(block): isBlockAndLastExprIsVoidReturn(lastExpr);
+          case EBlock(_): isBlockAndLastExprIsVoidReturn(lastExpr);
           default:            false;
         }
       }
@@ -215,16 +216,16 @@ class Check
     return isConstIdent(e, function (x) return x == "null");
   }
   
-  public static function isType (e:Expr) return switch (e.expr) 
-  {
-    case EConst(c): switch (c) 
-    {
-      case CType(_): true;
-      default:       false;
-    }
-    case EType(_, _): true;
-    default: false;
-  }
+  // public static function isType (e:Expr) return switch (e.expr) 
+  // {
+  //   case EConst(c): switch (c) 
+  //   {
+  //     case CType(_): true;
+  //     default:       false;
+  //   }
+  //   case EType(_, _): true;
+  //   default: false;
+  // }
   
   //EConst
   public static function isEConst (e:Expr):Bool return switch (e.expr) 
@@ -236,7 +237,7 @@ class Check
   // EBlock
   public static function isEBlock (e:Expr):Bool return switch (e.expr) 
   {
-    case EBlock(c): true;
+    case EBlock(_): true;
     default:        false;
   }
   
@@ -280,29 +281,19 @@ class Check
   }
 
   
-  // EType( e : Expr, field : String );
-  public static function isEType (e:Expr, ?fieldFilter:String->Bool):Bool 
-  {
-    var fieldFilter = fieldFilter.nullGetOrElseConst(function (_) return true);
-    
-    return switch (e.expr) 
-    {
-      case EType(_, field): fieldFilter(field);
-      default:              false;
-    }
-  }
+  
   
   // EParenthesis( e : Expr );
   public static function isEParenthesis (e:Expr):Bool return switch (e.expr) 
   {
-    case EParenthesis(e): true;
+    case EParenthesis(_): true;
     default:              false;
   }
   
   // EObjectDecl( fields : Array<{ field : String, expr : Expr }> );
   public static function isEObjectDecl (e:Expr):Bool return switch (e.expr) 
   {
-    case EType(_):  true;
+    case EObjectDecl(_):  true;
     default:        false;
   }
   
@@ -495,11 +486,6 @@ class Check
     default: false;
   }
   
-  public static function isCType (c:Constant):Bool return switch (c) 
-  {
-    case CType(_): true;
-    default: false;
-  }
   
   public static function isCIdent (c:Constant):Bool return switch (c) 
   {

@@ -1,8 +1,6 @@
 package scuts.mcore;
 
-#if (!macro && !display)
-#error "Class can only be used inside of macros"
-#elseif (display || macro)
+#if macro
 
 import haxe.macro.Type;
 import haxe.macro.Context;
@@ -12,8 +10,8 @@ import neko.FileSystem;
 import neko.io.File;
 import scuts.core.Log;
 
-using scuts.mcore.extensions.Exprs;
-using scuts.mcore.extensions.Strings;
+using scuts.mcore.ast.Exprs;
+using scuts.mcore.ast.Strings;
 using scuts.core.Arrays;
 
 

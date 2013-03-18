@@ -4,7 +4,7 @@ package scuts.mcore;
 
 import haxe.macro.Expr;
 import haxe.macro.Context;
-import scuts.core.Option;
+import scuts.core.Options;
 import scuts.Scuts;
 using scuts.core.Dynamics;
 using scuts.core.Arrays;
@@ -13,53 +13,53 @@ class Make
 {
 
   public static inline function whileExpr (cond:Expr, body:Expr, ?pos:Position):Expr
-    return expr(EWhile(cond, body, true), pos)
+    return expr(EWhile(cond, body, true), pos);
     
   public static inline function forIn (varName:String, iter:Expr, body:Expr, ?pos:Position):Expr
-    return expr(EFor(expr(EIn(constIdent(varName, pos), iter), pos), body), pos)
+    return expr(EFor(expr(EIn(constIdent(varName, pos), iter), pos), body), pos);
   
   public static inline function binop (left:Expr, right:Expr, op:Binop, ?pos:Position):Expr
-    return expr(EBinop(op,left, right), pos)
+    return expr(EBinop(op,left, right), pos);
     
   public static inline function unop (e:Expr, op:Unop, ?postFix:Bool = false, ?pos:Position):Expr
-    return expr(EUnop(op, postFix, e), pos)
+    return expr(EUnop(op, postFix, e), pos);
   
   public static inline function field (e:Expr, field:String, ?pos:Position):Expr
-    return expr(EField(e, field), pos)
+    return expr(EField(e, field), pos);
     
   public static function fields (e:Expr, fields:Array<String>, ?pos:Position):Expr
-    return fields.foldLeft(e, function (acc, cur) return field(acc, cur, pos))
+    return fields.foldLeft(e, function (acc, cur) return field(acc, cur, pos));
     
   public static inline function const (const:Constant, ?pos:Position):Expr
-    return expr(EConst(const), pos)
+    return expr(EConst(const), pos);
     
     
   public static inline function constIdent (ident:String, ?pos:Position):Expr
-    return const(CIdent(ident), pos)
+    return const(CIdent(ident), pos);
     
   public static inline function constInt (value:String, ?pos:Position):Expr
-    return const(CInt(value), pos)
+    return const(CInt(value), pos);
     
   public static inline function identNull (?pos:Position):Expr
-    return const(CIdent("null"), pos)
+    return const(CIdent("null"), pos);
     
   public static inline function identFalse (?pos:Position):Expr
-     return const(CIdent("false"), pos)
+     return const(CIdent("false"), pos);
       
   public static inline function identTrue (?pos:Position):Expr
-     return const(CIdent("true"), pos)
+     return const(CIdent("true"), pos);
     
   public static inline function assign (left:Expr, right:Expr, ?pos:Position):Expr
-    return expr(EBinop(OpAssign, left, right), pos)
+    return expr(EBinop(OpAssign, left, right), pos);
     
   public static inline function ifExpr (econd:Expr, ethen:Expr, ?eelse:Expr = null, ?pos:Position):Expr
-    return expr(EIf(econd, ethen, eelse), pos)
+    return expr(EIf(econd, ethen, eelse), pos);
 	
   public static function anon (fields:Array<{ field : String, expr : Expr }>, ?pos:Position) 
-    return expr(EObjectDecl(fields), pos)
+    return expr(EObjectDecl(fields), pos);
   
   public static function anonField (field:String, expr:Expr)
-    return { field: field, expr:expr}
+    return { field: field, expr:expr};
   
   public static function parenthesis (e:Expr, ?pos:Position) {
      return expr(EParenthesis(e), pos);
@@ -108,19 +108,19 @@ class Make
 	}
 	
   public static function call (e:Expr, params:Array<Expr>, ?pos:Position)
-    return expr(ECall(e, params), pos)
+    return expr(ECall(e, params), pos);
   
   public static inline function expr (def:ExprDef, ?pos:Position):Expr
     return 
-      { 
-        expr:def, 
-        pos: if (pos == null) Context.currentPos() else pos 
-      }
+    { 
+      expr:def, 
+      pos: if (pos == null) Context.currentPos() else pos 
+    }
     
   public static inline function block (?exprs:Array<Expr>, ?pos:Position):Expr 
-    return expr(EBlock(exprs == null ? [] : exprs), pos)
+    return expr(EBlock(exprs == null ? [] : exprs), pos);
   
-  public static inline function emptyBlock (?pos:Position):Expr return block()
+  public static inline function emptyBlock (?pos:Position):Expr return block();
   
   public static inline function varExpr (variableId:String, ?type:ComplexType, ?ex:Expr, ?pos:Position) 
   {
@@ -150,14 +150,14 @@ class Make
   public static inline function type (pack:Array<String>, name:String, ?module:String, ?pos:Position):Expr
   {
     return if (pack.length == 0) {
-      if (module == null) const(CType(name), pos)
-      else expr(EType(expr(EConst(CType(module)), pos), name), pos);
+      if (module == null) const(CIdent(name), pos)
+      else expr(EField(expr(EConst(CIdent(module)), pos), name), pos);
     } else {
       var first = pack[0];
       var e = constIdent(first);
       for (i in 1...pack.length) e = field(e, pack[i], pos);
-      if (module != null) e = expr(EType(e, module), pos);
-      e = expr(EType(e, name));
+      if (module != null) e = expr(EField(e, module), pos);
+      e = expr(EField(e, name));
       e;
     }
   }

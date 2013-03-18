@@ -2,15 +2,13 @@ package scuts.mcore;
 
 #if macro
 
-
-
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Expr.Binop;
 import haxe.macro.Type;
 import scuts.core.debug.Assert;
 
-import scuts.mcore.extensions.Types;
+import scuts.mcore.ast.Types;
 import scuts.Scuts;
 
 using scuts.core.Dynamics;
@@ -128,6 +126,8 @@ class Print
     
     
     return switch(ex.expr) {
+      case EMeta( _, _ ):
+        Scuts.notImplemented();
       case EConst( c ):
         const(c);
       case EArray( e1, e2): 
@@ -140,10 +140,6 @@ class Print
         binop(op);
         expr(e2);
       case EField( e, field): 
-        expr(e);
-        add(".");
-        add(field);
-      case EType( e, field): 
         expr(e);
         add(".");
         add(field);
@@ -373,9 +369,9 @@ class Print
           complexType1(t, buf, indent, indentStr);
           add(")");
         }
-      case EDisplay( e, isCall ):
+      case EDisplay( _, _ ):
         buf;
-      case EDisplayNew( t ):
+      case EDisplayNew( _ ):
         buf;
       case ETernary( econd, eif, eelse ):
         expr(econd);
@@ -422,19 +418,19 @@ class Print
       case TPath( p ): 
         var typeParams = if (cl != null) cl else [];
         
-        var params = new Hash();
+        var params = new Map();
         for (tp in typeParams) 
         {
           switch (tp) 
           {
-            case TypeParam.TPExpr(e):
+            case TypeParam.TPExpr(_):
               Scuts.notImplemented();
             case TypeParam.TPType(ct):
               switch(ct) 
               {
                 case TPath(p):
                   params.set(p.name + "." + p.sub, true);
-                case TFunction(args, ret):
+                case TFunction(_, _):
                   
                 default:
                   trace(ct);
@@ -478,7 +474,7 @@ class Print
           field1(f, buf, indent, indentStr);
         }
         add("}");
-      case TOptional(t):
+      case TOptional(_):
         buf.add("?");
         complexType1(c, buf, indent, indentStr, cl);
     }
@@ -505,6 +501,7 @@ class Print
       case AOverride: add("override ");
       case ADynamic:  add("dynamic ");
       case AInline:   add("inline ");
+      case AMacro:   add("macro ");
     }
   }
   
@@ -616,10 +613,21 @@ class Print
       complexType1(f.ret, buf, indent, indentStr);
     }
     
+
+
     if (!onlySignature && f.expr != null) 
     { 
       add(" "); 
-      expr1(f.expr, buf, 0, indentStr); 
+      //expr1(f.expr, buf, 0, indentStr); 
+       switch (f.expr.expr) 
+       {
+         case EBlock(_): 
+           expr1(f.expr, buf, 0, indentStr); 
+         case _: 
+           expr1(f.expr, buf, 0, indentStr); 
+           add(";");
+       }
+      
     }
     return buf;
     
@@ -676,7 +684,7 @@ class Print
       case AccResolve:      add("dynamic");
       case AccCall( m ):    add(m);
       case AccInline:       // should be resolved through access modifiers
-      case AccRequire( r, msg ): // TODO what is this
+      case AccRequire( _, _ ): // TODO what is this
     }
     return buf;
   }
@@ -702,7 +710,6 @@ class Print
       case CFloat( f ):        add(f);
       case CString( s ):       add('"' + s + '"');
       case CIdent( s ):        add(s);
-      case CType( s ):         add(s);
       case CRegexp( r , opt ): add("~/" + r + "/" + opt);
     }
   }
@@ -737,6 +744,7 @@ class Print
     }
     
     return switch (op) {
+      case OpArrow:      add("=>");
       case OpAdd:      add("+");
       case OpMult:     add("*");
       case OpDiv:      add("/");
@@ -781,7 +789,6 @@ class Print
       case CFloat( f ):        add(f);
       case CString( s ):       add('"' + s + '"');
       case CIdent( s ):        add(s);
-      case CType( s ):         add(s);
       case CRegexp( r , opt ): add("~/" + r + "/" + opt);
     }
   }
@@ -823,7 +830,7 @@ class Print
         res;
       case TLazy(f):
         type1(f(), simpleFunctionSignatures, wildcards, short);
-      case TMono(t): 
+      case TMono(_): 
         UNKNOWN_T_MONO;
           
       case TEnum( t1, params ): 
@@ -959,7 +966,7 @@ class Print
             
           default: Scuts.notImplemented();
         }
-      case FieldKind.FVar(read, write):
+      case FieldKind.FVar(read, _):
         switch (read) {
           case VarAccess.AccNo: c.name + " : " + P.type(c.type) + ",";
           case VarAccess.AccNormal: "var " + c.name + " : " + P.type(c.type) + ";";

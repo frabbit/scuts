@@ -1,21 +1,16 @@
 package scuts.mcore;
 
-#if (!macro && !display)
-#error "Class can only be used inside of macros"
-#elseif (display || macro)
+#if macro
 
 
-private typedef MType = haxe.macro.Type;
 import haxe.macro.Expr;
 import haxe.macro.Context;
-import scuts.core.Option;
-import scuts.core.Validation;
+
+
 import scuts.Scuts;
 
 using scuts.core.Arrays;
 using scuts.core.Eithers;
-
-
 using scuts.core.Validations;
 using scuts.core.Functions;
 using scuts.core.Options;
@@ -39,20 +34,30 @@ class Convert
 			default: Scuts.unexpected();
     }
 
-    var e = MContext.parse("{ var a:" + s + ";}", pos);
+    var e = MCore.parse("{ var a:" + s + ";}", pos);
     return e.flatMap(extractType);
     
 	}
 
-	public static function complexTypeToType (t:ComplexType):Option<MType>
+	public static function complexTypeToType (t:ComplexType):Option<haxe.macro.Type>
 	{
     var ctAsString = Print.complexType(t);
 		
     var e = Parse.parse("{ var a : $0 = null; a;}", [ctAsString]);
     
     
-		return MContext.typeof(e);
+		return MCore.typeof(e);
 	}
+
+  public static function typeToComplexType (t:haxe.macro.Type):Validation<Error, ComplexType>
+  {
+    return try {
+      Success(haxe.macro.TypeTools.toComplexType(t));
+    } catch (e:Error) {
+      Failure(e);
+    }
+    
+  }
 	
   public static function complexTypeToFullQualifiedComplexType (c:ComplexType):Validation<Error, ComplexType>
   {
@@ -68,15 +73,15 @@ class Convert
           {
             function createArg (a, t) return { name: a.name, opt: a.opt, type: t, value: a.value };
             
-            function mapArg (a:FunctionArg) return if (a.type == null) Success(a) else ct(a.type).map(createArg.partial1(a));
+            function mapArg (a:FunctionArg) return if (a.type == null) Success(a) else ct(a.type).map(createArg.bind(a));
             
             return f.args.map(mapArg).catIfAllSuccess();
           }
           function createFunction (args, r) return { args: args, expr: f.expr, params: f.params, ret: r };
           
           return 
-            if (f.ret != null) ct(f.ret).zipSuccessLazy(convArgs).map(createFunction.flip().tupled());
-            else               convArgs().map(createFunction.partial2(f.ret));
+            if (f.ret != null) ct(f.ret).zipLazy(convArgs).map(createFunction.flip().tupled());
+            else               convArgs().map(createFunction.bind(_,f.ret));
         }
         
         
@@ -85,8 +90,8 @@ class Convert
         var k = switch (f.kind) 
         {
           case FFun(f):               convFunction(f).map(FieldType.FFun);
-          case FVar(t, e):            ct(t).map(FieldType.FVar.partial2(e));
-          case FProp(get, set, t, e): ct(t).map(FieldType.FProp.partial1_2_4(get, set, e));
+          case FVar(t, e):            ct(t).map(FieldType.FVar.bind(_,e));
+          case FProp(get, set, t, e): ct(t).map(FieldType.FProp.bind(get, set, _, e));
         }
         
         return k.map(createField);
@@ -110,42 +115,42 @@ class Convert
       {
         function toTp (params) 
         {
-          function extractPackAndNameFromType (t:MType) return switch t 
+          function extractPackAndNameFromType (t:haxe.macro.Type) return switch t 
           {
-            case TInst( tr, p): var dt = tr.get(); { p:dt.pack, n:dt.name};
-            case TEnum( tr, p): var dt = tr.get(); { p:dt.pack, n:dt.name};
+            case TInst( tr, _): var dt = tr.get(); { p:dt.pack, n:dt.name};
+            case TEnum( tr, _): var dt = tr.get(); { p:dt.pack, n:dt.name};
             default:                            Scuts.notImplemented();
           }
           function extractPackAndName () return { p:p.pack, n:p.name };
           
-          var packAndName = MContext.typeof(expr).map(extractPackAndNameFromType).getOrElse(extractPackAndName);
+          var packAndName = MCore.typeof(expr).map(extractPackAndNameFromType).getOrElse(extractPackAndName);
           
           return { name: packAndName.n, pack: packAndName.p, params: params, sub: p.sub };
         }
         
         function convParam (tp) return switch (tp) 
         {
-          case TPExpr(e): tp.toSuccess(); 
+          case TPExpr(_): tp.toSuccess(); 
           case TPType(t): ct(t).map(TPType);
         }
         
         return p.params.map(convParam).catIfAllSuccess().map(toTp);
       }
       
-      return MContext.parse(testE, pos).flatMap(exprToTypePath);
+      return MCore.parse(testE, pos).flatMap(exprToTypePath);
     }
     
     function funcToFullQualified (args:Array<ComplexType>, ret) 
     {
       var newArgs = args.map(ct).catIfAllSuccess();
       var newRet = ct(ret);
-      return newArgs.zipSuccess(newRet).map(TFunction.tupled());
+      return newArgs.zip(newRet).map(TFunction.tupled());
     }
     
     return switch (c) 
     {
       case TAnonymous(fields):   convFields(fields).map(ComplexType.TAnonymous);
-      case TExtend(p, fields):   convTypePath(p).zipSuccess(convFields(fields)).map(TExtend.tupled());
+      case TExtend(p, fields):   convTypePath(p).zip(convFields(fields)).map(TExtend.tupled());
       case TFunction(args, ret): funcToFullQualified(args, ret);
       case TOptional(t):         ct(t).map(TOptional);
       case TParent(t):           ct(t).map(TParent);
@@ -156,16 +161,16 @@ class Convert
 	
 	
 	
-	public static function exprToType (e:Expr):Option<ComplexType> return switch (e.expr) 
-  {
-    case EConst(c): switch (c) 
-    {
-      case CType(t): stringToComplexType(t, e.pos).option();
-      default:       None;
-    }
-    case EType(_, _): stringToComplexType(Print.expr(e), e.pos).option();
-    default:          None;
-  }
+	// public static function exprToType (e:Expr):Option<ComplexType> return switch (e.expr) 
+ //  {
+ //    case EConst(c): switch (c) 
+ //    {
+ //      case CType(t): stringToComplexType(t, e.pos).option();
+ //      default:       None;
+ //    }
+ //    case EType(_, _): stringToComplexType(Print.expr(e), e.pos).option();
+ //    default:          None;
+ //  }
 	
 }
 
