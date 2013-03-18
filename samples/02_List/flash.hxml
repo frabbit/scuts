@@ -1,8 +1,0 @@
-main.hxml
--cp ../../src 
--cp ../../../scutsCore/src
--cp ../../../hots/src
--cp ../../../scutsMacros/src
--cp ../../../scutsMCore/src
--swf-header 1200:900:31:FFFFFF
--swf bin/Example.swf
