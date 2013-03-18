@@ -1,0 +1,6 @@
+-cp .
+-cp ../../src
+-cp ../../../scutsCore/src
+-cp ../../../scutsMCore/src
+-main Animation
+-js bin/animation.js
