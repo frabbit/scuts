@@ -1,43 +1,9 @@
-(h)igher (o)rder (t)ype(s) and type classes for haxe
-====================================================
+# hots is now named scuts.ht and will be moved into the repository scuts.
 
-Folder Structure of scuts.ht
+this library tries to add type classes and higher order types into the haxe programming language.
+This library is very experimental and should not be used in production code. There are still problems
+and missing compiler features in the language which needs to solved in order to make this library more useful.
 
-  bin - Binary folder for compiled samples and tests
-  compiler - Haxe Compiler and NekoVM
-  docs - folder for generated files
-  lib - the library scuts
-  samples - some samples of scuts.ht
-  src  - source code of scuts.ht
-  test - test files of scuts.ht
-
-Compilation and Running of Samples
-
-  1. Before compilation you have to start the Haxe Compilation Server with "run server"
-  2. Compile a Sample with run x y ( x is the sample id and y the target plattform)
-    x can be sort, carthesian1, carthesian2, promise, animation (only js) or equals
-    y can be neko, flash, php, cpp, js (to compile and run the programm directly in the console there are also nekox and cppx)
-  
-    Examples:
-    run animation js  (compiles the animation example for javascript)
-    run promise neko  (compiles the promises example for neko)
-    run promise nekox (compiles and runs the promises example with neko)
-    run carthesian1 cppx (compiles and runs the promises example with cpp)
-     
-Creating Documentation
-
-  1. Start the compilation server if not already running with "run server"
-  2. run docs (generates the documentation based on chxdoc (not really good)
-
-Clean up
-
-  just "run clean"
-
-Unit testing
-
-  1. Start the compilation server if not already running with "run server"
-  2. run test y
-     y can be neko, flash, php, cpp, js (to compile and run the programm directly in the console there are also nekox and cppx)
 
 
 
