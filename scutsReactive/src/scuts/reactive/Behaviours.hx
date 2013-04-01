@@ -17,21 +17,16 @@ package scuts.reactive;
 
 import scuts.reactive.BehavioursBool;
 import scuts.reactive.Streams;
-import scuts.core.Tup3;
-import scuts.core.Tup4;
-import scuts.core.Tup5;
+import scuts.core.Tuples;
 
 import scuts.reactive.Reactive;
 
-//import haxe.data.collections.Collection;
 import scuts.reactive.Behaviour;
 import scuts.reactive.Stream;
-import scuts.core.Tup2;
 
 using scuts.core.Iterables;
 using scuts.reactive.Streams;
 using scuts.reactive.Behaviours;
-//using haxe.data.collections.IterableExtensions;
 
 private typedef Beh<T> = Behaviour<T>;
 
@@ -40,7 +35,6 @@ private typedef Beh<T> = Behaviour<T>;
 class Behaviours 
 {
   private function new() { }
-  
   
   /**
    * Applies a function to a signal's value that 
@@ -207,10 +201,9 @@ class Behaviours
   public static function zip3<T, B, C>(b1:Beh<T>, b2: Beh<B>, b3: Beh<C>): Beh<Tup3<T, B, C>> 
   {
     var createTuple = function() return Tup3.create(b1.get(), b2.get(), b3.get());
-    
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(createTuple())),
-      [b1, b2, b3].map(changes)
+      [cast b1.changes(), cast b2.changes(), cast b3.changes()]
     ).startsWith(createTuple());
   }
   
@@ -228,12 +221,11 @@ class Behaviours
   public static function zip4<T, B, C, D>(b1:Beh<T>, b2: Beh<B>, b3: Beh<C>, b4: Beh<D>): Beh<Tup4<T, B, C, D>> 
   {
     function create()  return Tup4.create(b1.get(), b2.get(), b3.get(), b4.get());
-    
     return Streams.create(
       function(pulse) {
         return Propagate(pulse.withValue(create()));
       },
-      [b1, b2, b3, b4].map(changes)
+      [cast b1.changes(), cast b2.changes(), cast b3.changes(), cast b4.changes()]
     ).startsWith(create());
   }
     
@@ -255,7 +247,7 @@ class Behaviours
     
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(create())),
-      [b1, b2, b3, b4, b5].map(changes)
+      [cast b1.changes(), cast b2.changes(), cast b3.changes(), cast b4.changes(), cast b5.changes()]
     ).startsWith(create());
   }
   
@@ -285,10 +277,9 @@ class Behaviours
   public static function zipWith<T,A, R>(b1:Beh<T>, b2: Beh<A>, f : T -> A -> R): Beh<R> 
   { 
     function create() return f(b1.get(), b2.get());
-    
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(create())),
-      [b1, b2].map(changes)
+      [cast b1.changes(), cast b2.changes()]
     ).startsWith(create());
   }
   
@@ -298,7 +289,7 @@ class Behaviours
     
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(create())),
-      [b1, b2, b3].map(changes)
+      [cast b1.changes(), cast b2.changes(), cast b3.changes()]
     ).startsWith(create());
   }
   
@@ -308,7 +299,7 @@ class Behaviours
     
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(create())),
-      [b1, b2, b3, b4].map(changes)
+      [cast b1.changes(), cast b2.changes(), cast b3.changes(), cast b4.changes()]
     ).startsWith(create());
   }
     

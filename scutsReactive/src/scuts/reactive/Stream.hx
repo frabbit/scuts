@@ -1,18 +1,17 @@
 package scuts.reactive;
 
 import scuts.reactive.Reactive;
-import scuts.core.Tup2;
-import scuts.core.Tup3;
-import scuts.core.Tup4;
-import scuts.core.Tup5;
-
-private typedef Beh<T> = Behaviour<T>;
+import scuts.core.Tuples;
+// import scuts.core.Tup3;
+// import scuts.core.Tup4;
+// import scuts.core.Tup5;
 
 using scuts.core.Iterables;
 
 using scuts.reactive.Behaviours;
 using scuts.reactive.Streams;
 
+private typedef Beh<T> = Behaviour<T>;
 
 @:allow(scuts.reactive.Streams)
 class Stream<T> 
