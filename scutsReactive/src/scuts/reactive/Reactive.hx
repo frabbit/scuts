@@ -111,13 +111,16 @@ class PriorityQueue<T> {
         this.val.push(kv);
         
         var kvpos = this.val.length - 1;
-        
-        while (kvpos > 0 && kv.k < this.val[Math.floor((kvpos-1)/2)].k) {
+        var prev = Math.floor((kvpos-1)/2);
+
+        while (kvpos > 0 && kv.k < this.val[prev].k) {
             var oldpos = kvpos;
-            kvpos = Math.floor((kvpos-1)/2);
+            kvpos = prev;
             
             this.val[oldpos] = this.val[kvpos];
             this.val[kvpos]  = kv;
+
+            prev = Math.floor((kvpos-1)/2);
         }
     }
     
@@ -137,22 +140,25 @@ class PriorityQueue<T> {
         var kvpos = 0;
         var kv    = this.val[0];
         
-        while (true) { 
-            var leftChild  = (kvpos*2+1 < this.val.length ? this.val[kvpos*2+1].k : kv.k+1);
-            var rightChild = (kvpos*2+2 < this.val.length ? this.val[kvpos*2+2].k : kv.k+1);
+        while (true) {
+            var leftIndex =   kvpos*2+1;
+            var rightIndex = leftIndex+1;
+
+            var leftChild  = (leftIndex < this.val.length ? this.val[leftIndex].k : kv.k+1);
+            var rightChild = (rightIndex < this.val.length ? this.val[rightIndex].k : kv.k+1);
             
             if (leftChild > kv.k && rightChild > kv.k) {
                 break;
             }
             else if (leftChild < rightChild) {
-                this.val[kvpos] = this.val[kvpos*2+1];
-                this.val[kvpos*2+1] = kv;
-                kvpos = kvpos*2+1;
+                this.val[kvpos] = this.val[leftIndex];
+                this.val[leftIndex] = kv;
+                kvpos = leftIndex;
             }
             else {
-                this.val[kvpos] = this.val[kvpos*2+2];
-                this.val[kvpos*2+2] = kv;
-                kvpos = kvpos*2+2;
+                this.val[kvpos] = this.val[rightIndex];
+                this.val[rightIndex] = kv;
+                kvpos = rightIndex;
             }
         }
         

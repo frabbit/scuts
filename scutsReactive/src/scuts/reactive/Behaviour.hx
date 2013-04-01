@@ -2,14 +2,13 @@ package scuts.reactive;
 
 import scuts.reactive.Reactive;
 import scuts.reactive.Streams;
-import scuts.core.Tup3;
-import scuts.core.Tup4;
-import scuts.core.Tup5;
+import scuts.core.Tuples;
 
 using scuts.reactive.Behaviours;
 using scuts.reactive.Streams;
 
 private typedef Beh<T> = Behaviour<T>;
+
 
 @:allow(scuts.reactive.Behaviours)
 class Behaviour<T> 
