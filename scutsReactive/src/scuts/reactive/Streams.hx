@@ -19,10 +19,10 @@ import scuts.core.Ints;
 import scuts.reactive.Reactive;
 import scuts.core.Arrays;
 import scuts.reactive.Stream;
-import scuts.core.Tup2;
-import scuts.core.Tup3;
-import scuts.core.Tup4;
-import scuts.core.Tup5;
+import scuts.core.Tuples;
+// import scuts.core.Tup3;
+// import scuts.core.Tup4;
+// import scuts.core.Tup5;
 import scuts.Scuts;
 
 
@@ -831,7 +831,7 @@ class Streams
     var count = n;
 
     return Streams.create(
-      function(pulse: Pulse<Dynamic>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T> 
       {
         return if (count > 0) { 
           --count; 
@@ -858,7 +858,7 @@ class Streams
     
     
     return Streams.create(
-      function(pulse: Pulse<Dynamic>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T> 
       {
         return if (stillChecking) 
         {
@@ -1047,7 +1047,7 @@ class Streams
   public static function filter<T>(s:Stream<T>, pred: T -> Bool): Stream<T> 
   {
     return Streams.create(
-      function(pulse: Pulse<Dynamic>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T> 
       {
         return if (pred(pulse.value)) Propagate(pulse); else NotPropagate;
       },
@@ -1065,7 +1065,7 @@ class Streams
     var checking = true;
 
     return Streams.create(
-      function(pulse: Pulse<Dynamic>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T> 
       {
         return if (checking) {
           if (pred(pulse.value)) {

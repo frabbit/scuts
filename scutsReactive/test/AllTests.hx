@@ -3,9 +3,10 @@ package;
 
 #if macro
 import neko.Lib;
-import neko.Sys;
+// import neko.Sys;
 #else 
 import scuts.reactive.BehavioursTest;
+import scuts.reactive.ReactiveTest;
 #end
 
 
@@ -28,6 +29,7 @@ class AllTests
       
       #else
       runner.addCase(new BehavioursTest());
+      runner.addCase(new ReactiveTest());
       #end
       
       Report.create(runner);
