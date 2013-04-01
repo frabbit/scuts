@@ -3,6 +3,8 @@ import scuts.core.debug.Assert;
 
 import scuts.core.Tuples;
 
+using scuts.core.Validations;
+import scuts.core.Unit;
 import scuts.Scuts;
 
 
@@ -28,150 +30,144 @@ typedef Mutex =
 
 private typedef Percent = Float;
 
+typedef Throwable = Dynamic;
+
+typedef PromiseD<T> = Promise<Throwable, T>;
+
+//typedef Promise<T> = Promiseeneral<Throwable, T>;
+
 @:allow(scuts.core.Promises)
-class Promise<T> 
+class Promise<Err, T> 
 {
   
   #if scuts_multithreaded
-  var mutex:Mutex;
+  var _mutex:Mutex;
   #end
   
-  inline function lock () 
-  {
-    #if scuts_multithreaded
-    mutex.acquire(); 
-    #end
-  }
-  
-  inline function unlock () 
-  {
-    #if scuts_multithreaded 
-    mutex.release(); 
-    #end
-  }
-  
-  inline function initMutex () 
-  {
-    #if scuts_multithreaded
-    mutex = new Mutex();
-    #end
-    
-  }
-  
-  inline function isCompleteDoubleCheck() 
-  {
-    #if scuts_multithreaded
-    return isCompleteDoubleCheck();
-    #else
-    return false;
-    #end
-  }
-  
-  inline function isDoneDoubleCheck() 
-  {
-    #if scuts_multithreaded
-    return isDone();
-    #else
-    return false;
-    #end
-  }
-  
-  inline function isCancelledDoubleCheck() 
-  {
-    #if scuts_multithreaded
-    return isCancelled();
-    #else
-    return false;
-    #end
-  }
-  
-  
-  var _completeListeners:Array<T->Void>;
-  var _cancelListeners:Array<Void->Void>;
-  
+  var _completeListeners:Array<Validation<Err, T>->Void>;
+  var _failureListeners:Array<Err->Void>;
+  var _successListeners:Array<T->Void>;
+
   var _progressListeners:Array<Percent->Void>;
   
-  var _value:Option<T>;
+  var _value:Option<Validation<Err, T>>;
   var _complete:Bool;
-  var _cancelled:Bool;
-
   
   public function new () 
   {
-    initMutex();
+    Promises.initMutex(this);
     
     _complete = false;
-    _cancelled = false;
     _value = None;
     
     clearListeners();
   }
-  
-  function clearListeners () 
-  {
-    _completeListeners = [];
-    _cancelListeners = [];
-    _progressListeners = [];
-  }
-
-  /*
-  public function await ():T {
-    
-  }
-  */
 
 }
 
+
+@:allow(scuts.core.Promise)
 class Promises
 {
   
-  public static function extract <T>(p:Promise<T>):T 
+  inline static function clearListeners <T,E>(p:Promise<E,T>)
+  {
+    p._completeListeners = [];
+    p._failureListeners = [];
+    p._progressListeners = [];
+    p._successListeners = [];
+  }
+
+  inline static function lock <T,E>(p:Promise<E,T>) 
+  {
+    #if scuts_multithreaded
+    p._mutex.acquire(); 
+    #end
+  }
+  
+  inline static function unlock <T,E>(p:Promise<E,T>) 
+  {
+    #if scuts_multithreaded 
+    p._mutex.release(); 
+    #end
+  }
+  
+  inline static function initMutex <T,E>(p:Promise<E,T>) 
+  {
+    #if scuts_multithreaded
+    p._mutex = new Mutex();
+    #end
+    
+  }
+  
+  inline static function isCompleteDoubleCheck<T,E>(p:Promise<E,T>) 
+  {
+    #if scuts_multithreaded
+    return p.isComplete();
+    #else
+    return false;
+    #end
+  }
+  
+
+
+
+  public static function extract <E, T>(p:Promise<E, T>):Validation<E, T> 
   {
     return p._value.getOrError("error result is not available");
   }
 
-  public inline static function isComplete <T>(p:Promise<T>) return p._complete;
-  
-  public inline static function isCancelled <T>(p:Promise<T>) return p._cancelled;
-  
-  public inline static function isDone <T>(p:Promise<T>) return isComplete(p) || isCancelled(p);
-  
-  public static function valueOption <T>(p:Promise<T>):Option<T> return p._value;
+  public inline static function isComplete <E,T>(p:Promise<E,T>) return p._complete;
 
-  public static function onProgress <T>(p:Promise<T>,f:Percent->Void):Promise<T> 
+  public inline static function isSuccess <E,T>(p:Promise<E,T>) return p._value.isSome() && p._value.extract().isSuccess();
+  
+  public inline static function isFailure <E,T>(p:Promise<E,T>) return p._value.isSome() && p._value.extract().isFailure();
+  
+  public static function valueOption <E,T>(p:Promise<E,T>):Option<Validation<E, T>> return p._value;
+
+  public static function onProgress <E,T>(p:Promise<E,T>,f:Percent->Void):Promise<E,T> 
   {
     if (isComplete(p)) f(1.0)
-    else if (!isCancelled(p)) 
+    else
     {
-      p.lock();
-      if (!p.isDoneDoubleCheck()) p._progressListeners.push(f)
+      lock(p);
+      if (!p.isCompleteDoubleCheck()) p._progressListeners.push(f)
       else p.onProgress(f);
-      p.unlock();
+      unlock(p);
     } 
     return p;
   }
   
-  public static function progress <T>(p:Promise<T>,percent:Percent):Promise<T>
+  public static function progress <E,T>(p:Promise<E,T>,percent:Percent):Promise<E,T>
   {
     Assert.isTrue(percent >= 0.0 && percent <= 1.0, null);
     for (l in p._progressListeners) l(percent);
     return p;
   }
 
-  public static function complete <T>(p:Promise<T>,val:T):Promise<T> 
+  public static function complete <E, T>(p:Promise<E, T>,val:Validation<E,T>):Promise<E,T> 
   {
-    return if (isDone(p)) p
+    return if (!p.isComplete()) tryComplete(p, val) else throw "Cannot complete already completed Promise";
+  }
+ 
+  public static function tryComplete <E, T>(p:Promise<E, T>,val:Validation<E,T>):Promise<E,T> 
+  {
+    return if (p.isComplete()) p
     else 
     {
       p.lock();
-      if (!p.isDoneDoubleCheck()) 
+      if (!p.isCompleteDoubleCheck()) 
       {
+        switch (val) 
+        {
+          case Success(s): for (c in p._successListeners) c(s);
+          case Failure(f): for (c in p._failureListeners) c(f);
+        }
+        for (c in p._completeListeners) c(val);
         p._value = Some(val);
         p._complete = true;
-        
         p.progress(1.0);
         
-        for (c in p._completeListeners) c(val);
         
         p.clearListeners();
       }
@@ -180,36 +176,36 @@ class Promises
     }
   }
   
-
-  public static function cancel <T>(p:Promise<T>):Bool 
+  public static function tryFailure <E, T>(p:Promise<E, T>, f : E):Promise<E,T>  
   {
-    return if (!isComplete(p) && !isCancelled(p)) 
-    {
-      p.lock(); 
-      if (!p.isDoneDoubleCheck()) 
-      {
-        p._cancelled = true;
-        
-        for (c in p._cancelListeners) c();
+    return p.tryComplete(Failure(f));
+  }
 
-        p.clearListeners();
-      }
-      p.unlock();
-      p.isCancelled();
-    } 
-    else false;
+  public static function trySuccess <E, T>(p:Promise<E, T>, t : T):Promise<E,T> 
+  {
+    return p.tryComplete(Success(t));
+  }
+
+  public static function failure <E, T>(p:Promise<E, T>, f : E):Promise<E,T>  
+  {
+    return p.complete(Failure(f));
+  }
+
+  public static function success <E, T>(p:Promise<E, T>, t : T):Promise<E,T> 
+  {
+    return p.complete(Success(t));
   }
   
-  public static function onComplete <T>(p:Promise<T>,f:T->Void) 
+  public static function onComplete <E, T>(p:Promise<E, T>,f:Validation<E,T>->Void) 
   {
     if (p.isComplete()) 
     {
       f(p.extract());
     } 
-    else if (!p.isCancelled()) 
+    else
     {
       p.lock();
-      if (!p.isDoneDoubleCheck()) p._completeListeners.push(f);
+      if (!p.isCompleteDoubleCheck()) p._completeListeners.push(f);
       else p.onComplete(f);
       p.unlock();
     } 
@@ -217,30 +213,51 @@ class Promises
     return p;
   }
   
-  public static function onCancelled <T>(p:Promise<T>,f:Void->Void) 
+  public static function onFailureVoid <E, T>(p:Promise<E,T>,f:Void->Void) 
+  {
+    return onFailure(p, f.promote());
+  } 
+  
+
+  public static function onFailure <E, T>(p:Promise<E,T>,f:E->Void) 
   {
     if (!p.isComplete()) 
     {
-      if (p.isCancelled()) f();
+      if (p.isFailure()) f(p.extract().extractFailure());
       else 
       {
         p.lock();
-        if (!p.isDoneDoubleCheck()) p._cancelListeners.push(f);
-        else p.onCancelled(f);
+        if (!p.isCompleteDoubleCheck()) p._failureListeners.push(f);
+        else p.onFailure(f);
         p.unlock();
       }
     }
     return p;
   }
 
-  public static function toString <T>(p:Promise<T>) {
+  public static function onSuccess <E,T>(p:Promise<E,T>,f:T->Void) 
+  {
+    if (!p.isComplete()) 
+    {
+      if (p.isSuccess()) f(p.extract().extract());
+      else 
+      {
+        p.lock();
+        if (!p.isCompleteDoubleCheck()) p._successListeners.push(f);
+        else p.onSuccess(f);
+        p.unlock();
+      }
+    }
+    return p;
+  }
+
+  public static function toString <E,T>(p:Promise<E,T>) {
     return 
-      if (isComplete(p))       "Promise(" + p._value + ")"
-      else if (isCancelled(p)) "Cancelled Promise";
+      if (isComplete(p))       "Promise(" + p._value.extract() + ")"
       else                     "Unfullfilled Promise";
   }
 
-  public static function combineIterableWith <A,B> (a:Iterable<Promise<A>>, f:Iterable<A>->B):Promise<B>
+  public static function combineIterableWith <A,B,E> (a:Iterable<Promise<E,A>>, f:Iterable<A>->B):Promise<E,B>
   {
     
    
@@ -261,7 +278,7 @@ class Promises
           Scuts.error("Cannot deliver twice");
         }
         isDelivered = true;
-        fut.complete(f(res));
+        fut.success(f(res));
       }
     }
     function updateProgress () {
@@ -275,22 +292,19 @@ class Promises
        
     }
     var x = 0;
-    var cancel = function () {
-      //trace("cancel");
-      fut.cancel();
-    }
+
     for (f in a) {
       var index = x;
       progs[index] = 0.0;
-      f.onComplete(function (v) { 
+      f.onSuccess(function (v) { 
         if (res[index] != null) throw "ERROR";
         res[index] = v; 
         
         count++; 
         check(); 
-        } );
-      f.onCancelled(cancel);
-      f.onProgress(function (p) {
+        } )
+      .onFailure(fut.failure)
+      .onProgress(function (p) {
         progs[index] = p;
         updateProgress();
       });
@@ -302,172 +316,176 @@ class Promises
     return fut;
   }
   
-  public static function combineIterable <A> (a:Iterable<Promise<A>>):Promise<Iterable<A>>
+  public static function combineIterable <A,E> (a:Iterable<Promise<E,A>>):Promise<E,Iterable<A>>
   {
     return combineIterableWith(a, Scuts.id);
   }
   
-  public static function apply<A,B>(f:Promise<A->B>, p:Promise<A>):Promise<B> 
+  public static function apply<A,B,E>(f:Promise<E,A->B>, p:Promise<E,A>):Promise<E,B> 
   {
     return zipWith(f, p, function (g, x) return g(x)); 
   }
   
-  @:noUsing public static function cancelled <S>():Promise<S> {
+  @:noUsing public static function cancelled <E,S>(e:E):Promise<E,S> {
     var p = new Promise();
-    p.cancel();
+    p.failure(e);
     return p;
   }
   
-  @:noUsing public static function pure <S>(s:S):Promise<S> 
+  @:noUsing public static function pure <E,S>(s:S):Promise<E,S> 
   {
-    return new Promise().complete(s);
+    return new Promise().success(s);
   }
   
-  @:noUsing public static function mk <S>():Promise<S> 
+  @:noUsing public static function mk <E,S>():Promise<E,S> 
   {
     return new Promise();
   }
 
-  public static function flatMap < S,T > (p:Promise<S>, f:S->Promise<T>):Promise<T>
+  public static function flatMap < E,S,T > (p:Promise<E,S>, f:S->Promise<E,T>):Promise<E,T>
   {
     var res = new Promise();
     
-    function complete(r) {
+    function success(r) {
       var p1 = f(r);
-      p1.onComplete(res.complete);
+      p1.onSuccess(res.success);
       p1.onProgress(function (p) res.progress(0.5 + p * 0.5));
-      p1.onCancelled(res.cancel);
+      p1.onFailure(res.failure);
     }
     
-    p.onComplete(complete)
-     .onCancelled(res.cancel)
+    p.onSuccess(success)
+     .onFailure(res.failure)
      .onProgress(function (p) res.progress(p * 0.5));
     
     return res;
   }
   
-  public static function map < S, T > (p:Promise<S>, f:S->T):Promise<T>
+  public static function map < S, T,E > (p:Promise<E,S>, f:S->T):Promise<E,T>
   {
     var res = new Promise();
 
-    trace(f);
-    trace(res.complete);
-    var x = f.next(res.complete);
-    trace(p);
-    p.onComplete (x)
-     .onCancelled(res.cancel)
+    
+    
+    
+    p.onSuccess (f.next(res.success))
+     .onFailure(res.failure)
      .onProgress (res.progress);
       
     return res;
   }
   
-  
-  public static function filter <T>(p:Promise<T>, f:T->Bool):Promise<T>
+  public static function filter <E,T>(p:Promise<E,T>, f:T->Bool, failureVal:E):Promise<E, T>
   {
     var res = new Promise();
-    p.onComplete (function (x) if (f(x)) res.complete(x) else res.cancel())
-     .onCancelled(res.cancel)
+    p.onSuccess (function (x) if (f(x)) res.success(x) else res.failure(failureVal))
+     .onFailure(res.failure)
      .onProgress (res.progress);
     return res;
   }
   
-  public static function flatten <T>(p:Promise<Promise<T>>):Promise<T>
+  public static function filterUnit <T>(p:PromiseD<T>, f:T->Bool):PromiseD<T>
+  {
+    return filter(p, f, Unit);
+  }
+  
+  public static function flatten <E,T>(p:Promise<E,Promise<E,T>>):Promise<E, T>
   {
     var res = new Promise();
     
-    function complete (x:Promise<T>) {
+    function complete (x:Promise<E, T>) {
       x.onComplete (res.complete)
-       .onCancelled(res.cancel)
        .onProgress (res.progress);
     }
     
-    p.onComplete(complete)
-    .onCancelled(res.cancel)
+    p.onSuccess(complete)
+    .onFailure( res.failure)
     .onProgress (res.progress);
     return res;
   }
 
-  public static function then<A,B> (a:Promise<A>, b:Void->Promise<B>):Promise<B>
+  
+  public static function then<A,B,Z> (a:Promise<Z,A>, b:Void->Promise<Z,B>):Promise<Z,B>
   {
     return a.flatMap(function (_) return b());
   }
   
-  public static function zip<A,B>(a:Promise<A>, b:Promise<B>):Promise<Tup2<A,B>>
+  public static function zip<A,B,Z>(a:Promise<Z,A>, b:Promise<Z,B>):Promise<Z,Tup2<A,B>>
   {
     return Tup2.create.liftPromiseF2()(a,b);
   }
   
   public static function 
-  zip3<A,B,C>(a:Promise<A>, b:Promise<B>, c:Promise<C>):Promise<Tup3<A,B,C>>
+  zip3<A,B,C,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>):Promise<Z,Tup3<A,B,C>>
   {
     return Tup3.create.liftPromiseF3()(a,b,c);
   }
   
   public static function 
-  zip4<A,B,C,D>(a:Promise<A>, b:Promise<B>, c:Promise<C>, d:Promise<D>):Promise<Tup4<A,B,C,D>>
+  zip4<A,B,C,D,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>):Promise<Z,Tup4<A,B,C,D>>
   {
     return Tup4.create.liftPromiseF4()(a,b,c,d);
   }
   
   public static function 
-  zipWith<A,B,C>(a:Promise<A>, b:Promise<B>, f:A->B->C):Promise<C>
+  zipWith<A,B,C,Z>(a:Promise<Z,A>, b:Promise<Z,B>, f:A->B->C):Promise<Z,C>
   {
     return f.liftPromiseF2()(a,b);
   }
   
   public static function 
-  zipWith3<A,B,C,D>(a:Promise<A>, b:Promise<B>, c:Promise<C>, f:A->B->C->D):Promise<D>
+  zipWith3<A,B,C,D,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, f:A->B->C->D):Promise<Z,D>
   {
     return f.liftPromiseF3()(a,b,c);
   }
   
   public static function 
-  zipWith4<A,B,C,D,E>(a:Promise<A>, b:Promise<B>, c:Promise<C>, d:Promise<D>, f:A->B->C->D->E):Promise<E>
+  zipWith4<A,B,C,D,E,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>, f:A->B->C->D->E):Promise<Z,E>
   {
     return f.liftPromiseF4()(a,b,c,d);
   }
   
-  public static function liftPromiseF0 <A> (f:Void->A):Void->Promise<A> 
+  public static function liftPromiseF0 <E,A> (f:Void->A):Void->Promise<E,A> 
   {
-    return function () return new Promise().complete(f());
+    return function () return new Promise().success(f());
   }
 
-  public static function liftPromiseF1 <A, B> (f:A->B):Promise<A>->Promise<B> 
+  public static function liftPromiseF1 <E,A, B> (f:A->B):Promise<E,A>->Promise<E,B> 
   {
-    return function (a:Promise<A>) {
+    return function (a:Promise<E,A>) {
       var res = new Promise();
-      a.onComplete(f.next(res.complete))
-       .onCancelled(res.cancel)
+      a.onSuccess(f.next(res.success))
+       .onFailure(res.failure)
        .onProgress(res.progress);
       return res;
     }
   }
 
-  public static function liftPromiseF2 <A, B, C> (f:A->B->C):Promise<A>->Promise<B>->Promise<C> 
+  public static function liftPromiseF2 <A, B, C, E> (f:A->B->C):Promise<E,A>->Promise<E,B>->Promise<E,C> 
   {
-    return function (a:Promise<A>, b:Promise<B>) {
+    return function (a:Promise<E,A>, b:Promise<E,B>) {
       var res = new Promise();
       
       var valA = None;
       var valB = None;
       
-      function check () if (valA.isSome() && valB.isSome()) {
-        res.complete(f(valA.extract(), valB.extract()));
+      function check () if (valA.isSome() && valB.isSome()) 
+      {
+        res.success(f(valA.extract(), valB.extract()));
       }
       
       function progress (p:Float) res.progress(p * 0.5);
       
-      a.onComplete(function (r) { valA = Some(r); check(); }).onCancelled(res.cancel).onProgress(progress);
-      b.onComplete(function (r) { valB = Some(r); check(); }).onCancelled(res.cancel).onProgress(progress);
+      a.onSuccess(function (r) { valA = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
+      b.onSuccess(function (r) { valB = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
 
       return res;
     }
   }
 
   public static function 
-  liftPromiseF3 <A, B, C, D> (f:A->B->C->D):Promise<A>->Promise<B>->Promise<C>->Promise<D>
+  liftPromiseF3 <A, B, C, D,Z> (f:A->B->C->D):Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>
   {
-    return function (a:Promise<A>, b:Promise<B>, c:Promise<C>) {
+    return function (a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>) {
       var res = new Promise();
       
       var valA = None;
@@ -475,23 +493,23 @@ class Promises
       var valC = None;
       
       function check () if (valA.isSome() && valB.isSome() && valC.isSome()) {
-        res.complete(f(valA.extract(), valB.extract(), valC.extract()));
+        res.success(f(valA.extract(), valB.extract(), valC.extract()));
       }
 
       function progress (p:Float) res.progress(p * (1 / 3));
       
-      a.onComplete(function (r) { valA = Some(r); check(); }).onCancelled(res.cancel).onProgress(progress);
-      b.onComplete(function (r) { valB = Some(r); check(); }).onCancelled(res.cancel).onProgress(progress);
-      c.onComplete(function (r) { valC = Some(r); check(); }).onCancelled(res.cancel).onProgress(progress);
+      a.onSuccess(function (r) { valA = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
+      b.onSuccess(function (r) { valB = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
+      c.onSuccess(function (r) { valC = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
       
       return res;
     }
   }
 
   public static function 
-  liftPromiseF4 <A, B, C, D, E> (f:A->B->C->D->E):Promise<A>->Promise<B>->Promise<C>->Promise<D>->Promise<E>
+  liftPromiseF4 <A, B, C, D, E,Z> (f:A->B->C->D->E):Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>->Promise<Z,E>
   {
-    return function (a:Promise<A>, b:Promise<B>, c:Promise<C>, d:Promise<D>) {
+    return function (a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>) {
       var res = new Promise();
       
       var valA = None;
@@ -500,25 +518,25 @@ class Promises
       var valD = None;
       
       function check () if (valA.isSome() && valB.isSome() && valC.isSome() && valD.isSome()) {
-        res.complete(f(valA.extract(), valB.extract(), valC.extract(), valD.extract()));
+        res.success(f(valA.extract(), valB.extract(), valC.extract(), valD.extract()));
       }
 
       function progress (p:Float) res.progress(p * 0.25);
       
-      a.onComplete(function (r) { valA = Some(r); check(); }).onCancelled(res.cancel).onProgress(progress);
-      b.onComplete(function (r) { valB = Some(r); check(); }).onCancelled(res.cancel).onProgress(progress);
-      c.onComplete(function (r) { valC = Some(r); check(); }).onCancelled(res.cancel).onProgress(progress);
-      d.onComplete(function (r) { valD = Some(r); check(); }).onCancelled(res.cancel).onProgress(progress);
+      a.onSuccess(function (r) { valA = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
+      b.onSuccess(function (r) { valB = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
+      c.onSuccess(function (r) { valC = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
+      d.onSuccess(function (r) { valD = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
 
       return res;
     }
   }
   
   public static function 
-  liftPromiseF5 <A, B, C, D, E, F> (f:A->B->C->D->E->F)
-  :Promise<A>->Promise<B>->Promise<C>->Promise<D>->Promise<E>->Promise<F>
+  liftPromiseF5 <A, B, C, D, E, F,Z> (f:A->B->C->D->E->F)
+  :Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>->Promise<Z,E>->Promise<Z,F>
   {
-    return function (a:Promise<A>, b:Promise<B>, c:Promise<C>, d:Promise<D>, e:Promise<E>) {
+    return function (a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>, e:Promise<Z,E>) {
       var res = new Promise();
       
       var valA = None;
@@ -528,16 +546,16 @@ class Promises
       var valE = None;
       
       function check () if (valA.isSome() && valB.isSome() && valC.isSome() && valD.isSome() && valE.isSome()) {
-        res.complete(f(valA.extract(), valB.extract(), valC.extract(), valD.extract(), valE.extract()));
+        res.success(f(valA.extract(), valB.extract(), valC.extract(), valD.extract(), valE.extract()));
       }
 
       function progress (p:Float) res.progress(p * 0.2);
       
-      a.onComplete(function (r) { valA = Some(r); check(); } ).onCancelled(res.cancel).onProgress(progress);
-      b.onComplete(function (r) { valB = Some(r); check(); } ).onCancelled(res.cancel).onProgress(progress);
-      c.onComplete(function (r) { valC = Some(r); check(); } ).onCancelled(res.cancel).onProgress(progress);
-      d.onComplete(function (r) { valD = Some(r); check(); } ).onCancelled(res.cancel).onProgress(progress);
-      e.onComplete(function (r) { valE = Some(r); check(); } ).onCancelled(res.cancel).onProgress(progress);
+      a.onSuccess(function (r) { valA = Some(r); check(); } ).onFailure(res.tryFailure).onProgress(progress);
+      b.onSuccess(function (r) { valB = Some(r); check(); } ).onFailure(res.tryFailure).onProgress(progress);
+      c.onSuccess(function (r) { valC = Some(r); check(); } ).onFailure(res.tryFailure).onProgress(progress);
+      d.onSuccess(function (r) { valD = Some(r); check(); } ).onFailure(res.tryFailure).onProgress(progress);
+      e.onSuccess(function (r) { valE = Some(r); check(); } ).onFailure(res.tryFailure).onProgress(progress);
       
       return res;
     }
