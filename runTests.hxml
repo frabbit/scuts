@@ -19,7 +19,7 @@
 -cp scuts/test 
 
 -lib utest 
-
+--macro sys.FileSystem.createDirectory("scuts/bin")
 --macro scuts.core.tools.ImportAllBuilder.build(["scuts.core"], "ImportAll", "scutsCore/test/scuts/core", "scuts.core")
 --macro scuts.core.tools.ImportAllBuilder.build(["scuts.reactive"], "ImportAll", "scutsReactive/test/scuts/reactive", "scuts.reactive")
 --macro scuts.core.tools.ImportAllBuilder.build(["scuts.ht"], "ImportAll", "scutsHt/test/scuts/ht", "scuts.ht")
