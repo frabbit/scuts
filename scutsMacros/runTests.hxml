@@ -1,16 +1,16 @@
 -cp src 
--cp test 
 -cp ../scutsCore/src
+-cp ../scutsMCore/src
+-cp test 
 -lib utest 
 
 
 -D standaloneTest
 --macro sys.FileSystem.createDirectory("bin")
---macro scuts.core.tools.ImportAllBuilder.build(["scuts.reactive"], "ImportAll", "test/scuts/reactive", "scuts.reactive")
+--macro scuts.core.tools.ImportAllBuilder.build(["scuts.macros"], "ImportAll", "test/scuts/macros", "scuts.macros")
 --macro Sys.println("\n-------- macro unit tests ------\n")
---macro scuts.reactive.AllTests.main()
+--macro scuts.macros.AllTests.main()
 --macro Sys.println("\n-------- regular unit tests ------\n")
--main scuts.reactive.AllTests
+-main scuts.macros.AllTests
 
 -x bin/testNeko.n
-
