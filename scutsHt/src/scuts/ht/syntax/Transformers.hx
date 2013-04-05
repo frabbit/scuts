@@ -29,8 +29,8 @@ class ValidationTransformer
 
 class PromiseTransformer 
 {
-	public inline static function  runT<M,A>(x:PromiseTOf<M, A>):Of<M, Promise<A>> return x.runT();
-	public inline static function promiseT <M,A>(x:Of<M, Promise<A>>):PromiseTOf<M, A> return Hots.preservedCast(PromiseTOf.intoT(x));
+	public inline static function  runT<M,A>(x:PromiseTOf<M, A>):Of<M, PromiseD<A>> return x.runT();
+	public inline static function promiseT <M,A>(x:Of<M, PromiseD<A>>):PromiseTOf<M, A> return Hots.preservedCast(PromiseTOf.intoT(x));
 }
 
 

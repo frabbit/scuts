@@ -10,7 +10,7 @@ class Modify
 
   public static function modifyEConstCIdentValue(e:Expr, modifier:String->ExprDef):Void switch (e.expr) 
   {
-    case EConst(CIdent(id)): e.expr = modifier(ident);
+    case EConst(CIdent(id)): e.expr = modifier(id);
     case _:
   }
   

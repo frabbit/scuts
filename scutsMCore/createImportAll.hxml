@@ -1,6 +1,0 @@
--cp ./../scutsCore/src
--cp src
---macro scuts.core.tools.ImportAllBuilder.build(["scuts.mcore"], "ImportAll")
---no-output
-
-

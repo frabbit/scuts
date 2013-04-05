@@ -1,14 +1,14 @@
 package scuts.ht;
 
 
-import org.hamcrest.core.IsEqual;
-import org.hamcrest.MatchersBase;
+
 
 using scuts.ht.Context;
 
+private typedef A = utest.Assert;
 
 
-class ImplicitScopeTests extends MatchersBase
+class ImplicitScopeTests 
 {
   
   static function identity (a:Int) return a;
@@ -20,84 +20,87 @@ class ImplicitScopeTests extends MatchersBase
   
   
   public function new () {
-    super();
-  }
-  
-  @Test
-  public function testScopes() 
-  {
-    expectStaticScope(this);
-  }
-  @Test
-  public function shouldUseMemberScope() 
-  {
-    expectMemberScope(this);
-  }
-  @Test
-  public function shouldUseLocalScope() 
-  {
-    expectLocalScope(this);
-  }
-  @Test
-  public function shouldUseLocalNestedScope() 
-  {
-    expectLocalNestedScope(this);
-  }
-  @Test
-  public function shouldIgnoreLocalNestedScope() 
-  {
-    expectLocalNestedScopeIsIgnored(this);
-  }
-  @Test
-  public function shouldIgnoreLocalNestedScopeAndUseStatic() 
-  {
-    expectLocalNestedScopeIsIgnoredAndStaticUsed(this);
-  }
-  
-  function expectLocalScope(m:MatchersBase) 
-  {
-    Hots.implicit(4);
-
-    scuts.Assert.equals(4, identity._());
     
   }
   
-  function expectLocalNestedScope(m:MatchersBase) 
+  
+  public function testScopes() 
+  {
+    expectStaticScope();
+  }
+  
+  public function testShouldUseMemberScope() 
+  {
+    expectMemberScope();
+  }
+  
+  public function testShouldUseLocalScope() 
+  {
+    expectLocalScope();
+  }
+  
+  public function testShouldUseLocalNestedScope() 
+  {
+    expectLocalNestedScope();
+  }
+  
+  public function testShouldIgnoreLocalNestedScope() 
+  {
+    expectLocalNestedScopeIsIgnored();
+  }
+  
+  public function testShouldIgnoreLocalNestedScopeAndUseStatic() 
+  {
+    expectLocalNestedScopeIsIgnoredAndStaticUsed();
+  }
+  
+  function expectLocalScope() 
+  {
+    Hots.implicit(4);
+
+    A.equals(4, identity._());
+    
+  }
+  
+  function expectLocalNestedScope() 
   {
     Hots.implicit(4);
     {
       Hots.implicit(5);
-      m.assertThat(5, m.equalTo(identity._()));
+      A.equals(5, identity._());
       
     }
   }
   
-  function expectLocalNestedScopeIsIgnored(m:MatchersBase) 
+  function expectLocalNestedScopeIsIgnored() 
   {
     Hots.implicit(4);
     
     {
       Hots.implicit(5);
     }
-    m.assertThat(4, m.equalTo(identity._()));
+    A.equals(4, identity._());
+    
   }
   
-  function expectMemberScope(m:MatchersBase) 
+  function expectMemberScope() 
   {
-    m.assertThat(memberScope, m.equalTo(identity._()));
+    
+    A.equals(memberScope, identity._());
   }
   
-  static function expectStaticScope(m:MatchersBase) 
+  static function expectStaticScope() 
   {
-    m.assertThat(staticScope, m.equalTo(identity._()));
+    A.equals(staticScope, identity._());
   }
   
-  static function expectLocalNestedScopeIsIgnoredAndStaticUsed(m:MatchersBase) 
+  static function expectLocalNestedScopeIsIgnoredAndStaticUsed() 
   {
     {
       Hots.implicit(4);
     }
-    m.assertThat(staticScope, m.equalTo(identity._()));
+    A.equals(staticScope, identity._());
+    
   }
   
   

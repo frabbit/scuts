@@ -1,29 +1,27 @@
 package scuts.core;
 
-import org.hamcrest.MatchersBase;
+
 import scuts.core.Strings;
 
 
 private typedef S = Strings;
 
-class StringsTest extends MatchersBase
+class StringsTest 
 {
 
+  public function new () {}
   
-  @Test
-  public function times_should_return_the_string_5_times() 
+  public function testTimesShouldReturnTheString5Times() 
   {
     var s = "a";
-    assertThat(S.times(s, 5), equalTo("aaaaa"));
-
-    
+    utest.Assert.same(S.times(s, 5), "aaaaa");
   }
   
-  @Test
-  public function times_should_return_the_string_0_times() 
+  
+  public function testTimesShouldReturnTheString0Times() 
   {
     var s = "a";
-    assertThat(S.times(s, 0), equalTo(""));    
+    utest.Assert.same(S.times(s, 0), "");    
     
   }
   

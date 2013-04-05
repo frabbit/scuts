@@ -1,15 +1,15 @@
 
 package scuts.ht.syntax;
 
+import scuts.ht.core.Of;
+
 #if macro
 import haxe.macro.Expr;
-#else
-import scuts.ht.core.Of;
 #end
 
 class MonadsM {
 
-  #if display
+  #if xdisplay
 
   public static function sequence_ <M,B>(arr:Array<Of<M, B>>):Of<M,Array<B>> return null;
 

@@ -4,6 +4,8 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 import utest.Assert;
 
+using scuts.core.Validations;
+
 class CheckTest
 {
 
@@ -52,12 +54,12 @@ class CheckTest
   }
   
   public function test_isConstantTypeDecl_Nested () {
-    var type = Convert.stringToComplexType("Array<{ a : Int }>");
+    var type = Convert.stringToComplexType("Array<{ a : Int }>").extract();
     Assert.isTrue(Check.isConstantTypeDecl(type));
   }
   
   public function test_isConstantTypeDecl_Nested2 () {
-    var type = Convert.stringToComplexType("Array<{ a : Array<{b:String, c:Float, d:Int, f:Array<String>}> }>");
+    var type = Convert.stringToComplexType("Array<{ a : Array<{b:String, c:Float, d:Int, f:Array<String>}> }>").extract();
     Assert.isTrue(Check.isConstantTypeDecl(type));
   }
   

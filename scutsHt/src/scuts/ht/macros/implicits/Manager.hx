@@ -7,9 +7,9 @@ package scuts.ht.macros.implicits;
 import scuts.ht.macros.implicits.Data;
 import scuts.mcore.Make;
 
-import scuts.mcore.ast.Exprs;
-import scuts.mcore.ast.Types;
-import scuts.mcore.Print;
+//import scuts.mcore.ast.Exprs;
+//import scuts.mcore.ast.Types;
+//import scuts.mcore.Print;
 import scuts.core.debug.Assert;
 import scuts.Scuts;
 import haxe.CallStack;
@@ -62,7 +62,7 @@ class Manager
     {
       var id = createUniqueVarName();
       // create expression out of variable name
-      var idExpr = Make.constIdent(id);
+      var idExpr = macro $i{id};
       // store local var
       arr.push({ e: idExpr, pos: Context.getPosInfos(e.pos)});
       
@@ -111,7 +111,8 @@ class Manager
         case FieldKind.FVar(_,_):
           if ( f.meta.has(":implicit")) 
           {
-            var expr = Make.field(baseExpr, f.name);
+            var fname = f.name;
+            var expr = macro ${baseExpr}.$fname;
             res.push( { name : f.name, expr: expr } );
           }
         default:

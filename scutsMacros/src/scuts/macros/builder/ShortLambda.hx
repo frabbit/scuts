@@ -4,7 +4,9 @@
 
 
 
-package scuts.mcore.builder;
+package scuts.macros.builder;
+
+#if false
 
 #if macro
 import haxe.macro.Compiler;
@@ -22,38 +24,25 @@ import scuts.mcore.Print;
 import scuts.mcore.Select;
 
 
-typedef ED = ExprDef;
-#end
-/*
-typedef Function = {
-  var name : Null<String>;
-  var args : Array<FunctionArg>;
-  var ret : Null<ComplexType>;
-  var expr : Expr;
-}
 
-typedef FunctionArg = {
-  var name : String;
-  var opt : Bool;
-  var type : Null<ComplexType>;
-  var value : Null<Expr>;
-}
-*/
+#end
+using scuts.core.Dynamics;
 using scuts.mcore.Query;
-using scuts.Log;
+
 using scuts.core.Arrays;
 using scuts.core.Iterables;
 using scuts.core.Iterators;
 using scuts.core.Options;
-using scuts.core.Predicate1Ext;
-using scuts.core.Strings;
-using scuts.core.Dynamics;
+using scuts.core.Predicates;
 using scuts.core.Strings;
 
+using scuts.core.Strings;
 
-import scuts.CoreTypes;
 
 
+#if macro
+typedef ED = ExprDef;
+#end
 
 class ShortLambda 
 {
@@ -72,10 +61,10 @@ class ShortLambda
       .isSome();
   }
   
-  static function placeHolderPattern () return ~/^[_]$/
-  static function placeHolderWithTypePattern () return ~/^[_]:[A-Z][0-9a-zA-Z_<>]*$/
-  static function numericPlaceHolderPattern () return ~/^[_][1-9]$/
-  static function numericPlaceHolderWithTypePattern () return ~/^[_][1-9][:][A-Z][0-9a-zA-Z_<>]*$/
+  static function placeHolderPattern () return ~/^[_]$/;
+  static function placeHolderWithTypePattern () return ~/^[_]:[A-Z][0-9a-zA-Z_<>]*$/;
+  static function numericPlaceHolderPattern () return ~/^[_][1-9]$/;
+  static function numericPlaceHolderWithTypePattern () return ~/^[_][1-9][:][A-Z][0-9a-zA-Z_<>]*$/;
   
   
   
@@ -381,3 +370,5 @@ class ShortLambda
   
   
 }
+
+#end

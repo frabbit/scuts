@@ -8,13 +8,13 @@ import scuts.core.Promises;
 
 
 
-class PromiseEmpty implements Empty<Promise<In>>
+class PromiseEmpty implements Empty<PromiseD<In>>
 {
   public function new () {}
   
   public inline function empty <A>():PromiseOf<A> 
   {
-    return Promises.cancelled();
+    return Promises.cancelled(scuts.core.Unit);
   }
   
 }

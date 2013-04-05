@@ -21,7 +21,7 @@ import scuts.ht.core.Of;
 
 class Emptys 
 {
-  @:implicit @:noUsing public static var promiseEmpty         (default, null):Empty<Promise<In>> = new PromiseEmpty();
+  @:implicit @:noUsing public static var promiseEmpty         (default, null):Empty<PromiseD<In>> = new PromiseEmpty();
   @:implicit @:noUsing public static var optionEmpty          (default, null):Empty<Option<In>> = new OptionEmpty();
   @:implicit @:noUsing public static var arrayEmpty           (default, null):Empty<Array<In>> = new ArrayEmpty();
   @:implicit @:noUsing public static var lazyListEmpty        (default, null):Empty<LazyList<In>> = new LazyListEmpty();

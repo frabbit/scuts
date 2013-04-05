@@ -28,7 +28,7 @@ import scuts.ht.core.In;
 import scuts.ht.core.Of;
 
 class Pures {
-  @:implicit @:noUsing public static var promisePure         (default, null):Pure<Promise<In>> = new PromisePure();
+  @:implicit @:noUsing public static var promisePure         (default, null):Pure<PromiseD<In>> = new PromisePure();
   @:implicit @:noUsing public static var optionPure          (default, null):Pure<Option<In>> = new OptionPure();
   @:implicit @:noUsing public static var arrayPure           (default, null):Pure<Array<In>> = new ArrayPure();
   @:implicit @:noUsing public static var ioPure           (default, null):Pure<Io<In>> = new IoPure();
@@ -41,7 +41,7 @@ class Pures {
   
 
   //@:implicit @:noUsing public static function lazyTPure        <M>(base:Pure<M>):Pure<Void->Of<M,In>> return new LazyTPure(base);
-  @:implicit @:noUsing public static function promiseTPure        <M>(base:Pure<M>):Pure<Of<M, Promise<In>>> return new PromiseTPure(base);
+  @:implicit @:noUsing public static function promiseTPure        <M>(base:Pure<M>):Pure<Of<M, PromiseD<In>>> return new PromiseTPure(base);
   @:implicit @:noUsing public static function arrayTPure        <M>(base:Pure<M>):Pure<Of<M, Array<In>>> return new ArrayTPure(base);
   @:implicit @:noUsing public static function optionTPure       <M>(base:Pure<M>):Pure<Of<M, Option<In>>> return new OptionTPure(base);
   @:implicit @:noUsing public static function validationTPure   <M,F>(base:Pure<M>):Pure<Of<M, Validation<F,In>>> return new ValidationTPure(base);

@@ -1,22 +1,15 @@
 -cp src 
 -cp test 
--cp ./../scutsCore/src
+-cp ../scutsCore/src
 -lib utest 
---no-output 
---macro AllTests.main()
---times
--D macrotimes
---connect 1978
 
---next
--cp src 
--cp test 
--cp ./../scutsCore/src
--lib utest 
--main AllTests
--neko bin/test/testNeko.n
---times
--D macrotimes
---next
--cmd neko bin/test/testNeko.n
---connect 1978
+
+-D standaloneTest
+--macro scuts.core.tools.ImportAllBuilder.build(["scuts.reactive"], "ImportAll", "test/scuts/reactive", "scuts.reactive")
+--macro Sys.println("\n-------- macro unit tests ------\n")
+--macro scuts.reactive.AllTests.main()
+--macro Sys.println("\n-------- regular unit tests ------\n")
+-main scuts.reactive.AllTests
+
+-x bin/testNeko.n
+

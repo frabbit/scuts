@@ -7,7 +7,7 @@ import scuts.ht.instances.std.PromiseOf;
 import scuts.core.Promises;
 
 
-class PromiseFunctor implements Functor<Promise<In>>
+class PromiseFunctor implements Functor<PromiseD<In>>
 {
   public function new () {}
   

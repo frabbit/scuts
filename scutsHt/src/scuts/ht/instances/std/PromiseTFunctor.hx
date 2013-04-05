@@ -15,7 +15,7 @@ import scuts.core.Promises;
 
 
 
-class PromiseTFunctor<M> implements Functor<Of<M, Promise<In>>> {
+class PromiseTFunctor<M> implements Functor<Of<M, PromiseD<In>>> {
   
   var functorM:Functor<M>;
   

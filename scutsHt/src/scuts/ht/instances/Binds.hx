@@ -26,7 +26,7 @@ import scuts.ds.LazyLists;
 
 class Binds {
   @:implicit @:noUsing public static function contBind            <R>():Bind<Cont<In,R>> return new ContBind();
-  @:implicit @:noUsing public static var promiseBind         (default, null):Bind<Promise<In>> = new PromiseBind();
+  @:implicit @:noUsing public static var promiseBind         (default, null):Bind<PromiseD<In>> = new PromiseBind();
   @:implicit @:noUsing public static var optionBind          (default, null):Bind<Option<In>> = new OptionBind();
   @:implicit @:noUsing public static var arrayBind           (default, null):Bind<Array<In>> = new ArrayBind();
   @:implicit @:noUsing public static var ioBind           (default, null):Bind<Io<In>> = new IoBind();
@@ -37,7 +37,7 @@ class Binds {
   @:implicit @:noUsing public static function stateBind <S>():Bind<S->Tup2<S,In>> return new StateBind();
   
 
-  @:implicit @:noUsing public static function promiseTBind        <M>(base:Monad<M>):Bind<Of<M, Promise<In>>> return new PromiseTBind(base);
+  @:implicit @:noUsing public static function promiseTBind        <M>(base:Monad<M>):Bind<Of<M, PromiseD<In>>> return new PromiseTBind(base);
   @:implicit @:noUsing public static function arrayTBind        <M>(base:Monad<M>):Bind<Of<M, Array<In>>> return new ArrayTBind(base);
   @:implicit @:noUsing public static function optionTBind       <M>(base:Monad<M>):Bind<Of<M, Option<In>>> return new OptionTBind(base);
   @:implicit @:noUsing public static function validationTBind   <M,F>(base:Monad<M>):Bind<Of<M, Validation<F,In>>> return new ValidationTBind(base);

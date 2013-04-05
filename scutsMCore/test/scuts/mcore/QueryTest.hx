@@ -1,10 +1,10 @@
 package scuts.mcore;
 import haxe.macro.Context;
-import scuts.macro.Query;
+import scuts.mcore.Query;
 
-using scuts.core.Map;
-using scuts.macro.Query;
-import scuts.core.macros.F;
+
+using scuts.mcore.Query;
+
 
 using scuts.core.Objects;
 class QueryTest 

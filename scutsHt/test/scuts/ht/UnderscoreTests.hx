@@ -1,8 +1,8 @@
 package scuts.ht;
 
-import org.hamcrest.MatchersBase;
 
-import scuts.Assert;
+
+import utest.Assert;
 
 using scuts.ht.Context;
 
@@ -13,7 +13,6 @@ class UnderscoreTests
 {
   public function new () {}
   
-  @Test
   public function testNormalCalls() 
   {
     function foo () return 1;
@@ -24,7 +23,6 @@ class UnderscoreTests
     Assert.equals(add(2), add._(2));
     
   }
-  @Test
   public function testImplicitCalls() 
   {
     
@@ -39,7 +37,6 @@ class UnderscoreTests
     Assert.equals("3foo", add2._());
   }
   
-  @Test
   public function testOnSimpleClosure() 
   {
     
@@ -51,7 +48,6 @@ class UnderscoreTests
 
   public static inline function getVal(s:String, a:Int) return s.charAt(a);
 
-  @Test
   public function testOnInlined() 
   {
     
@@ -64,7 +60,6 @@ class UnderscoreTests
   }
   // Failing Test during Compile Time
   #if failing_tests
-  @Test
   public function testOnInlinedWithPrivateAccess() 
   {
     

@@ -1,4 +1,5 @@
 package scuts.macros;
+#if false
 #if macro
 import haxe.macro.Expr;
 import scuts.macros.builder.PartialApplication;
@@ -26,7 +27,7 @@ class F
    * 
    * 
    */
-  @:macro public static function _(expr:Expr) 
+  macro public static function partial(expr:Expr) 
   {
     return Select.selectECall(expr)
       .map(function (x) return [x._1].concat(x._2))
@@ -36,3 +37,4 @@ class F
   
   
 }
+#end

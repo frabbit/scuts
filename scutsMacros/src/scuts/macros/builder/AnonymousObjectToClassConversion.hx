@@ -1,7 +1,7 @@
-package scuts.mcore.builder;
+package scuts.macros.builder;
 
 
-
+#if false
 
 import haxe.macro.Expr;
 
@@ -132,3 +132,5 @@ class AnonymousObjectToClassConversion
 	}
 	
 }
+
+#end

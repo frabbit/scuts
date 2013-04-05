@@ -13,7 +13,7 @@ import scuts.ht.instances.std.PromiseTOf;
 
 using scuts.core.Promises;
 
-class PromiseTApply<M> extends ApplyAbstract<Of<M,Promise<In>>> 
+class PromiseTApply<M> extends ApplyAbstract<Of<M,PromiseD<In>>> 
 {
   var functorM:Functor<M>;
   var applyM:Apply<M>;
@@ -30,7 +30,7 @@ class PromiseTApply<M> extends ApplyAbstract<Of<M,Promise<In>>>
    */
   override public function apply<A,B>(val:PromiseTOf<M,A>, f:PromiseTOf<M,A->B>):PromiseTOf<M,B> 
   {
-    function f1 (f:Promise<A->B>):Promise<A>->Promise<B>
+    function f1 (f:PromiseD<A->B>):PromiseD<A>->PromiseD<B>
     {
       return function (a) return f.zipWith(a, function (f1, a1) return f1(a1));
     }

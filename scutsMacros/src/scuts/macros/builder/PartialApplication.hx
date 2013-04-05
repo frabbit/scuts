@@ -1,5 +1,6 @@
 package scuts.macros.builder;
 
+#if false
 
 #if macro
 
@@ -69,4 +70,6 @@ class PartialApplication
   }
   
 }
+#end
+
 #end

@@ -4,7 +4,7 @@ import scuts.ht.core.Of;
 
 #if macro
 import haxe.macro.Expr;
-typedef R = scuts.ht.macros.implicits.Resolver;
+private typedef R = scuts.ht.macros.implicits.Resolver;
 #end
 
 

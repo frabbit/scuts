@@ -29,6 +29,7 @@ private typedef ParseContext = Dynamic<Dynamic>;
 private typedef InputContext = Dynamic;
 private typedef ParseResult<T> = Validation<ParseError, T>;
 
+
 enum ParseError 
 {
   ContextVarNotFound(id:String);
@@ -170,6 +171,7 @@ class Parse
   {
     function convTypePath (p:TypePath) 
     {
+      //trace("convertTypePath" + p);
       function substituteTypeParam (tp) return switch tp
       {
         case TPType(ct): ctxVarToComplexType(ct, ctx, pos).map(TPType);
@@ -186,11 +188,18 @@ class Parse
         default: Scuts.unexpected();
       }
       
+      function applyRealTypeParams (ct:ComplexType) return switch [t,ct]
+      {
+        case [TPath(base), TPath(vp)] if (base.params.length > 0): TPath({ name : vp.name, sub : vp.sub, pack : vp.pack, params : base.params });
+        case _ : ct;
+      }
+
       return if (isTypePrefix(p.name)) 
       {
         getTypeId(p.name)
         .flatMap(resolveVar.bind(ctx))
         .flatMap(ctxVarToComplexType.bind(_,ctx, pos))
+        .map(applyRealTypeParams)
         .flatMap(substituteTypeParamsInComplexType);
       } 
       else substituteTypeParams(p.params).map(makeTypePath.bind(p.pack, p.name, p.sub));
@@ -293,10 +302,12 @@ class Parse
   
   static function ctxVarToExpr (a:Dynamic, ?pos:Position):ParseResult<Expr>
   {
+    
+
     var p = if (pos == null) Context.currentPos() else pos;
     
     return 
-      if (Check.isExpr(a))                 (cast a).toSuccess()
+      if (Check.isExpr(a))                 Success(a)
       else if (Std.is(a, haxe.macro.Type)) Make.const(CIdent(Print.type(cast a, true)), p).toSuccess()
       else if (Std.is(a, ComplexType))     complexTypeToExpr(cast a)
       else if (Std.is(a, Int))             Make.const(CInt(Std.string(a)), pos).toSuccess()
@@ -360,6 +371,9 @@ class Parse
   
 	static function convertExpr (ex:Expr, ctx:ParseContext, pos:Position):ParseResult<Expr>
   {
+    if (ex == null) return Success(null);
+    if (ex.expr == null) return Success(ex);
+
 		var conv = convertExpr.bind(_,ctx, pos);
     var convExprIfNotNull = convertExprIfNotNull.bind(_, ctx, pos);
     

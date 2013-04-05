@@ -9,11 +9,8 @@ import haxe.ds.StringMap;
 import haxe.macro.ExprTools;
 import haxe.macro.TypeTools;
 import scuts.ht.macros.implicits.Cache;
-import scuts.mcore.ast.Exprs;
-import scuts.mcore.ast.Types;
-import scuts.mcore.Make;
-import scuts.mcore.Print;
 import scuts.core.debug.Assert;
+import scuts.ht.macros.implicits.Typer;
 import scuts.Scuts;
 import haxe.CallStack;
 
@@ -26,7 +23,7 @@ import scuts.ht.macros.implicits.Data;
 import scuts.core.Tuples.*;
 import scuts.core.Tuples;
 
-
+ 
 
 import scuts.ht.macros.implicits.Data;
 
@@ -49,6 +46,8 @@ enum ArgumentAdjustment
 private typedef R = Resolver;
 private typedef RE = Errors;
 private typedef RL = Log;
+
+
 
 
 class Resolver
@@ -93,6 +92,7 @@ class Resolver
   {
     var id = Context.signature([f, args]);
     if (resolveCache.exists(id)) return resolveCache.get(id);
+    
     //trace("--------------------------------------");
     /*
     var valid = switch (f.expr) {
@@ -307,7 +307,8 @@ class Resolver
 
     f = isBind ? macro ($f).bind : f;
     // create the function call expression
-    var callExpr = Make.call(f, res._1, f.pos);
+    //var callExpr = Make.call(f, res._1, f.pos);
+    var callExpr = macro @:pos(f.pos) $f($a{res._1});
   
     // eventually apply a resulting cast
     
@@ -361,7 +362,8 @@ class Resolver
     for (i in 0...numParams) 
     {
       // create an expr representing the required type
-      var required = first(curried);
+      var cur = first(curried);
+      var required = Typer.tryFastTypeable(cur);
       // switch (Context.typeof(required)) {
       //   case TMono(_): Scuts.error("Cannot apply a parameter to an unknown type");
       //   case _: 
@@ -465,7 +467,7 @@ class Resolver
     }
 
     //trace("type" + Context.typeof(required));
-    switch (Context.typeof(required)) {
+    switch (Typer.typeof(required)) {
       case TAnonymous(_):
 
         //Scuts.error("Implicit Anonymous Objects are ot yet supported");
@@ -526,21 +528,43 @@ class Resolver
   /**
    * Internal function that resolves implicits from the using scope
    */
+
+  static var implicitCache = new Cache();
   static function resolveImplicitInUsingContext(required:Expr, scopes:Scopes, lastRequired:Array<Expr>):Validation<Expr, Expr>
   {
+    //trace("--------------start-----------------------");
+    //trace("start resolve@" + Context.currentPos());
     
-    //trace("start resolve");
-    
+    //Tools.printTypeOfExpr(required);
+
     var usings = Context.getLocalUsing();
     
+    //trace(usings);
+
     var res = [];
     
     for (u in usings) {
+
       var cl = u.get();
-      var statics = cl.statics.get();
-      var filtered = statics.filter(function (x) return x.isPublic && x.meta.has(":implicit"));
-      for (f in filtered) {
-        res.push( { cl:cl, field: f } );
+
+      if (!implicitCache.exists(cl.module + "_" + cl.name)) {
+        var cache = [];
+        var statics = cl.statics.get();
+        var filtered = statics.filter(function (x) return x.isPublic && x.meta.has(":implicit"));
+        for (f in filtered) {
+          var e = cl.module + "." + cl.name + "." + f.name;
+          var parsed = Context.parse(e, cl.pos);
+          cache.push({ cl:cl, field: f, parsed : parsed });
+          res.push( { cl:cl, field: f, parsed : parsed } );
+        }
+        implicitCache.set(cl.module + "_" + cl.name, cache);
+      } else {
+        
+        for (r in implicitCache.get(cl.module + "_" + cl.name)) {
+          res.push(r);
+        }
+        
+        
       }
       
     }
@@ -548,70 +572,94 @@ class Resolver
     //Tools.printExpr(required);
     
     for ( r in res) {
-      var e = r.cl.module + "." + r.cl.name + "." + r.field.name;
+      
+      
       //trace(e);
       //trace(r.field.type);
-      var parsed = Context.parse(e, r.cl.pos);
+      var parsed = r.parsed;
       
-      switch (r.field.type) {
-        case TInst(_,_):
-          
-          //var cur = parsed;
-          //var req = required;
-          var cur = macro $helper.toImplicitObject($parsed);
-          var req = macro $helper.toImplicitObject($required);
-          var isComp = Tools.isCompatible( cur, req);
-          
-          
-          
-          //Tools.printTypeOfExpr(cur);
-          //Tools.printTypeOfExpr(req);
-          if (isComp) {
-            //trace("isComp:");
-            
-            //Tools.printTypeOfExpr(parsed);
-            //Tools.printTypeOfExpr(required);
-            return Success(parsed);
-          }
-          
-        case TFun(args, _):
-          //trace(args.length);
-          var check = switch (args.length) {
-            case 0: macro $helper.ret0($parsed);
-            case 1: macro $helper.ret1($parsed);
-            case 2: macro $helper.ret2($parsed);
-            case 3: macro $helper.ret3($parsed);
-            case 4: macro $helper.ret4($parsed);
-            case 5: macro $helper.ret5($parsed);
-            case 6: macro $helper.ret6($parsed);
-            case _: trace("error");  Scuts.notImplemented();
-          }
-          
-          
-          
-          var isComp = Tools.isCompatible(macro $helper.toImplicitObject($check), macro $helper.toImplicitObject($required));
-          if (isComp) {
-            
-            var typed = switch (args.length) {
-              case 0: macro $helper.typed0($parsed, $required);
-              case 1: macro $helper.typed1($parsed, $required);
-              case 2: macro $helper.typed2($parsed, $required);
-              case 3: macro $helper.typed3($parsed, $required);
-              case 4: macro $helper.typed4($parsed, $required);
-              case 5: macro $helper.typed5($parsed, $required);
-              case 6: macro $helper.typed6($parsed, $required);
-              case _: trace("error"); Scuts.notImplemented();
-            }
-            return Success(if (args.length == 0) macro $parsed() else resolve1(typed, [], scopes, lastRequired.concat([required]),false));
+      function findIn (t:Type) {
 
-          }
-        default: 
-          
+        switch (t) {
+          case TLazy(x): return findIn(x());
+          case TInst(_,_):
+            
+            //var cur = parsed;
+            //var req = required;
+            var cur = macro $helper.toImplicitObject($parsed);
+            var req = macro $helper.toImplicitObject($required);
+
+            //Tools.printTypeOfExpr(cur);
+            //Tools.printTypeOfExpr(req);
+
+            // Tools.printTypeOfExpr(parsed);
+            // Tools.printTypeOfExpr(cur);
+
+            // Tools.printTypeOfExpr(req);
+
+            var isComp = Tools.isCompatible( cur, req);
+            
+            //trace("isComp=" + isComp);
+            
+            //Tools.printTypeOfExpr(cur);
+            //Tools.printTypeOfExpr(req);
+            if (isComp) {
+              //trace("isComp:");
+              //trace("isComp@" + Context.currentPos());
+              //trace(e);
+              //Tools.printTypeOfExpr(required);
+              return Success(parsed);
+            }
+            
+          case TFun(args, _):
+            //trace("check Func");
+            //trace("try " + e);
+            //trace(args.length);
+            var check = switch (args.length) {
+              case 0: macro $helper.ret0($parsed);
+              case 1: macro $helper.ret1($parsed);
+              case 2: macro $helper.ret2($parsed);
+              case 3: macro $helper.ret3($parsed);
+              case 4: macro $helper.ret4($parsed);
+              case 5: macro $helper.ret5($parsed);
+              case 6: macro $helper.ret6($parsed);
+              case _: trace("error");  Scuts.notImplemented();
+            }
+
+            
+            //Tools.printTypeOfExpr(macro $helper.toImplicitObject($check));
+            //Tools.printTypeOfExpr(macro $helper.toImplicitObject($required));
+            
+            var isComp = Tools.isCompatible(macro $helper.toImplicitObject($check), macro $helper.toImplicitObject($required));
+            if (isComp) {
+              //trace("isComp@" + Context.currentPos());
+              var typed = switch (args.length) {
+                case 0: macro $helper.typed0($parsed, $required);
+                case 1: macro $helper.typed1($parsed, $required);
+                case 2: macro $helper.typed2($parsed, $required);
+                case 3: macro $helper.typed3($parsed, $required);
+                case 4: macro $helper.typed4($parsed, $required);
+                case 5: macro $helper.typed5($parsed, $required);
+                case 6: macro $helper.typed6($parsed, $required);
+                case _: trace("error"); Scuts.notImplemented();
+              }
+              return Success(if (args.length == 0) macro $parsed() else resolve1(typed, [], scopes, lastRequired.concat([required]),false));
+
+            }
+          default: 
+            
+        }
+        return null;  
       }
+      var res = findIn(r.field.type);
+      if (res != null) return res;
       
     }
+
     
-    
+    //trace("found nothing in using");
+    //Tools.printTypeOfExpr(required);
+    //trace("------------end---------------");
     
     // Converts an Expr with Type X to an Expr with Type ImplicitObject<X>
     var requiredAsImplicit = macro $helper.toImplicitObject($required);

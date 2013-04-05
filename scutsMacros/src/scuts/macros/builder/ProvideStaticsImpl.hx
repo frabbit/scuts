@@ -1,5 +1,6 @@
-package scuts.mcore.builder;
+package scuts.macros.builder;
 
+#if false
 
 import haxe.macro.Compiler;
 import haxe.macro.Context;
@@ -9,7 +10,7 @@ import neko.FileSystem;
 import neko.io.File;
 import scuts.mcore.Check;
 import scuts.mcore.Convert;
-import scuts.mcore.MContext;
+import scuts.mcore.MCore;
 import scuts.mcore.ast.Functions;
 import scuts.mcore.Extract;
 import scuts.mcore.Print;
@@ -395,3 +396,4 @@ class ProvideStaticsImpl
   
 }
 
+#end

@@ -295,10 +295,13 @@ class Print
             }
           add(":");
           
-          var allExprs = switch (c.expr.expr) {
-            case EBlock(exprs): exprs;
-            default: [c.expr];
-          }
+
+          var allExprs = if (c.expr != null) {
+            switch (c.expr.expr) {
+              case EBlock(exprs): exprs;
+              default: [c.expr];
+            }
+          } else [];
           if (allExprs.length > 0) newLineInc();
           for (e in allExprs) {
             expr(e);
@@ -309,10 +312,12 @@ class Print
         if (edef != null) {
           if (cases.length > 0) newLine();
           add("default:");
-          var allExprs = switch (edef.expr) {
-            case EBlock(exprs): exprs;
-            default: throw "assert";
-          }
+          var allExprs = 
+            if (edef.expr == null) []
+            else switch (edef.expr) {
+              case EBlock(exprs): exprs;
+              default: throw "assert";
+            }
           if (allExprs.length > 0) newLineInc();
           for (e in allExprs) {
             expr(e);

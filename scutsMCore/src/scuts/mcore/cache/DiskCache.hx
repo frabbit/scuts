@@ -1,14 +1,13 @@
 package scuts.mcore.cache;
 
-#if (!macro && !display)
-#error "Class can only be used inside of macros"
-#elseif (display || macro)
+#if macro
+
 
 import haxe.macro.Context;
-import neko.FileSystem;
-import scuts.core.Option;
+import sys.FileSystem;
+import scuts.core.Options;
 
-import neko.io.File;
+import sys.io.File;
 
 class DiskCache 
 {

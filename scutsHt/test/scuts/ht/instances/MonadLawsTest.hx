@@ -15,7 +15,7 @@ import scuts.ht.core.OfOf;
 import scuts.ds.LazyLists;
 
 import scuts.core.Validations;
-import scuts.Assert;
+import utest.Assert;
 import scuts.ht.syntax.EqBuilder;
 
 using scuts.core.Promises;
@@ -66,21 +66,21 @@ class MonadLawsTest
     
   }
   
-  @Test
+  
   public function testLawsForInstances () 
   {
     function mkEq <M,X> (f:Of<M,Int>->X, eqX:Eq<X>):Eq<Of<M, Int>> return EqBuilder.create(function (a:Of<M,Int>, b:Of<M,Int>) return eqX.eq(f(a), f(b)));
     
     
-    Hots.implicit(EqBuilder.create(function (p1:Promise<Int>, p2:Promise<Int>) {
-      return (p1.isDone() == p2.isDone()) && p1.valueOption().eq_(p2.valueOption());
+    Hots.implicit(EqBuilder.create(function (p1:PromiseD<Int>, p2:PromiseD<Int>) {
+      return (p1.isComplete() == p2.isComplete()) && p1.valueOption().extract().eq._(p2.valueOption().extract());
     }));
     
     
  
     assertLaws(arrayMonad, mkEq._(function (a:Of<Array<In>, Int>):Array<Int> return a));
     assertLaws(optionMonad, mkEq._(function (a:Of<Option<In>, Int>):Option<Int> return a));
-    assertLaws(promiseMonad, mkEq._(function (a:Of<Promise<In>, Int>):Promise<Int> return a));
+    assertLaws(promiseMonad, mkEq._(function (a:Of<PromiseD<In>, Int>):PromiseD<Int> return a));
     
     
     function valUnbox <S>(x:ValidationOf<Int, S>):Validation<Int, S> return x;
@@ -95,11 +95,11 @@ class MonadLawsTest
     
     arrayUnbox.compose;
     
-    $type(validationMonad(intSumSemigroup));
-    $type(valUnbox);
+    
+    
     var eq = mkEq._(valUnbox);
     var mon = validationMonad(intSumSemigroup);
-    $type(mon);
+    
     assertLaws(mon, eq);
     assertLaws(optionTMonad(arrayMonad), mkEq._(arrayUnbox.compose(optionTUnbox)));
     assertLaws(arrayTMonad(arrayMonad), mkEq._(arrayUnbox.compose(arrayTUnbox)));

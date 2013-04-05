@@ -12,7 +12,7 @@ import scuts.ht.classes.Monad;
 
 
 
-class PromiseTEmpty<M> implements Empty<Of<M, Promise<In>>> 
+class PromiseTEmpty<M> implements Empty<Of<M, PromiseD<In>>> 
 {
   var monadM:Monad<M>;
   
@@ -22,7 +22,9 @@ class PromiseTEmpty<M> implements Empty<Of<M, Promise<In>>>
   
   public inline function empty <A>():PromiseTOf<M,A> 
   {
-    return monadM.pure(Promises.cancelled());
+  	inline function asPromiseD <T,A>(p:Promise<T,A>):PromiseD<A> return p;
+  	
+    return monadM.pure(asPromiseD(Promises.cancelled("error")));
   }
 }
 

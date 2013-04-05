@@ -8,7 +8,7 @@ import scuts.core.Promises;
 
 
 
-class PromisePure implements Pure<Promise<In>>
+class PromisePure implements Pure<PromiseD<In>>
 {
   public function new () {}
   

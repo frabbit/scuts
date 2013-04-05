@@ -11,7 +11,7 @@ using scuts.core.Strings;
 class ImportAllBuilder
 {
 
-  public static function build(packs:Array<String>, target:String, folder:String) 
+  public static function build(packs:Array<String>, target:String, folder:String, ?packageName:String = "") 
   {
     var classPaths = Context.getClassPath();
     
@@ -44,6 +44,7 @@ class ImportAllBuilder
           {
             var lastSlash = fullPath.lastIndexOf("/") + 1;
             
+
             buf.add("import ");
             buf.add(packBase);
             buf.add(fullPath.substr(lastSlash, fullPath.length - 3 - lastSlash));
@@ -54,7 +55,7 @@ class ImportAllBuilder
     }
     
     var buf = new StringBuf();
-    
+    buf.add("package " + packageName + ";\n");
     for (p in packs) create1(p, buf);
     
     buf.add("class ");

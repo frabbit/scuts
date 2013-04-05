@@ -10,11 +10,11 @@ private typedef MetadataEntry = { name : String, params : Array<Expr>, pos : Pos
 
 class MetadataEntryExt 
 {
-  public static function eq (a:MetadataEntry, b:MetadataEntry):Bool 
+  public static function eq (a:MetadataEntry, b:MetadataEntry, exprPosEq:Bool = true):Bool 
   {
     return Strings.eq(a.name, b.name)
       && Positions.eq(a.pos, b.pos)
-      && Arrays.eq(a.params, b.params, Exprs.eq);
+      && Arrays.eq(a.params, b.params, Exprs.eq.bind(_,_, exprPosEq));
   }
   
 }
@@ -22,9 +22,9 @@ class MetadataEntryExt
 class Metadatas 
 {
 
-  public static function eq (a:Metadata, b:Metadata):Bool 
+  public static function eq (a:Metadata, b:Metadata, exprPosEq : Bool = true):Bool 
   {
-    return Arrays.eq(a,b, MetadataEntryExt.eq);
+    return Arrays.eq(a,b, MetadataEntryExt.eq.bind(_,_, exprPosEq));
   }
   
 }

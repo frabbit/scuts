@@ -1,7 +1,7 @@
-package scuts.mcore.feature;
+package scuts.macros.builder;
 
+#if false
 
-private typedef SType = scuts.mcore.Type;
 
 import haxe.macro.Expr;
 import haxe.macro.Type;
@@ -10,6 +10,9 @@ import scuts.core.Ordering;
 
 using scuts.core.SortToBy;
 using scuts.core.Filter;
+
+private typedef SType = scuts.mcore.Type;
+
 class MultipleDispatchMacro 
 {
 
@@ -62,3 +65,5 @@ class MultipleDispatchMacro
   }
   
 }
+
+#end

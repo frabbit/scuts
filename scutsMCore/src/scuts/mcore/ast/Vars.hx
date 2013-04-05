@@ -22,7 +22,7 @@ class Vars
 
 class ArrayVars 
 {
-  public static inline function toExpr (vars:Array<Var>) return Make.vars(vars)
+  public static inline function toExpr (vars:Array<Var>) return Make.vars(vars);
 
 }
 

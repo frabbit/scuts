@@ -42,6 +42,10 @@ class Options {
   
   public static function compareBy <T>(a:Option<T>, b:Option<T>, compareT:T->T->Ordering):Ordering return switch(a) 
   {
+
+
+
+
     case None: switch (b) {
       case None: EQ;
       case Some(_): LT;

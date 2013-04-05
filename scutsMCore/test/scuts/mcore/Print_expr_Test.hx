@@ -5,15 +5,17 @@ import haxe.macro.Expr;
 import scuts.Scuts;
 #end
 
-@:macro private class Helper {
-  public static function getStringExpr (expr:Expr, indent:Int = 0, indentStr:String = "\t") {
+import utest.Assert;
+
+private class Helper {
+  macro public static function getStringExpr (expr:Expr, indent:Int = 0, indentStr:String = "\t") {
     
     return { expr:EConst(CString(Print.expr(expr, indent, indentStr))), pos:expr.pos };
   }
 }
 #if !macro
 
-import utest.Assert;
+
 
 class Print_expr_Test
 {

@@ -20,16 +20,16 @@ class ExprDefs
   
   public static inline function at (def:ExprDef, ?pos:Position) return toExpr(def, pos);
   
-  public static function eq (a:ExprDef, b:ExprDef):Bool 
+  public static function eq (a:ExprDef, b:ExprDef, eqPos:Bool = true):Bool 
   {
     
     var eqStr = Strings.eq;
-    var eeq = Exprs.eq;
+    var eeq = Exprs.eq.bind(_,_, eqPos);
     var eqComplex = ComplexTypes.eq;
     var eqTypePath = TypePaths.eq;
-    var eqArrExpr = Arrays.eq.bind(_,_,Exprs.eq);
+    var eqArrExpr = Arrays.eq.bind(_,_,eeq);
     var eqBool = Bools.eq;
-    var eqObjFields = Arrays.eq.bind(_,_,AnonFields.eq);
+    var eqObjFields = Arrays.eq.bind(_,_,AnonFields.eq.bind(_,_, eqPos));
     
     return switch [a,b] 
     {

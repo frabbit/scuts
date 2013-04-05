@@ -4,9 +4,9 @@
 
 package scuts.mcore.cache;
 
-#if (!macro && !display)
-#error "Class can only be used inside of macros"
-#elseif (display || macro)
+#if macro
+
+import haxe.ds.StringMap;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.PosInfos;
@@ -21,8 +21,8 @@ using Lambda;
 
 class ExprCache 
 {
-  var cache:Hash<Expr>;
-  var times:Hash<{time:Float, calls:Int}>;
+  var cache:StringMap<Expr>;
+  var times:StringMap<{time:Float, calls:Int}>;
   
   var measureTimes:Bool;
   
@@ -30,8 +30,8 @@ class ExprCache
   public function new (measureTimes:Bool) 
   {
     enabled = #if scutsCache true #else false #end;
-    cache = new Hash();
-    times = new Hash();
+    cache = new StringMap();
+    times = new StringMap();
     this.measureTimes = measureTimes;
   }
   

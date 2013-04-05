@@ -1,8 +1,7 @@
-/**
- * @Author Heinz HÃ¶lzer
- */
 
-package scuts.mcore.builder;
+package scuts.macros.builder;
+
+#if false
 
 typedef T = Type;
 
@@ -551,3 +550,5 @@ class Comprehension
           default: throw "assert";
         }
   }
+
+  #end

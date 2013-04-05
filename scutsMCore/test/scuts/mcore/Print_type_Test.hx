@@ -1,16 +1,19 @@
 package scuts.mcore;
 
 #if macro
+import haxe.macro.Context;
 import haxe.macro.Expr;
 using scuts.core.Options;
 import scuts.Scuts;
 #end
 
-@:macro private class Helper {
+import utest.Assert;
+
+private class Helper {
   
-  public static function getStringType (expr:Expr, ?simpleSignatures:Bool = false) {
+  macro public static function getStringType (expr:Expr, ?simpleSignatures:Bool = false) {
     
-    var t = Context.typeof(expr);
+    var t = MCore.typeof(expr);
     
     var type = t.getOrError("Error cannot get type of expression " + expr);
     
@@ -19,14 +22,12 @@ import scuts.Scuts;
 }
 #if !macro
 
-import utest.Assert;
-
 class Print_type_Test<Z>
 {
 
   public function new() {}
   
-  public function test_with_function_type_parameter<X>() 
+  public function testFunctionTypeParameterShouldEqualX<X>() 
   {
     var a:X;
     var expected = "X";
@@ -34,7 +35,7 @@ class Print_type_Test<Z>
     Assert.equals(expected, actual);
   }
   
-  public function test_with_class_type_parameter<X>() 
+  public function testClassTypeParameterShouldEqualZ() 
   {
     var a:Z;
     var expected = "Z";
@@ -42,7 +43,7 @@ class Print_type_Test<Z>
     Assert.equals(expected, actual);
   }
   
-  public function test_with_int<X>() 
+  public function testStdTypesShouldBePrintedWithoutModule() 
   {
     var a:Int;
     var expected = "StdTypes.Int";
@@ -50,7 +51,7 @@ class Print_type_Test<Z>
     Assert.equals(expected, actual);
   }
   
-  public function test_with_anonymous_object<X>() 
+  public function testAnonymousObjectFieldsShouldBePrintedCorrectly() 
   {
     var a:{ x: String, i:Int}; // fields gets sorted from the compiler alphabetical
     var expected = "{ var i : StdTypes.Int; var x : String; }";
@@ -58,15 +59,8 @@ class Print_type_Test<Z>
     Assert.equals(expected, actual);
   }
   
-  public function test_with_anonymous_object2<X>() 
-  {
-    var a:{ i:Int, x: String }; // fields gets sorted from the compiler alphabetical
-    var expected = "{ var i : StdTypes.Int; var x : String; }";
-    var actual = Helper.getStringType( a );
-    Assert.equals(expected, actual);
-  }
   
-  public function test_with_functions() 
+  public function testFunctionsWithStdTypesShouldBePrintedWithoutThem() 
   {
     var a:Int->String; 
     var expected = "StdTypes.Int -> String";

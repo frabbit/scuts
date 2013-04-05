@@ -6,9 +6,9 @@ import haxe.macro.Type;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.Timer;
-import neko.FileSystem;
-import neko.io.File;
-import scuts.core.Log;
+import sys.FileSystem;
+import sys.io.File;
+//import scuts.core.Log;
 
 using scuts.mcore.ast.Exprs;
 using scuts.mcore.ast.Strings;
@@ -20,12 +20,9 @@ class Cast
   
   public static function unsafeCastToComplexType (expr:Expr, type:ComplexType, ?pos:Position):Expr
   {
-    //var args = [Make.funcArg("x", false, TPath(Make.typePath([], "Dynamic")))];
-    //var f = Make.funcExpr(args, type, "x".asConstIdent().asReturn());
     
     return macro inline function (x:Dynamic):$type return x;
-    
-    //return Make.call(f, [expr]);
+
   }
   
   public static function unsafeCastFromTo (expr:Expr, fromType:Type, toType:Type, wildcards:Array<Type>, ?pos:Position):Expr
@@ -64,7 +61,7 @@ class Cast
     
     var clName = "TypedCast__" + safeStr + "__" + id;
 
-    var cacheFolder = MContext.getCacheFolder();
+    var cacheFolder = MCore.getCacheFolder();
     
     if (!FileSystem.exists(cacheFolder + "/" + clName + ".hx")) 
     {
@@ -88,7 +85,7 @@ class Cast
       out.close();
     }
     
-    var field = Make.field(Make.const(CType(clName), pos), "doCast", pos);
+    var field = Make.field(Make.const(CIdent(clName), pos), "doCast", pos);
     var call = Make.expr(ECall(field, [expr]), pos);
 
     return call;

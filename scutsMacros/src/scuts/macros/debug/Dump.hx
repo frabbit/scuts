@@ -1,5 +1,5 @@
 package scuts.macros.debug;
-
+#if false
 
 #if macro
 import haxe.macro.Context;
@@ -11,7 +11,7 @@ import scuts.mcore.Print;
 class Dump 
 {
 
-  @:macro public static function dump(a:Expr, ?msg:String):Expr 
+  macro public static function dump(a:Expr, ?msg:String):Expr 
 	{
 
 		var info = objInfo(a);
@@ -21,7 +21,7 @@ class Dump
 		return res;
 	}
 	
-	@:macro public static function dumpObject(a:Expr) 
+	macro public static function dumpObject(a:Expr) 
 	{
 		return objInfo(a);
 	}
@@ -38,3 +38,4 @@ class Dump
 	#end
   
 }
+#end

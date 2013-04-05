@@ -8,12 +8,12 @@ import scuts.ht.classes.Zero;
 import scuts.core.Promises;
 
 
-class PromiseZero<X> implements Zero<Promise<X>>
+class PromiseZero<X> implements Zero<PromiseD<X>>
 {
   public function new () {}
 
-  public inline function zero ():Promise<X> 
+  public inline function zero ():PromiseD<X> 
   {
-    return Promises.cancelled();
+    return Promises.cancelled("error");
   }
 }

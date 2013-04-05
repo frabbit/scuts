@@ -7,7 +7,7 @@ import scuts.core.Promises;
 import scuts.core.Tuples;
 
 
-class PromiseTPure<M> implements Pure<Of<M,Promise<In>>> {
+class PromiseTPure<M> implements Pure<Of<M,PromiseD<In>>> {
   
   var pureM:Pure<M>;
 

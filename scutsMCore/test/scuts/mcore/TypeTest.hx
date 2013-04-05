@@ -2,7 +2,8 @@ package scuts.mcore;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import scuts.mcore.Type;
+
+import scuts.mcore.ast.ComplexTypes;
 import scuts.Scuts;
 import utest.Assert;
 
@@ -39,8 +40,8 @@ class TypeTest
     var iterType = getType("StdTypes.Iterable<StdTypes.Int>");
     
     
-    Assert.isTrue(Type.isSupertypeOf(iterType, arrayType));
-    Assert.isFalse(Type.isSupertypeOf(arrayType, iterType));
+    Assert.isTrue(ComplexTypes.isSupertypeOf(iterType, arrayType));
+    Assert.isFalse(ComplexTypes.isSupertypeOf(arrayType, iterType));
   }
   
   public function testIsSubtypeOf () 
@@ -48,22 +49,22 @@ class TypeTest
     var arrayType = getType("Array<StdTypes.Int>");
     var iterType = getType("StdTypes.Iterable<StdTypes.Int>");
     
-    Assert.isTrue(Type.isSubtypeOf(arrayType, iterType));
-    Assert.isFalse(Type.isSubtypeOf(iterType, arrayType));
+    Assert.isTrue(ComplexTypes.isSubtypeOf(arrayType, iterType));
+    Assert.isFalse(ComplexTypes.isSubtypeOf(iterType, arrayType));
   }
   
   public function testIsSubtypeOf_forSameType () 
   {
     var arrayType = getType("Array<StdTypes.Int>");
     
-    Assert.isFalse(Type.isSubtypeOf(arrayType, arrayType));
+    Assert.isFalse(ComplexTypes.isSubtypeOf(arrayType, arrayType));
   }
   
   public function testIsSupertypeOf_forSameType () 
   {
     var arrayType = getType("Array<StdTypes.Int>");
     
-    Assert.isFalse(Type.isSupertypeOf(arrayType, arrayType));
+    Assert.isFalse(ComplexTypes.isSupertypeOf(arrayType, arrayType));
   }
   
 }

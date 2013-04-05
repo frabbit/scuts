@@ -1,0 +1,14 @@
+-cp src 
+-cp ../scutsCore/src
+-cp test 
+-lib utest 
+
+
+-D standaloneTest
+--macro scuts.core.tools.ImportAllBuilder.build(["scuts.ds"], "ImportAll", "test/scuts/ds", "scuts.ds")
+--macro Sys.println("\n-------- macro unit tests ------\n")
+--macro scuts.ds.AllTests.main()
+--macro Sys.println("\n-------- regular unit tests ------\n")
+-main scuts.ds.AllTests
+
+-x bin/testNeko.n

@@ -10,9 +10,9 @@ private typedef AnonField = { field : String, expr : Expr };
 
 class AnonFields
 {
-  public static function eq (a:AnonField, b:AnonField):Bool 
+  public static function eq (a:AnonField, b:AnonField, exprPosEq : Bool = true):Bool 
   {
-    return Strings.eq(a.field, b.field) && Exprs.eq(a.expr, b.expr);
+    return Strings.eq(a.field, b.field) && Exprs.eq(a.expr, b.expr, exprPosEq);
   }
 }
 

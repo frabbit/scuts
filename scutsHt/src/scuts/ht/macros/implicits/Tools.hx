@@ -3,8 +3,9 @@ package scuts.ht.macros.implicits;
 #if macro
 // unwanted dependecies
 
-import scuts.mcore.ast.Exprs;
-import scuts.mcore.ast.Types;
+//import scuts.mcore.ast.Exprs;
+//import scuts.mcore.ast.Types;
+import scuts.ht.macros.implicits.Typer;
 import scuts.mcore.Print;
 import scuts.core.debug.Assert;
 import scuts.Scuts;
@@ -51,7 +52,7 @@ class Tools
   
   public static function getTypeOfRequired (required:Expr) 
   {
-    return Context.typeof(required);
+    return Typer.typeof(required);
   }
   
   /**
@@ -140,27 +141,52 @@ class Tools
   /**
    * Checks if the expression e is typeable by the compiler.
    */
+ static var isTypeableCalls = {
+    Context.onGenerate(function (t) {
+      trace("isTypeableCalls:" + Std.string(isTypeableCalls));
+    });
+    0;
+  }
   public static function isTypeable (e:Expr) 
   {
-    return try { Context.typeof(e); true; } catch (e:Error) false;
+    isTypeableCalls++;
+    
+    return try { Typer.typeof(e); true; } catch (e:Error) false;
   }
   
   /**
    * Checks if the type of expression e is compatible to the type of to.
    */
+  static var isCompatibleCalls = {
+    Context.onGenerate(function (t) {
+      trace("isCompatibleCalls:" + Std.string(isCompatibleCalls));
+    });
+    0;
+  }
+
   public static function isCompatible (e:Expr, to:Expr) 
   {
+    isCompatibleCalls++;
+    
+    
     var helper = Resolver.helper;
-    return try { Context.typeof(macro $helper.typeAsParam($to)($e)); true; } catch (e:Error) false;
+    return try { Typer.typeof(macro $helper.typeAsParam($to)($e)); true; } catch (e:Error) false;
   }
   
   /**
    * Returns the type of expression e as an Option. 
    * Some if e is typeable, None otherwise.
    */
+  static var getTypeCalls = {
+    Context.onGenerate(function (t) {
+      trace("getTypeCalls:" + Std.string(getTypeCalls));
+    });
+    0;
+  }
   public static function getType (e:Expr):Option<Type> 
   {
-    return try Some(Context.typeof(e)) catch (e:Error)  None;
+    getTypeCalls++;
+    return try Some(Typer.typeof(e)) catch (e:Error)  None;
   }
 }
 

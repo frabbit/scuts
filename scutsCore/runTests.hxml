@@ -1,13 +1,14 @@
-
 -cp src 
 -cp test 
--cp ./../scutsCore/src
--cp ../MassiveUnit/core/src
--cp ../MassiveLib/haxe/src
--cp ../hamcrest-haxe/src/main
-#-cp ../mockatoo\src
--main AllTests
---times
--D macrotimes
--x bin/test/testNeko
+-lib utest 
+
+
+-D standaloneTest
+--macro scuts.core.tools.ImportAllBuilder.build(["scuts.core"], "ImportAll", "test/scuts/core", "scuts.core")
+--macro Sys.println("\n-------- macro unit tests ------\n")
+--macro scuts.core.AllTests.main()
+--macro Sys.println("\n-------- regular unit tests ------\n")
+-main scuts.core.AllTests
+
+-x bin/testNeko.n
 

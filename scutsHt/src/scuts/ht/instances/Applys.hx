@@ -37,7 +37,7 @@ import scuts.ht.instances.Functors.*;
 private typedef A = scuts.ht.syntax.ApplyBuilder;
 
 class Applys {
-  @:implicit @:noUsing public static var promiseApply         (default, null):Apply<Promise<In>> = new PromiseApply(promiseFunctor);
+  @:implicit @:noUsing public static var promiseApply         (default, null):Apply<PromiseD<In>> = new PromiseApply(promiseFunctor);
   @:implicit @:noUsing public static var optionApply          (default, null):Apply<Option<In>> = new OptionApply(optionFunctor);
   @:implicit @:noUsing public static var arrayApply           (default, null):Apply<Array<In>> = new ArrayApply(arrayFunctor);
   @:implicit @:noUsing public static var ioApply           (default, null):Apply<Io<In>> = new IoApply(ioFunctor);
@@ -51,7 +51,7 @@ class Applys {
   
   @:implicit @:noUsing public static function stateApply <S>():Apply<S->Tup2<S,In>> return new StateApply(stateFunctor());
   
-  @:implicit @:noUsing public static function promiseTApply        <M>(appM:Apply<M>, funcM:Functor<M>):Apply<Of<M, Promise<In>>> return new PromiseTApply(appM, funcM, promiseTFunctor(funcM));
+  @:implicit @:noUsing public static function promiseTApply        <M>(appM:Apply<M>, funcM:Functor<M>):Apply<Of<M, PromiseD<In>>> return new PromiseTApply(appM, funcM, promiseTFunctor(funcM));
   @:implicit @:noUsing public static function arrayTApply        <M>(appM:Apply<M>, funcM:Functor<M>):Apply<Of<M, Array<In>>> return new ArrayTApply(appM, funcM, arrayTFunctor(funcM));
   @:implicit @:noUsing public static function optionTApply       <M>(appM:Apply<M>, funcM:Functor<M>):Apply<Of<M, Option<In>>> return new OptionTApply(appM, funcM, optionTFunctor(funcM));
   @:implicit @:noUsing public static function validationTApply   <M,F>(funcM:Functor<M>, appM:Apply<M>):Apply<Of<M, Validation<F,In>>> return new ValidationTApply(funcM, appM, validationTFunctor(funcM));

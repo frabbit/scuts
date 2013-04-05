@@ -42,8 +42,8 @@ abstract Of<M,A>(OfI<M,A>)
 	@:from public static inline function fromIo (x:Io<A>):Of<Io<In>, A> return new Of(x);
 	@:to public static function toIo <A>(x:OfI<Io<In>, A>):Io<A> return Hots.preservedCast(cast x);
 
-	@:from public static function fromPromise (x:Promise<A>):Of<Promise<In>, A> return new Of(x);
-	@:to public static function toPromise <A>(x:OfI<Promise<In>, A>):Promise<A> return Hots.preservedCast(cast x);
+	@:from public static function fromPromise (x:PromiseD<A>):Of<PromiseD<In>, A> return new Of(x);
+	@:to public static function toPromise <A>(x:OfI<PromiseD<In>, A>):PromiseD<A> return Hots.preservedCast(cast x);
 
 	@:from public static inline function fromList (x:List<A>):Of<List<In>, A> return new Of(x);
 	@:to public static function toList <A>(x:OfI<List<In>, A>):List<A> return Hots.preservedCast(cast x);

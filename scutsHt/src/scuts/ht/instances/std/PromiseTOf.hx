@@ -6,12 +6,12 @@ import scuts.ht.core.OfOf;
 import scuts.core.Promises;
 import scuts.ht.core.Hots;
 
-abstract PromiseTOf<M,A>(OfOf<M, Promise<In>, A>) from OfOf<M, Promise<In>, A> to OfOf<M, Promise<In>, A>  
+abstract PromiseTOf<M,A>(OfOf<M, PromiseD<In>, A>) from OfOf<M, PromiseD<In>, A> to OfOf<M, PromiseD<In>, A>  
 {
 
-	public inline function new (x:OfOf<M, Promise<In>, A>) this = x;
+	public inline function new (x:OfOf<M, PromiseD<In>, A>) this = x;
 
-	@:to public inline function runT():Of<M, Promise<A>> return new Of(cast this);
+	@:to public inline function runT():Of<M, PromiseD<A>> return new Of(cast this);
 
-	@:from public static inline function intoT<M,A>(x:Of<M, Promise<A>>):PromiseTOf<M,A> return new PromiseTOf(cast x);
+	@:from public static inline function intoT<M,A>(x:Of<M, PromiseD<A>>):PromiseTOf<M,A> return new PromiseTOf(cast x);
 }

@@ -223,15 +223,13 @@ class Promises
   {
     if (!p.isComplete()) 
     {
-      if (p.isFailure()) f(p.extract().extractFailure());
-      else 
-      {
-        p.lock();
-        if (!p.isCompleteDoubleCheck()) p._failureListeners.push(f);
-        else p.onFailure(f);
-        p.unlock();
-      }
-    }
+      p.lock();
+      if (!p.isCompleteDoubleCheck()) p._failureListeners.push(f);
+      else p.onFailure(f);
+      p.unlock();
+    } 
+    else if (p.isFailure()) f(p.extract().extractFailure());
+    
     return p;
   }
 
@@ -239,15 +237,13 @@ class Promises
   {
     if (!p.isComplete()) 
     {
-      if (p.isSuccess()) f(p.extract().extract());
-      else 
-      {
-        p.lock();
-        if (!p.isCompleteDoubleCheck()) p._successListeners.push(f);
-        else p.onSuccess(f);
-        p.unlock();
-      }
-    }
+      p.lock();
+      if (!p.isCompleteDoubleCheck()) p._successListeners.push(f);
+      else p.onSuccess(f);
+      p.unlock();
+      
+      
+    } else if (p.isSuccess()) f(p.extract().extract());
     return p;
   }
 
