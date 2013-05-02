@@ -1,0 +1,46 @@
+
+
+-cp scutsCore/src
+-cp scutsCore/test
+-cp scutsCore/samples
+
+-cp scutsReactive/src
+-cp scutsReactive/test
+-cp scutsReactive/samples
+
+-cp scutsHt/src
+-cp scutsHt/test
+-cp scutsHt/samples
+
+-cp scutsMCore/src
+-cp scutsMCore/test
+-cp scutsMCore/samples
+
+-cp scutsMacros/src
+-cp scutsMacros/test
+-cp scutsMacros/samples
+
+-cp scutsDs/src
+-cp scutsDs/test
+-cp scutsDs/samples
+
+-cp scuts/test 
+
+-lib utest 
+--macro sys.FileSystem.createDirectory("scutsHt/bin")
+
+#--macro scuts.core.tools.ImportAllBuilder.build(["scuts.ht"], "ImportAll", "scutsHt/test/scuts/ht", "scuts.ht")
+
+--macro Sys.println("\n-------- macro unit tests ------\n")
+--macro scuts.ht.AllTests.main()
+
+
+--macro Sys.println("\n-------- regular unit tests ------\n")
+-main scuts.ht.AllTests
+
+--times
+-D macro_times
+
+-x scuts/bin/testNeko
+
+#-D excludeHtSamples
