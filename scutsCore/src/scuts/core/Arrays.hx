@@ -151,6 +151,11 @@ class Arrays
     }
     return false;
   }
+
+  @:noUsing public static function concat <T>(a:Array<T>, b:Array<T>) 
+  {
+    return a.concat(b);
+  }
   
   /**
    * Returns a new Array containing all elements of a except the first num elements.
@@ -395,6 +400,17 @@ class Arrays
     for (i in arr) 
     {
       if (e(i)) return Some(i);
+    }
+    return None;
+  }
+
+
+  public static function mapThenSomeOption <T,S>(arr:Array<T>, map:T->Option<S>):Option<S> 
+  {
+    for (i in arr) 
+    {
+      var x = map(i);
+      if (x.isSome()) return x;
     }
     return None;
   }
