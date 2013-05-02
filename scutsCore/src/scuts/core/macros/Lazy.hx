@@ -1,5 +1,7 @@
 package scuts.core.macros;
 
+
+
 #if (macro)
 import haxe.macro.Expr.ExprOf;
 import haxe.macro.Expr;
@@ -9,7 +11,7 @@ import scuts.core.Options;
 class Lazy 
 {
 
-  macro public static function expr(ex:Expr):Expr 
+  #if !macro macro #end public static function expr(ex:Expr):Expr 
   {
     return mkExpr(ex);
   }
@@ -17,84 +19,46 @@ class Lazy
   #if (macro)
   public static function mkExpr (ex:Expr):Expr 
   {
-    var p = ex.pos;
-    var constR = { expr: EConst(CIdent("r")), pos: p};
-    
     var type = try Some(haxe.macro.Context.typeof(ex)) catch (e:Dynamic) None;
-
-    var constNull = EConst(CIdent("null"));
     
-    var vars = 
+    var r = switch (type) 
     {
-      var r = 
-      {
-        var e = switch (type) 
+      case Some(TInst(ct, _)):
+        var cget = ct.get();
+        var n = cget.name;
+        var m = cget.module;
+        var modStdTypes = m == "StdTypes";
+        
+        switch (n) 
         {
-          case Some(t): switch (t) 
-          {
-            case TInst(ct, _): 
-              var cget = ct.get();
-              var n = cget.name;
-              var m = cget.module;
-              var modStdTypes = m == "StdTypes";
-              
-              switch (n) {
-                case "Int"    if (modStdTypes): EConst(CInt("0"));
-                case "Float"  if (modStdTypes): EConst(CFloat("0.0"));
-                case "String" if (modStdTypes): EConst(CString(""));
-                default:                           constNull;
-              }
-            case TEnum(et, _):
-              var eget = et.get();
-              var n = eget.name;
-              var m = eget.module;
-              
-              if (n == "Bool" && m == "StdTypes") 
-                EConst(CIdent("false"))
-              else 
-                constNull;
-              
-            default: constNull;
-          }
-          case None: constNull;
+          case "Int"    if (modStdTypes): macro 0; 
+          case "Float"  if (modStdTypes): macro 0.0;
+          case "String" if (modStdTypes): macro "";
+          case _:                         macro null;
         }
-        { type: null, name: "r" , expr:{ expr: e, pos:p}};
-      };
-      
-      var isSet = { type:null, name: "isSet", expr: { expr: EConst(CIdent("false")), pos: p}};
-      { expr: EVars([r, isSet]), pos: p};
-    }
-    
-    var f = 
-    {
-      var functionBody = 
-      {
-        var ifExpr = 
-        {
-          var ifCond = { expr: EUnop(Unop.OpNot, false, { expr: EConst(CIdent("isSet")), pos:p}), pos:p};
-          var ifBody = 
-          {
-            var block = 
-            [
-              { expr : EBinop(Binop.OpAssign, constR, ex), pos:p},
-              { expr : EBinop(Binop.OpAssign, { expr: EConst(CIdent("isSet")), pos:p}, { expr:EConst(CIdent("true")), pos:p}), pos:p},
-            ];
-            
-            { expr:EBlock(block), pos:p};
-          }
+        case Some(TEnum(et, _)):
+          var eget = et.get();
+          var n = eget.name;
+          var m = eget.module;
           
-          {expr:EIf(ifCond, ifBody, null), pos:p};
+          if (n == "Bool" && m == "StdTypes") macro false else macro null;
+        case _: macro null;
+    };
+
+    return macro @:pos(ex.pos) 
+    {
+      var r = $r;
+      var isSet = false;
+      function () 
+      {
+        if (!isSet) 
+        {
+          r = $ex;
+          isSet = true;
         }
-        
-        var retExpr = { expr:EReturn(constR), pos:p};
-        {expr:EBlock([ifExpr, retExpr]), pos:p }
-        
-      }
-      
-      { expr: EFunction(null, { args:[], ret:null, expr: functionBody, params:[]}), pos:ex.pos};
+        return r;
+      };
     }
-    
-    return { expr: EBlock([vars, f]), pos:p};
   }
   #end
   
