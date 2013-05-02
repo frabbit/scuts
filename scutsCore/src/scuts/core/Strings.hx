@@ -160,6 +160,10 @@ class Strings
   public static function unwords(s:Array<String>):String {
     return s.join(" ");
   }
+
+  public static function compareInt(s1:String, s2:String):Int {
+    return if (s1 < s2) -1 else if (s1 > s2) 1 else 0;
+  }
   
   
 }
