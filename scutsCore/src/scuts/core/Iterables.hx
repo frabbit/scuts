@@ -225,31 +225,26 @@ class Iterables
     return Iterators.findIndex(iter.iterator(), f);
   }
   
-  public static function foldRight <A,B>(iter:Iterable<A>, f:A->B->B, acc:B):B
+  public static function foldRight <A,B>(iter:Iterable<A>, acc:B, f:A->B->B):B
   {
-    return Iterators.foldRight(iter.iterator(), f, acc);
+    return Iterators.foldRight(iter.iterator(), acc, f);
   }
   
-  public static function foldLeft <A,B>(iter:Iterable<A>, f:B->A->B, acc:B):B
+  public static function foldLeft <A,B>(iter:Iterable<A>, acc:B, f:B->A->B):B
   {
-    return Iterators.foldLeft(iter.iterator(), f, acc);
+    return Iterators.foldLeft(iter.iterator(), acc, f);
   }
   
-  #if (!macro && scuts_multithreaded)
-  public static function foldLeftParallel <A,B>(iter:Iterable<A>, f:B->A->B, acc:B):B
-  {
-    return Iterators.foldLeftParallel(iter.iterator(), f, acc);
-  }
-  #end
   
-  public static function foldLeftWithIndex <A,B>(iter:Iterable<A>, f:B->A->Int->B, acc:B):B
+  
+  public static function foldLeftWithIndex <A,B>(iter:Iterable<A>, acc:B, f:B->A->Int->B):B
   {
-    return Iterators.foldLeftWithIndex(iter.iterator(), f, acc);
+    return Iterators.foldLeftWithIndex(iter.iterator(), acc, f);
   }
   
-  public static function foldRightWithIndex <A,B>(iter:Iterable<A>, f:A->B->Int->B, acc:B):B
+  public static function foldRightWithIndex <A,B>(iter:Iterable<A>, acc:B, f:A->B->Int->B):B
   {
-    return Iterators.foldRightWithIndex(iter.iterator(), f, acc);
+    return Iterators.foldRightWithIndex(iter.iterator(), acc, f);
   }
   
   public static function each<T>(a:Iterable<T>, f:T->Void):Iterable<T> 

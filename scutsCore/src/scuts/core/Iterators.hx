@@ -162,20 +162,20 @@ class Iterators
     return res;
   }
   
-  public static function foldRight<A,B>(iter:Iterator<A>, f:A->B->B, acc:B):B
+  public static function foldRight<A,B>(iter:Iterator<A>, acc:B, f:A->B->B):B
   {
-    return foldLeft(reversed(iter), Function2s.flip(f), acc);
+    return foldLeft(reversed(iter), acc, Function2s.flip(f));
   }
   
-  public static function foldRightWithIndex<A,B>(iter:Iterator<A>, f:A->B->Int->B, acc:B):B
+  public static function foldRightWithIndex<A,B>(iter:Iterator<A>, acc:B, f:A->B->Int->B):B
   {
-    return foldLeftWithIndex(reversed(iter), Function3s.flip(f), acc);
+    return foldLeftWithIndex(reversed(iter), acc, Function3s.flip(f));
   }
   
   /*
    * foldl<A,B>(iter:Iterator<A>, f:B->A->B, acc:B):B
    */
-  public static function foldLeft<A,B>(iter:Iterator<A>, f:B->A->B, acc:B):B
+  public static function foldLeft<A,B>(iter:Iterator<A>, acc:B, f:B->A->B):B
   {
     for (e in iter) {
       acc = f(acc, e);
@@ -185,7 +185,7 @@ class Iterators
   }
   
   
-  public static function foldLeftWithIndex<A,B>(iter:Iterator<A>, f:B->A->Int->B, acc:B):B
+  public static function foldLeftWithIndex<A,B>(iter:Iterator<A>, acc:B, f:B->A->Int->B):B
   {
     var i = 0;
     
@@ -297,7 +297,7 @@ class Iterators
       case GT: cur;
     }
     
-    return foldLeft(it, compare, it.next());
+    return foldLeft(it, it.next(), compare);
   }
   public static function maximumByOption <T>(it:Iterator<T>, f:T->T->Ordering):Option<T> 
   {
@@ -311,7 +311,7 @@ class Iterators
           case EQ: max;
           case GT: cur;
         }
-        Some(foldLeft(it, compare, it.next()));
+        Some(foldLeft(it, it.next(), compare));
       }
   }
   
@@ -326,7 +326,7 @@ class Iterators
       case GT: max;
     }
     
-    return foldLeft(it, compare, it.next());
+    return foldLeft(it, it.next(), compare );
   }
   
   public static function reduceLeft <T,S>(a:Iterator<T>, f:S->T->S, first:T->S):S
@@ -393,11 +393,11 @@ class Iterators
   
   public static function sum <A>(iter:Iterator<A>, f:A->Int):Int
   {
-    return Iterators.foldLeft(iter, function(a,v) return a + f(v), 0);
+    return Iterators.foldLeft(iter, 0, function(a,v) return a + f(v));
   }
   public static function sumFloat <A>(iter:Iterator<A>, f:A->Float):Float
   {
-    return Iterators.foldLeft(iter, function(a,v) return a + f(v), 0);
+    return Iterators.foldLeft(iter, 0.0, function(a,v) return a + f(v));
   }
   
   
