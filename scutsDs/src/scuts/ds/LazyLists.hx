@@ -1,5 +1,7 @@
 package scuts.ds;
 
+#if !macro
+
 import scuts.core.debug.Assert;
 import scuts.core.Arrays;
 import scuts.core.Tuples;
@@ -452,3 +454,5 @@ class LazyLists {
   }
 
 }
+
+#end
