@@ -1,4 +1,5 @@
 -cp src 
+-cp samples 
 -cp ../scutsCore/src
 -cp ../scutsDs/src
 -cp ../scutsMCore/src

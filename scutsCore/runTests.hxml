@@ -4,6 +4,7 @@
 
 
 -D standaloneTest
+--macro sys.FileSystem.createDirectory("bin")
 --macro scuts.core.tools.ImportAllBuilder.build(["scuts.core"], "ImportAll", "test/scuts/core", "scuts.core")
 --macro Sys.println("\n-------- macro unit tests ------\n")
 --macro scuts.core.AllTests.main()

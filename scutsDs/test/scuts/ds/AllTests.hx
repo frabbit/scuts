@@ -5,6 +5,10 @@ package scuts.ds;
 import utest.Runner;
 import utest.ui.Report;
 
+#if (!macro && !excludeImportAll)
+import scuts.ds.ImportAll;
+#end
+
 
 class AllTests 
 {

@@ -4,9 +4,9 @@ package scuts.core;
 import utest.Runner;
 import utest.ui.Report;
 
-
+#if (!macro && !excludeImportAll)
 import scuts.core.ImportAll;
-
+#end
 
 class AllTests 
 {
