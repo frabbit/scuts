@@ -1,5 +1,7 @@
 package scuts.core.tools;
 
+#if macro
+
 import haxe.macro.Compiler;
 import haxe.macro.Context;
 import sys.FileSystem;
@@ -11,8 +13,10 @@ using scuts.core.Strings;
 class ImportAllBuilder
 {
 
-  public static function build(packs:Array<String>, target:String, folder:String, ?packageName:String = "") 
+  public static function build(packs:Array<String>, target:String, folder:String, ?packageName:String = "", ?ignore:Array<String>) 
   {
+    if (ignore == null) ignore = [];
+
     var classPaths = Context.getClassPath();
     
     function create1 (pack:String, buf:StringBuf) 
@@ -21,6 +25,10 @@ class ImportAllBuilder
       var packPath = "/" + parts.join("/") + (pack.length > 0 ? "/" : "");
       var packBase = pack + (pack.length > 0 ? "." : "");
       
+      for (i in ignore) {
+        if (packBase.startsWith(i)) return;
+      }
+
       for (cp in classPaths) 
       {
         var folder = cp + packPath;
@@ -70,3 +78,5 @@ class ImportAllBuilder
   }
   
 }
+
+#end
