@@ -1,14 +1,17 @@
 package scuts.ht;
 
-
+#if !macro
 
 using scuts.ht.Context;
+
 
 
 class DoTest
 {
   public function new () {}
   
+  #if !excludeHtTests
+
   public function testSimple() 
   {
     var r = Do.run
@@ -17,6 +20,37 @@ class DoTest
       b <= [2],
       pure(a + b)
     );
+
+
+
+
+
+
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 
     utest.Assert.same(r, [3]);
@@ -95,4 +129,8 @@ class DoTest
     
     
   }
+  #end
 }
+
+
+#end

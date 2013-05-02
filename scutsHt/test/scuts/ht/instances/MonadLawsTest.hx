@@ -1,5 +1,7 @@
 package scuts.ht.instances;
 
+#if !macro
+
 import scuts.ht.classes.Eq;
 import scuts.ht.classes.Monad;
 
@@ -35,7 +37,7 @@ class MonadLawsTest
   {
     
   }
-  
+  #if !excludeHtTests
   /*
    * Monadic Laws
    (return x) >>= f == f x
@@ -105,5 +107,8 @@ class MonadLawsTest
     assertLaws(arrayTMonad(arrayMonad), mkEq._(arrayUnbox.compose(arrayTUnbox)));
     assertLaws(validationTMonad(arrayMonad), mkEq._(arrayUnbox.compose(valUnboxT)));
   }
-   
+  #end
 }
+
+
+#end

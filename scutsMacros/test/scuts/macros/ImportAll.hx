@@ -1,4 +1,5 @@
 package scuts.macros;
+import scuts.macros.ImportAll;
 import scuts.macros.AllTests;
 import scuts.macros.F;
 import scuts.macros.debug.Dump;

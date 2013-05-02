@@ -5,6 +5,7 @@ import scuts.mcore.Print_type_Test;
 import scuts.mcore.Print_expr_Test;
 import scuts.mcore.ParseTest;
 import scuts.mcore.MakeTest;
+import scuts.mcore.ImportAll;
 import scuts.mcore.CheckTest;
 import scuts.mcore.AllTests;
 import scuts.mcore.ast.ExprDefsTest;

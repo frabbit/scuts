@@ -1,5 +1,7 @@
 package scuts.ht.core;
 
+
+#if !macro
 using scuts.core.Validations;
 
 import scuts.core.Eithers.Either;
@@ -11,6 +13,7 @@ import scuts.core.Lazy;
 import scuts.core.Options;
 import scuts.core.Promises;
 import scuts.core.States;
+#end
 
 
 /*
@@ -30,6 +33,7 @@ abstract Of<M,A>(OfI<M,A>)
 {
 	public inline function new (o:Dynamic) this = o;
 
+	#if !macro
 	@:arrayAccess public static inline function arrayGet <A>(x:OfI<Array<In>, A>, index:Int):A return Hots.checkType(var _ : Array<A> = cast x)[index];
 
 	// convinience methods for casting of often used types
@@ -66,5 +70,6 @@ abstract Of<M,A>(OfI<M,A>)
 	@:from public static function fromEither <L,R>(x:Either<L,R>):Of<Either<L, In>, R> return Hots.preservedCheckType(var _ :  Of<Either<L, In>, R> = new Of(x));
 	@:to public static function toEither <L,R>(x:OfI<Either<L, In>, R>):Either<L, R> return Hots.preservedCast(cast x);
 
-
+	#end
 }
+

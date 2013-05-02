@@ -11,22 +11,6 @@ private typedef R = scuts.ht.macros.implicits.Resolver;
 
 #end
 
-#if display
-
-class PuresM
-{
-  
-  public static function pure_<M,A>(x:A, pure:String):Of<M, A>
-  {
-    return m.pure(x);
-  }
-  
-}
-
-#else
-
-
-
 class PuresM
 {
   macro public static function pure_<M,A>(x:ExprOf<A>, pure:String):ExprOf<Of<M,A>>
@@ -37,4 +21,3 @@ class PuresM
   
 }
 
-#end

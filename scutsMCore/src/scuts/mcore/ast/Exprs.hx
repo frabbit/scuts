@@ -4,7 +4,7 @@ package scuts.mcore.ast;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import scuts.core.macros.Lazy;
+//import scuts.core.macros.Lazy;
 import scuts.core.Tuples;
 import scuts.mcore.Make;
 import scuts.mcore.Parse;
@@ -69,7 +69,7 @@ class Exprs
   
   public static inline function withParenthesis (e:Expr, ?pos:Position) return M.expr(EParenthesis(e), pos);
   
-  public static inline function lazy (e:Expr, ?pos:Position) return Lazy.mkExpr(e);
+  //public static inline function lazy (e:Expr, ?pos:Position) return Lazy.mkExpr(e);
 
   public static inline function inParenthesis (e:Expr) return Make.parenthesis(e);
   

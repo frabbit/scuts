@@ -1,6 +1,6 @@
 package scuts.ht;
 
-
+#if !macro
 
 using scuts.ht.Context;
 
@@ -18,6 +18,8 @@ class MonadsTest
    
   }
   
+  #if !excludeHtTests
+
   public function testArrayMonad () 
   {
     var actual = [1,2,3].map_(function (x) return x + 1);
@@ -47,5 +49,8 @@ class MonadsTest
     
     A.same(Some(3), actual);
   }
-  
+  #end
 }
+
+
+#end

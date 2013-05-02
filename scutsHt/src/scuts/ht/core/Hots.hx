@@ -1,10 +1,16 @@
 package scuts.ht.core;
 
+
+
 #if macro
+#if !display
 import scuts.ht.macros.implicits.Manager;
+import scuts.Scuts;
+#end
 import scuts.ht.macros.implicits.Resolver;
 import haxe.macro.Expr;
-import scuts.Scuts;
+
+
 #end
 
 class Hots
@@ -18,22 +24,28 @@ class Hots
   @:noUsing 
   macro public static function implicit (e:Array<Expr>):Expr 
   {
+    #if display
+    return null;
+    #else
     return Manager.registerLocals(e);
+    #end
   }
 
   @:noUsing 
-  macro public static function preservedCast (e:Expr):Expr 
+  #if !macro macro #end public static function preservedCast (e:Expr):Expr 
   {
     return macro (inline function () return $e)();
   }
   @:noUsing 
-  macro public static function checkType (e:Expr):Expr 
+  #if !macro macro #end public static function checkType (e:Expr):Expr 
   {
+    
     return switch (e.expr) {
       case EVars([{ name : "_", type : t, expr : ex}]): { expr : ECheckType(ex, t), pos: e.pos};
-      case _ : Scuts.unexpected();
+      case _ : throw "Unexpected";
 
     }
+    
     return macro (function () return $e)();
   }
 
@@ -42,14 +54,14 @@ class Hots
   }
 
   @:noUsing 
-  macro public static function preservedCheckType (e:Expr):Expr 
+  #if !macro macro #end public static function preservedCheckType (e:Expr):Expr 
   {
     return switch (e.expr) {
       case EVars([{ name : "_", type : t, expr : ex}]) if (t != null): 
         var e = macro (inline function ():$t return $ex)();
         //trace(haxe.macro.ExprTools.toString(e));
         return e;
-      case _ : Scuts.unexpected();
+      case _ : throw "Unexpected";
 
     }
     
@@ -71,9 +83,10 @@ class Hots
    * Usage: myFunc._(1,2) instaed of myFunc.resolve(1,2) or Hots.resolve(myFunc, 1, 2)
    * 
    */
-  macro public static function _ (f:Expr, ?params:Array<Expr>):Expr 
+  #if !macro macro #end public static function _ (f:Expr, ?args:Array<Expr>):Expr 
   {
-    return Resolver.resolve(f, params);
+    
+    return Resolver.resolve(f, args);
   }
   
   /**
@@ -81,9 +94,12 @@ class Hots
    * 
    * Usage: Hots.resolve(myFunc, 1, 2)
    */
-  @:noUsing macro  public static function resolve (f:Expr, ?params:Array<Expr>):Expr {
+  @:noUsing #if !macro macro #end public static function resolve (f:Expr, ?args:Array<Expr>):Expr {
+    return Resolver.resolve(f, args);
     
-    return Resolver.resolve(f, params);
   }
 }
+
+
+
 

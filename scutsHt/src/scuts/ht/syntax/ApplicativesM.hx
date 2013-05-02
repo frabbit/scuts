@@ -8,19 +8,7 @@ private typedef R = scuts.ht.macros.implicits.Resolver;
 #end
 
 
-#if display
 
-class ApplicativesM
-{
-  
- 
-  public static inline function thenRight_<M,A,B>(x:Of<M,A>, y:Of<M,B>):Of<M,B>  {}
-  
-  public static inline function thenLeft_<M,A,B>(x:Of<M,A>, y:Of<M,B>):Of<M,A>  {}
-  
-}
-
-#else
 
 class ApplicativesM 
 {
@@ -40,7 +28,7 @@ class ApplicativesM
   
 }
 
-#end
+
 
 
 

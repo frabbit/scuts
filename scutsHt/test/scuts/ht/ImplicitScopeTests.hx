@@ -1,7 +1,7 @@
 package scuts.ht;
 
 
-
+#if !macro
 
 using scuts.ht.Context;
 
@@ -10,7 +10,11 @@ private typedef A = utest.Assert;
 
 class ImplicitScopeTests 
 {
-  
+  public function new () {
+    
+  }
+
+  #if !excludeHtTests
   static function identity (a:Int) return a;
   
   @:implicit static var staticScope = 1;
@@ -19,9 +23,8 @@ class ImplicitScopeTests
   @:implicit var memberScope = 2;
   
   
-  public function new () {
-    
-  }
+  
+  
   
   
   public function testScopes() 
@@ -103,6 +106,10 @@ class ImplicitScopeTests
     
   }
   
-  
+  #end
   
 }
+
+
+
+#end

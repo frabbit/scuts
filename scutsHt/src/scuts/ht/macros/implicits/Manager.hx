@@ -48,30 +48,32 @@ class Manager
    */
   public static function registerLocals (exprs:Array<Expr>) 
   {
-    var id = getLocalContextId();
-    
-    // the local implicits for this method
-    var arr = localImplicits.get(id);
-    // nothing stored currently
-    if (arr == null) arr = [];
-    
-    // Stores the returning variable expressions
-    var vars = [];
-    
-    for (e in exprs) 
-    {
-      var id = createUniqueVarName();
-      // create expression out of variable name
-      var idExpr = macro $i{id};
-      // store local var
-      arr.push({ e: idExpr, pos: Context.getPosInfos(e.pos)});
+    return Profiler.profile(function () {
+      var id = getLocalContextId();
       
-      vars.push( { name : id, expr : e, type : null } );
-    }
-    // store the modified local variables
-    localImplicits.set(id, arr);
-    // returns something like var __implicit__1 = expr1, __implicit2 = expr2;
-    return Make.vars(vars);
+      // the local implicits for this method
+      var arr = localImplicits.get(id);
+      // nothing stored currently
+      if (arr == null) arr = [];
+      
+      // Stores the returning variable expressions
+      var vars = [];
+      
+      for (e in exprs) 
+      {
+        var id = createUniqueVarName();
+        // create expression out of variable name
+        var idExpr = macro $i{id};
+        // store local var
+        arr.push({ e: idExpr, pos: Context.getPosInfos(e.pos)});
+        
+        vars.push( { name : id, expr : e, type : null } );
+      }
+      // store the modified local variables
+      localImplicits.set(id, arr);
+      // returns something like var __implicit__1 = expr1, __implicit2 = expr2;
+      return Make.vars(vars);
+    });
     
   }
 
@@ -80,18 +82,22 @@ class Manager
    */
   public static function getLocalImplicits (localContextId:String) 
   {
-    var all = localImplicits.get(localContextId);
-    if (all == null) return [];
-    
-    var curPos = Context.getPosInfos(Context.currentPos());
-    var filtered = [];
-    
-    for (a in all) 
-    {
-      if (a.pos.max < curPos.min) filtered.push(a.e);
-    }
-    
-    return filtered.reversed();
+    return Profiler.profile(function () {
+
+
+      var all = localImplicits.get(localContextId);
+      if (all == null) return [];
+      
+      var curPos = Context.getPosInfos(Context.currentPos());
+      var filtered = [];
+      
+      for (a in all) 
+      {
+        if (a.pos.max < curPos.min) filtered.push(a.e);
+      }
+      
+      return filtered.reversed();
+    });
   }
   
   /**
@@ -103,40 +109,63 @@ class Manager
    */
   public static function getImplicitsFromMeta (fields:Array<ClassField>, baseExpr:Expr):Array<NamedExpr> 
   {
-    var res = [];
-    for (f in fields) 
-    {
-      switch (f.kind) 
+    return Profiler.profile(function () {
+      var res = [];
+      for (f in fields) 
       {
-        case FieldKind.FVar(_,_):
-          if ( f.meta.has(":implicit")) 
-          {
+        switch (f.kind) 
+        {
+          case FieldKind.FVar(_,_) if ( f.meta.has(":implicit")):
             var fname = f.name;
             var expr = macro ${baseExpr}.$fname;
             res.push( { name : f.name, expr: expr } );
-          }
-        default:
+          case _:
+        }
       }
-    }
-    return res;
+      return res;
+    });
   }
   
+
+  static var staticCache:Cache<Array<NamedExpr>> = new Cache();
   /**
    * Returns all static implicits for the given class.
    */
   public static function getStaticImplicits (cl:ClassType):Array<NamedExpr> 
   {
-    var clName = cl.name;
-    var clExpr = { expr : EConst(CIdent(clName)), pos : Context.currentPos() };
-    return getImplicitsFromMeta(cl.statics.get(), clExpr);
+    return Profiler.profile(function () {
+      var id = cl.module + "." + cl.name;
+      return if (staticCache.exists(id)) 
+      {
+        staticCache.get(id);
+      } 
+      else 
+      {
+        var clName = cl.name;
+        var clExpr = { expr : EConst(CIdent(clName)), pos : Context.currentPos() };
+        staticCache.set(id, getImplicitsFromMeta(Profiler.profile(cl.statics.get, "statics-get"), clExpr));  
+      }
+      
+    });
   }
   
+  static var memberCache:Cache<Array<NamedExpr>> = new Cache();
   /**
    * Returns all member implicits for the given class.
    */
   public static function getMemberImplicits (cl:ClassType):Array<NamedExpr> 
   {
-    return getImplicitsFromMeta(cl.fields.get(), macro this);
+    return Profiler.profile(function () {
+      var id = cl.module + "." + cl.name;
+      return if (memberCache.exists(id)) 
+      {
+        memberCache.get(id);
+      } 
+      else 
+      {
+        memberCache.set(id,  getImplicitsFromMeta(cl.fields.get(), macro this));  
+      }
+    });
   }
   
   /**
@@ -144,11 +173,13 @@ class Manager
    */
   public static function getLocalContextId () 
   {
-    var m = Std.string(Context.getLocalMethod());
-    
-    var cl = Context.getLocalClass().get();
-    
-    return cl.pack.join(".") + "." + cl.name + "." + m;
+    return Profiler.profile(function () {
+      var m = Std.string(Context.getLocalMethod());
+      
+      var cl = Context.getLocalClass().get();
+      
+      return cl.pack.join(".") + "." + cl.name + "." + m;
+    });
   }
   
   /**
@@ -156,14 +187,15 @@ class Manager
    */
   public static function getImplicitsFromScope ():Scopes
   {
-    var cl = Context.getLocalClass().get();
+    return Profiler.profile(function () {
+      var cl = Context.getLocalClass().get();
 
-    var scopes = {
-      locals  : getLocalImplicits(getLocalContextId()),
-      statics : getStaticImplicits(cl),
-      members : getMemberImplicits(cl)
-    }
-    return scopes;
+      return {
+        locals  : getLocalImplicits(getLocalContextId()),
+        statics : getStaticImplicits(cl),
+        members : getMemberImplicits(cl)
+      }
+    });
   }
 }
 

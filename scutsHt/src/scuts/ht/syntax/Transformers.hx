@@ -38,12 +38,12 @@ class ArrayTransformer
 {
 	public inline static function  runT<M,A>(x:ArrayTOf<M, A>):Of<M, Array<A>> return x.runT();
 	
-	public inline static function arrayT <M,A>(x:Of<M, Array<A>>):ArrayTOf<M, A> return Hots.preservedCast(ArrayTOf.intoT(x));
+	public inline static function arrayT <M,A>(x:Of<M, Array<A>>):ArrayTOf<M, A> return Hots.preservedCheckType(var _:ArrayTOf<M, A> = ArrayTOf.intoT(x));
 }
 
 class OptionTransformer 
 {
-	public inline static function optionT <M,A>(x:Of<M, Option<A>>):OptionTOf<M, A> return Hots.preservedCast(OptionTOf.intoT(x));
+	public inline static function optionT <M,A>(x:Of<M, Option<A>>):OptionTOf<M, A> return Hots.preservedCheckType(var _:OptionTOf<M, A> = OptionTOf.intoT(x));
 	public inline static function  runT<M,A>(x:OptionTOf<M, A>):Of<M, Option<A>> return Hots.preservedCast(x.runT());
 }
 

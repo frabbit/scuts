@@ -1,5 +1,6 @@
 package scuts.reactive;
 import scuts.reactive.ReactiveTest;
+import scuts.reactive.ImportAll;
 import scuts.reactive.BehavioursTest;
 import scuts.reactive.AllTests;
 import scuts.reactive.StreamsBool;

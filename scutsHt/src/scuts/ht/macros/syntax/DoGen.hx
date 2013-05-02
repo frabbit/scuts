@@ -17,7 +17,7 @@ import scuts.mcore.Print;
 
 import scuts.ht.macros.implicits.Resolver;
 import scuts.ht.macros.syntax.DoParser;
-import scuts.ht.macros.syntax.DoTools;
+import scuts.ht.macros.syntax.RealDoTools;
 
 import scuts.ht.macros.implicits.Tools;
 
@@ -33,7 +33,7 @@ using scuts.core.Options;
 using scuts.core.Functions;
 using scuts.core.Validations;
 
-using scuts.ht.macros.syntax.DoTools;
+using scuts.ht.macros.syntax.RealDoTools;
 
 
 

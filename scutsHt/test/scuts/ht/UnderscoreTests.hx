@@ -1,6 +1,6 @@
 package scuts.ht;
 
-
+#if !macro
 
 import utest.Assert;
 
@@ -13,6 +13,8 @@ class UnderscoreTests
 {
   public function new () {}
   
+  #if !excludeHtTests
+
   public function testNormalCalls() 
   {
     function foo () return 1;
@@ -70,6 +72,8 @@ class UnderscoreTests
   }
   #end
   
+
+  #end
 }
 
 
@@ -84,3 +88,6 @@ class PrivateAccess {
   }
   
 }
+
+
+#end

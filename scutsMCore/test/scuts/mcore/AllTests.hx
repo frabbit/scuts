@@ -4,7 +4,7 @@ package scuts.mcore;
 import utest.Runner;
 import utest.ui.Report;
 
-#if macro
+#if (macro && !excludeImportAll)
 import scuts.mcore.ImportAll;
 #end
 

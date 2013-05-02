@@ -3,9 +3,10 @@ package scuts.reactive;
 import utest.Runner;
 import utest.ui.Report;
 
-#if standaloneTest
+#if (!macro && !excludeImportAll)
 import scuts.reactive.ImportAll;
 #end
+
 class AllTests 
 {
   

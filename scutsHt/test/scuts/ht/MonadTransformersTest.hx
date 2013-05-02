@@ -1,5 +1,6 @@
 package scuts.ht;
 
+#if !macro
 
 
 
@@ -19,10 +20,11 @@ class MonadTransformersTest
 
   public function new() {}
 
-  
+  #if !excludeHtTests
   public function testArrayTransformerMonad () 
   {
-    var actual = Some([1,2,3]).arrayT().map_(function (x) return x + 1);
+    var a = Some([1,2,3]).arrayT();
+    var actual = a.map_(function (x) return x + 1);
     A.same(Some([2,3,4]), actual);
   }
   
@@ -70,6 +72,9 @@ class MonadTransformersTest
     var v = Some(Success(1));
     var actual = v.validationT().flatMap_(function (x) return Some(Success(x + 1)).validationT());
     A.same(Some(Success(2)), actual);
+
+    
+
   }
   
   
@@ -128,11 +133,16 @@ class MonadTransformersTest
   }
 
   
+  
   public function testChainedFlatMapOptionMonad () 
   {
     var actual = Some(1).flatMap_(function (x) return Some(x + 1)).flatMap_(function (x) return Some(x + 1));
     
     A.same(Some(3), actual);
   }
-  
+  #end
 }
+
+
+
+#end

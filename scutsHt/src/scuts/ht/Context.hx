@@ -7,6 +7,7 @@ typedef Of<M,A> = scuts.ht.core.Of<M,A>;
 typedef OfOf<M,A,B> = scuts.ht.core.OfOf<M,A,B>;
 typedef In = scuts.ht.core.In;
 
+typedef ShowInstances = scuts.ht.instances.Shows;
 typedef MonadInstances = scuts.ht.instances.Monads;
 typedef MonadEmptyInstances = scuts.ht.instances.MonadEmptys;
 typedef ApplicativeInstances = scuts.ht.instances.Applicatives;
@@ -15,7 +16,7 @@ typedef SemigroupInstances = scuts.ht.instances.Semigroups;
 typedef ArrowInstances = scuts.ht.instances.Arrows;
 typedef FunctorInstances = scuts.ht.instances.Functors;
 typedef EqInstances = scuts.ht.instances.Eqs;
-typedef ShowInstances = scuts.ht.instances.Shows;
+
 typedef MonoidInstances = scuts.ht.instances.Monads;
 typedef CategoryInstances = scuts.ht.instances.Categorys;
 typedef ApplyInstances = scuts.ht.instances.Applys;
@@ -36,17 +37,18 @@ typedef Functors = scuts.ht.syntax.Functors;
 typedef FunctorsM = scuts.ht.syntax.FunctorsM;
 typedef Eqs = scuts.ht.syntax.Eqs;
 typedef EqsM = scuts.ht.syntax.EqsM;
-typedef Shows = scuts.ht.syntax.Shows;
+
 typedef Binds = scuts.ht.syntax.Binds;
 typedef BindsM = scuts.ht.syntax.BindsM;
 typedef Foldables = scuts.ht.syntax.Foldables;
-
+typedef Shows = scuts.ht.syntax.Shows;
 
 typedef Monoids = scuts.ht.syntax.Monoids;
 typedef Semigroups = scuts.ht.syntax.Semigroups;
 typedef Ords = scuts.ht.syntax.Ords;
 typedef Categories = scuts.ht.syntax.Categorys;
 typedef Arrows = scuts.ht.syntax.Arrows;
+
 
 typedef Do = scuts.ht.syntax.Do;
 

@@ -4,30 +4,11 @@ import scuts.ht.core.Of;
 
 #if macro
 import haxe.macro.Expr;
-typedef R = scuts.ht.macros.implicits.Resolver;
+private typedef R = scuts.ht.macros.implicits.Resolver;
 #end
 
 
-#if display
 
-class ApplysM
-{
-  
-  public static inline function apply_<M,A,B>(x:Of<M,A>, f:Of<M,A->B>):Of<M,B> {}
-
-  public static inline function apply2_ <M,A,B,C>(fa:Of<M,A>, fb:Of<M,B>, f:A->B->C):Of<M,C> {}
-
-  public static inline function apply3_ <M,A,B,C,D>(fa:Of<M,A>, fb:Of<M,B>, fc:Of<M,C>, f:A->B->C->D):Of<M,D> {}
-  
-  public static inline function lift2_<F,A, B, C>(f: A -> B -> C, apply:String): Of<F,A> -> Of<F,B> -> Of<F,C> {}
-
-  public static inline function lift3_<F,A, B, C,D>(f: A -> B -> C ->D, apply:String): Of<F,A> -> Of<F,B> -> Of<F,C> -> Of<F,D> {}
-
-  public static function ap_<M,A,B>(f:Of<M, A->B>):Of<M, A>->Of<M,B> {}
-  
-}
-
-#else
 
 class ApplysM 
 {
@@ -67,7 +48,7 @@ class ApplysM
   }
 }
 
-#end
+
 
 
 

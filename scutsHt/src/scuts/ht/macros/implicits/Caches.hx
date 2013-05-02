@@ -7,16 +7,16 @@ import haxe.macro.Expr;
 
 class Caches {
 
-	
+	public static var _doCache : Cache<haxe.macro.Expr>;
 
 	public static var doCache(get, null):Cache<Expr>;
 
 	public static function get_doCache () {
-		if (RealCache._doCache == null) {
+		if (_doCache == null) {
 			//trace("create Do cache");
-	    	RealCache._doCache = new Cache();
+	    	_doCache = new Cache();
 		}
-		return RealCache._doCache;
+		return _doCache;
 	}
 
 }

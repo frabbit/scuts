@@ -1,12 +1,15 @@
 package scuts.ht;
 
-
+#if !macro
 
 import scuts.core.Options;
 import scuts.core.Tuples;
 import scuts.core.Validations.Validation;
 
-using scuts.ht.Context;
+//using scuts.ht.Context;
+
+using scuts.ht.instances.Eqs;
+using scuts.ht.syntax.EqsM;
 
 private typedef A = utest.Assert;
 
@@ -15,8 +18,10 @@ private typedef A = utest.Assert;
 class EqTest
 {
 
-  public function new() {}
- 
+  public function new() {
+  }
+  
+  #if !excludeHtTests
   
   public function testNestedStructure () 
   {
@@ -26,17 +31,15 @@ class EqTest
     
     //Assert.areEqual(a, b);
     A.isTrue(a.eq_(b));
-    A.isTrue(a.notEq_(c));
-    
-    
+    //A.isTrue(a.notEq_(c));
     
   }
 
-  
+  /*
   public function testNestedStructure2 () 
   {
     var d:Validation<String,String> = Success("gh");
-    
+
     var a = Some([Tup2.create(1,Some(Tup2.create(d,1.1))), Tup2.create(3,Some(Tup2.create(d,1.1)))]);
     var b = Some([Tup2.create(1,Some(Tup2.create(d,1.1))), Tup2.create(3,Some(Tup2.create(d,1.1)))]);
     var c = Some([Tup2.create(1,Some(Tup2.create(d,1.1))), Tup2.create(3,Some(Tup2.create(d,1.2)))]);
@@ -45,6 +48,11 @@ class EqTest
     A.isTrue(a.notEq_(c));
 
   }
+  */
   
-  
+  #end
 }
+
+
+
+#end

@@ -142,16 +142,17 @@ class MCore
               && !found.any(function (x) return Types.eq(x, type)))
             found.concat([type]);
           else
-            params.foldLeft(found, function (acc, cur) return loop(cur, acc));
+
+            params.foldLeft(found, loop.flip());
         case TEnum(_, params):
-          params.foldLeft(found, function (acc, cur) return loop(cur, acc));
+          params.foldLeft(found, loop.flip());
         case TFun(args, ret):
           var r = args.foldLeft(found, function (acc, cur) return loop(cur.t, acc));
           loop(ret, r);
         case TAnonymous(a):
           a.get().fields.foldLeft(found, function (acc, cur) return loop(cur.type, acc));
         case TType(_, params):
-          params.foldLeft(found, function (acc, cur) return loop(cur, acc));
+          params.foldLeft(found, loop.flip());
         case TDynamic(t):
           loop(t, found);
         case TLazy(t):
@@ -199,7 +200,7 @@ class MCore
           var tpos = Ctx.getPosInfos(tget.pos);
           // TODO this is a hack because in display mode the min and max positions of the current class 
           // are wrong (report issue), so we don't filter anything out here
-          if (#if display true #else min.inRange(tpos.min, tpos.max) #end) 
+          if (Ctx.defined("display") || min.inRange(tpos.min, tpos.max)) 
           {
             var constructor = tget.constructor.nullToArray().map(function (x) return x.get());
             

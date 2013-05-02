@@ -1,6 +1,0 @@
--cp .
--cp ../../src
--cp ../../../scutsCore/src
--cp ../../../scutsMCore/src
--main Test
--js bin/main.js

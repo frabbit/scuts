@@ -5,6 +5,8 @@ package scuts.ht.macros.implicits;
 
 //import scuts.mcore.ast.Exprs;
 //import scuts.mcore.ast.Types;
+import haxe.Timer;
+import scuts.ht.macros.implicits.Profiler;
 import scuts.ht.macros.implicits.Typer;
 import scuts.mcore.Print;
 import scuts.core.debug.Assert;
@@ -30,11 +32,12 @@ using scuts.core.Functions;
 
 class Tools 
 {
+
   /**
    * Returns true if the expression e can be typed and it's type is not unknown, which
    * is called an untyped monomorph in the AST.
    */
-  public static function exprTypeableAndTypeIsMono (e:Expr) return switch (getType(e)) 
+  public static function exprTypeableAndTypeIsMono (e:Expr) return switch (Typer.typeof(e)) 
   {
     case Some(t): typeIsMono(t);
     case None:    false;
@@ -50,10 +53,10 @@ class Tools
     default:       false;
   }
   
-  public static function getTypeOfRequired (required:Expr) 
-  {
-    return Typer.typeof(required);
-  }
+  // public static function getTypeOfRequired (required:Expr) 
+  // {
+  //   return Typer.typeof(required);
+  // }
   
   /**
    * Prints a pretty representation of the type of expression e.
@@ -61,7 +64,7 @@ class Tools
   public static function printTypeOfExpr (e:Expr, ?msg:String, ?pos:PosInfos) 
   {
     if (msg == null) msg = "";
-    switch (getType(e)) 
+    switch (Typer.typeof(e)) 
     {
       case Some(x): Log.trace(msg + ":" + prettyType(x), pos);
       case None: Log.trace("cannot type the expression " + prettyExpr(e), pos);
@@ -84,7 +87,7 @@ class Tools
   public static function prettyExpr (x:Expr) 
   {
     var first = Print.expr(x);
-    return first.split("scuts.ht.macros.Implicits.ImplicitsHelper.").join("_").split("scuts.ht.syntax.").join("scuts.ht.ext.");
+    return first.split("scuts.ht.macros.Implicits.ImplicitsHelper.").join("_");
   }
   
   /**
@@ -105,10 +108,15 @@ class Tools
     trace(msg + ":" + Arrays.map(x, function (r) return prettyExpr(r)).join(","), pos);
   }
 
+  public static function prettyExprs (x:Array<Expr>) 
+  {
+    return Arrays.map(x, function (r) return prettyExpr(r)).join(",");
+  }
+
   /**
    * Returns a pretty String representation of type of expression e.
    */
-  public static function prettyTypeOfExpr (e:Expr) return switch (getType(e)) 
+  public static function prettyTypeOfExpr (e:Expr) return switch (Typer.typeof(e)) 
   {
     case Some(x): prettyType(x);
     case None: "(Cannot Type Expression)";
@@ -138,56 +146,19 @@ class Tools
     return "( " + pretty + " )";
   }
   
-  /**
-   * Checks if the expression e is typeable by the compiler.
-   */
- static var isTypeableCalls = {
-    Context.onGenerate(function (t) {
-      trace("isTypeableCalls:" + Std.string(isTypeableCalls));
-    });
-    0;
-  }
-  public static function isTypeable (e:Expr) 
-  {
-    isTypeableCalls++;
-    
-    return try { Typer.typeof(e); true; } catch (e:Error) false;
-  }
   
-  /**
-   * Checks if the type of expression e is compatible to the type of to.
-   */
-  static var isCompatibleCalls = {
-    Context.onGenerate(function (t) {
-      trace("isCompatibleCalls:" + Std.string(isCompatibleCalls));
-    });
-    0;
-  }
 
-  public static function isCompatible (e:Expr, to:Expr) 
-  {
-    isCompatibleCalls++;
-    
-    
-    var helper = Resolver.helper;
-    return try { Typer.typeof(macro $helper.typeAsParam($to)($e)); true; } catch (e:Error) false;
-  }
+  
   
   /**
    * Returns the type of expression e as an Option. 
    * Some if e is typeable, None otherwise.
    */
-  static var getTypeCalls = {
-    Context.onGenerate(function (t) {
-      trace("getTypeCalls:" + Std.string(getTypeCalls));
-    });
-    0;
-  }
-  public static function getType (e:Expr):Option<Type> 
-  {
-    getTypeCalls++;
-    return try Some(Typer.typeof(e)) catch (e:Error)  None;
-  }
+  
+  // public static function getType (e:Expr):Option<Type> 
+  // {
+  //   return Profiler.profile(Typer.typeof.bind(e));
+  // }
 }
 
 #end

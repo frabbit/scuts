@@ -20,7 +20,7 @@ class Cache<T> {
 	}
 
 	public function set (key:String, val:T):T {
-		if (enabled) {
+		if (enabled && key != null) {
 			cache.set(key, val);
 		}
 		return val;
