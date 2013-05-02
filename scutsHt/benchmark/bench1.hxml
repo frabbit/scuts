@@ -1,0 +1,12 @@
+-cp src 
+-cp ../src
+-cp ../../scutsCore/src
+-cp ../../scutsDs/src
+-cp ../../scutsMCore/src
+-cp ../../scutsMacros/src
+
+--macro sys.FileSystem.createDirectory("bin")
+-main Benchmark1
+--times
+-D macro_times
+-x bin/bench1.n
