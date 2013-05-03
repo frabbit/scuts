@@ -142,6 +142,7 @@ class RealResolver
         case EField({expr:EConst(_)}, _): resolveRegular();
           
         case _ : 
+         
           Profiler.profile(function () 
           {
             var p = Context.currentPos();
@@ -158,13 +159,39 @@ class RealResolver
               var a_1 = ${args[0]};
               scuts.ht.core.Hots.resolve($a{newArgs});
             }
+
             //trace(ExprTools.toString(e));
         
             return e;
           }, "newArgsAndExpr");
 
-      } else resolveRegular(), "args-mod");
+      } else switch (f.expr) {
+        
+        case EBlock(_) | EParenthesis({ expr : EBlock(_)}) | ECall(_): 
+          
+          Profiler.profile(function () 
+          {
+            var p = Context.currentPos();
+            
 
+            var newArgs = [macro f_1];
+
+            for (i in 0...args.length) newArgs.push(args[i]);
+            
+            // pass the param count of function f to the runtime and catch it like above, so we don't have to type the function (could be expensive)
+            if (numArgs != -1) newArgs.push(macro @:resolveParamsCount $v{numArgs});
+            
+            var e = macro @:pos(p) {
+              var f_1 = ${f};
+              scuts.ht.core.Hots.resolve($a{newArgs});
+            }
+
+            //trace(ExprTools.toString(e));
+        
+            return e;
+          }, "store function in var");
+        case _: resolveRegular();
+      });
     });
   }
   
