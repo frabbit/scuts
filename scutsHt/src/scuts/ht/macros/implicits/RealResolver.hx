@@ -122,6 +122,9 @@ class RealResolver
       else numArgs; 
       Profiler.pop();
        
+
+      
+
       function resolveRegular () 
       {
         return Profiler.profile(function () return switch (resolve1(f,f, args, Manager.getImplicitsFromScope(), [], numArgs)) 
@@ -136,10 +139,43 @@ class RealResolver
         }, "resolveRegular");
       }
 
+      function checkFunExprAndResolve () 
+      {
+        return switch (f.expr) {
+        
+          case EBlock(_) | EParenthesis({ expr : EBlock(_) | ECall(_)}) | ECall(_): // especially complex inlined expressions should be catched here for faster typing.
+            
+            Profiler.profile(function () 
+            {
+              var p = Context.currentPos();
+              
+
+              var newArgs = [macro f_1];
+
+              for (i in 0...args.length) newArgs.push(args[i]);
+              
+              // pass the param count of function f to the runtime and catch it like above, so we don't have to type the function (could be expensive)
+              if (numArgs != -1) newArgs.push(macro @:resolveParamsCount $v{numArgs});
+              
+              var e = macro @:pos(p) {
+                var f_1 = ${f};
+                scuts.ht.core.Hots.resolve($a{newArgs});
+              }
+
+              //trace(ExprTools.toString(e));
+          
+              return e;
+            }, "store function in var");
+          case _: 
+            resolveRegular();
+        };
+        
+      }
+
       return Profiler.profile(function () return if (args.length > 0) switch (args[0].expr) 
       {
-        case EConst(_): resolveRegular();
-        case EField({expr:EConst(_)}, _): resolveRegular();
+        case EConst(_): checkFunExprAndResolve();
+        case EField({expr:EConst(_)}, _): checkFunExprAndResolve();
           
         case _ : 
          
@@ -165,33 +201,7 @@ class RealResolver
             return e;
           }, "newArgsAndExpr");
 
-      } else switch (f.expr) {
-        
-        case EBlock(_) | EParenthesis({ expr : EBlock(_)}) | ECall(_): // especially complex inlined expressions should be catched here for faster typing.
-          
-          Profiler.profile(function () 
-          {
-            var p = Context.currentPos();
-            
-
-            var newArgs = [macro f_1];
-
-            for (i in 0...args.length) newArgs.push(args[i]);
-            
-            // pass the param count of function f to the runtime and catch it like above, so we don't have to type the function (could be expensive)
-            if (numArgs != -1) newArgs.push(macro @:resolveParamsCount $v{numArgs});
-            
-            var e = macro @:pos(p) {
-              var f_1 = ${f};
-              scuts.ht.core.Hots.resolve($a{newArgs});
-            }
-
-            //trace(ExprTools.toString(e));
-        
-            return e;
-          }, "store function in var");
-        case _: resolveRegular();
-      });
+      } else checkFunExprAndResolve(), "checkArgs");
     });
   }
   
