@@ -48,7 +48,7 @@ class Typer {
 
   public  static function typeof(x:Expr):Option<Type>
   {
-    return try Some(Context.typeof(x)) catch (e:Dynamic) None;
+    return Profiler.profile(function () return try Some(Context.typeof(x)) catch (e:Dynamic) None);
   }
 
 

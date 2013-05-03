@@ -167,7 +167,7 @@ class RealResolver
 
       } else switch (f.expr) {
         
-        case EBlock(_) | EParenthesis({ expr : EBlock(_)}) | ECall(_): 
+        case EBlock(_) | EParenthesis({ expr : EBlock(_)}) | ECall(_): // especially complex inlined expressions should be catched here for faster typing.
           
           Profiler.profile(function () 
           {
@@ -705,7 +705,7 @@ class RealResolver
 
 
       var id = signatureRequired + "_" + usingsId;
-
+      
       return if (usingCtxCache.exists(id)) 
       {
         Profiler.pushPop("cache");
@@ -752,7 +752,7 @@ class RealResolver
         var res = sortedKeys.foldLeft([], function (acc, cur) return acc.concat(res1.get(cur)));
         
         var result = { res : res, requiredHashes : requiredHashes };
-        //usingCtxCache.set(id, result);
+        usingCtxCache.set(id, result);
         Profiler.pushPop("no-cache");
         result;
       }
