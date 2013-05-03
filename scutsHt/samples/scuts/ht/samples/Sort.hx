@@ -32,12 +32,12 @@ class Sort
     var strings = ["paul", "bettina", "jerome", "kirstin"];
     var arrayOfArrays = [[Some(4)], [Some(2)], [Some(1)]];
     var complexArrays = [[[[Some(4)]]], [[[Some(2)]]], [[[Some(1)]]]];
-
+    
     strings.show._();
     
-    //sort._(strings).show._();
+    sort._(strings).show._();
     
-    /*
+    
     trace(strings.show._() + " -> " + sort._(strings).show._());
     
     trace(floats.show._() + " -> " + sort._(floats).show._());
@@ -69,7 +69,7 @@ class Sort
     trace("persons by age: " + persons.show._() + " -> " + sort._(persons).show._());
 
     trace("personsComplex by age: " + personsComplex.show._() + " -> " + sort._(personsComplex).show._());
-  */
+  
 
   }
 }
