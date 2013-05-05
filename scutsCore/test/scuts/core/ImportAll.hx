@@ -39,7 +39,5 @@ import scuts.core.std.StdType;
 import scuts.core.std.StdList;
 import scuts.core.math.MathConstants;
 import scuts.core.macros.Lazy;
-import scuts.core.format.StringFormat;
-import scuts.core.format.FloatFormat;
 import scuts.core.debug.Assert;
 class ImportAll { static function main () {} }

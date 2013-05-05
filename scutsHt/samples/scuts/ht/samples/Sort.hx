@@ -33,19 +33,20 @@ class Sort
     var arrayOfArrays = [[Some(4)], [Some(2)], [Some(1)]];
     var complexArrays = [[[[Some(4)]]], [[[Some(2)]]], [[[Some(1)]]]];
     
-    strings.show._();
     
-    sort._(strings).show._();
+    strings.show_();
+    
+    sort._(strings).show_();
     
     
-    trace(strings.show._() + " -> " + sort._(strings).show._());
+    trace(strings.show_() + " -> " + sort._(strings).show_());
     
-    trace(floats.show._() + " -> " + sort._(floats).show._());
+    trace(floats.show_() + " -> " + sort._(floats).show_());
     
-    trace(ints.show._() + " -> " + sort._(ints).show._());
-    trace(arrayOfArrays.show._() + " -> " + sort._(arrayOfArrays).show._());
-    trace(tuples.show._() + " -> " + sort._(tuples).show._());
-    trace(complexArrays.show._() + " -> " + sort._(complexArrays).show._());
+    trace(ints.show_() + " -> " + sort._(ints).show_());
+    trace(arrayOfArrays.show_() + " -> " + sort._(arrayOfArrays).show_());
+    trace(tuples.show_() + " -> " + sort._(tuples).show_());
+    trace(complexArrays.show_() + " -> " + sort._(complexArrays).show_());
     
 
     var persons = [{ name : "jimmy", age : 17}, { name : "alf", age : 27}];
@@ -57,20 +58,19 @@ class Sort
     var byNameDesc = OrdBuilder.createByIntCompare(function (p1:Person, p2:Person) return p1.name.compareInt._(p2.name));
     Hots.implicit(byNameDesc);
 
-    trace("persons by name: " + persons.show._() + " -> " + sort._(persons).show._());
+    trace("persons by name: " + persons.show_() + " -> " + sort._(persons).show_());
     
-    trace("personsComplex by name: " + personsComplex.show._() + " -> " + sort._(personsComplex).show._());
+    trace("personsComplex by name: " + personsComplex.show_() + " -> " + sort._(personsComplex).show_());
 
 
      
     var byAgeDesc = OrdBuilder.createByIntCompare(function (p1:Person, p2:Person) return p1.age.compareInt._(p2.age));
     Hots.implicit(byAgeDesc);
 
-    trace("persons by age: " + persons.show._() + " -> " + sort._(persons).show._());
+    trace("persons by age: " + persons.show_() + " -> " + sort._(persons).show_());
 
-    trace("personsComplex by age: " + personsComplex.show._() + " -> " + sort._(personsComplex).show._());
+    trace("personsComplex by age: " + personsComplex.show_() + " -> " + sort._(personsComplex).show_());
   
-
   }
 }
 

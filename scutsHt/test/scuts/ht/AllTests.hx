@@ -30,9 +30,6 @@ class AllTests
     runner.addCase(new scuts.ht.instances.MonadLawsTest());
     runner.addCase(new scuts.ht.MonadsTest());
     runner.addCase(new scuts.ht.MonadTransformersTest());
-    #if heavy
-    runner.addCase(new scuts.ht.MonadTransformersTestHeavy());
-    #end
     runner.addCase(new scuts.ht.UnderscoreTests());
     #end
     
