@@ -2,7 +2,7 @@ package scuts.ht.samples;
 
 #if !excludeHtSamples
 
-import scuts.core.Tuples;
+import scuts.core.Tuples.*;
 import scuts.core.Options;
 import scuts.ht.syntax.OrdBuilder;
 import scuts.ht.syntax.ShowBuilder;
@@ -26,7 +26,7 @@ class Sort
   public static function main() 
   {
     
-    var tuples = [Tup2.create(4, 2.2), Tup2.create(1, 2.0), Tup2.create(1, 2.2), Tup2.create(0, 10.0)];
+    var tuples = [tup2(4, 2.2), tup2(1, 2.0), tup2(1, 2.2), tup2(0, 10.0)];
     var ints = [1,4,5,6,2];
     var floats = [4.0,1.4,1.5,1.6,1.2];
     var strings = ["paul", "bettina", "jerome", "kirstin"];
@@ -50,7 +50,7 @@ class Sort
     
 
     var persons = [{ name : "jimmy", age : 17}, { name : "alf", age : 27}];
-    var personsComplex = [Some(Tup2.create("x", { name : "jimmy", age : 17})), Some(Tup2.create("x", { name : "alf", age : 27}))];
+    var personsComplex = [Some(tup2("x", { name : "jimmy", age : 17})), Some(tup2("x", { name : "alf", age : 27}))];
     
 
     Hots.implicit(ShowBuilder.create(function (p1:Person) return '{ name : ${p1.name}, age : ${p1.age}}'));

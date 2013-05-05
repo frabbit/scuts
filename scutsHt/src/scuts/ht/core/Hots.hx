@@ -98,6 +98,21 @@ class Hots
     return Resolver.resolve(f, args);
     
   }
+
+  /**
+   * Helper function to resolve function f on object o, prevents compiler inlining when f is defined as inline.
+   * 
+   * Usage: o.r_(myFunc, 1,2) instead of o.myFunc.resolve(1,2) or Hots.resolve(o.myFunc, 1, 2)
+   * 
+   */
+  macro public static function r_ (o:Expr, f:Expr, ?args:Array<Expr>):Expr {
+    return switch (f.expr) {
+      case EConst(CIdent(i)): Resolver.resolve(macro $o.$i, args);
+      case _: throw "the second parameter f must be a const ident";
+    }
+    
+    
+  }
 }
 
 

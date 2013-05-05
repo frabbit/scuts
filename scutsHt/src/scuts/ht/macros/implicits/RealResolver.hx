@@ -506,7 +506,7 @@ class RealResolver
      .flatMap(function (x) return if (x.isNone()) findInClassImplicits(scopes.statics, StaticsAmbiguous, Static) else Success(x)); // search in statics
   }
 
-  static var implicitCache:Cache<StringMap<Array<{ parsed : haxe.macro.Expr, field : haxe.macro.ClassField, cl : haxe.macro.ClassType }>>> = new Cache();
+  static var implicitCache:Cache<StringMap<Array<{ parsed : haxe.macro.Expr, field : haxe.macro.ClassField, cl : haxe.macro.ClassType, followedType:Option<Type> }>>> = new Cache();
 
   static function exprTypeHashes(parsed:Expr):Array<String> return switch (Typer.typeof(parsed)) 
   {
@@ -529,7 +529,10 @@ class RealResolver
         {
           case TInst(t2, _):
             var cl2 = t2.get();
-            [ "00_TInst_TInst_" + cl.module + "." + cl.name + "_" + cl2.module + "." + cl2.name, clId ];
+            var res = [ "00_TInst_TInst_" + cl.module + "." + cl.name + "_" + cl2.module + "." + cl2.name, clId ];
+
+            
+            res;
 
           case TEnum(t2, _):
             var cl2 = t2.get();
@@ -552,14 +555,19 @@ class RealResolver
     return hashes.concat(["30_Fallbacks"]);
   }
 
-  static function getImplicitExprTypeHashes(parsed:Expr):Array<String> return switch (Typer.typeof(parsed)) 
+  static function getImplicitExprTypeHashes(parsed:Expr):{ followedType:Option<Type>, hashes : Array<String> } return switch (Typer.typeof(parsed)) 
   {
     case Some(t): switch (Context.follow(t)) 
     {
-      case TFun(_, ret) if (ret != null): exprTypeHashesFromType(ret);
-      case type : exprTypeHashesFromType(type);
+      case TFun(_, ret) if (ret != null): 
+        //trace(TypeTools.toString(Context.follow(ret)));
+        //trace(TypeTools.toString(ret));
+        { followedType : None,  hashes : exprTypeHashesFromType(Context.follow(ret)) };
+      case type : 
+        
+        { followedType : Some(type), hashes : exprTypeHashesFromType(type) };
     }
-    case None: ["3_Fallbacks"];
+    case None: { followedType : None, hashes : ["3_Fallbacks"] };
   }
 
   static inline function getUsingsId (usings:Array<Null<Ref<ClassType>>>) 
@@ -575,22 +583,26 @@ class RealResolver
 
   static function getPublicStaticClassImplicits (cl:ClassType) 
   {
-    var cache:StringMap<Array<{ parsed : Expr, field : ClassField, cl : ClassType }>> = new StringMap();
+    var cache:StringMap<Array<{ parsed : Expr, field : ClassField, cl : ClassType, followedType : Option<Type> }>> = new StringMap();
           
     var statics = cl.statics.get();
     var filtered = statics.filter(function (x) return x.isPublic && x.meta.has(":implicit"));
     for (f in filtered) 
     {
       var e = cl.module + "." + cl.name + "." + f.name;
+
       var parsed = Typer.makeFastTypeable(Context.parse(e, cl.pos));
-      var hashes = getImplicitExprTypeHashes(parsed);
-      var data = { cl:cl, field: f, parsed : parsed };
+      var hashAndType = getImplicitExprTypeHashes(parsed);
+      var hashes = hashAndType.hashes;
+      
+      var data = { cl:cl, field: f, parsed : parsed, followedType : hashAndType.followedType };
       for (h in hashes) 
       {
         if (cache.exists(h)) cache.get(h).push(data)
         else cache.set(h, [data]);
       }
     }
+
     return cache;
   }
 
@@ -613,10 +625,12 @@ class RealResolver
       cacheUsingClasses(usings);
 
       var requiredHashes = exprTypeHashes(required);
+      
 
-      var res1:StringMap<Array<{ parsed : Expr, field : ClassField, cl : ClassType }>> = new StringMap();
+      var res1:StringMap<Array<{ parsed : Expr, field : ClassField, cl : ClassType, followedType : Option<Type> }>> = new StringMap();
       for ( u in usings) 
       {
+      
         var cl = u.get();
 
         var cacheData = implicitCache.get(cl.module + "_" + cl.name);
@@ -648,6 +662,7 @@ class RealResolver
       var res = sortedKeys.foldLeft([], function (acc, cur) return acc.concat(res1.get(cur)));
       
       var result = { res : res, requiredHashes : requiredHashes };
+      //trace(result.res.map(function (x) return ExprTools.toString(x.parsed)));
       return result;
     });
   }
@@ -665,7 +680,8 @@ class RealResolver
     {
       var cur = asImplicitObject(parsed);
       var req = asImplicitObject(required);
-
+      // trace(ExprTools.toString(cur));
+      // trace(ExprTools.toString(req));
       var isComp = Typer.isCompatible( cur, req);
       
       return if (isComp) Some(parsed) else Option.None;
@@ -736,19 +752,21 @@ class RealResolver
     return Profiler.profile(function () {
 
 
-      function checkCandidate (x:{parsed : Expr, field:ClassField, cl:ClassType}) 
+      function checkCandidate (x:{parsed : Expr, field:ClassField, cl:ClassType, followedType : Option<Type>}) 
       {
         return Profiler.profile(function () {
           var parsed = x.parsed;
-          
+          // this loop logic (follows) can also be performed during the collection phase, so it's only done once
           function loop (t:Type) return switch (t) 
           {
-            case TLazy(x): loop(x());
+            case TLazy(x): loop(Context.follow(x()));
             case TInst(_,_): resolveImplicitUsingObject(parsed, required).map(Success);
             case TFun(args, _): resolveImplicitUsingFunction(parsed, required, args, scopes, lastRequired);
             case _:  Option.None;
           }
-          return loop(x.field.type);
+          return loop(Context.follow(x.field.type));
+          
+          
         },"checkCandidate");
       }
 

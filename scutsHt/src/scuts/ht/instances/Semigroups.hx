@@ -33,7 +33,7 @@ class Semigroups
   
   @:implicit @:noUsing public static var intSumSemigroup           (default, null):SG<Int> = new IntSumSemigroup();
   @:implicit @:noUsing public static var stringSemigroup           (default, null):SG<String> = new StringSemigroup();
-  @:noUsing public static var intProductSemigroup       (default, null) = new IntProductSemigroup();
+  @:noUsing public static var intProductSemigroup                  (default, null):SG<Int> = new IntProductSemigroup();
   @:implicit @:noUsing public static function endoSemigroup             <T>():SG<T->T> return new EndoSemigroup();
   
   @:noUsing public static function dualSemigroup       (semiT)        return new DualSemigroup(semiT);

@@ -1,0 +1,9 @@
+-cp ../scutsCore/src
+-cp ../scutsHt/src
+-cp ../scutsDs/src
+-cp ../scutsMCore/src
+-cp ../scutsMacros/src
+-cp src
+-main scuts.ht.samples.Sort
+--macro sys.FileSystem.createDirectory("bin/samples/ht_sort")
+-x bin/samples/ht_sort/sample

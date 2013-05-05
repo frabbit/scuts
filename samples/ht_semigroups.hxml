@@ -1,0 +1,9 @@
+-cp ../scutsCore/src
+-cp ../scutsHt/src
+-cp ../scutsDs/src
+-cp ../scutsMCore/src
+-cp ../scutsMacros/src
+-cp src
+-main scuts.ht.samples.Semigroups
+--macro sys.FileSystem.createDirectory("bin/samples/ht_semigroups")
+-x bin/samples/ht_semigroups/sample

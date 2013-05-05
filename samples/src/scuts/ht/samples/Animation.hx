@@ -21,7 +21,7 @@ class Animation
   public static function move (elemId:String, newX:Int, newY:Int):PromiseD<Unit> 
   {
     var p = new Promise();
-    new JQuery("#" + elemId).animate( { left : newX, top:newY }, 1000, p.complete.bind(Unit));
+    new JQuery("#" + elemId).animate( { left : newX, top:newY }, 1000, p.success.bind(Unit));
     return p;
   }
   
@@ -29,7 +29,7 @@ class Animation
   public static function resize (elemId:String, newWidth:Int, newHeight:Int):PromiseD<Unit> 
   {
     var p = new Promise();
-    new JQuery("#" + elemId).animate( { width : newWidth, height:newHeight }, 1000, p.complete.bind(Unit));
+    new JQuery("#" + elemId).animate( { width : newWidth, height:newHeight }, 1000, p.success.bind(Unit));
     return p;
   }
   

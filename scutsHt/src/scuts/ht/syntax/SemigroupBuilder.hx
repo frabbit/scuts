@@ -3,7 +3,7 @@ package scuts.ht.syntax;
 import scuts.ht.classes.Semigroup;
 
 
-class SemigroupsBuilder
+class SemigroupBuilder
 {
 
   public static inline function create<T>(append:T->T->T) return new SemigroupByFun(append);

@@ -1,0 +1,9 @@
+-cp ../scutsCore/src
+-cp ../scutsHt/src
+-cp ../scutsDs/src
+-cp ../scutsMCore/src
+-cp ../scutsMacros/src
+-cp src
+-main scuts.ht.samples.Equals
+--macro sys.FileSystem.createDirectory("bin/samples/ht_equals")
+-x bin/samples/ht_equals/sample
