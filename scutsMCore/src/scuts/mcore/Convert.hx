@@ -14,6 +14,7 @@ using scuts.core.Eithers;
 using scuts.core.Validations;
 using scuts.core.Functions;
 using scuts.core.Options;
+using scuts.core.ArrayValidations;
 
 class Convert 
 {

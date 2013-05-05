@@ -12,7 +12,7 @@ using scuts.core.Strings;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
-using scuts.core.Dynamics;
+using scuts.core.Nulls;
 using scuts.core.PosInfosTools;
 #end
 
