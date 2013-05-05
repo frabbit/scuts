@@ -26,6 +26,20 @@ class Cache<T> {
 		return val;
 	}
 
+	public function getOrSet (key:String, f:Void->T):T {
+		return if (enabled) {
+			if (cache.exists(key)) {
+				cache.get(key);
+			} else {
+				var r = f();
+				cache.set(key, r);
+				r;
+			}
+		} else {
+			f();
+		}
+	}
+
 	public function get (key:String):T {
 		return if (enabled) {
 			cache.get(key);

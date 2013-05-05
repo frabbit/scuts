@@ -121,9 +121,6 @@ class RealResolver
       }
       else numArgs; 
       Profiler.pop();
-       
-
-      
 
       function resolveRegular () 
       {
@@ -139,70 +136,51 @@ class RealResolver
         }, "resolveRegular");
       }
 
-      function checkFunExprAndResolve () 
+
+      var outsourceFirstArg = if (args.length > 0) switch (args[0].expr) 
       {
-        return switch (f.expr) {
+        case EConst(_) | EField({expr:EConst(_)}, _): false;
+        case _ : true;
+      }
+      var outsourceFunc = switch (f.expr) {
         
-          case EBlock(_) | EParenthesis({ expr : EBlock(_) | ECall(_)}) | ECall(_): // especially complex inlined expressions should be catched here for faster typing.
-            
-            Profiler.profile(function () 
-            {
-              var p = Context.currentPos();
-              
-
-              var newArgs = [macro f_1];
-
-              for (i in 0...args.length) newArgs.push(args[i]);
-              
-              // pass the param count of function f to the runtime and catch it like above, so we don't have to type the function (could be expensive)
-              if (numArgs != -1) newArgs.push(macro @:resolveParamsCount $v{numArgs});
-              
-              var e = macro @:pos(p) {
-                var f_1 = ${f};
-                scuts.ht.core.Hots.resolve($a{newArgs});
-              }
-
-              //trace(ExprTools.toString(e));
-          
-              return e;
-            }, "store function in var");
-          case _: 
-            resolveRegular();
-        };
-        
+        case EBlock(_) | EParenthesis({ expr : EBlock(_) | ECall(_)}) | ECall(_): true;
+        case _ : false;
       }
 
-      return Profiler.profile(function () return if (args.length > 0) switch (args[0].expr) 
+      return Profiler.profile(function () return if (outsourceFirstArg || outsourceFunc) 
       {
-        case EConst(_): checkFunExprAndResolve();
-        case EField({expr:EConst(_)}, _): checkFunExprAndResolve();
-          
-        case _ : 
-         
-          Profiler.profile(function () 
-          {
-            var p = Context.currentPos();
-            
-
-            var newArgs = [f, (macro @:pos(p) a_1)];
-
-            for (i in 1...args.length) newArgs.push(args[i]);
-            
-            // pass the param count of function f to the runtime and catch it like above, so we don't have to type the function (could be expensive)
-            if (numArgs != -1) newArgs.push(macro @:resolveParamsCount $v{numArgs});
-            
-            var e = macro @:pos(p) {
-              var a_1 = ${args[0]};
-              scuts.ht.core.Hots.resolve($a{newArgs});
-            }
-
-            //trace(ExprTools.toString(e));
+        var p = Context.currentPos();
         
-            return e;
-          }, "newArgsAndExpr");
+        var newArgs = [];
 
-      } else checkFunExprAndResolve(), "checkArgs");
+        newArgs.push(if (outsourceFunc) macro @:pos(p) __f1 else f);
+
+        if (outsourceFirstArg) newArgs.push(macro @:pos(p) __a1);
+        
+        var startIndex = if (outsourceFirstArg) 1 else 0;
+
+        for (i in startIndex...args.length) newArgs.push(args[i]);
+        
+        // pass the param count of function f to the runtime and catch it like above, so we don't have to type the function (could be expensive)
+        if (numArgs != -1) newArgs.push(macro @:resolveParamsCount $v{numArgs});
+        
+
+        var blockExprs = [];
+
+        if (outsourceFunc) blockExprs.push(macro @:pos(p) var __f1 = $f);
+        if (outsourceFirstArg) blockExprs.push(macro @:pos(p) var __a1 = ${args[0]});
+
+        blockExprs.push(macro scuts.ht.core.Hots.resolve($a{newArgs}));
+
+        macro @:pos(p) $b{blockExprs};
+
+      } else {
+        resolveRegular();
+      }, "outsource complex expressions");
+    
     });
+      
   }
   
   
@@ -230,20 +208,6 @@ class RealResolver
   public static var helper(default, null) = (macro scuts.ht.macros.implicits.Helper);
   
   //public static var helper(default, null) = (macro HI1);
-
-
-  static function curryFunctionExpr (f:Expr, numArgs:Int) return switch (numArgs) 
-  {
-    case 0: macro $helper.curry0($f);
-    case 1: macro $helper.curry1($f);
-    case 2: macro $helper.curry2($f);
-    case 3: macro $helper.curry3($f);
-    case 4: macro $helper.curry4($f);
-    case 5: macro $helper.curry5($f);
-    case 6: macro $helper.curry6($f);
-    case 7: macro $helper.curry7($f);
-    default: Scuts.notImplemented();
-  }
 
   /**
    * Returns the number of function parameters of the expression f.
@@ -410,68 +374,7 @@ class RealResolver
     });
     
   }
-  /*
-  #if false
-  static function adjustArgs (functionExpr:Expr, args:Array<Expr>, numParams:Int, 
-    scopes:Scopes, lastRequired:Array<Expr>):Validation<ResolverError, Array<Expr>>
-  {
-    function foldArgs(acc:Validation<ResolverError, Tup2<Array<Expr>, Expr>>, i:Int) return switch (acc) 
-    {
-      case Success(st):
-        var newArgs = st._1;
-        var curried = st._2;
-        // create an expr representing the required type
-        var cur = first(curried);
-        var required = Typer.makeFastTypeable(cur);
-      
-        // do we have an expression for this position
-
-        var argExists = i < args.length;
-        
-        var adjustedArgVal = if (argExists) // do we have an argument
-          adjustArg(args[i], required);
-        else 
-        {
-          if (Context.defined("display")) 
-            Success(tup2(macro null, macro null));
-          else switch (resolveImplicitObj1(required, scopes, lastRequired)) 
-          {
-            case Success(impExpr): Success(tup2(impExpr, impExpr));
-            case Failure(f): Failure(f);
-          }
-        }
-        
-        return switch (adjustedArgVal) 
-        {
-          case Success(adjustedArg):
-            var adjustedExpr = adjustedArg._2;
-            var typeExpr = adjustedArg._1;
-
-            newArgs.push(adjustedExpr);
-            
-            curried = macro $curried($typeExpr);
-
-            Success(tup2(newArgs, curried));
-          case Failure(f):
-            Failure(f);
-        }
-      case Failure(f):
-        Failure(f);
-    }
-
-    return Profiler.profile(function ()
-    {
-      var curried = curryFunctionExpr(functionExpr, numParams);
-
-      var indices = [for (i in 0...numParams) i];
-      var res = indices.foldLeft(Success(tup2([], curried)), foldArgs);
-
-      return res.map(Tup2s.first);
-    });
-    
-  }
-  #end
-  */
+  
   
   static function adjustArg (arg:Expr, required:Expr):Validation<ResolverError, Tup2<Expr, Expr>> 
   {
@@ -481,8 +384,6 @@ class RealResolver
       {
         case EConst(CIdent("_")): Success(tup2(macro null, arg));
         case _: Success(tup2(arg, arg));
-        //case _ if (Typer.isCompatible(arg, required)): Success(tup2(arg, arg));
-        //case _: Failure(RE.functionParameterIsIncompatible(arg, required));
       }
     });
   }
@@ -512,15 +413,12 @@ class RealResolver
     //trace(Tools.prettyTypeOfExpr(required));
     return Profiler.profile(function () 
     {
-      Profiler.push("makeSignature");
-      //var signatureRequired = Context.signature(required);
-      //var id = signatureRequired + "_" + Context.signature(scopes);
-      Profiler.pop();
+     
       function getImplicitFromUsingContext () 
       {
         return Profiler.profile(function () 
         {
-          return switch (resolveImplicitInUsingContext(required, "", scopes, lastRequired)) 
+          return switch (resolveImplicitInUsingContext(required, scopes, lastRequired)) 
           {
             case Success(s): Success(s);
             case Failure(_): 
@@ -662,17 +560,16 @@ class RealResolver
     case None: ["3_Fallbacks"];
   }
 
-  static inline function resolveUsingsId (usings:Array<Null<Ref<ClassType>>>) 
+  static inline function getUsingsId (usings:Array<Null<Ref<ClassType>>>) 
   {
     return usings.join("_");
   }
 
-  static inline function resolveUsingTypeId (requiredTypeId:String, usingsId:String) 
+  static inline function getRequiredTypeAndUsingId (requiredTypeId:String, usingsId:String) 
   {
     return requiredTypeId + "_using_" + usingsId;
   }
 
-  static var usingCtxCache = new Cache();
 
   static function getPublicStaticClassImplicits (cl:ClassType) 
   {
@@ -704,68 +601,52 @@ class RealResolver
       {
         implicitCache.set(cl.module + "_" + cl.name, getPublicStaticClassImplicits(cl));
       }
-      
     }
   }
 
-  static function getUsingContext (required:Expr, signatureRequired:String, usings:Array<Null<Ref<ClassType>>>, usingsId:String) 
+  static function getUsingContext (required:Expr, usings:Array<Null<Ref<ClassType>>>, usingsId:String) 
   {
     return Profiler.profile(function () 
     {
+      cacheUsingClasses(usings);
 
+      var requiredHashes = exprTypeHashes(required);
 
-      var id = signatureRequired + "_" + usingsId;
-      
-      return if (usingCtxCache.exists(id)) 
+      var res1:StringMap<Array<{ parsed : Expr, field : ClassField, cl : ClassType }>> = new StringMap();
+      for ( u in usings) 
       {
-        Profiler.pushPop("cache");
-        usingCtxCache.get(id);
-      } 
-      else 
-      {
+        var cl = u.get();
+
+        var cacheData = implicitCache.get(cl.module + "_" + cl.name);
         
-        cacheUsingClasses(usings);
 
-        var requiredHashes = exprTypeHashes(required);
-
-        var res1:StringMap<Array<{ parsed : Expr, field : ClassField, cl : ClassType }>> = new StringMap();
-        for ( u in usings) 
+        for (h in requiredHashes) 
         {
-          var cl = u.get();
-
-          var cacheData = implicitCache.get(cl.module + "_" + cl.name);
-          
-
-          for (h in requiredHashes) 
+          if (cacheData.exists(h)) 
           {
-            if (cacheData.exists(h)) 
+            if (res1.exists(h)) 
             {
-              if (res1.exists(h)) 
-              {
-                var h1 = res1.get(h);
-                var vals = cacheData.get(h);
-                
-                h1 = h1.concat(vals);
-                res1.set(h, h1);
-              } 
-              else 
-              {
-                res1.set(h, cacheData.get(h));
-              }
+              var h1 = res1.get(h);
+              var vals = cacheData.get(h);
+              
+              h1 = h1.concat(vals);
+              res1.set(h, h1);
+            } 
+            else 
+            {
+              res1.set(h, cacheData.get(h));
             }
           }
         }
-        
-        var sortedKeys = [for (k in res1.keys()) k ];
-        sortedKeys.sort(Strings.compareInt);
-
-        var res = sortedKeys.foldLeft([], function (acc, cur) return acc.concat(res1.get(cur)));
-        
-        var result = { res : res, requiredHashes : requiredHashes };
-        usingCtxCache.set(id, result);
-        Profiler.pushPop("no-cache");
-        result;
       }
+      
+      var sortedKeys = [for (k in res1.keys()) k ];
+      sortedKeys.sort(Strings.compareInt);
+
+      var res = sortedKeys.foldLeft([], function (acc, cur) return acc.concat(res1.get(cur)));
+      
+      var result = { res : res, requiredHashes : requiredHashes };
+      return result;
     });
   }
 
@@ -801,7 +682,7 @@ class RealResolver
       case 4: macro $helper.typed4($f, $returnType);
       case 5: macro $helper.typed5($f, $returnType);
       case 6: macro $helper.typed6($f, $returnType);
-      case _: trace("error"); Scuts.notImplemented();
+      case _: Scuts.notImplemented();
     }
   }
   static function getFunctionExprReturnType (f:Expr, numArgs:Int) 
@@ -815,7 +696,7 @@ class RealResolver
       case 4: macro $helper.ret4($f);
       case 5: macro $helper.ret5($f);
       case 6: macro $helper.ret6($f);
-      case _: trace("error");  Scuts.notImplemented();
+      case _: Scuts.notImplemented();
     }
   }
 
@@ -832,12 +713,12 @@ class RealResolver
 
       return if (isComp) // it's compatible
       {
-        if (args.length == 0) // function required no arguments, just call it
+        if (args.length == 0) // function requires no arguments, just call it
           Some(Success(macro $rawFunc()))
         else 
         {
-          // it required arguments, but these arguments must be compatible to the required type, 
-          // which could be more specific than the raw return type (type parameters).
+          // function requires arguments, but these arguments must be compatible to the required type, 
+          // which could be more specific than the raw return type (e.g. type parameters).
           var withConcreteReturn = makeFunctionExprReturnTypeConcrete(rawFunc, required, args.length);
           Some(resolve1(Typer.makeFastTypeable(withConcreteReturn), rawFunc, [], scopes, lastRequired.concat([required]), args.length));
         }
@@ -848,7 +729,7 @@ class RealResolver
 
   static var concatUsingsCache = new Cache();
 
-  static function resolveImplicitInUsingContext(required:Expr, signatureRequired:String, scopes:Scopes, lastRequired:Array<Expr>):Validation<ResolverError, Expr>
+  static function resolveImplicitInUsingContext(required:Expr, scopes:Scopes, lastRequired:Array<Expr>):Validation<ResolverError, Expr>
   {
     return Profiler.profile(function () {
 
@@ -870,19 +751,12 @@ class RealResolver
       }
 
       var usings = Profiler.profile(Context.getLocalUsing, "getLocalUsing");
-      
-      
-      //var usingsId = Profiler.profile(resolveUsingsId.bind(usings), "concatUsings");
-      // use cache by class
+
       var usingsId = Profiler.profile(function () {
         var c = Context.getLocalClass();
         var cl = c.get();
         var hash = cl.module + cl.name;
-        return if (concatUsingsCache.exists(hash)) {
-          concatUsingsCache.get(hash);
-        } else {
-          concatUsingsCache.set(hash, resolveUsingsId(usings));
-        }
+        return concatUsingsCache.getOrSet(hash, getUsingsId.bind(usings));
       }, "concatUsingsAlt");
       
       function typeToUsingTypeId(requiredType)
@@ -890,14 +764,14 @@ class RealResolver
         return Profiler.profile(function () 
         {
           var requiredTypeStr = TypeTools.toString(requiredType);    
-          return resolveUsingTypeId(requiredTypeStr, usingsId);
+          return getRequiredTypeAndUsingId(requiredTypeStr, usingsId);
         }, "typeToUsingTypeId");
       }
 
       function getContext() 
       {
         return Profiler.profile(function () {
-          var ctx = getUsingContext(required, "", usings, usingsId);
+          var ctx = getUsingContext(required, usings, usingsId);
           var res = ctx.res;
 
           return switch (res.mapThenSomeOption(checkCandidate)) 
@@ -913,10 +787,7 @@ class RealResolver
 
       return if (hasNonUsingImplicits) 
       {
-        // TODO THIS TYPEOF CALL IS VERY VERY EXPENSIVE BECAUSE IT MUST TYPE THE COMPLEX CURRIED AND PARTIALLY APPLIED EXPRESSIONS
-
         var idOpt = Profiler.profile(function () return Typer.typeof(required).map(typeToUsingTypeId), "complex-TypeOf");
-        // 
         switch (idOpt) 
         {
           case Some(id) if (usingCtxFirstLevelCache.exists(id)):
