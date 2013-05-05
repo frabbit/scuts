@@ -42,6 +42,7 @@ typedef Binds = scuts.ht.syntax.Binds;
 typedef BindsM = scuts.ht.syntax.BindsM;
 typedef Foldables = scuts.ht.syntax.Foldables;
 typedef Shows = scuts.ht.syntax.Shows;
+typedef ShowsM = scuts.ht.syntax.ShowsM;
 
 typedef Monoids = scuts.ht.syntax.Monoids;
 typedef Semigroups = scuts.ht.syntax.Semigroups;
