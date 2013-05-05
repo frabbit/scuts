@@ -29,9 +29,10 @@ class Profiler {
       output.writeString(single);
       output.close();
       if (profiler.callStack.length > 0) {
+        trace(profiler.callStack);
         throw "Callstack is not empty: " + profiler.callStack; 
       }
-      trace("Callstack " + profiler.callStack); 
+
 
       
     });

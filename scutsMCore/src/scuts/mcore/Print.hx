@@ -687,7 +687,7 @@ class Print
       case AccNo:           add("null");
       case AccNever:        add("never");
       case AccResolve:      add("dynamic");
-      case AccCall( m ):    add(m);
+      case AccCall:         add("get");
       case AccInline:       // should be resolved through access modifiers
       case AccRequire( _, _ ): // TODO what is this
     }

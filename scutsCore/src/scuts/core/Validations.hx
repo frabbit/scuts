@@ -20,9 +20,10 @@ enum Validation < F, S > {
 
 abstract FailProjection<F,S>(VD < F, S >) to VD<F,S> {
 
-  public function new (v:VD<F,S>) {
+  public inline function new (v:VD<F,S>) {
     this = v;
   }
+  
 
 }
 

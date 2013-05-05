@@ -20,10 +20,8 @@ class OptionTBind<M> implements Bind<Of<M, Option<In>>> {
     this.base = base;
   }
   
-  // public function flatMap<A,B>(x:Of<M,A>, f:A->Of<M,B>):Of<M,B>;
   public function flatMap<A,B>(x:OptionTOf<M,A>, f: A->OptionTOf<M,B>):OptionTOf<M, B> 
   {
-    
     function f1 (a) return switch (a) 
     {
       case Some(v): f(v);

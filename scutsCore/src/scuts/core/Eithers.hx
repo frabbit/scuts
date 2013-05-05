@@ -20,6 +20,8 @@ abstract LeftProjection<L,R>(Either<L,R>) to Either<L,R> {
     this = e;
   }
 
+  
+
 }
 
 
@@ -332,23 +334,24 @@ class Eithers
 
 class LeftProjections
 {
-  static inline function either<L,R>(e:LP<L,R>):Either<L,R> return e;
+  
   
   static inline function eitherF<L,R,LL>(e:L->LP<LL,R>):L->Either<LL,R> return e;
   
+  static function either<L,R>(e:LP<L,R>):Either<L,R> return e;
   
   public static inline function flatMap < L,R,LL > (e:LP<L,R>, f:L->LP<LL, R>):LP<LL,R>
   {
-    return e.either().flatMapLeft(eitherF(f)).leftProjection();
+    return either(e).flatMapLeft(eitherF(f)).leftProjection();
   }
   
   public static inline function map <L,R,LL> (e:LP<L,R>, f:L->LL) : LP<LL,R>
   {
-    return e.either().mapLeft(f).leftProjection();
+    return either(e).mapLeft(f).leftProjection();
   }
   
   public static function apply <L,R,LL>(e:LP<L,R>, f:LP<L->LL, R>):LP<LL, R>
   {
-    return e.either().applyLeft(either(f)).leftProjection();
+    return either(e).applyLeft(either(f)).leftProjection();
   }
 }

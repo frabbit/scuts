@@ -127,6 +127,7 @@ class RealResolver
         return Profiler.profile(function () return switch (resolve1(f,f, args, Manager.getImplicitsFromScope(), [], numArgs)) 
         {
           case Success(e): 
+            //trace(ExprTools.toString(e));
             e;
           case Failure(err): 
             var pos = Std.string(Context.getPosInfos(f.pos));
@@ -139,7 +140,7 @@ class RealResolver
 
       var outsourceFirstArg = if (args.length > 0) switch (args[0].expr) 
       {
-        case EConst(_) | EField({expr:EConst(_)}, _): false;
+        case EConst(_) | EField({expr:EConst(_)}, _) | EFunction(_,_): false;
         case _ : true;
       }
       var outsourceFunc = switch (f.expr) {
@@ -173,8 +174,9 @@ class RealResolver
 
         blockExprs.push(macro scuts.ht.core.Hots.resolve($a{newArgs}));
 
-        macro @:pos(p) $b{blockExprs};
-
+        var res = macro @:pos(p) $b{blockExprs};
+        //trace(ExprTools.toString(res));
+        res;
       } else {
         resolveRegular();
       }, "outsource complex expressions");

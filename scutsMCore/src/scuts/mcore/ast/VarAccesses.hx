@@ -10,7 +10,7 @@ class VarAccesses
 
   public static function eq(v1:VarAccess, v2:VarAccess) return switch [v1,v2]
   {
-    case [AccCall(m1), AccCall(m2)]: Strings.eq(m1, m2);
+    case [AccCall, AccCall]: true;
     case [AccInline, AccInline] : true;
     case [AccNever, AccNever] : true;
     case [AccNo, AccNo] : true;
