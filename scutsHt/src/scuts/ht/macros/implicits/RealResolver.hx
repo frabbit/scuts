@@ -172,7 +172,7 @@ class RealResolver
         if (outsourceFunc) blockExprs.push(macro @:pos(p) var __f1 = $f);
         if (outsourceFirstArg) blockExprs.push(macro @:pos(p) var __a1 = ${args[0]});
 
-        blockExprs.push(macro scuts.ht.core.Hots.resolve($a{newArgs}));
+        blockExprs.push(macro scuts.ht.core.Ht.resolve($a{newArgs}));
 
         var res = macro @:pos(p) $b{blockExprs};
         //trace(ExprTools.toString(res));

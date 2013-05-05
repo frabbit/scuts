@@ -1,7 +1,7 @@
 package scuts.ht.macros.implicits;
 
 import scuts.ht.core.Of;
-//import scuts.ht.core.Hots;
+//import scuts.ht.core.Ht;
 class ImplicitObject<X> {}
 
 class Helper 

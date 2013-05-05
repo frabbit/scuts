@@ -53,10 +53,10 @@ class Sort
     var personsComplex = [Some(tup2("x", { name : "jimmy", age : 17})), Some(tup2("x", { name : "alf", age : 27}))];
     
 
-    Hots.implicit(ShowBuilder.create(function (p1:Person) return '{ name : ${p1.name}, age : ${p1.age}}'));
+    Ht.implicit(ShowBuilder.create(function (p1:Person) return '{ name : ${p1.name}, age : ${p1.age}}'));
 
     var byNameDesc = OrdBuilder.createByIntCompare(function (p1:Person, p2:Person) return p1.name.compareInt._(p2.name));
-    Hots.implicit(byNameDesc);
+    Ht.implicit(byNameDesc);
 
     trace("persons by name: " + persons.show_() + " -> " + sort._(persons).show_());
     
@@ -65,7 +65,7 @@ class Sort
 
      
     var byAgeDesc = OrdBuilder.createByIntCompare(function (p1:Person, p2:Person) return p1.age.compareInt._(p2.age));
-    Hots.implicit(byAgeDesc);
+    Ht.implicit(byAgeDesc);
 
     trace("persons by age: " + persons.show_() + " -> " + sort._(persons).show_());
 

@@ -12,7 +12,7 @@ abstract OptionTOf<M, A>(OfOf<M, Option<In>, A>) to OfOf<M, Option<In>, A> from 
 
 	inline function new (x:OfOf<M, Option<In>, A>) this = x;	
 
-	@:to public inline function runT ():Of<M, Option<A>> return scuts.ht.core.Hots.preservedCast(new Of(cast this));
+	@:to public inline function runT ():Of<M, Option<A>> return scuts.ht.core.Ht.preservedCast(new Of(cast this));
 
 	@:from public static inline function intoT <M,A>(x:Of<M, Option<A>>):OptionTOf<M, A> return new OptionTOf(cast x);
 	

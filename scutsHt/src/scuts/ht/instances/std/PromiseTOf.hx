@@ -4,7 +4,7 @@ import scuts.ht.core.In;
 import scuts.ht.core.Of;
 import scuts.ht.core.OfOf;
 import scuts.core.Promises;
-import scuts.ht.core.Hots;
+import scuts.ht.core.Ht;
 
 abstract PromiseTOf<M,A>(OfOf<M, PromiseD<In>, A>) from OfOf<M, PromiseD<In>, A> to OfOf<M, PromiseD<In>, A>  
 {

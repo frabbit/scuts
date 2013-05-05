@@ -39,7 +39,7 @@ class Equals
     function eqPoint (a:Point,b:Point) return a.x.eq_(b.x) && a.y.eq_(b.y);
     
     // and bring them in scope
-    Hots.implicit(EqBuilder.create(eqPoint));
+    Ht.implicit(EqBuilder.create(eqPoint));
     
     // type classes compose
 
@@ -58,7 +58,7 @@ class Equals
     trace([Some({x : 1, y : 2})].eq_([Some({x : 1, y : 2})]));
 
     // get a specific instance of Eq by Type and store the type class in a variable
-    var myEq = Hots.implicitByType("Eq<Array<Option<Int>>>");
+    var myEq = Ht.implicitByType("Eq<Array<Option<Int>>>");
 
     trace(myEq.eq([Some(1), Some(1)],[Some(1), Some(1)]));
     trace(myEq.eq([Some(1), Some(1)],[Some(1), Some(2)]));
@@ -67,7 +67,7 @@ class Equals
     // make use of type classes in your own functions
 
     function foo <T>(x: { a : T }, z : T, eq:Eq<T>) {
-      Hots.implicit(eq);
+      Ht.implicit(eq);
       return x.a.eq_(z);
     }
 

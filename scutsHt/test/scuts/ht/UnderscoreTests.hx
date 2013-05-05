@@ -28,8 +28,8 @@ class UnderscoreTests
   public function testImplicitCalls() 
   {
     
-    Hots.implicit(3);
-    Hots.implicit("foo");
+    Ht.implicit(3);
+    Ht.implicit("foo");
     
     function add (a:Int) return a;
     function add2 (a:Int, b:String) return a+b;
@@ -42,7 +42,7 @@ class UnderscoreTests
   public function testOnSimpleClosure() 
   {
     
-    Hots.implicit(3);
+    Ht.implicit(3);
     
     Assert.equals(3, (function add (a:Int) return a)._());
     
@@ -53,7 +53,7 @@ class UnderscoreTests
   public function testOnInlined() 
   {
     
-    Hots.implicit(0);
+    Ht.implicit(0);
 
     inline function add (a:Int) return if (a == 3) "foo" else "bar";
     
@@ -65,7 +65,7 @@ class UnderscoreTests
   public function testOnInlinedWithPrivateAccess() 
   {
     
-    Hots.implicit(0);
+    Ht.implicit(0);
     
     Assert.equals("f", "foo".callPublic._());
     

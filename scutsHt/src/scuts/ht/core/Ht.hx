@@ -13,7 +13,7 @@ import haxe.macro.Expr;
 
 #end
 
-class Hots
+class Ht
 {
 
   /**

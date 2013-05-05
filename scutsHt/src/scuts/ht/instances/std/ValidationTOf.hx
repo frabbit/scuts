@@ -5,7 +5,7 @@ import scuts.ht.core.In;
 import scuts.ht.core.OfOf;
 import scuts.core.Validations;
 
-import scuts.ht.core.Hots;
+import scuts.ht.core.Ht;
 
 private typedef FP<F,S> = FailProjection<F,S>;
 
@@ -17,7 +17,7 @@ abstract ValidationTOf<M,F,S>(OfOf<M, Validation<F,In>, S>) to OfOf<M, Validatio
 
 	public inline function new (x:OfOf<M, Validation<F,In>, S>) this = x;
 
-	@:to inline public function runT<M,F,S>():Of<M, Validation<F,S>> return Hots.preservedCheckType(var _ : Of<M, Validation<F,S>> = new Of(cast this));
+	@:to inline public function runT<M,F,S>():Of<M, Validation<F,S>> return Ht.preservedCheckType(var _ : Of<M, Validation<F,S>> = new Of(cast this));
 
-	@:from public inline static function intoT<M,F,S>(x:Of<M, Validation<F,S>>):ValidationTOf<M,F,S> return Hots.preservedCheckType(var _ : ValidationTOf<M,F,S> = new ValidationTOf(cast x));
+	@:from public inline static function intoT<M,F,S>(x:Of<M, Validation<F,S>>):ValidationTOf<M,F,S> return Ht.preservedCheckType(var _ : ValidationTOf<M,F,S> = new ValidationTOf(cast x));
 }

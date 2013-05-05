@@ -1,7 +1,7 @@
 package scuts.ht.instances.std;
 
 
-import scuts.ht.core.Hots;
+import scuts.ht.core.Ht;
 
 import scuts.ht.core.OfOf;
 import scuts.ht.core.In;

@@ -59,7 +59,7 @@ class ImplicitScopeTests
   
   function expectLocalScope() 
   {
-    Hots.implicit(4);
+    Ht.implicit(4);
 
     A.equals(4, identity._());
     
@@ -67,9 +67,9 @@ class ImplicitScopeTests
   
   function expectLocalNestedScope() 
   {
-    Hots.implicit(4);
+    Ht.implicit(4);
     {
-      Hots.implicit(5);
+      Ht.implicit(5);
       A.equals(5, identity._());
       
     }
@@ -77,10 +77,10 @@ class ImplicitScopeTests
   
   function expectLocalNestedScopeIsIgnored() 
   {
-    Hots.implicit(4);
+    Ht.implicit(4);
     
     {
-      Hots.implicit(5);
+      Ht.implicit(5);
     }
     A.equals(4, identity._());
     
@@ -100,7 +100,7 @@ class ImplicitScopeTests
   static function expectLocalNestedScopeIsIgnoredAndStaticUsed() 
   {
     {
-      Hots.implicit(4);
+      Ht.implicit(4);
     }
     A.equals(staticScope, identity._());
     

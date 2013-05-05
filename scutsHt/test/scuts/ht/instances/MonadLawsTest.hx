@@ -74,7 +74,7 @@ class MonadLawsTest
     function mkEq <M,X> (f:Of<M,Int>->X, eqX:Eq<X>):Eq<Of<M, Int>> return EqBuilder.create(function (a:Of<M,Int>, b:Of<M,Int>) return eqX.eq(f(a), f(b)));
     
     
-    Hots.implicit(EqBuilder.create(function (p1:PromiseD<Int>, p2:PromiseD<Int>) {
+    Ht.implicit(EqBuilder.create(function (p1:PromiseD<Int>, p2:PromiseD<Int>) {
       return (p1.isComplete() == p2.isComplete()) && p1.valueOption().extract().eq._(p2.valueOption().extract());
     }));
     

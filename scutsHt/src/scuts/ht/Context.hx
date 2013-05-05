@@ -85,4 +85,4 @@ typedef Apply<X> = scuts.ht.classes.Apply<X>;
 typedef Show<X> = scuts.ht.classes.Show<X>;
 
 
-typedef Hots = scuts.ht.core.Hots;
+typedef Ht = scuts.ht.core.Ht;

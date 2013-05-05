@@ -41,7 +41,7 @@ class Semigroups {
 
 		// use intProductSemigroup for Int appending
 
-		Hots.implicit(scuts.ht.instances.Semigroups.intProductSemigroup);
+		Ht.implicit(scuts.ht.instances.Semigroups.intProductSemigroup);
 
 		trace(3.append_(2));
 		trace(Some(3).append_(Some(2)));
@@ -50,7 +50,7 @@ class Semigroups {
 
 		{
 			// use your own appending function for ints (locally in this block)
-			Hots.implicit(SemigroupBuilder.create(function (a,b) return a * 2 + b));
+			Ht.implicit(SemigroupBuilder.create(function (a,b) return a * 2 + b));
 
 			trace(3.append_(2));
 			trace(Some(3).append_(Some(2)));

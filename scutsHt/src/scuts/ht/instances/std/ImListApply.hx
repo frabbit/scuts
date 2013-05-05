@@ -7,7 +7,7 @@ import scuts.ht.instances.std.ImListOf;
 import scuts.ds.ImLists;
 
 
-using scuts.ht.core.Hots;
+using scuts.ht.core.Ht;
 
 class ImListApply extends ApplyAbstract<ImList<In>>
 {
