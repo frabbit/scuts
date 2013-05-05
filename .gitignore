@@ -13,3 +13,15 @@
 /build/log
 /samples/dump
 /samples/log
+
+/samples/bin/samples/ht_animation/animation.js
+/samples/bin/samples/ht_animation/animation.js.map
+/samples/bin/samples/ht_animation/sample.js
+/samples/bin/samples/ht_animation/sample.js.map
+/samples/bin/samples/ht_equals/sample.n
+/samples/bin/samples/ht_promises/promises.js
+/samples/bin/samples/ht_promises/promises.js.map
+/samples/bin/samples/ht_semigroups/monoids.n
+/samples/bin/samples/ht_semigroups/sample.n
+/samples/bin/samples/ht_semigroups/semigroups.n
+/samples/bin/samples/ht_sort/sample.n
