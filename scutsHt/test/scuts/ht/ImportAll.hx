@@ -2,6 +2,7 @@ package scuts.ht;
 import scuts.ht.samples.Sort;
 import scuts.ht.samples.Semigroups;
 import scuts.ht.samples.Promises;
+import scuts.ht.samples.Monads;
 import scuts.ht.samples.Equals;
 import scuts.ht.samples.Animation;
 import scuts.ht.UnderscoreTests;
