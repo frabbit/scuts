@@ -8,6 +8,10 @@ import haxe.macro.ExprTools;
 
 class DisplayDoTools {
 
+  public static function buildWith (m : Expr, exprs:Array<Expr>) {
+    return build(exprs);
+  }
+
   public static function build (exprs:Array<Expr>) 
   {
     return if (exprs.length > 0) 

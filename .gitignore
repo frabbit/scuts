@@ -26,3 +26,5 @@
 /samples/bin/samples/ht_semigroups/semigroups.n
 /samples/bin/samples/ht_sort/sample.n
 /scuts/bin/testNeko.n
+
+/samples/bin/samples/ht_monads/sample.n

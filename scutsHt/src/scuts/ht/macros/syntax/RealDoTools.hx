@@ -75,7 +75,10 @@ class RealDoTools {
    * Array of Expressions parses it and generates a haxe expression out of monadic
    * operations.
    */
-  public static function build (exprs:Array<Expr>) 
+  public static function buildWith (m:Expr, exprs:Array<Expr>) {
+    return build(exprs, m);
+  }
+  public static function build (exprs:Array<Expr>, ?m:Expr) 
   {
 
     var id = Context.signature(exprs);
@@ -91,7 +94,7 @@ class RealDoTools {
       var isZero = requiresMonadEmpty(exprs);
       var monadExpr = getMonadExpr(o, isZero);
       
-      var res = buildWithMonad(monadExpr, exprs, false, isZero);
+      var res = buildWithMonad(monadExpr, exprs, false, isZero, m);
       //Resolver.applyImplicitDowncast(res, true);
       res;
     } 
@@ -103,7 +106,7 @@ class RealDoTools {
     return res;
   }
   
-  public static function buildWithMonad <M>(monad:ExprOf<scuts.ht.classes.Monad<M>>, exprs:Array<Expr>, isUpcasted:Bool, isMonadZero:Bool) 
+  public static function buildWithMonad <M>(monad:ExprOf<scuts.ht.classes.Monad<M>>, exprs:Array<Expr>, isUpcasted:Bool, isMonadZero:Bool, ?monadId:Expr) 
   {
     function handleErr (err) return DoParseErrors.handleError(err);
     
@@ -114,6 +117,9 @@ class RealDoTools {
     // If yes, we don't need to build a block for the resulting expression.
     var isConstIdent = monad.isConstIdent();
     
+    var withMonadId = monadId != null;
+
+
     var monadExpr = if (isConstIdent) monad else macro ___monad;
     
     // parse to abstract syntax tree
@@ -122,7 +128,18 @@ class RealDoTools {
     // generate resulting expression
     var generated = ast.map(toExpr.bind(_, monadExpr)).getOrElse(handleErr);
     
-    var res = if (isConstIdent) generated else macro { var ___monad = $monad; $generated; }
+    var res = if (withMonadId) {
+      switch (monadId.expr) {
+        case EConst(CIdent(x)): 
+          if (isConstIdent) 
+            macro { var $x = $monad; generated; } 
+          else macro { var ___monad = $monad; var $x = ___monad; $generated; }
+        case _ : throw "invalid monadId, must be const ident";
+      }
+    } else {
+      if (isConstIdent) generated else macro { var ___monad = $monad; $generated; }
+    }
+    
     
     
     #if scutsDebug

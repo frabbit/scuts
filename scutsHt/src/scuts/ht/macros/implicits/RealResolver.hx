@@ -517,6 +517,15 @@ class RealResolver
       ["3_Fallbacks"];
   }
 
+  static function exprTypeHashesFromOptionType(type:Option<Type>):Array<String> return switch (type) 
+  {
+    case Some(t): 
+      var type = Context.follow(t);
+      exprTypeHashesFromType(type);
+    case None: 
+      ["3_Fallbacks"];
+  }
+
   static function exprTypeHashesFromType(type:Type):Array<String> 
   {
     var hashes = switch (type) 
@@ -624,7 +633,9 @@ class RealResolver
     {
       cacheUsingClasses(usings);
 
-      var requiredHashes = exprTypeHashes(required);
+      var requiredType = Typer.typeof(required);
+
+      var requiredHashes = exprTypeHashesFromOptionType(requiredType);
       
 
       var res1:StringMap<Array<{ parsed : Expr, field : ClassField, cl : ClassType, followedType : Option<Type> }>> = new StringMap();
@@ -661,7 +672,7 @@ class RealResolver
 
       var res = sortedKeys.foldLeft([], function (acc, cur) return acc.concat(res1.get(cur)));
       
-      var result = { res : res, requiredHashes : requiredHashes };
+      var result = { requiredType : requiredType, res : res, requiredHashes : requiredHashes };
       //trace(result.res.map(function (x) return ExprTools.toString(x.parsed)));
       return result;
     });
@@ -674,7 +685,7 @@ class RealResolver
     return macro $helper.toImplicitObject($e);
   }
 
-  static function resolveImplicitUsingObject (parsed:Expr, required:Expr) 
+  static function resolveImplicitUsingObject (parsed:Expr, required:Expr, requiredType:Option<Type>) 
   {
     return Profiler.profile(function () 
     {
@@ -685,6 +696,17 @@ class RealResolver
       var isComp = Typer.isCompatible( cur, req);
       
       return if (isComp) Some(parsed) else Option.None;
+      /*switch (requiredType) {
+        case TInst(cl,_): 
+          var cls = cl.get();
+          if (cl.module == "scuts.ht.core.Of" && cl.name =="Of") {
+            var cur = asImplicitObject(parsed);
+            var req = asImplicitObject(required);
+            // trace(ExprTools.toString(cur));
+            // trace(ExprTools.toString(req));
+            var isComp = Typer.isCompatible( cur, req);
+          }
+        case _ : Option.None;*/
     });
   }
 
@@ -718,7 +740,7 @@ class RealResolver
     }
   }
 
-  static function resolveImplicitUsingFunction (rawFunc:Expr, required:Expr, args, scopes, lastRequired) 
+  static function resolveImplicitUsingFunction (rawFunc:Expr, required:Expr, requiredType:Option<Type>, args, scopes, lastRequired) 
   {
     return Profiler.profile(function () 
     {
@@ -752,7 +774,7 @@ class RealResolver
     return Profiler.profile(function () {
 
 
-      function checkCandidate (x:{parsed : Expr, field:ClassField, cl:ClassType, followedType : Option<Type>}) 
+      function checkCandidate (requiredType:Option<Type>, x:{parsed : Expr, field:ClassField, cl:ClassType, followedType : Option<Type>}) 
       {
         return Profiler.profile(function () {
           var parsed = x.parsed;
@@ -760,8 +782,8 @@ class RealResolver
           function loop (t:Type) return switch (t) 
           {
             case TLazy(x): loop(Context.follow(x()));
-            case TInst(_,_): resolveImplicitUsingObject(parsed, required).map(Success);
-            case TFun(args, _): resolveImplicitUsingFunction(parsed, required, args, scopes, lastRequired);
+            case TInst(_,_): resolveImplicitUsingObject(parsed, required, requiredType).map(Success);
+            case TFun(args, _): resolveImplicitUsingFunction(parsed, required, requiredType, args, scopes, lastRequired);
             case _:  Option.None;
           }
           return loop(Context.follow(x.field.type));
@@ -794,7 +816,7 @@ class RealResolver
           var ctx = getUsingContext(required, usings, usingsId);
           var res = ctx.res;
 
-          return switch (res.mapThenSomeOption(checkCandidate)) 
+          return switch (res.mapThenSomeOption(checkCandidate.bind(ctx.requiredType))) 
           {
             case Some(x): x;
             case None: Failure(RE.noImplicitObjectInContext(required));

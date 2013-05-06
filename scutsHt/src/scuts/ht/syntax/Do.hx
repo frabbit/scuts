@@ -26,5 +26,10 @@ class Do
   {
     return DoTools.build(exprs);
   }
+
+  @:noUsing macro public static function runWith<M>(m:Expr, exprs:Array<Expr>)
+  {
+    return DoTools.buildWith(m, exprs);
+  }
   
 }
