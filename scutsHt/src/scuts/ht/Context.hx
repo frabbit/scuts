@@ -50,7 +50,8 @@ typedef ShowsM = scuts.ht.syntax.ShowsM;
 typedef Semigroups = scuts.ht.syntax.Semigroups;
 typedef SemigroupsM = scuts.ht.syntax.SemigroupsM;
 typedef Ords = scuts.ht.syntax.Ords;
-typedef Categories = scuts.ht.syntax.Categorys;
+typedef Categorys = scuts.ht.syntax.Categorys;
+typedef CategorysM = scuts.ht.syntax.CategorysM;
 typedef Arrows = scuts.ht.syntax.Arrows;
 typedef ArrowsM = scuts.ht.syntax.ArrowsM;
 

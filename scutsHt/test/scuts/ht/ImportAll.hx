@@ -4,7 +4,6 @@ import scuts.ht.samples.Semigroups;
 import scuts.ht.samples.Promises;
 import scuts.ht.samples.Monads;
 import scuts.ht.samples.Equals;
-import scuts.ht.samples.ArrowsTmp;
 import scuts.ht.samples.Arrows;
 import scuts.ht.samples.Animation;
 import scuts.ht.UnderscoreTests;

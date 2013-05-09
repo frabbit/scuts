@@ -17,16 +17,24 @@ class Arrows
   public static function main() 
   {
   	
+    var f = function (x) return x + 2;
+    var g = function (x) return x + 3;
 
 
-    var f = function (x:Int) return x + 2;
-    var g = function (x:Int) return x + 3;
+    var a1 = f.arr_().split_(f.arr_()).runArrow();
+
+    trace(a1(tup2(1,1)));
+
+    var a2 = f.arr_().next_(g.arr_()).runArrow();
+
+    trace(a2(1));
 
 
-    var z = f.arr_().split_(f.arr_()).runArrow();
+    var a3 = a2.arr_().fanout_(g.arr_()).runArrow();
+
+    trace(a3(1));
 
 
-    trace(z(tup2(1,1)));
 
   }
   
