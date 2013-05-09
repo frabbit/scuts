@@ -12,7 +12,6 @@ class DisplayResolver
   
   public static function resolve (f:Expr, args:Array<Expr>, ?numArgs:Int = -1):Expr 
   {
-    trace("here");
    if (numArgs == null) numArgs == -1;
     
     
