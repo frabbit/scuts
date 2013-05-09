@@ -37,6 +37,9 @@ abstract Of<M,A>(OfI<M,A>)
 	@:arrayAccess public static inline function arrayGet <A>(x:OfI<Array<In>, A>, index:Int):A return Ht.checkType(var _ : Array<A> = cast x)[index];
 
 	// convinience methods for casting of often used types
+
+	@:to public inline static function toFunction <A,B>(x:OfI<Of<In->In, A>, B>):A->B return cast x;
+
 	@:from public static inline function fromArray <A>(x:Array<A>):Of<Array<In>, A> return new Of(x);
 	@:to public inline static function toArray <A>(x:OfI<Array<In>, A>):Array<A> return Ht.preservedCast(cast x);
 
@@ -69,7 +72,7 @@ abstract Of<M,A>(OfI<M,A>)
 
 	@:from public static inline function fromEither <L,R>(x:Either<L,R>):Of<Either<L, In>, R> return Ht.preservedCheckType(var _ :  Of<Either<L, In>, R> = new Of(x));
 	@:to public static function toEither <L,R>(x:OfI<Either<L, In>, R>):Either<L, R> return Ht.preservedCast(cast x);
-
+	
 	#end
 }
 

@@ -52,6 +52,7 @@ typedef SemigroupsM = scuts.ht.syntax.SemigroupsM;
 typedef Ords = scuts.ht.syntax.Ords;
 typedef Categories = scuts.ht.syntax.Categorys;
 typedef Arrows = scuts.ht.syntax.Arrows;
+typedef ArrowsM = scuts.ht.syntax.ArrowsM;
 
 
 typedef Do = scuts.ht.syntax.Do;
@@ -86,3 +87,6 @@ typedef Show<X> = scuts.ht.classes.Show<X>;
 
 
 typedef Ht = scuts.ht.core.Ht;
+
+
+typedef FunctionBoxing = scuts.ht.core.Boxing.FunctionBoxing;

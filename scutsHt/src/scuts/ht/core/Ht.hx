@@ -58,7 +58,7 @@ class Ht
   {
     return switch (e.expr) {
       case EVars([{ name : "_", type : t, expr : ex}]) if (t != null): 
-        var e = macro (inline function ():$t return $ex)();
+        var e = macro (function ():$t return $ex)();
         //trace(haxe.macro.ExprTools.toString(e));
         return e;
       case _ : throw "Unexpected";

@@ -25,7 +25,7 @@ enum ResolverError
   ImplicitObjectDefinitionIsIncorrect(found:Expr, required:Expr);
   NoImplicitObjectInContext (required:Expr);
   CircularDependency (imp1:Expr, imp2:Expr);
-  InvalidImplicitObjInScope (required:Expr);
+  InvalidImplicitObjInScope (required:Expr, reason:ResolverError);
   FunctionParameterIsIncompatible(param:Expr, required:Expr);
   InvalidImplicitObjFunction;
   FunctionExprIsNotAFunction (functionExpr:Expr);
@@ -64,9 +64,9 @@ class Errors
     return ImplicitObjectDefinitionIsIncorrect(found, required);
   }
   
-  public static function invalidImplicitObjInScope (required:Expr) 
+  public static function invalidImplicitObjInScope (required:Expr, reason:ResolverError) 
   {
-    return InvalidImplicitObjInScope (required);
+    return InvalidImplicitObjInScope (required, reason);
   }
   
   public static function noImplicitObjectInContext (required:Expr) 
@@ -116,7 +116,7 @@ class ErrorPrinter
       case ImplicitObjectDefinitionIsIncorrect(found, required): implicitObjectDefinitionIsIncorrect(found, required);
       case NoImplicitObjectInContext (required): noImplicitObjectInContext(required);
       case CircularDependency (imp1, imp2): circularDependency(imp1, imp2);
-      case InvalidImplicitObjInScope (required): invalidImplicitObjInScope(required);
+      case InvalidImplicitObjInScope (required, reason): invalidImplicitObjInScope(required, reason);
       case FunctionParameterIsIncompatible(param, required): functionParameterIsIncompatible(param, required);
       case InvalidImplicitObjFunction: invalidImplicitObjFunction();
       case FunctionExprIsNotAFunction (functionExpr): functionExprIsNotAFunction(functionExpr);
@@ -183,10 +183,11 @@ class ErrorPrinter
     return msg;
   }
   
-  public static function invalidImplicitObjInScope (required:Expr) 
+  public static function invalidImplicitObjInScope (required:Expr, reason:ResolverError) 
   {
     var msg = 
       "Invalid implicitObj definition for type " + Typer.typeof(required).map(Tools.prettyType)  + " in current scope\n"
+      + "Reason:\n" + toString(reason) + "\n"
       + "It's possible that you leaved out an explicit return type, which is needed when the resulting object depends "
       + "on type parameters.";
     return msg;

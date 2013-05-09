@@ -42,7 +42,7 @@
 --times
 -D macro_times
 
--x scuts/bin/testNeko
+
 
 #-D excludeHtTests
 #-D excludeHtSamples

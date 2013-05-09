@@ -15,7 +15,7 @@ class PuresM
 {
   macro public static function pure_<M,A>(x:ExprOf<A>, pure:String):ExprOf<Of<M,A>>
   {
-  	var pure = R.resolveImplicitObjByType("Pure<" + pure + ">");
+  	var pure = R.resolveImplicitObjByType("scuts.ht.classes.Pure<" + pure + ">");
     return R.resolve(macro scuts.ht.syntax.Pures.pure, [x, pure]);
   }
   

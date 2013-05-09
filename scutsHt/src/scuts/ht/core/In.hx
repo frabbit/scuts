@@ -6,7 +6,11 @@ package scuts.ht.core;
  * 
  * f.e. the type constructor Array must be represented as Array<In>
  */
+#if (js || neko)
 abstract In(Dynamic) {
 	function new (x) this = x;
 
 }
+#else
+class In {}
+#end

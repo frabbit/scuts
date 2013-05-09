@@ -23,7 +23,11 @@ class ArrayTFunctor<M> implements Functor<Of<M,Array<In>>>
 
   public function map<A,B>(v:ArrayTOf<M, A>,f:A->B):ArrayTOf<M, B> 
   {
+  	var q = v;
+  	var z = q.runT();
 
-    return functorM.map(v, Arrays.map.bind(_,f));
+  	var f = Arrays.map.bind(_,f);
+    var x =  functorM.map(z,f);
+    return x;
   }
 }

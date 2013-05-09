@@ -132,7 +132,8 @@ class RealResolver
           case Failure(err): 
             var pos = Std.string(Context.getPosInfos(f.pos));
             var msg = "Resolver Error for Expr: " + ExprTools.toString(macro $f($a{args})) + " at " + pos + "\n" + ErrorPrinter.toString(err);
-            Scuts.error(msg);
+            //Scuts.error(msg);
+            Context.warning(msg, f.pos);
             { expr : ECall(f, args), pos: Context.currentPos()};  
         }, "resolveRegular");
       }
@@ -423,10 +424,10 @@ class RealResolver
           return switch (resolveImplicitInUsingContext(required, scopes, lastRequired)) 
           {
             case Success(s): Success(s);
-            case Failure(_): 
+            case Failure(f): 
               //trace(Tools.prettyTypeOfExpr(required));
               //trace(Tools.prettyExpr(required));
-              Failure(RE.invalidImplicitObjInScope(required));
+              Failure(RE.invalidImplicitObjInScope(required, f));
           }
         },"getImplicitFromUsingContext");
       }
@@ -598,6 +599,8 @@ class RealResolver
     var filtered = statics.filter(function (x) return x.isPublic && x.meta.has(":implicit"));
     for (f in filtered) 
     {
+
+      //var e = if (cl.module == cl.name || StringTools.endsWith(cl.module, "." + cl.name)) cl.module + "." + f.name else cl.module + "." + cl.name + "." + f.name;
       var e = cl.module + "." + cl.name + "." + f.name;
 
       var parsed = Typer.makeFastTypeable(Context.parse(e, cl.pos));

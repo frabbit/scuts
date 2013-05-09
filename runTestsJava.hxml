@@ -1,0 +1,6 @@
+runTestsCommon.hxml
+--macro sys.FileSystem.createDirectory("scuts/bin/testJava")
+-java scuts/bin/testJava/java
+
+#-D excludeHtTests
+#-D excludeHtSamples

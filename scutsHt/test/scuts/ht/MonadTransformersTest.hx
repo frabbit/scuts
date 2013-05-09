@@ -10,7 +10,7 @@ import scuts.ht.instances.std.OptionOf;
 import scuts.core.Options;
 
 import scuts.core.Validations;
-
+import scuts.core.Promises;
 using scuts.ht.Context;
 
 private typedef A = utest.Assert;
@@ -21,11 +21,32 @@ class MonadTransformersTest
   public function new() {}
 
   #if !excludeHtTests
-  public function testArrayTransformerMonad () 
+  public function testOptionArrayTransformer () 
   {
     var a = Some([1,2,3]).arrayT();
     var actual = a.map_(function (x) return x + 1);
     A.same(Some([2,3,4]), actual);
+  }
+
+  public function testArrayOptionTransformer () 
+  {
+    var a = [Some(1)].optionT();
+    var actual = a.map_(function (x) return x + 1);
+    A.same([Some(2)], actual);
+  }
+
+  public function testArrayPromiseTransformer () 
+  {
+    var a = [Promises.pure(1)].promiseT();
+    var actual = a.map_(function (x) return x + 1);
+    A.same([Promises.pure(2)], actual);
+  }
+
+  public function testPromiseArrayTransformer () 
+  {
+    var a = Promises.pure([1]).arrayT();
+    var actual = a.map_(function (x) return x + 1);
+    A.same(Promises.pure([2]), actual);
   }
   
   
@@ -38,14 +59,12 @@ class MonadTransformersTest
   
   public function testUsingBehaviour2 () 
   {
-    
-    
     var actual = Some([1,2,3]).map_(function (x) return [1]);
     A.same(Some([1]), actual);
   }
   
   
-  public function testValidationTransformerMonad () 
+  public function testValidationTransformer () 
   {
     var v = Some(Success(1)).validationT();
 
@@ -53,39 +72,34 @@ class MonadTransformersTest
     A.same(Some(Success(2)), actual);
   }
 
-  // Failing Test
-  #if failing_tests
-  public function testValidationTransformerMonadFailing () 
+  
+  public function testValidationTransformer2 () 
   {
-    
-    var v = Some(Success(1));
     // this is failing currently
-    var actual = v.validationT().map_(function (x) return x + 1); // optionFunctor is used here, typing/inline problem
+    var actual = Some(Success(1)).validationT().map_(function (x) return x + 1); // optionFunctor is used here, typing/inline problem
     A.same(Some(Success(2)), actual);
-    
   }
-  #end
-  
-  
-  public function testFlatMapOnValidationTransformerMonad () 
+
+  public function testFlatMapOnValidationTransformer () 
   {
+
     var v = Some(Success(1));
-    var actual = v.validationT().flatMap_(function (x) return Some(Success(x + 1)).validationT());
+    var actual = v.validationT()
+      .flatMap_(
+        function (x) return Some(Success(x + 1)).validationT());
+
     A.same(Some(Success(2)), actual);
-
-    
-
   }
   
   
-  public function testChainedArrayTransformerMonad () 
+  public function testChainedArrayTransformer () 
   {
     var actual = Some([1,2,3]).arrayT().map_(function (x) return x + 1).map_(function (x) return x + 1);
     A.same(Some([3,4,5]), actual);
   }
   
   
-  public function testChainedFlatMapOptionTransformerMonad () 
+  public function testChainedFlatMapOptionTransformer () 
   {
     var actual = [Some(1)].optionT()
     .flatMap_(function (x) return [Some(x + 1)].optionT())
@@ -96,7 +110,7 @@ class MonadTransformersTest
   }
   
   
-  public function testChainedFlatMapArrayTransformerMonad () 
+  public function testChainedFlatMapArrayTransformer () 
   {
     var actual = Some([1,2,3]).arrayT()
     .flatMap_(function (x) return Some([x + 1]).arrayT())
@@ -106,12 +120,38 @@ class MonadTransformersTest
     
   }
 
+
+  public function testLiftingNestedComplex () 
+  {
+    var actual = Some([Some(Promises.pure(1))]).arrayT().optionT().promiseT()
+    .flatMap_(function (x) return Some([Some(Promises.pure(x + 1))]).arrayT().optionT().promiseT())
+    .flatMap_(function (x) return Some([Some(Promises.pure(x + 2))]).arrayT().optionT().promiseT())
+    .flatMap_(function (x) return Some([Some(Promises.pure(x + 3))]).arrayT().optionT().promiseT());
+    
+    A.same(Some([Some(Promises.pure(7))]), actual);
+    
+  }
+
+  public function testLiftingNestedVeryComplex () 
+  {
+    var actual = Some([Some(Promises.pure(Success(1)))]).arrayT().optionT().promiseT().validationT()
+    .flatMap_(function (x) return Some([Some(Promises.pure(Success(x + 1)))]).arrayT().optionT().promiseT().validationT());
+    
+    A.same(Some([Some(Promises.pure(Success(2)))]), actual);
+    
+  }
   
+  public function testNestedComplexWithRunT () 
+  {
+    var actual = Some([Some(Promises.pure(Success(1)))]).arrayT().runT().arrayT().optionT().runT().optionT().runT().optionT().promiseT().runT().promiseT().validationT()
+    .flatMap_(function (x) return Some([Some(Promises.pure(Success(x + 1)))]).arrayT().optionT().promiseT().validationT());
+    
+    A.same(Some([Some(Promises.pure(Success(2)))]), actual);
+    
+  }
+
   public function testLiftingNested () 
   {
-
-    //inline function runFT<X,T>(x:X->Option<Array<Option<T>>>) return x.arrayT().optionT();
-    
     var actual = Some([Some(1)]).arrayT().optionT()
     .flatMap_(function (x) return Some([Some(x + 1)]).arrayT().optionT())
     .flatMap_(function (x) return Some([Some(x + 1)]).arrayT().optionT());
@@ -131,7 +171,7 @@ class MonadTransformersTest
     
     A.same(Some(Some([Some(3)])), actual);
   }
-
+  
   
   
   public function testChainedFlatMapOptionMonad () 
@@ -140,6 +180,7 @@ class MonadTransformersTest
     
     A.same(Some(3), actual);
   }
+  
   #end
 }
 
