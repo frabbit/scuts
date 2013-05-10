@@ -88,7 +88,7 @@ or with using
 	[[1]].eq([[1]], EqInstances.arrayEq(EqInstances.arrayEq(EqInstances.intEq)));
 
 
-As you see in the second and third example, type classes compose. But the more complex your type gets the more complex is the expression for the type class. To get rid of this the macro based syntax classes can be used.
+As you see in the second and third example, type classes compose. But the more complex your type gets the more complex is the expression for the type class. To get rid of explicitly passing of type classes the macro based syntax classes can be used.
 
 The correspondend macro syntax class EqsM contains the macro function eq_ (the leading underscore is by convention) which takes only 2 parameters and resolves the required type class based on the argument types with the help of macros. It can be used like this:
 
@@ -102,10 +102,23 @@ or with using
 	[1].eq_([1])
 	[[1]].eq_([[1]]) // compiles as EqInstances.arrayEq(EqInstances.arrayEq(EqInstances.intEq)).eq([[1]], [[1]]);
 
+It is important to understand that the functions found in all of these macro syntax classes are just sugar on top of the `resolve` function which is described in the next section.
+
 Implicit resolution of type classes
 -----------------------------------
 
-Type classes are resolved with the help of a resolver macro (function `resolve` in [scuts.ht.core.Ht](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/Ht.hx)). It resolves the required type classes based on the current context of the function/macro call. The context is divided in 4 scopes which are checked in the following order: local, member, static and using. Implicits of parent classes are not taken into account currently, but this is planned.
+Type classes are resolved with the help of a resolver macro (function `resolve` in [scuts.ht.core.Ht](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/Ht.hx)). It resolves the required type classes based on the current context of the function/macro call. 
+
+The expression `1.eq_(1)` from the following section is just syntactic sugar for `Ht.resolve(Eqs.eq, 1, 1)`. To have a short and nice way to call arbitrary functions with implicit resolution, there is also an alias for resolve named `_` (yes, just an underscore ;)) which can be used via using on every function. To make things clear, the following calls are equivalent: 
+
+	1.eq_(1) // using of eq_
+	1.eq._(1,1) // using of eq and _
+	Eqs.eq._(1,1) 
+	Ht._(Eqs.eq, 1, 1)
+	Ht.resolve(Eqs.eq, 1, 1)
+
+
+The context is divided in 4 scopes which are checked in the following order: local, member, static and using. Implicits of parent classes are not taken into account currently, but this is planned.
 
 Please take a look at the [test cases](https://github.com/frabbit/scuts/blob/master/scutsHt/test/scuts/ht/ImplicitScopeTests.hx) to get the general idea of scopes.
 
