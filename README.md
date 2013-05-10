@@ -23,14 +23,31 @@ Higher Order Types
 
 Type constructor polymorphism is essential to implement type classes like Monads, Functors etc. Haxe at its core is missing this functionality. Because of this, scuts simulates this feature with 2 special types: [Of](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/Of.hx) and [In](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/In.hx). 
 
-Some Examples:
+Some Examples how these types relate to a scala-like type constructor notation:
 
-	M<_> <=> Of<M, T>
-	Array<T> <=> Of<Array<In>, T>
-	Option<T> <=> Of<Option<In>, T>
-	Array<Option<T>> <=> Of<Array<In>, Option<T>>
-	M<Option<T>> <=> Of<Array<In>, Option<T>>
-	A -> B <=> Of<Of<In->In>, A>, B> <=> OfOf<In->In, A, B>
+<table>
+	<tr>
+		<th>Required</th><th>Simulated</th>
+	</tr>
+	<tr>
+		<td><![CDATA[M<T>]]></td><td><![CDATA[Of<M, T>]]></td>
+	</tr>
+	<tr>
+		<td><![CDATA[Array<T>]]></td><td><![CDATA[Of<Array<In>, T>]]></td>
+	</tr>
+	<tr>
+		<td><![CDATA[Option<T>]]></td><td><![CDATA[Of<Option<In>, T>]]></td>
+	</tr>
+	<tr>
+		<td><![CDATA[Array<Option<T>>]]></td><td><![CDATA[Of<Array<In>, Option<T>>]]></td>
+	</tr>
+	<tr>
+		<td><![CDATA[M<Option<T>>]]></td><td><![CDATA[Of<Array<In>, Option<T>>]]></td>
+	</tr>
+	<tr>
+		<td><![CDATA[A -> B]]></td><td><![CDATA[OfOf<In->In, A, B>]]></td>
+	</tr>
+</table>
 
 Type classes
 ------------
