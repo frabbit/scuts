@@ -30,22 +30,22 @@ Some Examples how these types relate to a scala-like type constructor notation:
 		<th>Required</th><th>Simulated</th>
 	</tr>
 	<tr>
-		<td><![CDATA[M<T>]]></td><td><![CDATA[Of<M, T>]]></td>
+		<td><[CDATA[M<T>]]></td><td><[CDATA[Of<M, T>]]></td>
 	</tr>
 	<tr>
-		<td><![CDATA[Array<T>]]></td><td><![CDATA[Of<Array<In>, T>]]></td>
+		<td><[CDATA[Array<T>]]></td><td><[CDATA[Of<Array<In>, T>]]></td>
 	</tr>
 	<tr>
-		<td><![CDATA[Option<T>]]></td><td><![CDATA[Of<Option<In>, T>]]></td>
+		<td><[CDATA[Option<T>]]></td><td><[CDATA[Of<Option<In>, T>]]></td>
 	</tr>
 	<tr>
-		<td><![CDATA[Array<Option<T>>]]></td><td><![CDATA[Of<Array<In>, Option<T>>]]></td>
+		<td><[CDATA[Array<Option<T>>]]></td><td><[CDATA[Of<Array<In>, Option<T>>]]></td>
 	</tr>
 	<tr>
-		<td><![CDATA[M<Option<T>>]]></td><td><![CDATA[Of<Array<In>, Option<T>>]]></td>
+		<td><[CDATA[M<Option<T>>]]></td><td><[CDATA[Of<Array<In>, Option<T>>]]></td>
 	</tr>
 	<tr>
-		<td><![CDATA[A -> B]]></td><td><![CDATA[OfOf<In->In, A, B>]]></td>
+		<td><[CDATA[A -> B]]></td><td><[CDATA[OfOf<In->In, A, B>]]></td>
 	</tr>
 </table>
 
