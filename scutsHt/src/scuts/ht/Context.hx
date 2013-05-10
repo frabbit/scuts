@@ -17,6 +17,7 @@ typedef ArrowInstances = scuts.ht.instances.Arrows;
 typedef FunctorInstances = scuts.ht.instances.Functors;
 typedef EqInstances = scuts.ht.instances.Eqs;
 
+typedef EnumerationInstances = scuts.ht.instances.Enumerations;
 typedef MonoidInstances = scuts.ht.instances.Monoids;
 typedef CategoryInstances = scuts.ht.instances.Categorys;
 typedef ApplyInstances = scuts.ht.instances.Applys;
@@ -38,6 +39,8 @@ typedef ApplysM = scuts.ht.syntax.ApplysM;
 typedef Functors = scuts.ht.syntax.Functors;
 typedef FunctorsM = scuts.ht.syntax.FunctorsM;
 
+typedef Enumerations = scuts.ht.syntax.Enumerations;
+typedef EnumerationsM = scuts.ht.syntax.EnumerationsM;
 
 typedef Eqs = scuts.ht.syntax.Eqs;
 typedef EqsM = scuts.ht.syntax.EqsM;
