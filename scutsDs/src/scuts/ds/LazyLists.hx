@@ -12,7 +12,21 @@ import scuts.ds.LazyLists;
 using scuts.core.Iterators;
 using scuts.core.Options;
 
-typedef LazyList<T> = Void->LazyNode<T>;
+abstract LazyList<T>(Void->LazyNode<T>) {
+
+  public function new (x:Void->LazyNode<T>) {
+    this = x;
+  }
+
+  public static function fromNode <T>(x:Void->LazyNode<T>):LazyList<T> {
+    return new LazyList(x);
+  }
+
+  public function get <T>():LazyNode<T> {
+    var x : Void->LazyNode<T> = cast this;
+    return x();
+  }
+}
 
 private enum LazyNode<T> {
   LazyNil;
@@ -28,6 +42,10 @@ private class LazyListIter<T>
   var hasNextTrue:Bool;
   var l:LL<T>;
   
+  static inline function asLL <T>(x:Void->LazyNode<T>) {
+    return LazyList.fromNode(x);
+  }
+
   public function new (l:LL<T>) {
     this.l = l;
     v = null;
@@ -35,7 +53,7 @@ private class LazyListIter<T>
   }
   public function hasNext () 
   {
-    hasNextTrue = hasNextTrue || switch (l()) {
+    hasNextTrue = hasNextTrue || switch (l.get()) {
       case LazyNil: hasNextTrue = false;
       case LazyCons(e, tail): 
         v = e;
@@ -58,7 +76,11 @@ private typedef A = Arrays;
 
 class LazyLists {
   
-  static var EMPTY_LIST = function () return LazyNil;
+  static inline function asLL <T>(x:Void->LazyNode<T>) {
+    return LazyList.fromNode(x);
+  }
+
+  static var EMPTY_LIST = new LazyList(function () return LazyNil);
   
   @:noUsing public static function fromArray <T> (arr:Array<T>):LL<T> 
   {
@@ -68,7 +90,7 @@ class LazyLists {
   
   public static function isEmpty <T> (l:LL<T>):Bool 
   {
-    return switch (l()) { case LazyNil:true; default: false;}
+    return switch (l.get()) { case LazyNil:true; default: false;}
   }
   
   public static function toArray <T> (l:LL<T>):Array<T> 
@@ -76,7 +98,7 @@ class LazyLists {
     var res = [];
     var loop = true;
     while (loop) {
-      var e = l();
+      var e = l.get();
       switch (e) {
         case LazyNil: loop = false;
         case LazyCons(e, tail):
@@ -156,42 +178,43 @@ class LazyLists {
     var to1 = (to == -1) ? arr.length : to;
     Assert.isTrue(to1 <= arr.length);
     
-    return Lazy.expr
+    return asLL(Lazy.expr
     ({
       Assert.isTrue(to1 <= arr.length);
       
-      if (index < to1) LazyCons(arr[index], fromArrayAsView(arr, index+1, to1));
-      else             LazyNil;
-    });
+        if (index < to1) LazyCons(arr[index], fromArrayAsView(arr, index+1, to1));
+        else             LazyNil;
+      
+    }));
   }
   
   public static function take <T> (l:LL<T>, num:Int):LL<T> 
   {
     Assert.isTrue(num >= 0);
     
-    return Lazy.expr
+    return asLL(Lazy.expr
     ({
       if (num-1 < 0) LazyNil;
-      else switch (l()) 
+      else switch (l.get()) 
       {
         case LazyNil: LazyNil;
         case LazyCons(e, tail): LazyCons(e, take(tail, num-1));
       }
-    });
+    }));
   }
   
   public static function drop <T> (l:LL<T>, num:Int):LL<T> 
   {
-    return Lazy.expr
+    return asLL(Lazy.expr
     ({
-      var res = l();
+      var res = l.get();
       while (--num >= 0) switch (res) 
       {
         case LazyNil:           break;
-        case LazyCons(_, tail): res = tail();
+        case LazyCons(_, tail): res = tail.get();
       }
       res;
-    });
+    }));
   }
   
   public static function insertElemAt <T> (l:LL<T>, el:T, at:Int):LL<T> 
@@ -202,20 +225,20 @@ class LazyLists {
   
   static function insertElemAt1 <T> (l:LL<T>, el:T, at:Int):LL<T> 
   {
-    return Lazy.expr
+    return asLL(Lazy.expr
     ({
       if (at == 0) LazyCons(el, l);
-      else switch (l()) 
+      else switch (l.get()) 
       {
         case LazyNil: LazyNil;
         case LazyCons(e, tail): LazyCons(e, insertElemAt1(tail, el, at-1));
       }
-    });
+    }));
   }
   
   public static function takeWhile <T> (l:LL<T>, f:T->Bool):LL<T> 
   {
-    return Lazy.expr( switch (l()) 
+    return asLL(Lazy.expr( switch (l.get()) 
     {
       case LazyNil: LazyNil;
       case LazyCons(e, tail): 
@@ -224,16 +247,16 @@ class LazyLists {
         } else {
           LazyNil;
         }
-    });
+    }));
   }
   
   public static function dropWhile <T> (l:LL<T>, f:T->Bool):LL<T> 
   {
-    return Lazy.expr
+    return asLL(Lazy.expr
     ({
       var res = LazyNil;
       var loop = true;
-      while (loop) switch (l()) 
+      while (loop) switch (l.get()) 
       {
         case LazyNil: loop = false;
         case LazyCons(e, tail): 
@@ -247,7 +270,7 @@ class LazyLists {
       }
       res;
       }
-    );
+    ));
   }
   
   /**
@@ -267,7 +290,7 @@ class LazyLists {
     var val = null;
     var isSet = false;
     var loop = true;
-    while (loop) switch (l()) 
+    while (loop) switch (l.get()) 
     {
       case LazyNil: 
         loop = false;
@@ -279,13 +302,13 @@ class LazyLists {
     return if (isSet) Some(val) else None;
   }
   
-  public static function first <T> (l:LL<T>):T return switch (l()) 
+  public static function first <T> (l:LL<T>):T return switch (l.get()) 
   {
     case LazyNil: Scuts.error("Cannot extract first value from Empty List");
     case LazyCons(e, _): e;
   }
   
-  public static function firstOption <T> (l:LL<T>):Option<T> return switch (l()) 
+  public static function firstOption <T> (l:LL<T>):Option<T> return switch (l.get()) 
   {
     case LazyNil: None;
     case LazyCons(e, _): Some(e);
@@ -293,28 +316,28 @@ class LazyLists {
   
   public static function zip <A,B>(a:LL<A>, b:LL<B>):LL<Tup2<A,B>>
   {
-    return Lazy.expr(switch (a()) 
+    return asLL(Lazy.expr(switch (a.get()) 
     {
       case LazyNil: LazyNil;
-      case LazyCons(e1, tail1): switch (b()) 
+      case LazyCons(e1, tail1): switch (b.get()) 
       {
         case LazyNil:             LazyNil;
         case LazyCons(e2, tail2): LazyCons(Tup2.create(e1,e2), zip(tail1, tail2));
       }
-    });
+    }));
   }
   
   public static function zipWith <A,B,C>(a:LL<A>, b:LL<B>, f:A->B->C):LL<C>
   {
-    return Lazy.expr(switch (a()) 
+    return asLL(Lazy.expr(switch (a.get()) 
     {
       case LazyNil: LazyNil;
-      case LazyCons(e1, tail1): switch (b()) 
+      case LazyCons(e1, tail1): switch (b.get()) 
       {
         case LazyNil:             LazyNil;
         case LazyCons(e2, tail2): LazyCons(f(e1,e2), zipWith(tail1, tail2, f));
       }
-    });
+    }));
   }
   
   @:noUsing public static inline function mkEmpty <T> ():LL<T> 
@@ -324,12 +347,12 @@ class LazyLists {
   
   @:noUsing public static function mkOne <T>(e:T):LL<T> 
   {
-    return Lazy.expr(LazyCons(e, mkEmpty()));
+    return asLL(Lazy.expr(LazyCons(e, mkEmpty())));
   }
   
   @:noUsing public static function mkOneThunk <T>(e:Void->T):LL<T> 
   {
-    return Lazy.expr(LazyCons(e(), mkEmpty()));
+    return asLL(Lazy.expr(LazyCons(e(), mkEmpty())));
   }
   
   public static function cons <T>(l:LL<T>, el:T):LL<T> 
@@ -361,7 +384,7 @@ class LazyLists {
   {
     var i = 0;
     var loop = true;
-    while (loop) switch (l()) 
+    while (loop) switch (l.get()) 
     {
       case LazyNil: loop = false;
       case LazyCons(_, tail):
@@ -373,29 +396,29 @@ class LazyLists {
   
   public static function map <S,T>(l:LL<T>, f:T->S):LL<S>
   {
-    return Lazy.expr(switch (l()) 
+    return asLL(Lazy.expr(switch (l.get()) 
     {
       case LazyNil:           LazyNil;
       case LazyCons(e, tail): LazyCons(f(e), map(tail, f));
-    });
+    }));
   }
   
   public static function concat <T>(l1:LL<T>, l2:LL<T>):LL<T> 
   {
-    return Lazy.expr(switch (l1()) 
+    return asLL(Lazy.expr(switch (l1.get()) 
     {
-      case LazyNil: l2();
+      case LazyNil: l2.get();
       case LazyCons(e, tail): LazyCons(e, concat(tail, l2));
-    });
+    }));
   }
   
   public static function filter <T>(l:LL<T>, f:T->Bool) 
   {
-    return Lazy.expr
+    return asLL(Lazy.expr
     ({
       var ret = LazyNil;
       var loop = true;
-      while (loop) switch (l()) 
+      while (loop) switch (l.get()) 
       {
         case LazyNil: loop = false;
         case LazyCons(e, tail):
@@ -407,7 +430,7 @@ class LazyLists {
           else l = tail;
       }
       ret;
-    });
+    }));
   }
   
   public static function flatMap <S, T>(l:LL<S>, f:S->LL<T>):LL<T>
@@ -415,42 +438,46 @@ class LazyLists {
     return flatten(map(l,f));
   }
   
-  public static function flatten <S,T>(l:LL<LL<T>>):LL<T>
+  public static function flatten <T>(l:LL<LL<T>>):LL<T>
   {
-    return Lazy.expr(switch (l()) 
-    {
-      case LazyNil: LazyNil;
-      case LazyCons(e, tail): switch (e()) 
+    
+    return asLL(function () {
+      var l1 : LazyNode<LL<T>> = l.get();
+      return switch (l1) 
       {
-        case LazyNil:             flatten(tail)();
-        case LazyCons(e2, tail2): LazyCons(e2, concat(tail2, flatten(tail)));
-      }
+        case LazyNil: LazyNil;
+        case LazyCons(e, tail): switch (e.get()) 
+        {
+          case LazyNil:             flatten(tail).get();
+          case LazyCons(e2, tail2): LazyCons(e2, concat(tail2, flatten(tail)));
+        }
+      };
     });
   }
   
   @:noUsing public static function infinite <T>(start:T, next:T->T):LL<T>
   {
-    return Lazy.expr
+    return asLL(Lazy.expr
     (
       LazyCons(start, infinite(next(start), next))
-    );
+    ));
   }
   
   @:noUsing public static function infinitePlusOne (start:Int):LL<Int>
   {
-    return Lazy.expr
+    return asLL(Lazy.expr
     (
       LazyCons(start, infinitePlusOne(start + 1))
-    );
+    ));
   }
   
   @:noUsing public static function interval (from:Int, to:Int):LL<Int>
   {
-    return Lazy.expr
+    return asLL(Lazy.expr
     (
       if (from < to) LazyCons(from, interval(from + 1, to))
       else           LazyNil
-    );
+    ));
   }
 
 }
