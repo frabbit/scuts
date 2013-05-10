@@ -4,7 +4,7 @@ package scuts.ht.samples;
 using scuts.core.Promises;
 using scuts.ht.Context;
 
-class Monads {
+class MonadSample {
 
 	public static function main () {
 

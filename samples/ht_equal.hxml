@@ -4,6 +4,6 @@
 -cp ../scutsMCore/src
 -cp ../scutsMacros/src
 -cp src
--main scuts.ht.samples.Equals
+-main scuts.ht.samples.EqualSample
 --macro sys.FileSystem.createDirectory("bin/samples/ht_equals")
 -x bin/samples/ht_equals/sample

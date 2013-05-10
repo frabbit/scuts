@@ -13,7 +13,10 @@ import scuts.core.Lazy;
 import scuts.core.Options;
 import scuts.core.Promises;
 import scuts.core.States;
+import scuts.ds.ImLists;
+import scuts.ds.LazyLists;
 #end
+
 
 
 /*
@@ -67,11 +70,18 @@ abstract Of<M,A>(OfI<M,A>)
 	@:from public static inline function fromValidation <F,A>(x:Validation<F,A>):Of<Validation<F, In>, A> return Ht.preservedCheckType(var _ :  Of<Validation<F, In>, A> = new Of(x));
 	@:to public static function toValidation <F,A>(x:OfI<Validation<F, In>, A>):Validation<F, A> return Ht.preservedCast(cast x);
 
+	@:from public static inline function fromLazyList <T>(x:LazyList<T>):Of<LazyList<In>, T> return new Of(x);
+	@:to public static function toLazyList <T>(x:OfI<LazyList<In>, T>):LazyList<T> return Ht.preservedCast(cast x);
+
 	@:from public static inline function fromLazy (x:Lazy<A>):Of<Void->In, A> return new Of(x);
 	@:to public static function toLazy <A>(x:OfI<Void->In, A>):Lazy<A> return Ht.preservedCast(cast x);
 
 	@:from public static inline function fromEither <L,R>(x:Either<L,R>):Of<Either<L, In>, R> return Ht.preservedCheckType(var _ :  Of<Either<L, In>, R> = new Of(x));
 	@:to public static function toEither <L,R>(x:OfI<Either<L, In>, R>):Either<L, R> return Ht.preservedCast(cast x);
+
+	@:from public static inline function fromImList <T>(x:ImList<T>):Of<ImList<In>, T> return new Of(x);
+	@:to public static function toImList <T>(x:OfI<ImList<In>, T>):ImList<T> return Ht.preservedCast(cast x);
+
 	
 	#end
 }

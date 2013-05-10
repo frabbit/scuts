@@ -16,7 +16,7 @@ using scuts.ht.Context;
 using scuts.core.Promises;
 
 
-class Promises 
+class PromiseSample 
 {
 
   public static function print (s:Dynamic) {

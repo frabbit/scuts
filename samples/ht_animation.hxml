@@ -4,6 +4,6 @@
 -cp ../scutsMCore/src
 -cp ../scutsMacros/src
 -cp src
--main scuts.ht.samples.Animation
+-main scuts.ht.samples.AnimationSample
 --macro sys.FileSystem.createDirectory("bin/samples/ht_animation")
 -js bin/samples/ht_animation/sample.js

@@ -19,7 +19,7 @@ typedef Point = {
   y:Int
 }
 
-class Equals 
+class EqualSample 
 {
   public static function main() 
   {

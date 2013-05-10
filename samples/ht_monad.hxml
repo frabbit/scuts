@@ -4,6 +4,6 @@
 -cp ../scutsMCore/src
 -cp ../scutsMacros/src
 -cp src
--main scuts.ht.samples.Monads
+-main scuts.ht.samples.MonadSample
 --macro sys.FileSystem.createDirectory("bin/samples/ht_monads")
 -x bin/samples/ht_monads/sample

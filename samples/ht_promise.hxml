@@ -4,6 +4,6 @@
 -cp ../scutsMCore/src
 -cp ../scutsMacros/src
 -cp src
--main scuts.ht.samples.Promises
+-main scuts.ht.samples.PromiseSample
 --macro sys.FileSystem.createDirectory("bin/samples/ht_promises")
 -js bin/samples/ht_promises/sample.js

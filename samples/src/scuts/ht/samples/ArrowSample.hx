@@ -7,7 +7,7 @@ import scuts.core.Tuples.*;
 import scuts.core.Tuples;
 using scuts.ht.Context;
 
-class Arrows 
+class ArrowSample 
 {
 
   public static function plus(a:Int, b:Int):String {
@@ -19,7 +19,7 @@ class Arrows
   	
     var f = function (x) return x + 2;
     var g = function (x) return x + 3;
-
+    
 
     var a1 = f.arr_().split_(f.arr_()).runArrow();
 

@@ -4,6 +4,7 @@ import scuts.ht.classes.Monoid;
 
 
 
+
 /*
  * The foldable instance provides various fold operations 
  * for data structures that can be folded.

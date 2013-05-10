@@ -25,7 +25,7 @@ class Ht
   macro public static function implicit (e:Array<Expr>):Expr 
   {
     #if display
-    return null;
+    return macro null;
     #else
     return Manager.registerLocals(e);
     #end

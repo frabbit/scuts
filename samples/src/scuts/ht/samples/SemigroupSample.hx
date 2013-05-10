@@ -9,7 +9,7 @@ import scuts.ht.syntax.SemigroupBuilder;
 using scuts.core.Validations;
 import scuts.core.Tuples.*;
 
-class Semigroups {
+class SemigroupSample {
 
 	public static function main () {
 		trace("hi".append_("hey"));

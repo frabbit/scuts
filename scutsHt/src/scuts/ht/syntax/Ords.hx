@@ -23,5 +23,6 @@ class Ords
   public static inline function max<T>(v1:T, v2:T, o:Ord<T>):T return o.max(v1, v2);
   
   public static inline function min<T>(v1:T, v2:T, o:Ord<T>):T return o.min(v1, v2);
+
   
 }

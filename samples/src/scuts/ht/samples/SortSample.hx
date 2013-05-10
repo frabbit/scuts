@@ -14,7 +14,7 @@ typedef Person = {
   age : Int
 }
 
-class Sort
+class SortSample
 {
   public static function sort <A> (list:Array<A>, ord:Ord<A>) 
   {

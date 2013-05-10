@@ -14,7 +14,7 @@ using scuts.core.Promises;
 // import the scuts.ht context and it's implicit typeclasses
 using scuts.ht.Context;
 
-class Animation 
+class AnimationSample 
 {
   
   // Moves the html element  with the id "elemId" to a new position specified by (newX, newY).
