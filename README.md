@@ -1,15 +1,27 @@
 scuts
 =====
 
-The library scuts is an attempt to integrate haskell/scalaz-like type classes and higher order types in Haxe. It consists of multiple modules, the most important ones are scuts.core (core types and functions on them) and scuts.ht (type classes and higher order types). This library is in an alpha state and changes are likely. The following section explains how scuts.ht works and how it can be used.
+The library scuts (alpha state and changes are likely) is an attempt to integrate haskell/scalaz-like type classes and higher order types in Haxe. It consists of multiple modules:
+
+* scuts.core : core types and functions for working with them
+* scuts.ht : type classes, type class instances, higher order types and implicit resolution algorithms
+* scuts.ds : a few functional data structures
+* scuts.reactive : classes and functions for functional reactive programming
+* scuts.mcore : helper functions for working with macros
+* scuts.macros : useful macros (most of them not working at the moment :()
+
+
+
+The most important modules are scuts.core and scuts.ht and the following section explains how scuts.ht works and how it can be used.
 
 scuts.ht
 ========
 
+
 Higher Order Types
 ------------------
 
-Haxe lacks type constructor polymorphism which is essential to implement Monads, Functors etc. Because of this limitation scuts simulates this missing feature with 2 special types [Of](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/Of.hx) and [In](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/In.hx). 
+Type constructor polymorphism is essential to implement type classes like Monads, Functors etc. Haxe at its core is missing this functionality. Because of this, scuts simulates this feature with 2 special types: [Of](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/Of.hx) and [In](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/In.hx). 
 
 Some Examples:
 
