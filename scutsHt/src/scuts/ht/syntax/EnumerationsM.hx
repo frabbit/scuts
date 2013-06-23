@@ -40,19 +40,19 @@ class EnumerationsM
     return R.resolve(macro scuts.ht.syntax.Enumerations.fromEnum, [i], 2);
   }
   
-  macro public static function enumFrom_ <T>(a:ExprOf<T>):ExprOf<LazyList<T>>
-  {
-    return R.resolve(macro scuts.ht.syntax.Enumerations.enumFrom, [a], 2);
-  }
+  // macro public static function enumFrom_ <T>(a:ExprOf<T>):ExprOf<LazyList<T>>
+  // {
+  //   return R.resolve(macro scuts.ht.syntax.Enumerations.enumFrom, [a], 2);
+  // }
   
-  macro public static function enumFromTo_ <T>(a:ExprOf<T>, b:ExprOf<T>):ExprOf<LazyList<T>>
-  {
-    return R.resolve(macro scuts.ht.syntax.Enumerations.enumFromTo, [a,b], 3);
-  }
+  // macro public static function enumFromTo_ <T>(a:ExprOf<T>, b:ExprOf<T>):ExprOf<LazyList<T>>
+  // {
+  //   return R.resolve(macro scuts.ht.syntax.Enumerations.enumFromTo, [a,b], 3);
+  // }
   
-  macro public static function enumFromThenTo_ <T>(a:ExprOf<T>, b:ExprOf<T>, c:ExprOf<T>):ExprOf<LazyList<T>>
-  {
-    return R.resolve(macro scuts.ht.syntax.Enumerations.enumFromThenTo, [a,b,c], 4);
-  }
+  // macro public static function enumFromThenTo_ <T>(a:ExprOf<T>, b:ExprOf<T>, c:ExprOf<T>):ExprOf<LazyList<T>>
+  // {
+  //   return R.resolve(macro scuts.ht.syntax.Enumerations.enumFromThenTo, [a,b,c], 4);
+  // }
 
 }
