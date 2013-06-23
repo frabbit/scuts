@@ -139,11 +139,13 @@ class RealResolver
       }
 
 
+      
       var outsourceFirstArg = if (args.length > 0) switch (args[0].expr) 
       {
         case EConst(_) | EField({expr:EConst(_)}, _) | EFunction(_,_): false;
         case _ : true;
-      }
+      } else false;
+      
       var outsourceFunc = switch (f.expr) {
         
         case EBlock(_) | EParenthesis({ expr : EBlock(_) | ECall(_)}) | ECall(_): true;
