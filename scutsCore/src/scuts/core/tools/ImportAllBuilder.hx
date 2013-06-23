@@ -15,6 +15,7 @@ class ImportAllBuilder
 
   public static function build(packs:Array<String>, target:String, folder:String, ?packageName:String = "", ?ignore:Array<String>) 
   {
+    #if !display
     if (ignore == null) ignore = [];
 
     var classPaths = Context.getClassPath();
@@ -31,14 +32,24 @@ class ImportAllBuilder
 
       for (cp in classPaths) 
       {
+
+        if (StringTools.endsWith(cp, "/") || StringTools.endsWith(cp, "\\")) {
+          cp = cp.substr(0, cp.length-1);
+        }
         var folder = cp + packPath;
         
-        var sorted = FileSystem.readDirectory(folder);
-        sorted.sort(function (a, b) {
-          var isDirA = FileSystem.isDirectory(folder + "/" + a);
-          var isDirB = FileSystem.isDirectory(folder + "/" + b);
-          return if (!isDirA && isDirB) -1 else if (isDirA && !isDirB) 1 else 0;
-        });
+
+        var sorted = if (FileSystem.exists(folder)) {
+          var f = FileSystem.readDirectory(folder);
+          f.sort(function (a, b) {
+            var isDirA = FileSystem.isDirectory(folder + "/" + a);
+            var isDirB = FileSystem.isDirectory(folder + "/" + b);
+            return if (!isDirA && isDirB) -1 else if (isDirA && !isDirB) 1 else 0;
+          });
+          f;
+        } else {
+          [];
+        }
         
         for (f in sorted) 
         {
@@ -75,6 +86,7 @@ class ImportAllBuilder
     var output = File.write(f +  target + ".hx", false);
     output.writeString(buf.toString());
 	  output.close();
+    #end
   }
   
 }
