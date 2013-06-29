@@ -604,9 +604,11 @@ class RealResolver
 
       //var e = if (cl.module == cl.name || StringTools.endsWith(cl.module, "." + cl.name)) cl.module + "." + f.name else cl.module + "." + cl.name + "." + f.name;
       var e = cl.module + "." + cl.name + "." + f.name;
+      //trace(e);
 
       var parsed = Typer.makeFastTypeable(Context.parse(e, cl.pos));
       var hashAndType = getImplicitExprTypeHashes(parsed);
+      // trace(hashAndType);
       var hashes = hashAndType.hashes;
       
       var data = { cl:cl, field: f, parsed : parsed, followedType : hashAndType.followedType };
@@ -696,8 +698,8 @@ class RealResolver
     {
       var cur = asImplicitObject(parsed);
       var req = asImplicitObject(required);
-      // trace(ExprTools.toString(cur));
-      // trace(ExprTools.toString(req));
+      /*trace(ExprTools.toString(cur));
+      trace(ExprTools.toString(req));*/
       var isComp = Typer.isCompatible( cur, req);
       
       return if (isComp) Some(parsed) else Option.None;
@@ -787,8 +789,11 @@ class RealResolver
           function loop (t:Type) return switch (t) 
           {
             case TLazy(x): loop(Context.follow(x()));
-            case TInst(_,_): resolveImplicitUsingObject(parsed, required, requiredType).map(Success);
-            case TFun(args, _): resolveImplicitUsingFunction(parsed, required, requiredType, args, scopes, lastRequired);
+            case TInst(_,_):     resolveImplicitUsingObject(parsed, required, requiredType).map(Success);
+            case TAbstract(_,_): resolveImplicitUsingObject(parsed, required, requiredType).map(Success);
+            case TEnum(_,_):     resolveImplicitUsingObject(parsed, required, requiredType).map(Success);
+            case TAnonymous(_):  resolveImplicitUsingObject(parsed, required, requiredType).map(Success);
+            case TFun(args, _):  resolveImplicitUsingFunction(parsed, required, requiredType, args, scopes, lastRequired);
             case _:  Option.None;
           }
           return loop(Context.follow(x.field.type));
