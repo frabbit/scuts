@@ -18,7 +18,7 @@ haxelib installation
 You can use the current state of this library with haxelib git, just run the following commands:
 
 	haxelib git scuts-core https://github.com/frabbit/scuts.git master scutsCore
-	haxelib git scuts-mcore https://github.com/frabbit/scuts.git master scutsMcore
+	haxelib git scuts-mcore https://github.com/frabbit/scuts.git master scutsMCore
 	haxelib git scuts-ds https://github.com/frabbit/scuts.git master scutsDs
 	haxelib git scuts-reactive https://github.com/frabbit/scuts.git master scutsReactive
 	haxelib git scuts-macros https://github.com/frabbit/scuts.git master scutsMacros
