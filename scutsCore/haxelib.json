@@ -9,6 +9,6 @@
   "contributors": ["frabbit"],
   "classPath" : "src",
   "dependencies": {
-  	"utest" : "1.x"
+  	"utest" : "1.1.2"
   }
 }

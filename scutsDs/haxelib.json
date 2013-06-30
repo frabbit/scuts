@@ -9,6 +9,6 @@
   "contributors": ["frabbit"],
   "classPath" : "src",
   "dependencies": {
-    "scuts-core" : "0.1.0"
+    "scuts-core" : ""
   }
 }
