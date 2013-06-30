@@ -10,6 +10,18 @@ The library scuts (alpha state and changes are likely) is an attempt to integrat
 * scuts.mcore : helper functions for working with macros
 * scuts.macros : useful macros (most of them not working at the moment :()
 
+haxelib installation
+====================
+
+You can use current state of this library with haxelib git, just run the following commands:
+
+	haxelib git scuts-core https://github.com/frabbit/scuts.git master scutsCore
+	haxelib git scuts-mcore https://github.com/frabbit/scuts.git master scutsMcore
+	haxelib git scuts-ds https://github.com/frabbit/scuts.git master scutsDs
+	haxelib git scuts-reactive https://github.com/frabbit/scuts.git master scutsReactive
+	haxelib git scuts-macros https://github.com/frabbit/scuts.git master scutsMacros
+	haxelib git scuts-ht https://github.com/frabbit/scuts.git master scutsHt
+
 
 
 The most important modules are scuts.core and scuts.ht and the following section explains how scuts.ht works and how it can be used.
