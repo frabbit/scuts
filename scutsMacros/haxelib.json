@@ -10,7 +10,7 @@
   "classPath" : "src",
   "dependencies": {
   	"scuts-core" : "",
-    "scuts-mcore" : "",
+    "scuts-mcore" : ""
 
   }
 }

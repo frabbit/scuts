@@ -10,6 +10,6 @@
   "classPath" : "src",
   "dependencies": {
   	"scuts-core" : "",
-    "scuts-reactive" : "",
+    "scuts-reactive" : ""
   }
 }

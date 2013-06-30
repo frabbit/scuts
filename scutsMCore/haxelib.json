@@ -1,14 +1,14 @@
 {
-  "name": "scuts-core",
+  "name": "scuts-mcore",
   "url" : "https://github.com/frabbit/scuts",
   "license": "MIT",
   "tags": ["cross", "type classes", "functional"],
-  "description": "Scuts core library",
+  "description": "Scuts macro tools",
   "version": "0.1.0",
   "releasenote": "Initial release",
   "contributors": ["frabbit"],
   "classPath" : "src",
   "dependencies": {
-  	"utest" : "1.1.2"
+    "scuts-core" : ""
   }
 }
