@@ -1,0 +1,4 @@
+#build-name=1. Run Tests Core Common
+runTestsCoreCommon.hxml
+#--macro sys.FileSystem.createDirectory("scuts/bin/testCoreNeko")
+-neko scuts/bin/testCoreNeko/test.n

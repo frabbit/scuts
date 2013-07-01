@@ -1,0 +1,10 @@
+
+
+-cp scutsCore/src
+-cp scutsCore/test
+
+-lib utest 
+
+#--macro sys.FileSystem.createDirectory("scuts/bin")
+
+-main scuts.core.AllTests

@@ -1,0 +1,28 @@
+
+
+-cp scutsCore/src
+-cp scutsCore/test
+
+-cp scutsReactive/src
+-cp scutsReactive/test
+
+-cp scutsHt/src
+-cp scutsHt/test
+
+-cp scutsMCore/src
+-cp scutsMCore/test
+
+-cp scutsMacros/src
+-cp scutsMacros/test
+
+-cp scutsDs/src
+-cp scutsDs/test
+
+-cp samples/src
+
+-cp scuts/test 
+
+-lib utest 
+--macro sys.FileSystem.createDirectory("scuts/bin")
+
+-main scuts.reactive.AllTests
