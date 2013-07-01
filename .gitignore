@@ -1,3 +1,15 @@
+/bugs/Bug.hx
+/bugs/Bug2.hx
+/bugs/Helper.hx
+/samples/bin/samples/ht_json/sample.n
+/scuts/bin/testCoreNeko/test.n
+/scuts/bin/testReactiveNeko/test.n
+/testing/sample1/samplex.hxml
+/testing/sample1/Test.hx
+/testing/sample1/Def.hx
+/testing/sample1.hxml
+/testing/bin/testing/sample1/sample.n
+/testing/bin/testing/sample1/sample
 /*.sublime-project
 /*.sublime-workspace
 /.gradle
