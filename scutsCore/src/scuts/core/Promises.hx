@@ -34,7 +34,6 @@ typedef Throwable = Dynamic;
 
 typedef PromiseD<T> = Promise<Throwable, T>;
 
-//typedef Promise<T> = Promiseeneral<Throwable, T>;
 
 @:allow(scuts.core.Promises)
 class Promise<Err, T> 
@@ -53,9 +52,9 @@ class Promise<Err, T>
   var _value:Option<Validation<Err, T>>;
   var _complete:Bool;
   
-  public function new () 
+  function new () 
   {
-    Promises.initMutex(this);
+    initMutex();
     
     _complete = false;
     _value = None;
@@ -64,6 +63,22 @@ class Promise<Err, T>
   }
 
 }
+
+/**
+ * Represents a deferred value, that must be completed. 
+ * It can only be created with Promises.deferred().
+ *
+ */
+abstract Deferred<A,B>(Promise<A,B>) to Promise<A,B> {
+  @:allow(scuts.core.Promises)
+  function new (p:Promise<A,B>) this = p;
+
+  public inline function promise ():Promise<A,B> {
+    return this;
+  }
+}
+
+
 
 
 @:allow(scuts.core.Promise)
@@ -138,21 +153,23 @@ class Promises
     return p;
   }
   
-  public static function progress <E,T>(p:Promise<E,T>,percent:Percent):Promise<E,T>
+
+
+  public static function progress <E,T>(p:Deferred<E,T>,percent:Percent):Deferred<E,T>
   {
     Assert.isTrue(percent >= 0.0 && percent <= 1.0, null);
-    for (l in p._progressListeners) l(percent);
-    return p;
+    for (l in p.promise()._progressListeners) l(percent);
+    return asDeferred(p);
   }
 
-  public static function complete <E, T>(p:Promise<E, T>,val:Validation<E,T>):Promise<E,T> 
+  public static function complete <E, T>(p:Deferred<E, T>,val:Validation<E,T>):Deferred<E,T> 
   {
     return if (!p.isComplete()) tryComplete(p, val) else throw "Cannot complete already completed Promise";
   }
  
-  public static function tryComplete <E, T>(p:Promise<E, T>,val:Validation<E,T>):Promise<E,T> 
+  public static function tryComplete <E, T>(p:Deferred<E, T>,val:Validation<E,T>):Deferred<E,T> 
   {
-    return if (p.isComplete()) p
+    return asDeferred(if (p.isComplete()) p
     else 
     {
       p.lock();
@@ -160,12 +177,12 @@ class Promises
       {
         switch (val) 
         {
-          case Success(s): for (c in p._successListeners) c(s);
-          case Failure(f): for (c in p._failureListeners) c(f);
+          case Success(s): for (c in p.promise()._successListeners) c(s);
+          case Failure(f): for (c in p.promise()._failureListeners) c(f);
         }
-        for (c in p._completeListeners) c(val);
-        p._value = Some(val);
-        p._complete = true;
+        for (c in p.promise()._completeListeners) c(val);
+        p.promise()._value = Some(val);
+        p.promise()._complete = true;
         p.progress(1.0);
         
         
@@ -173,27 +190,31 @@ class Promises
       }
       p.unlock();
       p;
-    }
+    });
   }
   
-  public static function tryFailure <E, T>(p:Promise<E, T>, f : E):Promise<E,T>  
-  {
-    return p.tryComplete(Failure(f));
+  static inline function asDeferred <A,B>(p:Promise<A,B>) {
+    return new Deferred(p);
   }
 
-  public static function trySuccess <E, T>(p:Promise<E, T>, t : T):Promise<E,T> 
+  public static function tryFailure <E, T>(p:Deferred<E, T>, f : E):Deferred<E,T>  
   {
-    return p.tryComplete(Success(t));
+    return asDeferred(p.tryComplete(Failure(f)));
   }
 
-  public static function failure <E, T>(p:Promise<E, T>, f : E):Promise<E,T>  
+  public static function trySuccess <E, T>(p:Deferred<E, T>, t : T):Deferred<E,T> 
   {
-    return p.complete(Failure(f));
+    return asDeferred(p.tryComplete(Success(t)));
   }
 
-  public static function success <E, T>(p:Promise<E, T>, t : T):Promise<E,T> 
+  public static function failure <E, T>(p:Deferred<E, T>, f : E):Deferred<E,T>  
   {
-    return p.complete(Success(t));
+    return asDeferred(p.complete(Failure(f)));
+  }
+
+  public static function success <E, T>(p:Deferred<E, T>, t : T):Deferred<E,T> 
+  {
+    return asDeferred(p.complete(Success(t)));
   }
   
   public static function onComplete <E, T>(p:Promise<E, T>,f:Validation<E,T>->Void) 
@@ -255,9 +276,8 @@ class Promises
 
   public static function combineIterableWith <A,B,E> (a:Iterable<Promise<E,A>>, f:Iterable<A>->B):Promise<E,B>
   {
-    
-   
-    var fut = new Promise();
+
+    var fut = deferred();
     var res = [];
     var progs = [];
     
@@ -323,24 +343,24 @@ class Promises
   }
   
   @:noUsing public static function cancelled <E,S>(e:E):Promise<E,S> {
-    var p = new Promise();
+    var p = deferred();
     p.failure(e);
     return p;
   }
   
   @:noUsing public static function pure <E,S>(s:S):Promise<E,S> 
   {
-    return new Promise().success(s);
+    return deferred().success(s);
   }
   
-  @:noUsing public static function mk <E,S>():Promise<E,S> 
+  @:noUsing public static function deferred <E,S>():Deferred<E,S> 
   {
-    return new Promise();
+    return new Deferred(new Promise());
   }
 
   public static function flatMap < E,S,T > (p:Promise<E,S>, f:S->Promise<E,T>):Promise<E,T>
   {
-    var res = new Promise();
+    var res = deferred();
     
     function success(r) {
       var p1 = f(r);
@@ -358,7 +378,7 @@ class Promises
   
   public static function map < S, T,E > (p:Promise<E,S>, f:S->T):Promise<E,T>
   {
-    var res = new Promise();
+    var res = deferred();
 
     
     
@@ -372,7 +392,7 @@ class Promises
   
   public static function filter <E,T>(p:Promise<E,T>, f:T->Bool, failureVal:E):Promise<E, T>
   {
-    var res = new Promise();
+    var res = deferred();
     p.onSuccess (function (x) if (f(x)) res.success(x) else res.failure(failureVal))
      .onFailure(res.failure)
      .onProgress (res.progress);
@@ -386,7 +406,7 @@ class Promises
   
   public static function flatten <E,T>(p:Promise<E,Promise<E,T>>):Promise<E, T>
   {
-    var res = new Promise();
+    var res = deferred();
     
     function complete (x:Promise<E, T>) {
       x.onComplete (res.complete)
@@ -400,6 +420,7 @@ class Promises
   }
 
   
+
   public static function then<A,B,Z> (a:Promise<Z,A>, b:Void->Promise<Z,B>):Promise<Z,B>
   {
     return a.flatMap(function (_) return b());
@@ -442,13 +463,13 @@ class Promises
   
   public static function liftPromiseF0 <E,A> (f:Void->A):Void->Promise<E,A> 
   {
-    return function () return new Promise().success(f());
+    return function () return deferred().success(f());
   }
 
   public static function liftPromiseF1 <E,A, B> (f:A->B):Promise<E,A>->Promise<E,B> 
   {
     return function (a:Promise<E,A>) {
-      var res = new Promise();
+      var res = deferred();
       a.onSuccess(f.next(res.success))
        .onFailure(res.failure)
        .onProgress(res.progress);
@@ -459,7 +480,7 @@ class Promises
   public static function liftPromiseF2 <A, B, C, E> (f:A->B->C):Promise<E,A>->Promise<E,B>->Promise<E,C> 
   {
     return function (a:Promise<E,A>, b:Promise<E,B>) {
-      var res = new Promise();
+      var res = deferred();
       
       var valA = None;
       var valB = None;
@@ -482,7 +503,7 @@ class Promises
   liftPromiseF3 <A, B, C, D,Z> (f:A->B->C->D):Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>
   {
     return function (a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>) {
-      var res = new Promise();
+      var res = deferred();
       
       var valA = None;
       var valB = None;
@@ -506,7 +527,7 @@ class Promises
   liftPromiseF4 <A, B, C, D, E,Z> (f:A->B->C->D->E):Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>->Promise<Z,E>
   {
     return function (a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>) {
-      var res = new Promise();
+      var res = deferred();
       
       var valA = None;
       var valB = None;
@@ -533,7 +554,7 @@ class Promises
   :Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>->Promise<Z,E>->Promise<Z,F>
   {
     return function (a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>, e:Promise<Z,E>) {
-      var res = new Promise();
+      var res = deferred();
       
       var valA = None;
       var valB = None;
