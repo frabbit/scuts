@@ -18,11 +18,10 @@ package scuts.reactive;
 import scuts.core.Ints;
 import scuts.reactive.Reactive;
 import scuts.core.Arrays;
-import scuts.reactive.Stream;
+
 import scuts.core.Tuples;
-// import scuts.core.Tup3;
-// import scuts.core.Tup4;
-// import scuts.core.Tup5;
+
+using scuts.reactive.StreamSubscriptions;
 import scuts.Scuts;
 
 
@@ -31,11 +30,53 @@ using scuts.core.Arrays;
 using scuts.reactive.Behaviours;
 using scuts.reactive.Streams;
 
+using scuts.core.Promises;
+
 private typedef Beh<T> = Behaviour<T>;
 
+@:allow(scuts.reactive.Streams)
+class Stream<T> 
+{
+  private var _rank: Int;
+  private var _sendsTo: Array<Stream<Dynamic>>;
+  private var _updater: Pulse<Dynamic> -> Propagation<T>;
+  
+  private var _weak: Bool;
+  
+  private var _cleanups: Array<Void -> Void>;
+  
+  private static function _new<T>(updater: Pulse<Dynamic> -> Propagation<T>, sources: Array<Stream<Dynamic>> = null):Stream<T> 
+  {
+    return new Stream(updater, sources);
+  }
+  
+  function new(updater: Pulse<Dynamic> -> Propagation<T>, sources: Array<Stream<Dynamic>> = null) 
+  {
+    this._updater  = updater;
+
+    this._sendsTo  = [];
+    this._weak     = false;
+    this._rank     = Rank.nextRank();
+    this._cleanups = [];
+    
+    if (sources != null) 
+    {
+      for (source in sources) 
+      {
+        source.attachListener(this);
+      }
+    }
+  }
+    
+  
+    
+    
+}
+@:allow(scuts.reactive.Behaviours)
+@:allow(scuts.reactive.StreamSources)
 class Streams 
 {
-  private function new() { }
+  
   
   /**
    * Creates a new stream with the specified updater and optional sources.
@@ -78,6 +119,17 @@ class Streams
       
       return Scuts.error('zero : received a value; zeroE should not receive a value; the value was ' + pulse.value);
     });            
+  }
+
+  /**
+   *
+   * Returns the next new value as a Promise.
+  */
+  public static inline function next<T>(b:Beh<T>): PromiseD<T>
+  {
+    var p = Promises.mk();
+    b.stream.listenOnce(p.success);
+    return p;
   }
   
   /**
@@ -126,15 +178,6 @@ class Streams
       function(pulse) return Propagate(pulse.withValue(value)),
       sources
     );
-  }
-  
-  /**
-   * Creates a "receiver" stream whose sole purpose is to be used in 
-   * combination with sendEvent().
-   */
-  public static function receiver <T>():Stream<T> 
-  {
-    return Streams.identity();
   }
   
   /**
@@ -354,6 +397,8 @@ class Streams
     return stream;
   }
   
+
+
   public static function attachListener<T>(s:Stream<T>, dependent: Stream<Dynamic>): Void 
   {
     s._sendsTo.push(dependent);
@@ -426,6 +471,37 @@ class Streams
   }
 
 
+  public static function listenOnce<T>(s:Stream<T>, f:T->Void): Stream<T>
+  {
+
+    var sub:StreamSubscription<T> = null;
+
+    function once (x:T) {
+      sub.cancel();
+      f(x);
+    }
+
+    sub = listen(s, once);
+    
+    return s;
+    
+  }
+
+  public static function listen<T>(s:Stream<T>, f:T->Void): StreamSubscription<T>
+  {
+
+    var dep = Streams.create(
+      function(pulse: Pulse<T>): Propagation<T> {
+          f(pulse.value);
+          
+          return NotPropagate;
+      },
+      [s]
+    );
+    return new StreamSubscription(s, dep);
+    
+  }
+
 
   /**
    * Converts the stream to an array. Note: This array will grow 
@@ -489,7 +565,7 @@ class Streams
    *
    * @param value The value to send.
    */
-  public static function sendEventDynamic<T>(s:Stream<T>, value: Dynamic): Stream<T> 
+  private static function sendEventDynamic<T>(s:Stream<T>, value: Dynamic): Stream<T> 
   {
     s.propagatePulse(new Pulse(Stamp.nextStamp(), value));
     return s;
@@ -502,15 +578,10 @@ class Streams
    *
    * @param value The value to send.
    */
-  public static function sendEvent<T>(s:Stream<T>, value: T): Stream<T> 
+  private static function send<T>(s:Stream<T>, value: T): Stream<T> 
   {
     s.propagatePulse(new Pulse(Stamp.nextStamp(), value));
     return s;
-  }
-  
-  public static function send<T>(s:Stream<T>, value: T): Stream<T> 
-  {
-    return sendEvent(s, value);
   }
   
   public static function apply<A,B>(f:Stream<A->B>, v:Stream<A>):Stream<B> 
@@ -528,7 +599,7 @@ class Streams
    *                  the event will be scheduled for "as soon as possible".
    *
    */
-  public static function sendLaterIn<T>(s:Stream<T>, value: Dynamic, millis: Int): Stream<T> 
+  private static function sendLaterIn<T>(s:Stream<T>, value: Dynamic, millis: Int): Stream<T> 
   {
     External.setTimeout(
       function() s.sendEventDynamic(value),
@@ -543,7 +614,7 @@ class Streams
    *
    * @param value The value to send.
    */
-  public static function sendLater<T>(s:Stream<T>, value: Dynamic): Stream<T> 
+  private static function sendLater<T>(s:Stream<T>, value: Dynamic): Stream<T> 
   {
     return s.sendLaterIn(value, 0);
   }
@@ -554,7 +625,7 @@ class Streams
    *
    * @param init  The initial value.
    */
-  public static function startsWith<T>(s:Stream<T>, init: T): Beh<T> 
+  public static function asBehaviour<T>(s:Stream<T>, init: T): Beh<T> 
   {
     return Behaviours.fromStream(s, init);
   }

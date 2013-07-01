@@ -25,10 +25,11 @@ typedef Timeout = Timer;
 
 class External {
     public static var setTimeout: (Void -> Void) -> Int -> Timeout = function(f, time) { 
-      #if (!cpp && !neko && !php)
+      #if (!cpp && !neko && !php && !nme)
       return haxe.Timer.delay(f, time); 
       #else
-      return cast null;
+
+      return throw "set Timeout is not supported on this plattform";
       #end
     };
     
@@ -96,7 +97,8 @@ class Rank {
 typedef KeyValue<T> = { k: Int, v: T };
 
 //@:allow(scuts.reactive)
-class PriorityQueue<T> {
+class PriorityQueue<T> 
+{
     var val: Array<KeyValue<T>>;
     
     public function new() {
@@ -124,11 +126,13 @@ class PriorityQueue<T> {
         }
     }
     
-    public function isEmpty(): Bool { 
+    public function isEmpty(): Bool 
+    { 
         return this.val.length == 0; 
     }
     
-    public function pop(): KeyValue<T> {
+    public function pop(): KeyValue<T> 
+    {
         if (this.val.length == 1) {
             return this.val.pop();
         }

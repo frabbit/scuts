@@ -15,14 +15,11 @@
 */
 package scuts.reactive;
 
+import scuts.core.Promises;
 import scuts.reactive.BehavioursBool;
-import scuts.reactive.Streams;
 import scuts.core.Tuples;
 
 import scuts.reactive.Reactive;
-
-import scuts.reactive.Behaviour;
-import scuts.reactive.Stream;
 
 using scuts.core.Iterables;
 using scuts.reactive.Streams;
@@ -31,10 +28,50 @@ using scuts.reactive.Behaviours;
 private typedef Beh<T> = Behaviour<T>;
 
 
+@:allow(scuts.reactive)
+class Behaviour<T> 
+{
+  private var _underlyingRaw: Stream<Dynamic>;
+  private var _underlying:    Stream<T>;
+  private var _updater:       Pulse<Dynamic> -> Propagation<T>;
+  
+  private var _last: T;
+  
+  public var stream(get, null):Stream<T>;
+
+  public function get_stream () return _underlying;
+
+  function new(stream: Stream<Dynamic>, init: T, updater: Pulse<Dynamic> -> Propagation<T>) 
+  {
+    this._last          = init;        
+    this._underlyingRaw = stream;
+    this._updater       = updater;
+    
+    var self = this;
+    
+    this._underlying = Streams.create(
+      function(pulse)
+      {
+        return switch (updater(pulse)) 
+        {
+          case Propagate(newPulse):
+            self._last = newPulse.value;
+            Propagate(newPulse);
+          case NotPropagate:
+            NotPropagate;
+        }
+      },
+      // [stream]???
+      [stream.uniqueSteps()]
+    );
+  }
+  
+  
+}
+
 
 class Behaviours 
 {
-  private function new() { }
   
   /**
    * Applies a function to a signal's value that 
@@ -48,34 +85,14 @@ class Behaviours
    */
   public static function mapC<T>(b:Beh<T>, f: Stream<T> -> Stream<T>): Beh<T> 
   {
-    return f(b.changes()).startsWith(b.get());
-  }
-  
-  /**
-   * Sends an event to the underlying Stream that will be immediately 
-   * propagated with a new timestamp.
-   *
-   * @param   value   the value to send Into the Stream.
-   */
-  public static function sendSignalDynamic<T>(b:Beh<T>, value: Dynamic): Void 
-  {
-    b.changes().sendEventDynamic(value);
+    return f(b.stream).asBehaviour(b.get());
   }
 
-  /**
-   * Sends an event to the underlying Stream that will be immediately 
-   * propagated with a new timestamp.
-   *
-   * @param   value   the value to send Into the Stream.
-   */
-  public static function sendSignal<T>(b:Beh<T>,value: T): Void 
-  {
-    b.changes().sendEvent(value);
-  }
+
   
   @:noUsing public static function constant<T>(value: T): Beh<T> 
   {
-    return Streams.identity().startsWith(value);
+    return Streams.identity().asBehaviour(value);
   }
   
   @:noUsing public static inline function pure<T>(value: T): Beh<T> 
@@ -100,7 +117,7 @@ class Behaviours
    * Calms the stream. No event will be get through unless it occurs T 
    * milliseconds or more before the following event.
    *
-   * @param time  The number of milliseconds as a Signal.
+   * @param time  The number of milliseconds as a Behaviour.
    */
   public static function calmB<T>(b:Beh<T>, time: Beh<Int>): Beh<T> 
   {
@@ -142,7 +159,7 @@ class Behaviours
   /**
    * Delays this stream by the specified number of milliseconds.
    * 
-   * @param   time    Time in milliseconds as a Signal
+   * @param   time    Time in milliseconds as a Behaviour
    */
   public static function delayB<T>(b:Beh<T>, time: Beh<Int>): Beh<T> 
   {
@@ -165,9 +182,9 @@ class Behaviours
   public static function liftB<T,Z>(b:Beh<T>, f: Beh<T -> Z>): Beh<Z> 
   {
     // uniqueSteps()???
-    return b.changes()
+    return b.stream
     .map(function(a) return f.get()(a))
-    .startsWith(f.get()(b.get()));
+    .asBehaviour(f.get()(b.get()));
   }
   */
     
@@ -203,8 +220,8 @@ class Behaviours
     var createTuple = function() return Tup3.create(b1.get(), b2.get(), b3.get());
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(createTuple())),
-      [cast b1.changes(), cast b2.changes(), cast b3.changes()]
-    ).startsWith(createTuple());
+      [cast b1.stream, cast b2.stream, cast b3.stream]
+    ).asBehaviour(createTuple());
   }
   
   /**
@@ -225,8 +242,8 @@ class Behaviours
       function(pulse) {
         return Propagate(pulse.withValue(create()));
       },
-      [cast b1.changes(), cast b2.changes(), cast b3.changes(), cast b4.changes()]
-    ).startsWith(create());
+      [cast b1.stream, cast b2.stream, cast b3.stream, cast b4.stream]
+    ).asBehaviour(create());
   }
     
    /**
@@ -247,8 +264,8 @@ class Behaviours
     
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(create())),
-      [cast b1.changes(), cast b2.changes(), cast b3.changes(), cast b4.changes(), cast b5.changes()]
-    ).startsWith(create());
+      [cast b1.stream, cast b2.stream, cast b3.stream, cast b4.stream, cast b5.stream]
+    ).asBehaviour(create());
   }
   
   /**
@@ -279,8 +296,8 @@ class Behaviours
     function create() return f(b1.get(), b2.get());
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(create())),
-      [cast b1.changes(), cast b2.changes()]
-    ).startsWith(create());
+      [cast b1.stream, cast b2.stream]
+    ).asBehaviour(create());
   }
   
   public static function zipWith3<T, B, C, X>(b1:Beh<T>, b2: Beh<B>, b3: Beh<C>, f:T->B->C->X): Beh<X> {
@@ -289,8 +306,8 @@ class Behaviours
     
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(create())),
-      [cast b1.changes(), cast b2.changes(), cast b3.changes()]
-    ).startsWith(create());
+      [cast b1.stream, cast b2.stream, cast b3.stream]
+    ).asBehaviour(create());
   }
   
   public static function zipWith4<T, B, C, D, X>(b1:Beh<T>, b2: Beh<B>, b3: Beh<C>, b4:Beh<D>, f:T->B->C->D->X): Beh<X> 
@@ -299,8 +316,8 @@ class Behaviours
     
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(create())),
-      [cast b1.changes(), cast b2.changes(), cast b3.changes(), cast b4.changes()]
-    ).startsWith(create());
+      [cast b1.stream, cast b2.stream, cast b3.stream, cast b4.stream]
+    ).asBehaviour(create());
   }
     
     
@@ -315,14 +332,14 @@ class Behaviours
    */
   public static function map<T, Z>(b:Beh<T>, f: T -> Z): Beh<Z> 
   {
-    return b.changes().map(f).startsWith(f(b.valueNow()));
+    return b.stream.map(f).asBehaviour(f(b.value()));
   }
   
   public static function apply<A,B>(f:Beh<A->B>, v:Beh<A>):Beh<B> 
   {
-    return v.changes()
+    return v.stream
     .map(function(a) return f.get()(a))
-    .startsWith(f.get()(v.get()));
+    .asBehaviour(f.get()(v.get()));
     
     // functor bind apply
     //function z (g:A->B) return map(v, function (x) return g(x));
@@ -372,26 +389,12 @@ class Behaviours
   {
     return valueNow(b);
   }
-  
-  /**
-   * Returns the present value of 'this' Signal. 
-   *
-   */
-  public static function set<T>(b:Beh<T>, x:T):Beh<T> 
-  {
-    b.sendSignal(x);
-    return b;
-  }
-  
-  public static function modify<T>(b:Beh<T>, f:T->T):Beh<T> 
-  {
-    b.set(f(b.get()));
-    return b;
-  }
+
+
     
   public static function flatMap<T,Z> (b:Beh<T>, f : T->Beh<Z>):Beh<Z>
   {
-    return flatten(b.changes().map(f).startsWith(f(b.get())));
+    return flatten(b.stream.map(f).asBehaviour(f(b.get())));
   }
     
   /**
@@ -419,7 +422,7 @@ class Behaviours
           prevSourceE.removeListener(receiverE);
         }
 
-        prevSourceE = p.value.changes();
+        prevSourceE = p.value.stream;
         
         prevSourceE.attachListener(receiverE);
 
@@ -427,12 +430,12 @@ class Behaviours
         
         return NotPropagate;
       },
-      [beh.changes()]
+      [beh.stream]
     );
 
     makerE.sendEventDynamic(init);
 
-    return receiverE.startsWith(init.get());
+    return receiverE.asBehaviour(init.get());
   }
     
     /**
@@ -476,7 +479,7 @@ class Behaviours
       return Streams.create(
         function(pulse) return Propagate(pulse.withValue(zipValueNow())),
         behaviours.map(changes)
-      ).startsWith(zipValueNow());
+      ).asBehaviour(zipValueNow());
     }
     
     /**
@@ -486,7 +489,7 @@ class Behaviours
      */
     @:noUsing public static function sample(time: Int): Beh<Int> 
     {
-      return Streams.timer(time).startsWith(Std.int(External.now()));
+      return Streams.timer(time).asBehaviour(Std.int(External.now()));
     }
     
     /**
@@ -496,12 +499,12 @@ class Behaviours
      */
     @:noUsing public static function sampleB(time: Beh<Int>): Beh<Int> 
     {
-      return Streams.timerB(time).startsWith(Std.int(External.now()));
+      return Streams.timerB(time).asBehaviour(Std.int(External.now()));
     }
     
   @:noUsing public static function fromStream<T>(s:Stream<T>, init: T): Beh<T> 
   {
-    return Beh._new(
+    return new Beh(
       s,
       init,
       function(pulse: Pulse<Dynamic>): Propagation<T> {

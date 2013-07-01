@@ -34,7 +34,7 @@ class BehavioursBool {
      * opposite of the original original Signal.
      */
     public static function not(signal: Beh<Bool>): Beh<Bool> {
-        return StreamsBool.not(signal.changes()).startsWith(!signal.valueNow());
+        return StreamsBool.not(signal.stream).asBehaviour(!signal.valueNow());
     }
     
     /**
@@ -58,7 +58,7 @@ class BehavioursBool {
      */
     public static function ifTrue<T>(condition: Beh<Bool>, thenB: Beh<T>, elseB: Beh<T>): Beh<T> {			
 			return
-				StreamsBool.ifTrue(condition.changes(), thenB.changes(), elseB.changes()).startsWith(
+				StreamsBool.ifTrue(condition.stream, thenB.stream, elseB.stream).asBehaviour(
 					if (condition.valueNow()) thenB.valueNow() else elseB.valueNow()
 				);			
     }

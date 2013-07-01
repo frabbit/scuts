@@ -18,7 +18,7 @@ package scuts.reactive;
 import scuts.core.Bools;
 import scuts.core.Predicates;
 import scuts.reactive.Reactive;
-import scuts.reactive.Stream;
+
 
 using scuts.reactive.Streams;
 
