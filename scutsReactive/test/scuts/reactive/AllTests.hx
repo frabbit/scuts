@@ -26,6 +26,7 @@ class AllTests
     #if !macro
     runner.addCase(new scuts.reactive.BehavioursTest());
     runner.addCase(new scuts.reactive.ReactiveTest());
+    runner.addCase(new scuts.reactive.StreamsTest());
     #end
   } 
 
