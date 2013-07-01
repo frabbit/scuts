@@ -17,6 +17,58 @@ class Tuples {
   }
 }
 
+
+class Tup2s 
+{
+  /**
+   * Swaps the values of a tuple.
+   * 
+   * Tup2.create(1,2).swap(); // (2,1)
+   */
+  public static function swap <A,B>(t:Tup2<A,B>) return Tup2.create(t._2, t._1);
+  
+  public static inline function first  <A,B>(t:Tup2<A,B>) return t._1;
+  public static inline function second <A,B>(t:Tup2<A,B>) return t._2;
+  
+
+  public static inline function into <A,B,C>(t:Tup2<A,B>, f:A->B->C) return f(t._1, t._2);
+
+
+  /**
+   * Compares two tuples for equality based on equal functions for the parameter types.
+   */
+  public static function eq <A,B>(t1:Tup2<A,B>, t2:Tup2<A,B>, eq1:A->A->Bool, eq2:B->B->Bool) {
+    return eq1(t1._1, t2._1) && eq2(t1._2, t2._2);
+  }
+}
+
+class Tup3s 
+{
+  /**
+   * Swaps the first 2 values of `t`.
+   * 
+   * `Tup3.create(1,2,3).swap(); // (2,1,3)`
+   */
+  public static function swap <A,B,C>(t:Tup3<A,B,C>) return Tup3.create(t._2, t._1, t._3);
+  
+  public static inline function first  <A,B,C>(t:Tup3<A,B,C>) return t._1;
+  public static inline function second <A,B,C>(t:Tup3<A,B,C>) return t._2;
+  public static inline function third <A,B,C>(t:Tup3<A,B,C>) return t._3;
+  
+
+  public static inline function into <A,B,C,D>(t:Tup3<A,B,C>, f:A->B->C->D) return f(t._1, t._2, t._3);
+
+
+  /**
+   * Compares two tuples for equality based on equal functions for the parameter types.
+   */
+  public static function eq <A,B,C>(t1:Tup3<A,B,C>, t2:Tup3<A,B,C>, eq1:A->A->Bool, eq2:B->B->Bool, eq3:C->C->Bool) {
+    return eq1(t1._1, t2._1) && eq2(t1._2, t2._2) && eq3(t1._3, t2._3);
+  }
+}
+
+
+
 class Tup2<A,B> 
 {
   public var _1(default, null):A;
@@ -122,25 +174,6 @@ class Tup5<A,B,C,D,E>
   
 }
 
-class Tup2s 
-{
-  /**
-   * Swaps the values of a tuple.
-   * 
-   * Tup2.create(1,2).swap(); // (2,1)
-   */
-  public static function swap <A,B>(t:Tup2<A,B>) return Tup2.create(t._2, t._1);
-  
-  public static function first  <A,B>(t:Tup2<A,B>) return t._1;
-  public static function second <A,B>(t:Tup2<A,B>) return t._2;
-  
-  /**
-   * Compares two tuples for equality based on equal functions for the parameter types.
-   */
-  public static function eq <A,B>(t1:Tup2<A,B>, t2:Tup2<A,B>, eq1:A->A->Bool, eq2:B->B->Bool) {
-    return eq1(t1._1, t2._1) && eq2(t1._2, t2._2);
-  }
-}
 
 class Tup6<A,B,C,D,E,F> 
 {
