@@ -202,7 +202,7 @@ class PersonJsonConverter implements JsonConverter<Person>
 		
 		
 		return 
-			JsonObject([
+			JsonValue.JsonObject([
 				"age" => intJsonConverter.toJson(p.age),
 				"name" => stringJsonConverter.toJson(p.name),
 				"children" => p.children.toJson._()

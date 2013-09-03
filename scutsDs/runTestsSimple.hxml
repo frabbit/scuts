@@ -1,0 +1,15 @@
+#build-name=DS TEST
+-cp src 
+-cp ../scutsCore/src
+-cp ../scutsHt/src
+-cp ../scutsMCore/src
+-cp ../scutsReactive/src
+-cp test 
+#-lib utest 
+-cp /home/frabbit/work/tools/haxe-git/lib/utest/1,1,2
+
+-D nodejs
+-D dump=pretty
+-main scuts.ds.AllTests
+
+-js bin/testJs.js

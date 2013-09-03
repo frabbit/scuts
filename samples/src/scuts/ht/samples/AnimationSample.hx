@@ -20,7 +20,7 @@ class AnimationSample
   // Moves the html element  with the id "elemId" to a new position specified by (newX, newY).
   public static function move (elemId:String, newX:Int, newY:Int):PromiseD<Unit> 
   {
-    var p = new Promise();
+    var p = Promises.deferred();
     new JQuery("#" + elemId).animate( { left : newX, top:newY }, 1000, p.success.bind(Unit));
     return p;
   }
@@ -28,7 +28,7 @@ class AnimationSample
   // scales the html element with the id elemId to it's new size
   public static function resize (elemId:String, newWidth:Int, newHeight:Int):PromiseD<Unit> 
   {
-    var p = new Promise();
+    var p = Promises.deferred();
     new JQuery("#" + elemId).animate( { width : newWidth, height:newHeight }, 1000, p.success.bind(Unit));
     return p;
   }

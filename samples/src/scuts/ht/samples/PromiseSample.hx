@@ -27,7 +27,7 @@ class PromiseSample
   public static function loadData(url:String):Promise<String, String> 
   {
     
-    var p = new Promise();
+    var p = Promises.deferred();
     try {
       var http = new Http(url);
       http.onData = function (data) {
