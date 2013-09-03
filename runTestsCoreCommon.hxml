@@ -1,13 +1,13 @@
 
 
--cp scutsCore/src
--cp scutsCore/test
+-cp scuts-core/src
+-cp scuts-core/test
 
--cp scutsHt/src
+-cp scuts-ht/src
 
--cp scutsDs/src
+-cp scuts-ds/src
 
--cp scutsMCore/src
+-cp scuts-mcore/src
 
 -lib utest 
 

@@ -1,9 +1,9 @@
 -cp src 
 -cp samples 
--cp ../scutsCore/src
--cp ../scutsDs/src
--cp ../scutsMCore/src
--cp ../scutsMacros/src
+-cp ../scuts-core/src
+-cp ../scuts-ds/src
+-cp ../scuts-mcore/src
+-cp ../scuts-macros/src
 -cp test 
 -lib utest 
 

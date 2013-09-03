@@ -1,22 +1,22 @@
 
 
--cp scutsCore/src
--cp scutsCore/test
+-cp scuts-core/src
+-cp scuts-core/test
 
--cp scutsReactive/src
--cp scutsReactive/test
+-cp scuts-reactive/src
+-cp scuts-reactive/test
 
--cp scutsHt/src
--cp scutsHt/test
+-cp scuts-ht/src
+-cp scuts-ht/test
 
--cp scutsMCore/src
--cp scutsMCore/test
+-cp scuts-mcore/src
+-cp scuts-mcore/test
 
--cp scutsMacros/src
--cp scutsMacros/test
+-cp scuts-macros/src
+-cp scuts-macros/test
 
--cp scutsDs/src
--cp scutsDs/test
+-cp scuts-ds/src
+-cp scuts-ds/test
 
 -cp samples/src
 
@@ -24,12 +24,12 @@
 
 -lib utest 
 --macro sys.FileSystem.createDirectory("scuts/bin")
---macro scuts.core.tools.ImportAllBuilder.build(["scuts.core"], "ImportAll", "scutsCore/test/scuts/core", "scuts.core")
---macro scuts.core.tools.ImportAllBuilder.build(["scuts.reactive"], "ImportAll", "scutsReactive/test/scuts/reactive", "scuts.reactive")
---macro scuts.core.tools.ImportAllBuilder.build(["scuts.ht"], "ImportAll", "scutsHt/test/scuts/ht", "scuts.ht")
---macro scuts.core.tools.ImportAllBuilder.build(["scuts.ds"], "ImportAll", "scutsDs/test/scuts/ds", "scuts.ds")
---macro scuts.core.tools.ImportAllBuilder.build(["scuts.mcore"], "ImportAll", "scutsMCore/test/scuts/mcore", "scuts.mcore")
---macro scuts.core.tools.ImportAllBuilder.build(["scuts.macros"], "ImportAll", "scutsMacros/test/scuts/macros", "scuts.macros")
+--macro scuts.core.tools.ImportAllBuilder.build(["scuts.core"], "ImportAll", "scuts-core/test/scuts/core", "scuts.core")
+--macro scuts.core.tools.ImportAllBuilder.build(["scuts.reactive"], "ImportAll", "scuts-reactive/test/scuts/reactive", "scuts.reactive")
+--macro scuts.core.tools.ImportAllBuilder.build(["scuts.ht"], "ImportAll", "scuts-ht/test/scuts/ht", "scuts.ht")
+--macro scuts.core.tools.ImportAllBuilder.build(["scuts.ds"], "ImportAll", "scuts-ds/test/scuts/ds", "scuts.ds")
+--macro scuts.core.tools.ImportAllBuilder.build(["scuts.mcore"], "ImportAll", "scuts-mcore/test/scuts/mcore", "scuts.mcore")
+--macro scuts.core.tools.ImportAllBuilder.build(["scuts.macros"], "ImportAll", "scuts-macros/test/scuts/macros", "scuts.macros")
 
 
 --macro Sys.println("\n-------- macro unit tests ------\n")

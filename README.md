@@ -17,12 +17,12 @@ haxelib installation
 
 You can use the current state of this library with haxelib git, just run the following commands:
 
-	haxelib git scuts-core https://github.com/frabbit/scuts.git master scutsCore
-	haxelib git scuts-mcore https://github.com/frabbit/scuts.git master scutsMCore
-	haxelib git scuts-ds https://github.com/frabbit/scuts.git master scutsDs
-	haxelib git scuts-reactive https://github.com/frabbit/scuts.git master scutsReactive
-	haxelib git scuts-macros https://github.com/frabbit/scuts.git master scutsMacros
-	haxelib git scuts-ht https://github.com/frabbit/scuts.git master scutsHt
+	haxelib git scuts-core https://github.com/frabbit/scuts.git master scuts-core
+	haxelib git scuts-mcore https://github.com/frabbit/scuts.git master scuts-mcore
+	haxelib git scuts-ds https://github.com/frabbit/scuts.git master scuts-ds
+	haxelib git scuts-reactive https://github.com/frabbit/scuts.git master scuts-reactive
+	haxelib git scuts-macros https://github.com/frabbit/scuts.git master scuts-macros
+	haxelib git scuts-ht https://github.com/frabbit/scuts.git master scuts-ht
 
 
 scuts.ht
@@ -32,7 +32,7 @@ scuts.ht
 Higher Order Types
 ------------------
 
-Type constructor polymorphism is essential to implement type classes like Monads, Functors etc. Haxe at its core is missing this functionality. Because of this, scuts simulates this feature with 2 special types: [Of](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/Of.hx) and [In](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/In.hx). 
+Type constructor polymorphism is essential to implement type classes like Monads, Functors etc. Haxe at its core is missing this functionality. Because of this, scuts simulates this feature with 2 special types: [Of](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/core/Of.hx) and [In](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/core/In.hx). 
 
 Some Examples how these types relate to a scala-like type constructor notation:
 
@@ -67,26 +67,26 @@ Type classes are implemented as interfaces and type class inheritance through in
 
 Some Examples:
 
-* [Pure](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/classes/Pure.hx)
-* [Apply](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/classes/Apply.hx)
-* [Bind](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/classes/Bind.hx)
-* [Monad](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/classes/Monad.hx)
-* [Functor](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/classes/Functor.hx)
-* [Eq](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/classes/Eq.hx)
+* [Pure](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/classes/Pure.hx)
+* [Apply](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/classes/Apply.hx)
+* [Bind](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/classes/Bind.hx)
+* [Monad](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/classes/Monad.hx)
+* [Functor](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/classes/Functor.hx)
+* [Eq](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/classes/Eq.hx)
 
 Ord with default implementations
 
-* [Ord](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/classes/Ord.hx)
-* [OrdAbstract](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/classes/OrdAbstract.hx)
+* [Ord](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/classes/Ord.hx)
+* [OrdAbstract](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/classes/OrdAbstract.hx)
 
-Type class instances can be found in [scuts.ht.instances](https://github.com/frabbit/scuts/tree/master/scutsHt/src/scuts/ht/instances).
+Type class instances can be found in [scuts.ht.instances](https://github.com/frabbit/scuts/tree/master/scuts-ht/src/scuts/ht/instances).
 
 Syntax for using Type classes
 -----------------------------
 
-The package [scuts.ht.syntax](https://github.com/frabbit/scuts/tree/master/scutsHt/src/scuts/ht/syntax) contains classes for working with type classes (all of them are imported with "using scuts.ht.Context"). For every type class there's a syntax class and a macro based syntax class (M suffix).
+The package [scuts.ht.syntax](https://github.com/frabbit/scuts/tree/master/scuts-ht/src/scuts/ht/syntax) contains classes for working with type classes (all of them are imported with "using scuts.ht.Context"). For every type class there's a syntax class and a macro based syntax class (M suffix).
 
-The class [scuts.ht.syntax.Eqs](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/syntax/Eqs.hx) for example defines the static function eq to physically compare 2 values. It takes 3 parameters, two of them are values of the same arbitrary type and the last one is the required type class which contains the implemented Eq type class instance. This function can be called like this:
+The class [scuts.ht.syntax.Eqs](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/syntax/Eqs.hx) for example defines the static function eq to physically compare 2 values. It takes 3 parameters, two of them are values of the same arbitrary type and the last one is the required type class which contains the implemented Eq type class instance. This function can be called like this:
 
 	Eqs.eq(1,1, EqInstances.intEq);
 	Eqs.eq([1],[1], EqInstances.arrayEq(EqInstances.intEq));
@@ -118,7 +118,7 @@ It is important to understand that the functions found in all of these macro syn
 Implicit resolution of type classes
 -----------------------------------
 
-Type classes are resolved with the help of a resolver macro (function `resolve` in [scuts.ht.core.Ht](https://github.com/frabbit/scuts/blob/master/scutsHt/src/scuts/ht/core/Ht.hx)). It resolves the required type classes based on the current context of the function/macro call. 
+Type classes are resolved with the help of a resolver macro (function `resolve` in [scuts.ht.core.Ht](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/core/Ht.hx)). It resolves the required type classes based on the current context of the function/macro call. 
 
 The expression `1.eq_(1)` from the following section is just syntactic sugar for `Ht.resolve(Eqs.eq, 1, 1)`. To have a short and nice way to call arbitrary functions with implicit resolution, there is also an alias for resolve named `_` (yes, just an underscore ;)) which can be used via using on every function. To make things clear, the following calls are equivalent: 
 
@@ -131,7 +131,7 @@ The expression `1.eq_(1)` from the following section is just syntactic sugar for
 
 The context is divided in 4 scopes which are checked in the following order: local, member, static and using. Implicits of parent classes are not taken into account currently, but this is planned.
 
-Please take a look at the [test cases](https://github.com/frabbit/scuts/blob/master/scutsHt/test/scuts/ht/ImplicitScopeTests.hx) to get the general idea of scopes.
+Please take a look at the [test cases](https://github.com/frabbit/scuts/blob/master/scuts-ht/test/scuts/ht/ImplicitScopeTests.hx) to get the general idea of scopes.
 
 Local type classes can be registered for implicit resolution with the help of `Ht.implicit`, these type classes are only available in the current and in nested local scopes.
 

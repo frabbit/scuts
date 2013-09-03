@@ -16,11 +16,11 @@
 /.hxsublime_tmp
 /dump
 /log
-/scutsHt/log
-/scutsHt/benchmark/log
-/scutsHt/benchmark/dump
-/scutsHt/benchmark/bin/cache1.n.n
-/scutsHt/benchmark/bin/bench1.n.n
+/scuts-ht/log
+/scuts-ht/benchmark/log
+/scuts-ht/benchmark/dump
+/scuts-ht/benchmark/bin/cache1.n.n
+/scuts-ht/benchmark/bin/bench1.n.n
 /build/dump
 /build/log
 /samples/dump

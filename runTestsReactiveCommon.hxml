@@ -1,22 +1,22 @@
 
 
--cp scutsCore/src
--cp scutsCore/test
+-cp scuts-core/src
+-cp scuts-core/test
 
--cp scutsReactive/src
--cp scutsReactive/test
+-cp scuts-reactive/src
+-cp scuts-reactive/test
 
--cp scutsHt/src
--cp scutsHt/test
+-cp scuts-ht/src
+-cp scuts-ht/test
 
--cp scutsMCore/src
--cp scutsMCore/test
+-cp scuts-mcore/src
+-cp scuts-mcore/test
 
--cp scutsMacros/src
--cp scutsMacros/test
+-cp scuts-macros/src
+-cp scuts-macros/test
 
--cp scutsDs/src
--cp scutsDs/test
+-cp scuts-ds/src
+-cp scuts-ds/test
 
 -cp samples/src
 

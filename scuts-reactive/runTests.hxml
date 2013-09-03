@@ -1,6 +1,6 @@
 -cp src 
 -cp test 
--cp ../scutsCore/src
+-cp ../scuts-core/src
 -lib utest 
 
 

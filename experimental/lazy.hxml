@@ -1,11 +1,11 @@
 #build-name=Lazy
 
 -main LazyTest
--cp ../scutsCore/src
--cp ../scutsDs/src
--cp ../scutsMacros/src
--cp ../scutsMCore/src
--cp ../scutsHt/src
+-cp ../scuts-core/src
+-cp ../scuts-ds/src
+-cp ../scuts-macros/src
+-cp ../scuts-mcore/src
+-cp ../scuts-ht/src
 -cp src
 -D nodejs
 -debug
