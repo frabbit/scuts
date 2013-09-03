@@ -1,0 +1,14 @@
+#build-name=ZipperTest
+
+-main zippers.ListZipperTest
+-cp ../scutsCore/src
+-cp ../scutsDs/src
+-cp ../scutsMacros/src
+-cp ../scutsMCore/src
+-cp ../scutsHt/src
+-cp src
+-D nodejs
+-debug
+-dce no
+-D dump=pretty
+-neko zippers.n

@@ -1,0 +1,12 @@
+#build-name=Implicits
+
+-main ImplicitsAsAbstracts
+-cp ../scutsCore/src
+-cp ../scutsDs/src
+-cp ../scutsMacros/src
+-cp ../scutsMCore/src
+-cp ../scutsHt/src
+-cp src
+-D nodejs
+-debug
+-neko implicitsAsAbstracts.n

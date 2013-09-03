@@ -1,0 +1,14 @@
+#build-name=Lazy
+
+-main LazyTest
+-cp ../scutsCore/src
+-cp ../scutsDs/src
+-cp ../scutsMacros/src
+-cp ../scutsMCore/src
+-cp ../scutsHt/src
+-cp src
+-D nodejs
+-debug
+-dce no
+-D dump=pretty
+-js lazy.js

@@ -1,0 +1,11 @@
+#build-name=LensTest
+
+-main lenses.LensTest
+-cp ../scutsCore/src
+-cp ../scutsMacros/src
+-cp ../scutsDs/src
+-cp ../scutsMCore/src
+-cp src
+-debug
+-D dump=pretty
+-cpp lenses_cpp

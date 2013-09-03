@@ -1,0 +1,14 @@
+#build-name=IterateesTest
+
+-main iteratee.IterateesTest
+-cp ../scutsCore/src
+-cp ../scutsDs/src
+-cp ../scutsMacros/src
+-cp ../scutsMCore/src
+-cp ../scutsHt/src
+-cp src
+-D nodejs
+-D dump=pretty
+-debug
+-dce no
+-java iteratees_java
