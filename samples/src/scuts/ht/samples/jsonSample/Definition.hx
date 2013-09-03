@@ -1,41 +1,174 @@
 package scuts.ht.samples.jsonSample;
 
+import haxe.ds.Option;
 import scuts.ht.core.Ht;
+
 using scuts.ht.core.Ht;
-using Definition.ToJsonSyntax;
+using scuts.ht.samples.jsonSample.Data;
 using Definition.ImplicitInstances;
 
 
-typedef Json = String;
+using scuts.core.Iterables;
+using scuts.core.Arrays;
 
-interface ToJson<T> {
-	public function toJson (t:T):Json;
-}
 
-class ArrayToJson<T> implements ToJson<Array<T>> {
 
-	var toJsonT:ToJson<T>;
+class ArrayJsonConverter<T> implements JsonConverter<Array<T>> 
+{
 
-	public function new (toJsonT:ToJson<T>) {
-		this.toJsonT = toJsonT;
+	var jsonConverterT:JsonConverter<T>;
+
+	public function new (jsonConverterT:JsonConverter<T>) 
+	{
+		this.jsonConverterT = jsonConverterT;
 	}
 
-	public function toJson (t:Array<T>):Json {
-		return "[" + t.map(toJsonT.toJson).join(",") + "]";
+	public function toJson (t:Array<T>):JsonValue 
+	{
+		return JsonArray(t.map(jsonConverterT.toJson));
 	}	
+
+	public function fromJson (t:JsonValue):Array<T>
+	{
+		return switch (t) 
+		{
+			case JsonArray(a): a.map(jsonConverterT.fromJson);
+			case _: throw "Cannot convert " + t + " to Array";
+		}
+	}
 }
 
-class IntToJson implements ToJson<Int> {
+class IntJsonConverter implements JsonConverter<Int> {
 
 	public function new () {}
 
-	public function toJson (t:Int):Json {
-		return Std.string(t);
+	public function toJson (t:Int):JsonValue 
+	{
+		return JsonInt(t);
+	}
+	public function fromJson (t:JsonValue):Int 
+	{
+		return switch (t) 
+		{
+			case JsonInt(x): x;
+			case _ : throw "Cannot convert " + t + " to Int";
+		}
 	}
 }
 
 
-class Person {
+class FloatJsonConverter implements JsonConverter<Float> {
+
+	public function new () {}
+
+	public function toJson (t:Float):JsonValue 
+	{
+		return JsonFloat(t);
+	}
+
+	public function fromJson (t:JsonValue):Float 
+	{
+		return switch (t) 
+		{
+			case JsonFloat(x): x;
+			case _ : throw "Cannot convert " + t + " to Float";
+		}
+	}
+}
+
+class StringJsonConverter implements JsonConverter<String> {
+
+	public function new () {}
+
+	public function toJson (t:String):JsonValue 
+	{
+		return JsonString(t);
+	}
+
+	public function fromJson (t:JsonValue):String 
+	{
+		return switch (t) 
+		{
+			case JsonString(x): x;
+			case _ : throw "Cannot convert " + t + " to String";
+		}
+	}
+}
+
+
+
+
+class IterableJsonConverter<T> implements JsonConverter<Iterable<T>> 
+{
+
+	@:implicit var jsonConverterT:JsonConverter<T>;
+
+	public function new (jsonConverterT:JsonConverter<T>) 
+	{
+		this.jsonConverterT = jsonConverterT;
+	}
+
+	public inline function toJson (t:Iterable<T>):JsonValue {
+		return JsonObject([
+			"type" => JsonString("iterable"),
+			"data" => JsonArray(Lambda.map(t, jsonConverterT.toJson).toArray())
+		]);
+	}
+
+	public inline function fromJson (t:JsonValue):Iterable<T> {
+		return switch (t) 
+		{
+			case JsonObject(x): 
+				x.get("data").fromJson._(Ht.implicitly("Array<T>"));
+			case _ : throw "Cannot convert " + t + " to Iterable";
+		}	
+	}
+}
+
+class OptionJsonConverter<T> implements JsonConverter<Option<T>> 
+{
+
+	@:implicit var jsonConverterT:JsonConverter<T>;
+
+	public function new (jsonConverterT:JsonConverter<T>) {
+		this.jsonConverterT = jsonConverterT;
+	}
+
+	public inline function fromJson (t:JsonValue):Option<T>
+	{
+		return switch (t) {
+			case JsonObject(m): switch (m.get("type")) {
+				case JsonString("None"): None;
+				case JsonString("Some"):
+					var impT = Ht.implicitly("T");
+					Some(m.get("value").fromJson._(impT));
+				case _ : 
+					throw "Cannot convert " + t + " to Option";
+			}
+			case x:
+				throw "Cannot convert " + t + " to Option";
+		}
+	} 	
+
+	public inline function toJson (t:Option<T>):JsonValue 
+	{
+		return switch(t) {
+			case None: JsonObject([
+				"type" => JsonString("None")
+			]);
+			case Some(v): JsonObject([
+				"type" => JsonString("Some"),
+				"value" => v.toJson._()
+			]);
+		}
+	}
+
+
+}
+
+
+class Person 
+{
 	public var age(default, null) : Int;
 	public var name(default, null) : String;
 	// recursive Person
@@ -49,73 +182,76 @@ class Person {
 }
 
 
-class PersonToJson implements ToJson<Person> 
+class PersonJsonConverter implements JsonConverter<Person> 
 {
 	// it's not 
-	var intToJson:ToJson<Int>;
-	var stringToJson:ToJson<String>;
+	@:implicit var intJsonConverter:JsonConverter<Int>;
+	@:implicit var stringJsonConverter:JsonConverter<String>;
 
 
 
-	public function new (intToJson:ToJson<Int>, stringToJson:ToJson<String>) 
+	public function new (intJsonConverter:JsonConverter<Int>, stringJsonConverter:JsonConverter<String>) 
 	{
-		this.intToJson = intToJson;
-		this.stringToJson = stringToJson;
+		this.intJsonConverter = intJsonConverter;
+		this.stringJsonConverter = stringJsonConverter;
 
 	}
 
-	public function toJson (p:Person):Json 
+	public function toJson (p:Person):JsonValue
 	{
-
-		Ht.implicit(intToJson, stringToJson);
 		
-		return '{' + 
-			    '"age" : ' + intToJson.toJson(p.age) + "," +
-			    '"name" : ' + stringToJson.toJson(p.name) + "," +
-			    '"children" : ' + p.children.toJson._() + 
-			  ' }';
+		
+		return 
+			JsonObject([
+				"age" => intJsonConverter.toJson(p.age),
+				"name" => stringJsonConverter.toJson(p.name),
+				"children" => p.children.toJson._()
+			]);
 	}
-}
 
-class FloatToJson implements ToJson<Float> {
-
-	public function new () {}
-
-	public function toJson (t:Float):Json {
-		return Std.string(t);
-	}
-}
-
-
-class StringToJson implements ToJson<String> {
-
-	public function new () {}
-
-	public function toJson (t:String):Json {
-		return '"$t"';
-	}
-}
-
-class ToJsonSyntax {
-	public static function toJson <T>(x:T, toJson:ToJson<T>) {
-		return toJson.toJson(x);
+	public function fromJson (p:JsonValue):Person
+	{
+		return switch (p) 
+		{
+			case JsonObject(m):
+				new Person(
+					intJsonConverter.fromJson(m.get("age")),
+					stringJsonConverter.fromJson(m.get("name")),
+					m.get("children").fromJson._(Ht.implicitly("Array<Person>"))
+					);
+			case x:
+				Scuts.error("cannot convert " + p + " into Person");
+		}
 	}
 }
 
 // provide the instances
-class ImplicitInstances {
+class ImplicitInstances 
+{
 	@:implicit 
-	public static var intToJson : ToJson<Int> = new IntToJson();
+	public static var intJsonConverter : JsonConverter<Int> = new IntJsonConverter();
 
 	@:implicit 
-	public static var floatToJson : ToJson<Float> = new FloatToJson();
+	public static var floatJsonConverter : JsonConverter<Float> = new FloatJsonConverter();
 
 	@:implicit 
-	public static var stringToJson : ToJson<String> = new StringToJson();
+	public static var stringJsonConverter : JsonConverter<String> = new StringJsonConverter();
+
+	@:implicit 
+	public static var x : Int = 6;
+	@:implicit public static var y : Float = 6.1;
+	
+
+	@:implicit public static inline function iterableJsonConverter<T>(x:JsonConverter<T>):JsonConverter<Iterable<T>> return new IterableJsonConverter(x);
 
 	@:implicit @:noUsing 
-	public static function arrayToJson <T>(x:ToJson<T>):ToJson<Array<T>> return new ArrayToJson(x);
+	public static function arrayJsonConverter <T>(x:JsonConverter<T>):JsonConverter<Array<T>> return new ArrayJsonConverter(x);
 
 	@:implicit @:noUsing 
-	public static function personToJson <T>(x1:ToJson<Int>, x2:ToJson<String>):ToJson<Person> return new PersonToJson(x1,x2);
+	public static function optionJsonConverter <T>(x:JsonConverter<T>):JsonConverter<Option<T>> return new OptionJsonConverter(x);
+
+	@:implicit @:noUsing 
+	public static function personJsonConverter <T>(x1:JsonConverter<Int>, x2:JsonConverter<String>):JsonConverter<Person> return new PersonJsonConverter(x1,x2);
+
 }
+

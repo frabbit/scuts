@@ -32,5 +32,5 @@
 -main scuts.AllTests
 
 
--x scuts/bin/testNeko
+-neko scuts/bin/testNeko
 

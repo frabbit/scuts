@@ -4,12 +4,17 @@ package scuts.ds;
 
 import scuts.core.debug.Assert;
 import scuts.core.Tuples;
+import scuts.core.Tuples.*;
+import scuts.ht.classes.Eq;
+import scuts.ht.classes.Ord;
 import scuts.Scuts;
 
 
 using scuts.core.Iterators;
 using scuts.core.Options;
 
+
+using scuts.ds.ImLists;
 
 enum ImList<T> {
   Nil;
@@ -43,6 +48,45 @@ private class ListIter<T>
 
 class ImLists 
 {
+
+  public static function eq <T>(x1:List<T>, x2:List<T>, eqTc:Eq<T>)
+  {
+    return switch [x1,x2] {
+      case [Nil, Nil]: true;
+      case [Cons(a1, t1), Cons(a2,t2)]: eqTc.eq(a1,a2) && eq(t1, t2, eqTc);
+      case _ : false;
+    }
+  }
+
+  public static function groupBy <T> (l:List<T>, f:T->T->Bool):List<List<T>>
+  {
+    return switch (l) 
+    {
+      case Nil: Nil;
+      case Cons(x, xs): 
+        var r = span(xs, f.bind(x));
+        var ys = r._1;
+        var zs = r._2;
+        Cons(Cons(x, ys), groupBy(zs, f));
+    }
+  } 
+  
+  public static function span <T> (l:List<T>, f:T->Bool):Tup2<List<T>, List<T>>
+  {
+    return span1(l, Nil, f);
+  } 
+
+  static function span1 <T> (l:List<T>, prefix:List<T>, f:T->Bool):Tup2<List<T>, List<T>>
+  {
+    return switch (l) {
+      case Nil: tup2(prefix.reverse(), Nil);
+      case Cons(x, tail) if (f(x)): span1(tail, prefix.cons(x), f);
+      case tail: tup2(prefix.reverse(), tail);
+    }
+  } 
+
+
+
   public static function each <T> (l:List<T>, f:T->Void) 
   {
     while (true) {
@@ -90,7 +134,7 @@ class ImLists
     return fromArrayWithBounds(it.toArray());
   }
   
-  @:noUsing public static inline function mkEmpty <T> ():List<T> {
+  @:generic @:noUsing public static inline function mkEmpty <T> ():List<T> {
     return Nil;
   }
   
@@ -126,7 +170,7 @@ class ImLists
     return new ListIter(l);
   }
   
-  public static function foldLeft <A,B> (list:List<B>, f:A->B->A, init:A):A 
+  public static function foldLeft <A,B> (list:List<A>, init:B, f:B->A->B):B 
   {
     while (!isEmpty(list)) 
     {
@@ -136,7 +180,7 @@ class ImLists
     return init;
   }
   
-  public static function foldRight <A,B> (list:List<A>, f:A->B->B, init:B):B 
+  public static function foldRight <A,B> (list:List<A>, init:B, f:A->B->B):B 
   {
     var a = toArray(list);
     var i = a.length;
@@ -146,7 +190,7 @@ class ImLists
     return init;
   }
   
-  public static function foldLeftWithIndex <A,B> (list:List<B>, f:A->B->Int->A, init:A):A 
+  public static function foldLeftWithIndex <A,B> (list:List<B>, init:A, f:A->B->Int->A):A 
   {
     var i = 0;
     
@@ -177,7 +221,7 @@ class ImLists
   public static function toString <T> (list:List<T>, show:T->String):String 
   {
     return "ImList["
-      + foldLeftWithIndex(list, function (acc, el, i) return acc + ((i>0) ? ", " : "") + show(el), "") 
+      + foldLeftWithIndex(list, "", function (acc, el, i) return acc + ((i>0) ? ", " : "") + show(el)) 
       + "]";
   }
   
@@ -426,6 +470,33 @@ class ImLists
     }
     return l2;
   }
+
+
+  public static function concatReversed <T>(l1:List<T>, l2:List<T>):List<T> 
+  {
+    while (!isEmpty(l1)) {
+      l2 = cons(l2, first(l1));
+      l1 = tail(l1);
+    }
+    return l2;
+  }
+
+
+  public static function quicksort <T>(l:List<T>, ord:Ord<T>):List<T>
+  {
+    return switch (l) 
+    {
+      case Nil: Nil;
+      case Cons(x, xs): 
+
+        var smaller = filter(xs, ord.lessOrEq.bind(_,x));
+        var larger = filter(xs, ord.greater.bind(_,x));
+        
+        quicksort(smaller,ord).concat(mkOne(x)).concat(quicksort(larger,ord));
+      
+
+    }
+  }
   
   public static function filter <T>(l:List<T>, f:T->Bool):List<T> 
   {
@@ -440,6 +511,8 @@ class ImLists
     return reverse(stack);
   }
   
+  
+
   public static function flatMap <S, T>(l:List<S>, f:S->List<T>):List<T>
   {
     return flatten(map(l,f));

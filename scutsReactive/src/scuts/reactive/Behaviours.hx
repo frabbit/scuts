@@ -332,7 +332,7 @@ class Behaviours
    */
   public static function map<T, Z>(b:Beh<T>, f: T -> Z): Beh<Z> 
   {
-    return b.stream.map(f).asBehaviour(f(b.value()));
+    return b.stream.map(f).asBehaviour(f(b.get()));
   }
   
   public static function apply<A,B>(f:Beh<A->B>, v:Beh<A>):Beh<B> 

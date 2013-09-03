@@ -16,6 +16,11 @@ class Strings
     return b.toString();
   }
   
+  public static inline function append (s1:String, s2:String):String 
+  {
+    return s1 + s2;
+  }
+
   /**
    * Trims surrounding whitespace of a string.
    */
@@ -163,6 +168,11 @@ class Strings
 
   public static function compareInt(s1:String, s2:String):Int {
     return if (s1 < s2) -1 else if (s1 > s2) 1 else 0;
+  }
+
+  public static function firstToUppercase(s:String):String {
+
+    return if (s.length == 0) s else s.charAt(0).toUpperCase() + s.substr(1);
   }
   
   

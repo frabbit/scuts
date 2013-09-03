@@ -101,6 +101,14 @@ class Options {
     case Some(v): Left(v);
     case None:    Right(right);
   }
+
+  public static function toArray <A>(o:Option<A>):Array<A> return switch (o) 
+  {
+    case Some(v): [v];
+    case None:    [];
+  }
+
+  
   
   public static function toLeft <A,B>(o:Option<A>, right:Void->B):Either<A,B> return switch (o) 
   {
@@ -203,9 +211,17 @@ class Options {
     }
   }
 
-  
-  
+  @:noUsing public static function liftF1 <A,B>(f:A->B):Option<A>->Option<B> 
+  {
+    return function (o1) return switch (o1) 
+    {
+      case Some(a) : Some(f(a));
+      case None : None;
+    
+    }
+  }
 }
+
 
 class OptionDynamicConversions 
 {

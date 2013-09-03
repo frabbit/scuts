@@ -1,3 +1,4 @@
+#build-name=Json Example
 -cp ../scutsCore/src
 -cp ../scutsHt/src
 -cp ../scutsDs/src
@@ -5,5 +6,7 @@
 -cp ../scutsMacros/src
 -cp src
 -main scuts.ht.samples.jsonSample.JsonSample
---macro sys.FileSystem.createDirectory("bin/samples/ht_json")
--x bin/samples/ht_json/sample
+#--macro sys.FileSystem.createDirectory("bin/samples/ht_json")
+#-D dump=pretty
+-neko bin/samples/ht_json/sample.n
+

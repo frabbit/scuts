@@ -98,13 +98,13 @@ class Iterators
   {
     var res = [];
     // TODO cast can be solved with type parameter constraints
-    return cast doFilter(it, filter, res);
+    return doFilter(it, filter, res, function (a,e) a.push(e));
   }
   
-  static function doFilter < A,X:{ function push (a:A):Void; } > (it:Iterator<A>, filter:A->Bool, cont: X ):X {
+  static function doFilter < A,X > (it:Iterator<A>, filter:A->Bool, cont: X, append : X->A->Void ):X {
     for (e in it) 
     {
-      if (filter(e)) cont.push(e);
+      if (filter(e)) append(cont,e);
     }
     return cont;
   }
@@ -113,7 +113,7 @@ class Iterators
   {
     var res = new List();
     // TODO cast can be solved with type parameter constraints
-    return doFilter(it, filter, res); 
+    return doFilter(it, filter, res, function (a,e) a.add(e)); 
   }
   public static function findIndex<T>(iter:Iterator<T>, f:T->Bool):Option<Int>
   {

@@ -55,6 +55,13 @@ class Function1Opts
 
 class Function1s 
 {
+  public static function on <A,B,C>(on:B->B->C, f:A->B):A->A->C
+  {
+    return function (a,b) {
+      return on(f(a), f(b));
+    }
+  }
+
   public static function map <A,B,R>(f:A->B, mapper:B->R):A->R
   {
     return function (a:A) return mapper(f(a));

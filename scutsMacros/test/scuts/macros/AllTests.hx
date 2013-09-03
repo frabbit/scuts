@@ -4,9 +4,6 @@ package scuts.macros;
 import utest.Runner;
 import utest.ui.Report;
 
-#if (!macro && !excludeImportAll)
-import scuts.macros.ImportAll;
-#end
 
 class AllTests 
 {
@@ -24,7 +21,7 @@ class AllTests
 
     public static function addTests (runner:Runner) {
     	#if !macro
-    	
+    	runner.addCase(new ImplicitSupportTest());
     	#end
     }
 }

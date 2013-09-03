@@ -1,6 +1,7 @@
 package scuts.ht.syntax;
 
 
+using scuts.ds.LazyLists;
 import scuts.ht.classes.MonadEmpty;
 
 import scuts.ht.core.Of;
@@ -60,6 +61,18 @@ class Monads
       );
     }
     return Arrays.foldRight(arr, m.pure([]), k);
+  }
+
+  public static function sequenceLazy <M,B>(arr:LazyList<Of<M, B>>, m:Monad<M>):Of<M,LazyList<B>>
+  {
+    var k = function (m1:Of<M,B>,m2:Of<M,LazyList<B>>) {
+      return m.flatMap(m1, function (x:B) 
+         return m.flatMap(m2, function (xs:LazyList<B>) 
+          return m.pure(LazyLists.mkOne(x).concat(xs))
+          )
+      );
+    }
+    return LazyLists.foldRight(arr, m.pure(LazyLists.mkEmpty()), k);
   }
   
   public static inline function mapM <M,A,B>(a:Array<A>, f:A->Of<M,B>, m:Monad<M>):Of<M,Array<B>>

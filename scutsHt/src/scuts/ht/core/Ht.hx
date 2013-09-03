@@ -3,14 +3,17 @@ package scuts.ht.core;
 
 
 #if macro
+
 #if !display
+
 import scuts.ht.macros.implicits.Manager;
-import scuts.Scuts;
+
+
 #end
+
+import haxe.macro.Context;
 import scuts.ht.macros.implicits.Resolver;
 import haxe.macro.Expr;
-
-
 #end
 
 class Ht
@@ -75,6 +78,28 @@ class Ht
   macro public static function implicitByType (type:String):Expr 
   {
     return Resolver.resolveImplicitObjByType(type);
+  }
+
+  @:noUsing macro public static function implicitly (e:Expr):Expr 
+  {
+    var s = switch (e.expr) {
+      case EConst(CString(s)): s;
+      case _ : throw "Parameter must be a Type as a constant string";"";
+    }
+    var e = Context.parse(" { var e : scuts.ht.core.Implicitly<" + s + "> = null; e; } ", Context.currentPos());
+    var ct = switch (e.expr) {
+      case EBlock([{expr:EVars(v)},_]): v[0].type;
+      case _ : throw "cannot type " + s; null;
+    }
+    
+    //return { expr : ECheckType(macro null, ct), pos: Context.currentPos()}; 
+    return macro { var x : $ct = null; x; };
+  }
+
+  @:noUsing macro public static function implicitly2 ():Expr 
+  {
+    
+    return macro { var x : String = null; x; };
   }
   
   /**

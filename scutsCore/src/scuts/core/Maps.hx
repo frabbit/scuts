@@ -10,31 +10,82 @@ using scuts.core.Nulls;
 
 class StringMaps {
 
+  @:noUsing public static function create <T>():StringMap<T> {
+    return new StringMap();
+  }
+
   public static function mapElems<A,B>(h:StringMap<A>, f : A -> B):StringMap<B>
   {
-    return Maps.mapElems(h, f, function () return new StringMap());
+    return Maps.mapElems(h, f, create);
   }
 
   public static function mapElemsWithKeys<A,B>(h:StringMap<A>, f : String -> A -> B):StringMap<B>
   {
-    return Maps.mapElemsWithKeys(h, f, function () return new StringMap());
+    return Maps.mapElemsWithKeys(h, f, create);
   }
+
+  public static function imSet <B>(m:StringMap<B>, key:String, v:B):StringMap<B>
+  {
+    return Maps.imSet(m, key, v, create);
+  }
+
+  public static function getOption<A>(h:StringMap<A>, key:String):Option<A>
+  {
+    return h.get(key).nullToOption();
+    
+  }
+
+
 }
 
 class IntMaps {
 
+  @:noUsing public static function create <T>():IntMap<T> {
+    return new IntMap();
+  }
+
   public static function mapElems<A,B>(h:IntMap<A>, f : A -> B):IntMap<B>
   {
-    return Maps.mapElems(h, f, function () return new IntMap());
+    return Maps.mapElems(h, f, create);
   }
   public static function mapElemsWithKeys<A,B>(h:IntMap<A>, f : Int -> A -> B):IntMap<B>
   {
-    return Maps.mapElemsWithKeys(h, f, function () return new IntMap());
+    return Maps.mapElemsWithKeys(h, f, create);
   }
+
+
 }
 
 class Maps 
 {
+
+  /**
+   * immutable Set operation, returns a new Map and doesn't change the given Map m.
+   */
+  public static function imSet <A,B>(m:Map<A,B>, key:A, v:B, createEmptyMap:Void->Map<A,B>):Map<A,B>
+  {
+    var newMap = createEmptyMap();
+    
+    var found = false;
+
+    for (k in m.keys()) {
+      
+      if (key == k) 
+      {
+        newMap.set(k,v);
+        found = true;
+      } 
+      else 
+      {
+        newMap.set(k,m.get(k));
+      }
+    }
+    if (!found) {
+      newMap.set(key, v);
+    }
+    return newMap;
+  }
+  
 
   public static function each<A,B>(m:Map<A, B>, f : A -> B, f:A->B->Void):Void
   {
@@ -126,12 +177,12 @@ class Maps
     return res;
   }
   
-  public static function getOption<A>(h:Map<String, A>, key:String):Option<A>
+  public static function getOption<K,A>(h:Map<K, A>, key:K):Option<A>
   {
     return h.get(key).nullToOption();
   }
   
-  public static function getOrElseConst<A>(h:Map<String, A>, key:String, elseValue:A):A
+  public static function getOrElseConst<K,A>(h:Map<K, A>, key:K, elseValue:A):A
   {
     return h.get(key).nullGetOrElseConst(elseValue);
   }

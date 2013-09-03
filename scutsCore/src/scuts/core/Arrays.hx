@@ -83,6 +83,8 @@ class Arrays
     return res;
   }
   
+
+
   /**
    * Checks if a1 and a2 are equal, the elements are compared by eqElem.
    */
@@ -345,6 +347,43 @@ class Arrays
       else arr[arr.length - 1];
   }
   
+  public static function imSet<T>(arr:Array<T>, index:Int, v:T):Array<T> 
+  {
+    return if (index < arr.length && index >= 0) 
+    {
+      var res = [];
+
+      for (i in 0...arr.length) 
+      {
+        if (index == i) 
+        {
+          res.push(v);
+        } 
+        else 
+        {
+          res.push(arr[i]);
+        }
+      }
+      res;
+    } 
+    else if (index == arr.length) 
+    {
+      var a = arr.copy();
+      a.push(v);
+      a;
+    } 
+    else arr;
+  }
+
+  public static function elemAtOption<T>(arr:Array<T>, index:Int):Option<T> 
+  {
+    return if (index < arr.length && index >= 0) {
+      Some(arr[index]);
+    } else {
+      None;
+    }
+  }
+
   public static function lastOption<T>(arr:Array<T>):Option<T>
   {
     return if (arr.length == 0) None else Some(arr[arr.length - 1]);

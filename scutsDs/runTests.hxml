@@ -1,5 +1,8 @@
 -cp src 
 -cp ../scutsCore/src
+-cp ../scutsMCore/src
+-cp ../scutsHt/src
+-cp ../scutsReactive/src
 -cp test 
 -lib utest 
 
@@ -12,4 +15,5 @@
 --macro Sys.println("\n-------- regular unit tests ------\n")
 -main scuts.ds.AllTests
 
--x bin/testNeko.n
+-D nodejs
+-js bin/testJs.js

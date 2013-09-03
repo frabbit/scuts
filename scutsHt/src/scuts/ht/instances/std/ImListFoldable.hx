@@ -14,12 +14,12 @@ class ImListFoldable extends FoldableAbstract<ImList<In>>
   
   override public inline function foldRight <A,B>(x:ImListOf<A>, init:B, f:A->B->B ):B  
   {
-    return ImLists.foldRight(x, f, init);
+    return ImLists.foldRight(x, init, f);
   }
   
   override public inline function foldLeft <A,B>(x:ImListOf<B>, init:A, f:A->B->A ):A 
   {
-    return ImLists.foldLeft(x, f, init);
+    return ImLists.foldLeft(x, init, f);
   }
   
 }

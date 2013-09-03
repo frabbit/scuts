@@ -94,6 +94,8 @@ class RealDoTools {
       var isZero = requiresMonadEmpty(exprs);
       var monadExpr = getMonadExpr(o, isZero);
       
+
+
       var res = buildWithMonad(monadExpr, exprs, false, isZero, m);
       //Resolver.applyImplicitDowncast(res, true);
       res;
@@ -115,6 +117,7 @@ class RealDoTools {
     
     // check if the passed monad is a const ident. 
     // If yes, we don't need to build a block for the resulting expression.
+
     var isConstIdent = monad.isConstIdent();
     
     var withMonadId = monadId != null;

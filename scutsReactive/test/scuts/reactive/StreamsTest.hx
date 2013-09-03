@@ -24,10 +24,6 @@ class StreamsTest {
 		var x = 0;
 		function listener (z) { x = z;}
 
-		
-		
-		
-
 		var s = StreamSources.create();
 		var subscription = s.stream.listen(listener);
 		Assert.equals(0, x);
@@ -45,8 +41,7 @@ class StreamsTest {
 		Assert.equals(4, x);
 
 
-		var p = Promises.mk();
-
+		var p = Promises.deferred();
 
 		subscription.pauseUntil(p);
 

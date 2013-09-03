@@ -24,7 +24,7 @@ class PromiseTBind<M> implements Bind<Of<M, PromiseD<In>>> {
   {
     function f1 (a:PromiseD<A>):Of<M,PromiseD<B>> 
     {
-      var x:PromiseD<B> = new PromiseD();
+      var x:Deferred<Dynamic,B> = Promises.deferred();
       a.onFailure(x.failure);
       a.onSuccess(function (a1:A) 
       {

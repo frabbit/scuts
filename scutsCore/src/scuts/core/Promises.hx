@@ -362,11 +362,12 @@ class Promises
   {
     var res = deferred();
     
-    function success(r) {
+    function success(r) 
+    {
       var p1 = f(r);
-      p1.onSuccess(res.success);
-      p1.onProgress(function (p) res.progress(0.5 + p * 0.5));
-      p1.onFailure(res.failure);
+      p1.onSuccess(res.success)
+        .onProgress(function (p) res.progress(0.5 + p * 0.5))
+        .onFailure(res.failure);
     }
     
     p.onSuccess(success)
@@ -379,12 +380,20 @@ class Promises
   public static function map < S, T,E > (p:Promise<E,S>, f:S->T):Promise<E,T>
   {
     var res = deferred();
-
-    
-    
-    
+  
     p.onSuccess (f.next(res.success))
      .onFailure(res.failure)
+     .onProgress (res.progress);
+      
+    return res;
+  }
+
+  public static function mapFailure < T,E, EE > (p:Promise<E,T>, f:E->EE):Promise<EE,T>
+  {
+    var res = deferred();
+ 
+    p.onSuccess (res.success)
+     .onFailure(f.next(res.failure))
      .onProgress (res.progress);
       
     return res;
@@ -414,8 +423,8 @@ class Promises
     }
     
     p.onSuccess(complete)
-    .onFailure( res.failure)
-    .onProgress (res.progress);
+     .onFailure( res.failure)
+     .onProgress (res.progress);
     return res;
   }
 

@@ -127,7 +127,7 @@ class Streams
   */
   public static inline function next<T>(b:Beh<T>): PromiseD<T>
   {
-    var p = Promises.mk();
+    var p = Promises.deferred();
     b.stream.listenOnce(p.success);
     return p;
   }

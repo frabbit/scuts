@@ -26,6 +26,9 @@ class AllTests
     	#if !macro
     	runner.addCase(new scuts.core.PromisesTest());
     	runner.addCase(new scuts.core.StringsTest());
+      runner.addCase(new scuts.core.ReadersTest());
+      runner.addCase(new scuts.core.WritersTest());
+      
     	#end
     }
 }

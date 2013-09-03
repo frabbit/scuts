@@ -3,6 +3,12 @@
 -cp scutsCore/src
 -cp scutsCore/test
 
+-cp scutsHt/src
+
+-cp scutsDs/src
+
+-cp scutsMCore/src
+
 -lib utest 
 
 #--macro sys.FileSystem.createDirectory("scuts/bin")

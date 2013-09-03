@@ -1,16 +1,20 @@
+#build-name=Macros All
+
 -cp src 
 -cp ../scutsCore/src
 -cp ../scutsMCore/src
+-cp ../scutsHt/src
+-cp ../scutsDs/src
+-cp ../scutsReactive/src
 -cp test 
 -lib utest 
 
 
 -D standaloneTest
---macro sys.FileSystem.createDirectory("bin")
---macro scuts.core.tools.ImportAllBuilder.build(["scuts.macros"], "ImportAll", "test/scuts/macros", "scuts.macros")
---macro Sys.println("\n-------- macro unit tests ------\n")
---macro scuts.macros.AllTests.main()
---macro Sys.println("\n-------- regular unit tests ------\n")
+
+-D dump=pretty
 -main scuts.macros.AllTests
 
--x bin/testNeko.n
+-D nodejs
+
+-js bin/testJs.js

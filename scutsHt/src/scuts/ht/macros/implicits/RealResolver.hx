@@ -105,85 +105,116 @@ class RealResolver
   static var resolveCache = new Cache();
   static var calls = 0;
 
+
+  static function isMacroCall (f:Expr) {
+    return try {
+      Context.typeof(f);
+      return false;
+    } catch (e:haxe.macro.Expr.Error) {
+      
+      if (e.message == "Macro functions must be called immediately") {
+        true;
+      } else {
+        false;
+      }
+      
+    }
+  }
+  
+
   public static function resolve (f:Expr, args:Array<Expr>, ?numArgs:Int = -1)
   {
+    trace("------------- start");
+    trace(ExprTools.toString(macro $f($a{args}) ));
     return Profiler.profile(function () 
     {
-      Profiler.push("check-args");
-      if (args == null) args = [];
-      
-      numArgs = if (numArgs == -1 && args.length > 0) switch (args[args.length-1].expr) 
-      {
-        case EMeta(m, {expr:EConst(CInt(x))}) if (m.name == ":resolveParamsCount"):
-          args.pop();
-          Std.parseInt(x);
-        case _ : -1;
-      }
-      else numArgs; 
-      Profiler.pop();
-
-      function resolveRegular () 
-      {
-        return Profiler.profile(function () return switch (resolve1(f,f, args, Manager.getImplicitsFromScope(), [], numArgs)) 
-        {
-          case Success(e): 
-            //trace(ExprTools.toString(e));
-            e;
-          case Failure(err): 
-            var pos = Std.string(Context.getPosInfos(f.pos));
-            var msg = "Resolver Error for Expr: " + ExprTools.toString(macro $f($a{args})) + " at " + pos + "\n" + ErrorPrinter.toString(err);
-            //Scuts.error(msg);
-            Context.warning(msg, f.pos);
-            { expr : ECall(f, args), pos: Context.currentPos()};  
-        }, "resolveRegular");
-      }
-
-
-      
-      var outsourceFirstArg = if (args.length > 0) switch (args[0].expr) 
-      {
-        case EConst(_) | EField({expr:EConst(_)}, _) | EFunction(_,_): false;
-        case _ : true;
-      } else false;
-      
-      var outsourceFunc = switch (f.expr) {
-        
-        case EBlock(_) | EParenthesis({ expr : EBlock(_) | ECall(_)}) | ECall(_): true;
-        case _ : false;
-      }
-
-      return Profiler.profile(function () return if (outsourceFirstArg || outsourceFunc) 
-      {
-        var p = Context.currentPos();
-        
-        var newArgs = [];
-
-        newArgs.push(if (outsourceFunc) macro @:pos(p) __f1 else f);
-
-        if (outsourceFirstArg) newArgs.push(macro @:pos(p) __a1);
-        
-        var startIndex = if (outsourceFirstArg) 1 else 0;
-
-        for (i in startIndex...args.length) newArgs.push(args[i]);
-        
-        // pass the param count of function f to the runtime and catch it like above, so we don't have to type the function (could be expensive)
-        if (numArgs != -1) newArgs.push(macro @:resolveParamsCount $v{numArgs});
-        
-
-        var blockExprs = [];
-
-        if (outsourceFunc) blockExprs.push(macro @:pos(p) var __f1 = $f);
-        if (outsourceFirstArg) blockExprs.push(macro @:pos(p) var __a1 = ${args[0]});
-
-        blockExprs.push(macro scuts.ht.core.Ht.resolve($a{newArgs}));
-
-        var res = macro @:pos(p) $b{blockExprs};
-        //trace(ExprTools.toString(res));
-        res;
+      return if (isMacroCall(f)) {
+        macro $f($a{args});
       } else {
-        resolveRegular();
-      }, "outsource complex expressions");
-    
+
+
+
+        Profiler.push("check-args");
+        if (args == null) args = [];
+        
+        numArgs = if (numArgs == -1 && args.length > 0) switch (args[args.length-1].expr) 
+        {
+          case EMeta(m, {expr:EConst(CInt(x))}) if (m.name == ":resolveParamsCount"):
+            args.pop();
+            Std.parseInt(x);
+          case _ : -1;
+        }
+        else numArgs; 
+        Profiler.pop();
+
+        function resolveRegular () 
+        {
+          return Profiler.profile(function () return switch (resolve1(f,f, args, Manager.getImplicitsFromScope(), [], numArgs)) 
+          {
+            case Success(e): 
+              //trace(ExprTools.toString(e));
+              e;
+            case Failure(err): 
+              var pos = Std.string(Context.getPosInfos(f.pos));
+              var msg = "Resolver Error for Expr: " + ExprTools.toString(macro $f($a{args})) + " at " + pos + "\n" + ErrorPrinter.toString(err);
+              //Scuts.error(msg);
+              Context.warning(msg, f.pos);
+              { expr : ECall(f, args), pos: Context.currentPos()};  
+          }, "resolveRegular");
+        }
+
+
+        
+        var outsourceFirstArg = if (args.length > 0) switch (args[0].expr) 
+        {
+          case EConst(_) | EField({expr:EConst(_)}, _) | EFunction(_,_): false;
+          case _ : true;
+        } else false;
+        
+        //trace(ExprTools.toString(f));
+        var outsourceFunc = switch (f.expr) {
+          
+          case EBlock(_) | EParenthesis({ expr : EBlock(_) | ECall(_)}) | ECall(_): true;
+          case _ : false;
+        }
+        trace("------------- pre return");
+        return Profiler.profile(function () return if (outsourceFirstArg || outsourceFunc) 
+        {
+          var p = Context.currentPos();
+          
+          var newArgs = [];
+
+          newArgs.push(if (outsourceFunc) macro @:pos(p) __f1 else f);
+
+          if (outsourceFirstArg) newArgs.push(macro @:pos(p) __a1);
+          
+          var startIndex = if (outsourceFirstArg) 1 else 0;
+
+          for (i in startIndex...args.length) newArgs.push(args[i]);
+          
+          // pass the param count of function f to the runtime and catch it like above, so we don't have to type the function (could be expensive)
+          if (numArgs != -1) newArgs.push(macro @:resolveParamsCount $v{numArgs});
+          
+
+          var blockExprs = [];
+
+          if (outsourceFunc) blockExprs.push(macro @:pos(p) var __f1 = $f);
+          if (outsourceFirstArg) blockExprs.push(macro @:pos(p) var __a1 = ${args[0]});
+
+          blockExprs.push(macro scuts.ht.core.Ht.resolve($a{newArgs}));
+
+          var res = macro @:pos(p) $b{blockExprs};
+          //trace(ExprTools.toString(res));
+          res;
+        } else {
+          trace("------------- pre regular");
+          var r = resolveRegular();
+          trace("------------- after regular");
+          trace(ExprTools.toString(r));
+          return macro @:allowPrivate $r;
+        }, "outsource complex expressions");
+      
+      }
     });
       
   }
@@ -247,6 +278,8 @@ class RealResolver
       Assert.notNull(args);
    
       RL.startResolve(f, args);
+
+
 
       var numFunctionParams = if (numArgs == -1) getFunctionParamsNum(f) else Success(numArgs);
 

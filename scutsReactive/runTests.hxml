@@ -12,5 +12,5 @@
 --macro Sys.println("\n-------- regular unit tests ------\n")
 -main scuts.reactive.AllTests
 
--x bin/testNeko.n
+-neko bin/testNeko.n
 
