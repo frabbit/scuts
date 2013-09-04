@@ -20,8 +20,10 @@ import scuts.reactive.Reactive;
 import scuts.core.Arrays;
 
 import scuts.core.Tuples;
+import scuts.core.Tuples.*;
 
 using scuts.reactive.StreamSubscriptions;
+import scuts.reactive.StreamSources;
 import scuts.Scuts;
 
 
@@ -72,6 +74,9 @@ class Stream<T>
     
     
 }
+
+
+
 @:allow(scuts.reactive.Behaviours)
 @:allow(scuts.reactive.StreamSources)
 class Streams 
@@ -96,6 +101,9 @@ class Streams
     return Stream._new(updater, sourceEvents);
   }
   
+
+
+
   /**
    * Creates a new stream that merely propagates all pulses it receives.
    *
