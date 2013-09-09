@@ -81,7 +81,7 @@ class Behaviour<T>
 
 class Behaviours 
 {
-  public static function source <T>(init:T):BehaviourSource<T>
+  @:noUsing public static function source <T>(init:T):BehaviourSource<T>
   {
     return new BehaviourSource(Streams.source().asBehaviour(init));
   }
