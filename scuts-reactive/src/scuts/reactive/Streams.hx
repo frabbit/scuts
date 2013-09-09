@@ -15,6 +15,7 @@
 */
 package scuts.reactive;
 
+import scuts.core.Eithers;
 import scuts.core.Ints;
 import scuts.reactive.Reactive;
 import scuts.core.Arrays;
@@ -23,7 +24,6 @@ import scuts.core.Tuples;
 import scuts.core.Tuples.*;
 
 using scuts.reactive.StreamSubscriptions;
-import scuts.reactive.StreamSources;
 import scuts.Scuts;
 
 
@@ -35,6 +35,13 @@ using scuts.reactive.Streams;
 using scuts.core.Promises;
 
 private typedef Beh<T> = Behaviour<T>;
+
+
+typedef StreamT2<A,B> = Stream<Tup2<A,B>>
+typedef StreamT3<A,B,C> = Stream<Tup3<A,B,C>>
+typedef StreamT4<A,B,C,D> = Stream<Tup4<A,B,C,D>>
+typedef StreamT5<A,B,C,D,E> = Stream<Tup5<A,B,C,D,E>>
+
 
 @:allow(scuts.reactive.Streams)
 class Stream<T> 
@@ -56,6 +63,7 @@ class Stream<T>
   {
     this._updater  = updater;
 
+    
     this._sendsTo  = [];
     this._weak     = false;
     this._rank     = Rank.nextRank();
@@ -69,19 +77,45 @@ class Stream<T>
       }
     }
   }
-    
-  
-    
-    
+}
+
+abstract StreamSource<T>(Stream<T>) to Stream<T> {
+
+  @:allow(scuts.reactive.Streams) inline function new (x:Stream<T>) this = x;
+
+  // public var stream(get, null): Stream<T>;
+
+  // public inline function get_stream () return this;
 }
 
 
+class StreamSources {
+  public static function send <T>(s:StreamSource<T>, event:T):StreamSource<T>
+  {
+    Streams.send(s, event);
+    return s;
+  }
+
+  public static function sendEnd <T>(s:StreamSource<T>, event:T):StreamSource<T>
+  {
+    s.sendEnd(event);
+    return s;
+  }
+}
+
 
 @:allow(scuts.reactive.Behaviours)
-@:allow(scuts.reactive.StreamSources)
+@:allow(scuts.reactive.Behaviour)
+@:allow(scuts.reactive)
 class Streams 
 {
   
+  
+
+
+  @:noUsing public static function source <T>():StreamSource<T> {
+    return new StreamSource(identity());
+  }
   
   /**
    * Creates a new stream with the specified updater and optional sources.
@@ -90,18 +124,73 @@ class Streams
    * @param sources   (Optional) The sources.
    *
    */
-  @:noUsing public static function create<I, O>(updater: Pulse<I> -> Propagation<O>, sources: Iterable<Stream<I>> = null): Stream<O> 
+  @:noUsing static function create<I, O>(updater: Pulse<I> -> Propagation<O>, sources: Iterable<Stream<I>> = null): Stream<O> 
   {
     var sourceEvents = if (sources == null) null else (sources.toArray());
     return createRaw(cast updater, sourceEvents);
   }
   
-  @:noUsing public static function createRaw<O>(updater: Pulse<Dynamic> -> Propagation<O>, sourceEvents: Array<Stream<Dynamic>>): Stream<O> 
+  @:noUsing static function createRaw<O>(updater: Pulse<Dynamic> -> Propagation<O>, sourceEvents: Array<Stream<Dynamic>>): Stream<O> 
   {
     return Stream._new(updater, sourceEvents);
   }
   
+  private static function propagatePulse<T>(s:Stream<T>, pulse: Pulse<Dynamic>) 
+  {
+    // XXX Change so that we won't propagate more than one value per time step???
+    var queue = new PriorityQueue<{stream: Stream<Dynamic>, pulse: Pulse<Dynamic>}>();
+    
+    var pulseIsEnd = switch (pulse.type) {
+      case End: true;
+      case _ : false;
+    }
+    var pulseAsNext = if (pulseIsEnd) {
+      pulse.withValue(pulse.value);
+    } else pulse;
 
+    queue.insert({k: s._rank, v: {stream: s, pulse: pulseAsNext}});
+    
+    while (queue.length() > 0) 
+    {
+      var qv = queue.pop();
+      
+      var stream = qv.v.stream;
+      var pulse  = qv.v.pulse;
+      
+      var propagation = stream._updater(pulse);
+      
+      switch (propagation) 
+      {
+        case Propagate(nextPulse): 
+          
+          var weaklyHeld = true;
+          
+          for (recipient in stream._sendsTo) 
+          {
+            weaklyHeld = weaklyHeld && recipient.weaklyHeld();
+        
+            queue.insert(
+              {
+                k: recipient._rank,
+                v: { stream: recipient, pulse:  nextPulse }
+              }
+            );
+          }
+          if (stream._sendsTo.length > 0 && weaklyHeld) {
+              stream.setWeaklyHeld(true);
+          }
+        case NotPropagate:
+      }
+
+    }
+    switch (pulse.type) {
+      case End:
+        s._sendsTo = [];
+        s.setWeaklyHeld(true);
+      case _:
+    }
+    
+  }
 
 
   /**
@@ -133,10 +222,10 @@ class Streams
    *
    * Returns the next new value as a Promise.
   */
-  public static inline function next<T>(b:Beh<T>): PromiseD<T>
+  public static inline function next<T>(s:Stream<T>): PromiseD<T>
   {
     var p = Promises.deferred();
-    b.stream.listenOnce(p.success);
+    s.listenOnce(p.success);
     return p;
   }
   
@@ -158,7 +247,7 @@ class Streams
       }
     );
     
-    stream.sendLater(val);
+    sendLater(stream, val);
     
     return stream;
   }
@@ -229,7 +318,7 @@ class Streams
    */
   public static function timerB(time: Beh<Int>): Stream<Int> 
   {
-    var stream: Stream<Int> = Streams.identity();
+    var stream: StreamSource<Int> = Streams.source();
     
     var pulser: Void -> Void = null;
     var timer = null;
@@ -239,7 +328,7 @@ class Streams
     }
     
     pulser = function() {
-      stream.sendEventDynamic(External.now());
+      stream.send(Std.int(External.now()));
       
       if (timer != null) External.cancelTimeout(timer);
       
@@ -391,7 +480,7 @@ class Streams
     {
       var next = iterator.next();
       
-      stream.sendEventDynamic(next);
+      stream.send(next);
 
       if (timer != null) External.cancelTimeout(timer);
 
@@ -405,23 +494,28 @@ class Streams
     return stream;
   }
   
-
+  public static function hasListener <T>(s:Stream<T>, dependent : Stream<Dynamic>):Bool {
+    return s._sendsTo.elem(dependent);
+  }
 
   public static function attachListener<T>(s:Stream<T>, dependent: Stream<Dynamic>): Void 
   {
-    s._sendsTo.push(dependent);
+    
+    // attach only once
+    if (!hasListener(s, dependent)) {
+      s._sendsTo.push(dependent);
 
-    // Rewrite the propagation graph:
-    if (s._rank > dependent._rank) {
-      var lowest = Rank.lastRank() + 1;
-      var q: Array<Stream<Dynamic>> = [dependent];
-
-      while (q.length > 0) {
-          var cur = q.splice(0,1)[0];
-          
-          cur._rank = Rank.nextRank();
-          
-          q = q.concat(cur._sendsTo);
+      // Rewrite the propagation graph:
+      if (s._rank > dependent._rank) {
+        var lowest = Rank.lastRank() + 1;
+        var q: Array<Stream<Dynamic>> = [dependent];
+        while (q.length > 0) {
+            var cur = q.splice(0,1)[0];
+            
+            cur._rank = Rank.nextRank();
+            
+            q = q.concat(cur._sendsTo);
+        }
       }
     }
   }
@@ -475,6 +569,7 @@ class Streams
       [s]
     );
     
+    
     return s;
   }
 
@@ -482,11 +577,21 @@ class Streams
   public static function listenOnce<T>(s:Stream<T>, f:T->Void): Stream<T>
   {
 
+    var calls = 0;
+
     var sub:StreamSubscription<T> = null;
 
     function once (x:T) {
-      sub.cancel();
+
+      if (calls > 0) {
+        
+        throw "This should never be called twice";
+      } 
+      sub.release();
+
+      
       f(x);
+      calls++;
     }
 
     sub = listen(s, once);
@@ -498,14 +603,18 @@ class Streams
   public static function listen<T>(s:Stream<T>, f:T->Void): StreamSubscription<T>
   {
 
+    
+    
+    
+
     var dep = Streams.create(
       function(pulse: Pulse<T>): Propagation<T> {
-          f(pulse.value);
-          
+          f(pulse.value);  
           return NotPropagate;
       },
       [s]
     );
+
     return new StreamSubscription(s, dep);
     
   }
@@ -543,7 +652,7 @@ class Streams
    */
   public static function flatMap<Z,T>(s:Stream<T>, k: T -> Stream<Z>): Stream<Z> 
   {
-    var m: Stream<T> = s;
+    
     var prevE: Stream<Z> = null;
 
     var outE: Stream<Z> = Streams.identity();
@@ -561,7 +670,7 @@ class Streams
 
         return NotPropagate;
       },
-      [m]
+      [s]
     );
 
     return outE;
@@ -573,11 +682,11 @@ class Streams
    *
    * @param value The value to send.
    */
-  private static function sendEventDynamic<T>(s:Stream<T>, value: Dynamic): Stream<T> 
-  {
-    s.propagatePulse(new Pulse(Stamp.nextStamp(), value));
-    return s;
-  }
+  // private static function sendEventDynamic<T>(s:Stream<T>, value: Dynamic): Stream<T> 
+  // {
+  //   s.propagatePulse(new Pulse(Stamp.nextStamp(), value, Next));
+  //   return s;
+  // }
 
   /**
    * A typed version of sendEvent.
@@ -588,7 +697,13 @@ class Streams
    */
   private static function send<T>(s:Stream<T>, value: T): Stream<T> 
   {
-    s.propagatePulse(new Pulse(Stamp.nextStamp(), value));
+    s.propagatePulse(new Pulse(Stamp.nextStamp(), value, Next));
+    return s;
+  }
+
+  private static function sendEnd<T>(s:Stream<T>, value: T): Stream<T> 
+  {
+    s.propagatePulse(new Pulse(Stamp.nextStamp(), value, End));
     return s;
   }
   
@@ -610,7 +725,7 @@ class Streams
   private static function sendLaterIn<T>(s:Stream<T>, value: Dynamic, millis: Int): Stream<T> 
   {
     External.setTimeout(
-      function() s.sendEventDynamic(value),
+      function() s.send(value),
       millis
     );
     
@@ -650,7 +765,7 @@ class Streams
     Streams.create(
       function(pulse)
       { 
-        resE.sendLaterIn(pulse.value, time);
+        sendLaterIn(resE, pulse.value, time);
         return NotPropagate;
       },
       [s]
@@ -683,17 +798,16 @@ class Streams
             towards: s.delay(pulse.value)
         };
         
-        receiverEE.sendEventDynamic(link.towards);
+        receiverEE.send(link.towards);
         
         return NotPropagate;
       },
       [time.changes()]
     );
-    
-    
+
     var resE = Streams.flatten(receiverEE);
     
-    switcherE.sendEventDynamic(time.valueNow());
+    switcherE.send(time.valueNow());
     
     return resE;
   }
@@ -713,7 +827,7 @@ class Streams
    * Calms the stream. No event will be get through unless it occurs T 
    * milliseconds or more before the following event.
    *
-   * @param time  The number of milliseconds.
+   * @param time  The numilber of milliseconds.
    */
   public static function calmB<T>(s:Stream<T>, time: Beh<Int>): Stream<T> 
   {
@@ -734,7 +848,7 @@ class Streams
           {
             towards = null;
             
-            out.sendEventDynamic(pulse.value);
+            out.send(pulse.value);
           },
           time.valueNow()
         );
@@ -946,6 +1060,7 @@ class Streams
           else 
           {
             stillChecking = false;
+
             s.setWeaklyHeld(true);
             NotPropagate;
           }
@@ -1134,6 +1249,35 @@ class Streams
     );
   }
 
+  public static function takeUntilS<T>(s:Stream<T>, other:Stream<Dynamic>):Stream<T>
+  {
+
+    var checking = true;
+    var valid = true;
+    other.listenOnce(function (_) {
+      valid = false;
+    });
+    var res:Stream<T> = null;
+    res = Streams.create(
+      function(pulse: Pulse<T>): Propagation<T> 
+      {
+        return if (checking) {
+          if (valid) 
+            Propagate(pulse); 
+          else {
+            checking = false;
+            s.setWeaklyHeld(true);
+            s.removeListener(res);
+
+            NotPropagate;
+          }
+        } else NotPropagate; 
+      },
+      [s]
+    ); 
+    return res;
+  }
+
   /**
    * Accepts all elements until the predicate first returns false.
    *
@@ -1202,6 +1346,8 @@ class Streams
       [as]
     );
   }
+
+
 
   /**
    * Zips elements of supplied streams together and returns an
@@ -1395,6 +1541,11 @@ class Streams
   {
     return Streams.create(function(p) return Propagate(p), [s, that]);
   }
+
+  public static function mergeEither<T,S>(s:Stream<T>, that: Stream<S>): Stream<Either<T,S>> 
+  {
+    return Streams.create(function(p) return Propagate(p), [s.map(Left), that.map(Right)]);
+  }
   
   /**
    * Creates a new Stream in which only events on 
@@ -1455,47 +1606,7 @@ class Streams
     return s.uniqueSteps().uniqueEvents(eq);
   }
 
-  private static function propagatePulse<T>(s:Stream<T>, pulse: Pulse<Dynamic>) 
-  {
-    // XXX Change so that we won't propagate more than one value per time step???
-    var queue = new PriorityQueue<{stream: Stream<Dynamic>, pulse: Pulse<Dynamic>}>();
-    
-
-    queue.insert({k: s._rank, v: {stream: s, pulse: pulse}});
-    
-    while (queue.length() > 0) 
-    {
-      var qv = queue.pop();
-      
-      var stream = qv.v.stream;
-      var pulse  = qv.v.pulse;
-      
-      var propagation = stream._updater(pulse);
-      
-      switch (propagation) 
-      {
-        case Propagate(nextPulse): 
-          
-          var weaklyHeld = true;
-          
-          for (recipient in stream._sendsTo) 
-          {
-            weaklyHeld = weaklyHeld && recipient.weaklyHeld();
-        
-            queue.insert(
-              {
-                k: recipient._rank,
-                v: { stream: recipient, pulse:  nextPulse }
-              }
-            );
-          }
-          if (stream._sendsTo.length > 0 && weaklyHeld) {
-              stream.setWeaklyHeld(true);
-          }
-        case NotPropagate:
-      }
-    }
-  }
+  
   
   public static function setWeaklyHeld<T>(s:Stream<T>, held: Bool): Bool 
   {

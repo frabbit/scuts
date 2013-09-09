@@ -28,6 +28,15 @@ using scuts.reactive.Behaviours;
 private typedef Beh<T> = Behaviour<T>;
 
 
+abstract BehaviourSource<T>(Beh<T>) to Beh<T> {
+  @:allow(scuts.reactive.Behaviours) function new (b:Beh<T>) this = b;
+  
+  public var stream(get, never):Stream<T>;
+
+  inline function get_stream () return this.stream;
+}
+
+
 @:allow(scuts.reactive)
 class Behaviour<T> 
 {
@@ -72,6 +81,14 @@ class Behaviour<T>
 
 class Behaviours 
 {
+  public static function source <T>(init:T):BehaviourSource<T>
+  {
+    return new BehaviourSource(Streams.source().asBehaviour(init));
+  }
+
+  public static function set <T> (b:BehaviourSource<T>, val:T) {
+      return Streams.send(b.stream, val);
+  }
   
   /**
    * Applies a function to a signal's value that 
@@ -92,7 +109,7 @@ class Behaviours
   
   @:noUsing public static function constant<T>(value: T): Beh<T> 
   {
-    return Streams.identity().asBehaviour(value);
+    return Streams.constantValue(value).asBehaviour(value);
   }
   
   @:noUsing public static inline function pure<T>(value: T): Beh<T> 
@@ -293,11 +310,18 @@ class Behaviours
    */
   public static function zipWith<T,A, R>(b1:Beh<T>, b2: Beh<A>, f : T -> A -> R): Beh<R> 
   { 
+
+
+
     function create() return f(b1.get(), b2.get());
-    return Streams.create(
-      function(pulse) return Propagate(pulse.withValue(create())),
-      [cast b1.stream, cast b2.stream]
-    ).asBehaviour(create());
+
+    return Streams.zipWith(b1.stream, b2.stream, f).asBehaviour(create());
+
+    // trace(create());
+    // return Streams.create(
+    //   function(pulse) return Propagate(pulse.withValue(create())),
+    //   [cast b1.stream, cast b2.stream]
+    // ).asBehaviour(create());
   }
   
   public static function zipWith3<T, B, C, X>(b1:Beh<T>, b2: Beh<B>, b3: Beh<C>, f:T->B->C->X): Beh<X> {
@@ -416,7 +440,7 @@ class Behaviours
 
     //XXX could result in out-of-order propagation! Fix!
     var makerE = Streams.create(
-      function(p: Pulse<Beh<T>>): Propagation<Void> 
+      function(p: Pulse<Beh<T>>): Propagation<Beh<T>> 
       {
         if (prevSourceE != null) {
           prevSourceE.removeListener(receiverE);
@@ -426,14 +450,14 @@ class Behaviours
         
         prevSourceE.attachListener(receiverE);
 
-        receiverE.sendEventDynamic(p.value.get());
+        receiverE.send(p.value.get());
         
         return NotPropagate;
       },
       [beh.stream]
     );
 
-    makerE.sendEventDynamic(init);
+    makerE.send(init);
 
     return receiverE.asBehaviour(init.get());
   }

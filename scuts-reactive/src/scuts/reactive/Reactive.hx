@@ -48,17 +48,20 @@ enum Propagation<T> {
   NotPropagate;
 }
 
+enum PulseType {
+    Next;
+    End;
+}
+
 class Pulse<T> {
     public var stamp (default, null): Int;
     public var value (default, null): T;
-    
-    public function new(stamp: Int, value: T) {
+    public var type (default, null): PulseType;
+    public function new(stamp: Int, value: T, type:PulseType) {
         this.stamp = stamp;
         this.value = value;
+        this.type = type;
         
-        var elements: Array<Dynamic> = [];
-        
-        elements.push(stamp); elements.push(value);
     }
     
     public function map<S>(f: T -> S): Pulse<S> {
@@ -66,7 +69,7 @@ class Pulse<T> {
     }
     
     public function withValue<S>(newValue: S): Pulse<S> {
-        return new Pulse<S>(stamp, newValue);
+        return new Pulse<S>(stamp, newValue, Next);
     }
 }
 

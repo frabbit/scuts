@@ -6,7 +6,19 @@ import haxe.PosInfos;
 using scuts.core.Eithers;
 import scuts.core.Thunk;
 import scuts.core.Tuples;
+import scuts.core.Unit;
+import scuts.core.Tuples.*;
 using scuts.core.Options;
+
+class Functions {
+  public static function identity <X> (x:X):X
+  {
+    return x;
+  }
+
+  public static function unit ():Unit return Unit;
+
+}
 
 class Function0s 
 {
@@ -195,7 +207,7 @@ class Function2s
    */
   public static function untupled <A,B,Z>(f:Tup2<A,B>->Z):A->B->Z
   {
-    return function (a,b) return f(Tup2.create(a,b));
+    return function (a,b) return f(tup2(a,b));
   }
   
   /**
@@ -268,7 +280,7 @@ class Function3s
    */
   public static function untupled <A,B,C,Z>(f:Tup3<A,B,C>->Z):A->B->C->Z
   {
-    return function (a,b,c) return f(Tup3.create(a,b,c));
+    return function (a,b,c) return f(tup3(a,b,c));
   }
   
   /**
@@ -328,6 +340,23 @@ class Function4s
     return function (a,b,c,d) f(a,b,c,d);
   }
   
+  /**
+   * Converts f into a function taking a Tuple as only parameter instead of 4 values.
+   */
+  public static function tupled <A,B,C,D,Z>(f:A->B->C->D->Z):Tup4<A,B,C,D>->Z
+  {
+    return function (t) return f(t._1, t._2, t._3, t._4);
+  }
+  
+  /**
+   * Converts f into a function taking 4 parameters instead of a Tuple.
+   */
+  public static function untupled <A,B,C,D,Z>(f:Tup4<A,B,C,D>->Z):A->B->C->D->Z
+  {
+    return function (a,b,c,d) return f(tup4(a,b,c,d));
+  }
+
+  
   
   
 }
@@ -362,6 +391,22 @@ class Function5s
   public static function flip < A, B, C, D, E, F > (f:A->B->C->D->E->F):B->A->C->D->E->F
   {
     return function (b, a, c, d, e) return f(a, b, c, d, e);
+  }
+
+  /**
+   * Converts f into a function taking a Tuple as only parameter instead of 5 values.
+   */
+  public static function tupled <A,B,C,D,E,Z>(f:A->B->C->D->E->Z):Tup5<A,B,C,D,E>->Z
+  {
+    return function (t) return f(t._1, t._2, t._3, t._4, t._5);
+  }
+  
+  /**
+   * Converts f into a function taking 5 parameters instead of a Tuple.
+   */
+  public static function untupled <A,B,C,D,E,Z>(f:Tup5<A,B,C,D,E>->Z):A->B->C->D->E->Z
+  {
+    return function (a,b,c,d,e) return f(tup5(a,b,c,d,e));
   }
   
   

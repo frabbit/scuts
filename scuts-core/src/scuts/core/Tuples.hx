@@ -15,6 +15,16 @@ class Tuples {
   {
     return Tup4.create(_1, _2, _3, _4);
   }
+
+  @:noUsing public static function tup5 <A,B,C,D,E>(_1:A, _2:B, _3:C, _4:D, _5:E) 
+  {
+    return Tup5.create(_1, _2, _3, _4, _5);
+  }
+
+  @:noUsing public static function tup6 <A,B,C,D,E,F>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F) 
+  {
+    return Tup6.create(_1, _2, _3, _4, _5, _6);
+  }
 }
 
 
