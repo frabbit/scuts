@@ -23,6 +23,7 @@ import scuts.core.Arrays;
 import scuts.core.Tuples;
 import scuts.core.Tuples.*;
 
+using scuts.core.Validations;
 using scuts.reactive.StreamSubscriptions;
 import scuts.Scuts;
 
@@ -1249,11 +1250,24 @@ class Streams
     );
   }
 
+  @:noUsing public static function fromPromise <A,B>(p:Promise<A,B>):Stream<Validation<A,B>> {
+    var s = source();
+    p.onComplete(s.sendEnd);
+    return s;
+  }
+
+  
+  public static function takeUntilPromise<T>(s:Stream<T>, p:Promise<Dynamic, Dynamic>):Stream<T>
+  {
+    return takeUntilS(s,fromPromise(p));
+  }
+
   public static function takeUntilS<T>(s:Stream<T>, other:Stream<Dynamic>):Stream<T>
   {
 
     var checking = true;
     var valid = true;
+
     other.listenOnce(function (_) {
       valid = false;
     });
@@ -1261,17 +1275,20 @@ class Streams
     res = Streams.create(
       function(pulse: Pulse<T>): Propagation<T> 
       {
-        return if (checking) {
+        return if (checking) 
+        {
           if (valid) 
             Propagate(pulse); 
-          else {
+          else 
+          {
             checking = false;
             s.setWeaklyHeld(true);
             s.removeListener(res);
 
             NotPropagate;
           }
-        } else NotPropagate; 
+        } 
+        else NotPropagate; 
       },
       [s]
     ); 
@@ -1364,6 +1381,7 @@ class Streams
   {
     return s.zipWith(as, Tup2.create);
   }
+
 
   /**
    * Zips elements of supplied streams together and returns an

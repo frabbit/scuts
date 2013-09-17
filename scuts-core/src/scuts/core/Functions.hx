@@ -11,14 +11,16 @@ import scuts.core.Tuples.*;
 using scuts.core.Options;
 
 class Functions {
-  public static function identity <X> (x:X):X
+  @:noUsing public static function identity <X> (x:X):X
   {
     return x;
   }
 
-  public static function unit ():Unit return Unit;
+  @:noUsing public static function unit ():Unit return Unit;
 
 }
+
+
 
 class Function0s 
 {
@@ -60,13 +62,22 @@ class Function0s
 
 class Function1Opts 
 {
-
+  public static function withoutOptionals <A,B>(f:?A->B):Option<A>->B
+  {
+    return function (a) return switch (a) 
+    {
+      case Some(x): f(x);
+      case None: f();
+    }
+  }
   
 }
 
 
 class Function1s 
 {
+
+
   public static function on <A,B,C>(on:B->B->C, f:A->B):A->A->C
   {
     return function (a,b) {
@@ -148,7 +159,14 @@ class Function2Opts
     return function (a:A) return f1(f2(a));
   }
   
- 
+  public static function withoutOptionals <A,B,Z>(f:A->?B->Z):A->Option<B>->Z
+  {
+    return function (a,b) return switch (b) 
+    {
+      case Some(x): f(a,x);
+      case None: f(a);
+    }
+  }
   
   
 }
@@ -231,12 +249,31 @@ class Function3Opts2
   {
     return function (a:X) return f1(f2(a));
   }
+
+  public static function withoutOptionals <A,B,C,Z>(f:A->?B->?C->Z):A->Option<B>->Option<C>->Z
+  {
+    return function (a,b,c) return switch [b,c]
+    {
+      case [Some(b1), None]: f(a,b1);
+      case [None, Some(c1)]: f(a,c1);
+      case [Some(b1), Some(c1)]: f(a,b1,c1);
+      case [None, None]: f(a);
+    }
+  }
 }
 
 
 class Function3Opts1
 {
-  
+  public static function withoutOptionals <A,B,C,Z>(f:A->B->?C->Z):A->B->Option<C>->Z
+  {
+    return function (a,b,c) return switch c
+    {
+      case Some(c1): f(a,b,c1);
+      case None: f(a,b);
+      
+    }
+  }
   
 }
 
@@ -297,8 +334,38 @@ class Function3s
 }
 
 class Function4Opt1s {
+  public static function withoutOptionals <A,B,C,D,Z>(f:A->B->C->?D->Z):A->B->C->Option<D>->Z
+  {
+    return function (a,b,c,d) return switch d
+    {
+      case Some(d1): f(a,b,c,d1);
+      case None: f(a,b,c);
+      
+    }
+  }
   
-  
+}
+
+class Function4Opt3s {
+   public static function withoutOptionals <A,B,C,D,Z>(f:A->?B->?C->?D->Z):A->Option<B>->Option<C>->Option<D>->Z
+  {
+    return function (a,b,c,d) return switch [b,c,d]
+    {
+      case [Some(b1), None     , None     ]: f(a,b1);
+      case [None,     Some(c1) , None     ]: f(a,c1);
+      case [None,     None     , Some(d1) ]: f(a,d1);
+      
+      case [Some(b1), Some(c1) , None     ]: f(a,b1,c1);
+      case [Some(b1), None     , Some(d1) ]: f(a,b1,d1);
+      case [None    , Some(c1) , Some(d1) ]: f(a,c1,d1);
+      
+      case [Some(b1), Some(c1) , Some(d1) ]: f(a,b1,c1,d1);
+
+      case [None,     None     , None     ]: f(a);
+
+
+    }
+  }
 }
 
 class Function4s 

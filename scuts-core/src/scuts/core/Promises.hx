@@ -71,7 +71,7 @@ class Promise<Err, T>
  */
 abstract Deferred<A,B>(Promise<A,B>) to Promise<A,B> {
   @:allow(scuts.core.Promises)
-  function new (p:Promise<A,B>) this = p;
+  inline function new (p:Promise<A,B>) this = p;
 
   public inline function promise ():Promise<A,B> {
     return this;
@@ -428,8 +428,6 @@ class Promises
     return res;
   }
 
-  
-
   public static function then<A,B,Z> (a:Promise<Z,A>, b:Void->Promise<Z,B>):Promise<Z,B>
   {
     return a.flatMap(function (_) return b());
@@ -437,45 +435,45 @@ class Promises
   
   public static function zip<A,B,Z>(a:Promise<Z,A>, b:Promise<Z,B>):Promise<Z,Tup2<A,B>>
   {
-    return Tup2.create.liftPromiseF2()(a,b);
+    return liftF2(Tup2.create)(a,b);
   }
   
   public static function 
   zip3<A,B,C,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>):Promise<Z,Tup3<A,B,C>>
   {
-    return Tup3.create.liftPromiseF3()(a,b,c);
+    return liftF3(Tup3.create)(a,b,c);
   }
   
   public static function 
   zip4<A,B,C,D,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>):Promise<Z,Tup4<A,B,C,D>>
   {
-    return Tup4.create.liftPromiseF4()(a,b,c,d);
+    return liftF4(Tup4.create)(a,b,c,d);
   }
   
   public static function 
   zipWith<A,B,C,Z>(a:Promise<Z,A>, b:Promise<Z,B>, f:A->B->C):Promise<Z,C>
   {
-    return f.liftPromiseF2()(a,b);
+    return liftF2(f)(a,b);
   }
   
   public static function 
   zipWith3<A,B,C,D,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, f:A->B->C->D):Promise<Z,D>
   {
-    return f.liftPromiseF3()(a,b,c);
+    return liftF3(f)(a,b,c);
   }
   
   public static function 
   zipWith4<A,B,C,D,E,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>, f:A->B->C->D->E):Promise<Z,E>
   {
-    return f.liftPromiseF4()(a,b,c,d);
+    return liftF4(f)(a,b,c,d);
   }
   
-  public static function liftPromiseF0 <E,A> (f:Void->A):Void->Promise<E,A> 
+  @:noUsing public static function liftF0 <E,A> (f:Void->A):Void->Promise<E,A> 
   {
     return function () return deferred().success(f());
   }
 
-  public static function liftPromiseF1 <E,A, B> (f:A->B):Promise<E,A>->Promise<E,B> 
+  @:noUsing public static function liftF1 <E,A, B> (f:A->B):Promise<E,A>->Promise<E,B> 
   {
     return function (a:Promise<E,A>) {
       var res = deferred();
@@ -486,7 +484,7 @@ class Promises
     }
   }
 
-  public static function liftPromiseF2 <A, B, C, E> (f:A->B->C):Promise<E,A>->Promise<E,B>->Promise<E,C> 
+  @:noUsing public static function liftF2 <A, B, C, E> (f:A->B->C):Promise<E,A>->Promise<E,B>->Promise<E,C> 
   {
     return function (a:Promise<E,A>, b:Promise<E,B>) {
       var res = deferred();
@@ -508,8 +506,8 @@ class Promises
     }
   }
 
-  public static function 
-  liftPromiseF3 <A, B, C, D,Z> (f:A->B->C->D):Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>
+  @:noUsing public static function 
+  liftF3 <A, B, C, D,Z> (f:A->B->C->D):Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>
   {
     return function (a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>) {
       var res = deferred();
@@ -532,8 +530,8 @@ class Promises
     }
   }
 
-  public static function 
-  liftPromiseF4 <A, B, C, D, E,Z> (f:A->B->C->D->E):Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>->Promise<Z,E>
+  @:noUsing public static function 
+  liftF4 <A, B, C, D, E,Z> (f:A->B->C->D->E):Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>->Promise<Z,E>
   {
     return function (a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>) {
       var res = deferred();
@@ -558,8 +556,8 @@ class Promises
     }
   }
   
-  public static function 
-  liftPromiseF5 <A, B, C, D, E, F,Z> (f:A->B->C->D->E->F)
+  @:noUsing public static function 
+  liftF5 <A, B, C, D, E, F,Z> (f:A->B->C->D->E->F)
   :Promise<Z,A>->Promise<Z,B>->Promise<Z,C>->Promise<Z,D>->Promise<Z,E>->Promise<Z,F>
   {
     return function (a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>, e:Promise<Z,E>) {
