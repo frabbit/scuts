@@ -77,6 +77,32 @@ class Tup3s
   }
 }
 
+class Tup4s 
+{
+  /**
+   * Swaps the first 2 values of `t`.
+   * 
+   * `Tup3.create(1,2,3).swap(); // (2,1,3)`
+   */
+  public static function swap <A,B,C,D>(t:Tup4<A,B,C,D>) return Tup4.create(t._2, t._1, t._3,t._4);
+  
+  public static inline function first  <A,B,C,D>(t:Tup4<A,B,C,D>) return t._1;
+  public static inline function second <A,B,C,D>(t:Tup4<A,B,C,D>) return t._2;
+  public static inline function third <A,B,C,D>(t:Tup4<A,B,C,D>) return t._3;
+  public static inline function fourth <A,B,C,D>(t:Tup4<A,B,C,D>) return t._4;
+  
+
+  public static inline function into <A,B,C,D,E>(t:Tup4<A,B,C,D>, f:A->B->C->D->E) return f(t._1, t._2, t._3,t._4);
+
+
+  /**
+   * Compares two tuples for equality based on equal functions for the parameter types.
+   */
+  public static function eq <A,B,C,D>(t1:Tup4<A,B,C,D>, t2:Tup4<A,B,C,D>, eq1:A->A->Bool, eq2:B->B->Bool, eq3:C->C->Bool, eq4:D->D->Bool) {
+    return eq1(t1._1, t2._1) && eq2(t1._2, t2._2) && eq3(t1._3, t2._3) && eq4(t1._4, t2._4);
+  }
+}
+
 
 
 class Tup2<A,B> 

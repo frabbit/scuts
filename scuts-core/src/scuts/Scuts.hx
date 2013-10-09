@@ -8,9 +8,12 @@ import scuts.core.PosInfosTools;
 using scuts.core.Arrays;
 using scuts.core.Strings;
 
+import scuts.core.Unit;
+
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
+
 
 using scuts.core.Nulls;
 using scuts.core.PosInfosTools;
@@ -19,7 +22,8 @@ using scuts.core.PosInfosTools;
 
 class Scuts 
 {
-  
+  public static function unit <T> () return Unit;
+
   public static function id <T> (a:T):T return a;
   
   public static function posInfos <T>(?p:PosInfos):PosInfos return p;

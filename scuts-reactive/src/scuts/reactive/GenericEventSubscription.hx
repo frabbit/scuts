@@ -4,29 +4,31 @@ package scuts.reactive;
 using scuts.reactive.Subscriptions;
 
 
+import haxe.Constraints.Function;
 
-private typedef AddListener<EventType> = String->(EventType->Void)->Void;
 
-private typedef RemoveListener<EventType> = AddListener<EventType>;
+private typedef AddListener<Callback:Function> = String->Callback->Void;
 
-class GenericEventSubscription<DispatcherType, EventType> {
+private typedef RemoveListener<Callback:Function> = AddListener<Callback>;
+
+class GenericEventSubscription<DispatcherType, Callback:Function> {
 
 	public var dispatcher(default, null):DispatcherType;
 
 	var sub : Subscription;
 
-	var addListener : AddListener<EventType>;
-	var removeListener : RemoveListener<EventType>;
+	var addListener : AddListener<Callback>;
+	var removeListener : RemoveListener<Callback>;
 
 	var events:Array<String>;
-	var cb:EventType->Void;
+	var cb:Callback;
 
-	public static function fromEvents <DispatcherType, EventType>(jq:DispatcherType, events:Array<String>, cb:EventType->Void, addListener:AddListener<EventType>, removeListener:RemoveListener<EventType>)
+	public static function fromEvents <DispatcherType, Callback:Function>(jq:DispatcherType, events:Array<String>, cb:Callback, addListener:AddListener<Callback>, removeListener:RemoveListener<Callback>)
 		return new GenericEventSubscription(jq, events, cb, addListener, removeListener);
 
-	public static function fromEvent <DispatcherType, EventType>(jq:DispatcherType, event:String, cb:EventType->Void, addListener:AddListener<EventType>, removeListener:RemoveListener<EventType>) return fromEvents(jq, [event], cb, addListener, removeListener);
+	public static function fromEvent <DispatcherType, Callback:Function>(jq:DispatcherType, event:String, cb:Callback, addListener:AddListener<Callback>, removeListener:RemoveListener<Callback>) return fromEvents(jq, [event], cb, addListener, removeListener);
 
-	function new (dispatcher:DispatcherType, events:Array<String>, cb:EventType->Void, addListener:AddListener<EventType>, removeListener:RemoveListener<EventType>) 
+	function new (dispatcher:DispatcherType, events:Array<String>, cb:Callback, addListener:AddListener<Callback>, removeListener:RemoveListener<Callback>) 
 	{
 		this.dispatcher = dispatcher;
 		this.events = events;

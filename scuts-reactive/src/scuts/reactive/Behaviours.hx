@@ -25,6 +25,8 @@ using scuts.core.Iterables;
 using scuts.reactive.Streams;
 using scuts.reactive.Behaviours;
 
+using scuts.core.Functions;
+
 private typedef Beh<T> = Behaviour<T>;
 
 
@@ -183,6 +185,10 @@ class Behaviours
     return b.mapC(function(s) return s.delayB(time));
   }
   
+  public static function uniqueEvents<T>(s:Behaviour<T>, ?eq: T -> T -> Bool): Behaviour<T> 
+  {
+    return s.stream.uniqueEvents(eq).toBehaviour(s.get());
+  }
   
   /**
    * Applies a function to a value and returns the 
@@ -358,6 +364,16 @@ class Behaviours
   {
     return b.stream.map(f).asBehaviour(f(b.get()));
   }
+
+  public static function map2<T1,T2, Z>(b:Beh<Tup2<T1,T2>>, f: T1->T2 -> Z): Beh<Z> 
+  {
+    return map(b, f.tupled());
+  }
+
+  public static function map3<T1,T2,T3, Z>(b:Beh<Tup3<T1,T2,T3>>, f: T1->T2->T3 -> Z): Beh<Z> 
+  {
+    return map(b, f.tupled());
+  }
   
   public static function apply<A,B>(f:Beh<A->B>, v:Beh<A>):Beh<B> 
   {
@@ -400,10 +416,7 @@ class Behaviours
    * Returns the present value of 'this' Signal. 
    *
    */
-  public static function valueNow<T>(b:Beh<T>): T 
-  {
-    return b._last;
-  }
+  
   
   /**
    * Returns the present value of 'this' Signal. 
@@ -411,14 +424,18 @@ class Behaviours
    */
   public static inline function get<T>(b:Beh<T>): T 
   {
-    return valueNow(b);
+    return b._last;
   }
 
 
     
-  public static function flatMap<T,Z> (b:Beh<T>, f : T->Beh<Z>):Beh<Z>
+  public static function flatMap<T,Z> (b:Beh<T>, f : T->Beh<Z>, init:Z):Beh<Z>
   {
-    return flatten(b.stream.map(f).asBehaviour(f(b.get())));
+
+
+    //return b.stream.flatMapLatest(function (x) return f(x).stream).toBehaviour(init);
+    
+    return flatten(map(b,f));
   }
     
   /**

@@ -34,6 +34,8 @@ typedef Throwable = Dynamic;
 
 typedef PromiseD<T> = Promise<Throwable, T>;
 
+typedef PromiseU<T> = Promise<Unit, T>;
+
 
 @:allow(scuts.core.Promises)
 class Promise<Err, T> 
@@ -226,7 +228,8 @@ class Promises
     else
     {
       p.lock();
-      if (!p.isCompleteDoubleCheck()) p._completeListeners.push(f);
+      if (!p.isCompleteDoubleCheck())
+        p._completeListeners.push(f);
       else p.onComplete(f);
       p.unlock();
     } 
@@ -274,7 +277,10 @@ class Promises
       else                     "Unfullfilled Promise";
   }
 
-  public static function combineIterableWith <A,B,E> (a:Iterable<Promise<E,A>>, f:Iterable<A>->B):Promise<E,B>
+  public static function asPromiseD <E,T>(p:Promise<E,T>):PromiseD<T> return p;
+  public static function asPromiseU <E,T>(p:Promise<E,T>):PromiseU<T> return p.mapFailure(function (_) return Unit);
+
+  @:noUsing public static function zipIterableWith <A,B,E> (a:Iterable<Promise<E,A>>, f:Iterable<A>->B):Promise<E,B>
   {
 
     var fut = deferred();
@@ -332,10 +338,12 @@ class Promises
     return fut;
   }
   
-  public static function combineIterable <A,E> (a:Iterable<Promise<E,A>>):Promise<E,Iterable<A>>
+  @:noUsing public static function zipIterable <A,E> (a:Iterable<Promise<E,A>>):Promise<E,Iterable<A>>
   {
-    return combineIterableWith(a, Scuts.id);
+    return zipIterableWith(a, Scuts.id);
   }
+
+
   
   public static function apply<A,B,E>(f:Promise<E,A->B>, p:Promise<E,A>):Promise<E,B> 
   {
@@ -348,6 +356,11 @@ class Promises
     return p;
   }
   
+  @:noUsing public static function fromValidation <F,S>(v:Validation<F,S>):Promise<F,S> 
+  {
+    return deferred().complete(v);
+  }
+
   @:noUsing public static function pure <E,S>(s:S):Promise<E,S> 
   {
     return deferred().success(s);
@@ -358,25 +371,80 @@ class Promises
     return new Deferred(new Promise());
   }
 
-  public static function flatMap < E,S,T > (p:Promise<E,S>, f:S->Promise<E,T>):Promise<E,T>
+
+
+  public static function flatMapBoth < E,S,T,X,E2 > (p:Promise<E,S>, ff:E->Promise<E2,X>, fs:S->Promise<E2,X>):Promise<E2,X>
+  {
+    function f1(v:Validation<E,S>) return switch (v) 
+    {
+      case Success(s): fs(s);
+      case Failure(f): ff(f);
+    }
+    return flatMapValidation(p,f1);
+    
+  }
+
+  public static function flatMapValidation < E,S,E2,S2 > (p:Promise<E,S>, f:Validation<E,S>->Promise<E2,S2>):Promise<E2,S2>
   {
     var res = deferred();
     
+    function next(v) 
+    {
+      var p1 = f(v);
+      p1.onProgress(function (p) res.progress(0.5 + p * 0.5))
+        .onComplete(res.complete);
+        
+    }
+    
+    p.onProgress(function (p) res.progress(p * 0.5))
+     .onComplete(next);
+    
+    return res; 
+  }
+
+  public static function flatMap < E,S,T > (p:Promise<E,S>, f:S->Promise<E,T>):Promise<E,T>
+  {
+    var res = deferred();
+    trace("1");
     function success(r) 
     {
       var p1 = f(r);
-      p1.onSuccess(res.success)
-        .onProgress(function (p) res.progress(0.5 + p * 0.5))
+      trace("helo");
+      p1.onProgress(function (p) res.progress(0.5 + p * 0.5))
+        .onSuccess(res.success)
         .onFailure(res.failure);
     }
     
-    p.onSuccess(success)
-     .onFailure(res.failure)
-     .onProgress(function (p) res.progress(p * 0.5));
+    p.onProgress(function (p) res.progress(p * 0.5))
+     .onSuccess(success)
+     .onFailure(res.failure);
+     
     
     return res;
   }
+
+  public static inline function flatMap2 < E,S1,S2,T > (p:Promise<E,Tup2<S1,S2>>, f:S1->S2->Promise<E,T>):Promise<E,T> 
+  {
+    return flatMap(p, f.tupled());
+  }
+
+  public static inline function flatMap3 < E,S1,S2,S3,T > (p:Promise<E,Tup3<S1,S2,S3>>, f:S1->S2->S3->Promise<E,T>):Promise<E,T> 
+  {
+    return flatMap(p, f.tupled());
+  }
+
+  public static inline function flatMap4 < E,S1,S2,S3,S4,T > (p:Promise<E,Tup4<S1,S2,S3,S4>>, f:S1->S2->S3->S4->Promise<E,T>):Promise<E,T> 
+  {
+    return flatMap(p, f.tupled());
+  }
   
+  public static inline function flatMap5 < E,S1,S2,S3,S4,S5,T > (p:Promise<E,Tup5<S1,S2,S3,S4,S5>>, f:S1->S2->S3->S4->S5->Promise<E,T>):Promise<E,T> 
+  {
+    return flatMap(p, f.tupled());
+  }
+
+  
+
   public static function map < S, T,E > (p:Promise<E,S>, f:S->T):Promise<E,T>
   {
     var res = deferred();
@@ -386,6 +454,40 @@ class Promises
      .onProgress (res.progress);
       
     return res;
+  }
+
+  public static inline function map2 < E,S1,S2,T > (p:Promise<E,Tup2<S1,S2>>, f:S1->S2->T):Promise<E,T> {
+    return map(p, f.tupled());
+  }
+
+  public static inline function map3 < E,S1,S2,S3,T > (p:Promise<E,Tup3<S1,S2,S3>>, f:S1->S2->S3->T):Promise<E,T> {
+    return map(p, f.tupled());
+  }
+
+  public static inline function map4 < E,S1,S2,S3,S4,T > (p:Promise<E,Tup4<S1,S2,S3,S4>>, f:S1->S2->S3->S4->T):Promise<E,T> {
+    return map(p, f.tupled());
+  }
+
+  public static inline function map5 < E,S1,S2,S3,S4,S5,T > (p:Promise<E,Tup5<S1,S2,S3,S4,S5>>, f:S1->S2->S3->S4->S5->T):Promise<E,T> {
+    return map(p, f.tupled());
+  }
+
+  public static function recover < T,E, EE > (p:Promise<E,T>, convert:E->T):Promise<E,T>
+  {
+    return p.flatMapValidation(function (v) return switch (v) 
+    {
+      case Success(_): p;
+      case Failure(f): Promises.pure(convert(f));
+    });
+  }
+
+  public static function recoverWith < T,E,E2> (p:Promise<E,T>, convert:E->Promise<E,T>):Promise<E,T>
+  {
+    return p.flatMapValidation(function (v) return switch (v) 
+    {
+      case Success(_): p;
+      case Failure(f): convert(f);
+    });
   }
 
   public static function mapFailure < T,E, EE > (p:Promise<E,T>, f:E->EE):Promise<EE,T>
@@ -408,7 +510,7 @@ class Promises
     return res;
   }
   
-  public static function filterUnit <T>(p:PromiseD<T>, f:T->Bool):PromiseD<T>
+  public static inline function filterUnit <T>(p:PromiseD<T>, f:T->Bool):PromiseD<T>
   {
     return filter(p, f, Unit);
   }
@@ -428,41 +530,51 @@ class Promises
     return res;
   }
 
-  public static function then<A,B,Z> (a:Promise<Z,A>, b:Void->Promise<Z,B>):Promise<Z,B>
+  public static function switchWith<A,B,Z> (a:Promise<Z,A>, b:Void->Promise<Z,B>):Promise<Z,B>
   {
     return a.flatMap(function (_) return b());
   }
+
+  public static inline function switchC<A,C,Z> (a:Promise<Z,A>, c:C):Promise<Z,C>
+  {
+    return a.switchWith(function () return Promises.pure(c));
+  }
+
+  public static inline function switchP<A,B,Z> (a:Promise<Z,A>, b:Promise<Z,B>):Promise<Z,B>
+  {
+    return a.switchWith(function () return b);
+  }
   
-  public static function zip<A,B,Z>(a:Promise<Z,A>, b:Promise<Z,B>):Promise<Z,Tup2<A,B>>
+  public static inline function zip<A,B,Z>(a:Promise<Z,A>, b:Promise<Z,B>):Promise<Z,Tup2<A,B>>
   {
     return liftF2(Tup2.create)(a,b);
   }
   
-  public static function 
+  public static inline function 
   zip3<A,B,C,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>):Promise<Z,Tup3<A,B,C>>
   {
     return liftF3(Tup3.create)(a,b,c);
   }
   
-  public static function 
+  public static inline function 
   zip4<A,B,C,D,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>):Promise<Z,Tup4<A,B,C,D>>
   {
     return liftF4(Tup4.create)(a,b,c,d);
   }
   
-  public static function 
+  public static inline function 
   zipWith<A,B,C,Z>(a:Promise<Z,A>, b:Promise<Z,B>, f:A->B->C):Promise<Z,C>
   {
     return liftF2(f)(a,b);
   }
   
-  public static function 
+  public static inline function 
   zipWith3<A,B,C,D,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, f:A->B->C->D):Promise<Z,D>
   {
     return liftF3(f)(a,b,c);
   }
   
-  public static function 
+  public static inline function 
   zipWith4<A,B,C,D,E,Z>(a:Promise<Z,A>, b:Promise<Z,B>, c:Promise<Z,C>, d:Promise<Z,D>, f:A->B->C->D->E):Promise<Z,E>
   {
     return liftF4(f)(a,b,c,d);
@@ -584,6 +696,9 @@ class Promises
       return res;
     }
   }
+
+  
+
 }
 
 

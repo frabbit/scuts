@@ -25,6 +25,22 @@ class Functions {
 class Function0s 
 {
   
+
+  /**
+   * Creates a Memoized (Lazy) Version of f where only the first call is evaluated and every further
+   * access returns the cached value.
+   */
+  public static function memoize <A,B>(f:Thunk<A>):Thunk<A>
+  {
+    var o = None;
+
+    return function () return switch (o) 
+    {
+      case None: var r = f(); o = Some(r); r;
+      case Some(x): x;
+    }
+  }
+
   public static function map <A,B>(a:Thunk<A>, f:A->B):Thunk<B>
   {
     return function () return f(a());

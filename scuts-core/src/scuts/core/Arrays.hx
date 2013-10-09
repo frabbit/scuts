@@ -384,6 +384,14 @@ class Arrays
     }
   }
 
+  public static function elemIndex<T>(arr:Array<T>, elem:T, eq:T->T->Bool):Option<Int> 
+  {
+    for (i in 0...arr.length) {
+      if (eq(arr[i], elem)) Some(i);
+    }
+    return None;
+  }
+
   public static function lastOption<T>(arr:Array<T>):Option<T>
   {
     return if (arr.length == 0) None else Some(arr[arr.length - 1]);

@@ -17,6 +17,7 @@ package scuts.reactive;
 
 import scuts.core.Eithers;
 import scuts.core.Ints;
+import scuts.core.Unit;
 import scuts.reactive.Reactive;
 import scuts.core.Arrays;
 
@@ -37,6 +38,7 @@ using scuts.core.Promises;
 
 private typedef Beh<T> = Behaviour<T>;
 
+typedef StreamU = Stream<Unit>;
 
 typedef StreamT2<A,B> = Stream<Tup2<A,B>>
 typedef StreamT3<A,B,C> = Stream<Tup3<A,B,C>>
@@ -79,6 +81,8 @@ class Stream<T>
     }
   }
 }
+
+typedef StreamSourceU = StreamSource<Unit>;
 
 abstract StreamSource<T>(Stream<T>) to Stream<T> {
 
@@ -149,6 +153,7 @@ class Streams
       pulse.withValue(pulse.value);
     } else pulse;
 
+    
     queue.insert({k: s._rank, v: {stream: s, pulse: pulseAsNext}});
     
     while (queue.length() > 0) 
@@ -325,7 +330,7 @@ class Streams
     var timer = null;
     
     var createTimer = function() {
-      return External.setTimeout(pulser, time.valueNow());
+      return External.setTimeout(pulser, time.get());
     }
     
     pulser = function() {
@@ -412,7 +417,7 @@ class Streams
    */
   public static function flatten<T>(stream: Stream<Stream<T>>): Stream<T> 
   {
-    return stream.flatMap(
+    return stream.flatMapLatest(
       function(stream: Stream<T>): Stream<T> {
           return stream;
       }
@@ -459,7 +464,7 @@ class Streams
       
       if (startTime < 0.0) startTime = nowTime;
       
-      var delta = time.valueNow();
+      var delta = time.get();
       
       var endTime = startTime + accum + delta; 
       
@@ -647,13 +652,44 @@ class Streams
 
   /**
    * AKA bind. Binds each value to another stream, and returns a 
-   * flattened stream.
+   * flattened stream. It only propagates the Events from the latest Stream
+   * created by k.
    *
    * @param k The flatMap function.
    */
+
+  @:require(deprecated) 
   public static function flatMap<Z,T>(s:Stream<T>, k: T -> Stream<Z>): Stream<Z> 
   {
-    
+    return flatMapLatest(s, k);
+  }
+
+  public static function flatMapLatest<Z,T>(s:Stream<T>, k: T -> Stream<Z>): Stream<Z> 
+  {
+    var prevE: Stream<Z> = null;
+
+    var outE: Stream<Z> = Streams.identity();
+
+    function propagate(pulse: Pulse<Dynamic>): Propagation<Dynamic> 
+    {
+      if (prevE != null) {
+        prevE.removeListener(outE, true);
+      }
+      prevE = k(pulse.value);
+      prevE.attachListener(outE);
+      return NotPropagate;
+    }
+
+    var inE: Stream<Dynamic> = Streams.create(propagate, [s]);
+
+    return outE;
+  }
+
+  /**
+   * Like flatMapLatest, but it aggregates the events of all streams created by k.
+   */
+  public static function flatMapAggregate<Z,T>(s:Stream<T>, k: T -> Stream<Z>): Stream<Z> 
+  {
     var prevE: Stream<Z> = null;
 
     var outE: Stream<Z> = Streams.identity();
@@ -661,12 +697,7 @@ class Streams
     var inE: Stream<Dynamic> = Streams.create(
       function (pulse: Pulse<Dynamic>): Propagation<Dynamic> 
       {
-        if (prevE != null) {
-          prevE.removeListener(outE, true); // XXX This is sloppy
-        }
-        
         prevE = k(pulse.value);
-        
         prevE.attachListener(outE);
 
         return NotPropagate;
@@ -733,6 +764,19 @@ class Streams
     return s;
   }
 
+  private static function sendEndLaterIn<T>(s:Stream<T>, value: Dynamic, millis: Int): Stream<T> 
+  {
+    External.setTimeout(
+      function() s.sendEnd(value),
+      millis
+    );
+    
+    return s;
+  }
+  private static function sendEndLater<T>(s:Stream<T>, value: Dynamic): Stream<T> 
+  {
+    return s.sendEndLaterIn(value, 0);
+  }
   /**
    * Sends an event later, "as soon as possible".
    *
@@ -749,7 +793,16 @@ class Streams
    *
    * @param init  The initial value.
    */
+  
+  
+  
+  @:require(!NO_DEPRECATION, "please use toBehaviour")
   public static function asBehaviour<T>(s:Stream<T>, init: T): Beh<T> 
+  {
+    return toBehaviour(s, init);
+  }
+
+  public static function toBehaviour<T>(s:Stream<T>, init: T): Beh<T> 
   {
     return Behaviours.fromStream(s, init);
   }
@@ -786,7 +839,7 @@ class Streams
     
     var link = {
       from:    s, 
-      towards: s.delay(time.valueNow())
+      towards: s.delay(time.get())
     };
 
     // XXX: event is not guaranteed to output
@@ -808,7 +861,7 @@ class Streams
 
     var resE = Streams.flatten(receiverEE);
     
-    switcherE.send(time.valueNow());
+    switcherE.send(time.get());
     
     return resE;
   }
@@ -851,7 +904,7 @@ class Streams
             
             out.send(pulse.value);
           },
-          time.valueNow()
+          time.get()
         );
         
         return NotPropagate;
@@ -881,14 +934,14 @@ class Streams
    */
   public static function blindB<T>(s:Stream<T>, time: Beh<Int>): Stream<T> 
   {
-    var lastSent = External.now() - time.valueNow() - 1;
+    var lastSent = External.now() - time.get() - 1;
     
     return Streams.create(            
       function (p: Pulse<T>): Propagation<T> 
       {
         var curTime = External.now();
         
-        if (curTime - lastSent > time.valueNow()) { // XXX What happens if signal time decreases, then we "owe" a prior event???
+        if (curTime - lastSent > time.get()) { // XXX What happens if signal time decreases, then we "owe" a prior event???
           lastSent = curTime;
           
           return Propagate(p);
@@ -909,7 +962,7 @@ class Streams
    */
   public static function snapshot<Z,T>(s:Stream<T>, value: Beh<Z>): Stream<Z> 
   {
-    return s.map(function(t) return value.valueNow());
+    return s.map(function(t) return value.get());
   }
 
   /**
@@ -1252,7 +1305,7 @@ class Streams
 
   @:noUsing public static function fromPromise <A,B>(p:Promise<A,B>):Stream<Validation<A,B>> {
     var s = source();
-    p.onComplete(s.sendEnd);
+    p.onComplete(function (v) s.sendEndLater(v));
     return s;
   }
 
