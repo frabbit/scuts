@@ -96,6 +96,16 @@ class Strings
   {
     return StringTools.endsWith(s, end);
   }
+
+  public static inline function toUpperCase(s:String):String 
+  {
+    return s.toUpperCase();
+  }
+
+  public static inline function toLowerCase(s:String):String 
+  {
+    return s.toLowerCase();
+  }
   
   /**
    * Replace each occurrence of sub in s with by.
