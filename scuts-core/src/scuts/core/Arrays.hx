@@ -397,6 +397,16 @@ class Arrays
     return if (arr.length == 0) None else Some(arr[arr.length - 1]);
   } 
   
+  public static function map2 < A, B,C > (arr:Array<Tup2<A,B>>, f:A->B->C):Array<C> 
+  {
+    return arr.map(f.tupled());
+  }
+
+  public static function flatMap2 < A, B,C > (arr:Array<Tup2<A,B>>, f:A->B->Array<C>):Array<C> 
+  {
+    return arr.flatMap(f.tupled());
+  }
+
   public static function map < A, B > (arr:Array<A>, f:A->B):Array<B> 
   {
     var r = [];
