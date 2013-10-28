@@ -18,11 +18,11 @@ using scuts.core.Functions;
 
 class CallbackToPromise {}
 
-abstract PromiseWithResult<A,B,C>({ promise : Promise<A,B>, result : C}) from { promise : Promise<A,B>, result : C} {
+abstract PromiseWithResult<A,B,C>({ promise : PromiseG<A,B>, result : C}) from { promise : PromiseG<A,B>, result : C} {
   
-  public function new (promise:Promise<A,B>, res:C) this = { promise : promise, result : res };
+  public function new (promise:PromiseG<A,B>, res:C) this = { promise : promise, result : res };
 
-  @:to public function toPromise ():Promise<A,B> return this.promise;
+  @:to public function toPromise ():PromiseG<A,B> return this.promise;
 }
 
 
