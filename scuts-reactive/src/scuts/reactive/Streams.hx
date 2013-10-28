@@ -566,7 +566,7 @@ class Streams
    */
   public static function each<T>(s:Stream<T>, f: T -> Void): Stream<T> 
   {
-    Streams.create(
+    var res = Streams.create(
       function(pulse: Pulse<T>): Propagation<T> {
           f(pulse.value);
           
@@ -576,7 +576,7 @@ class Streams
     );
     
     
-    return s;
+    return res;
   }
 
 
@@ -1303,14 +1303,14 @@ class Streams
     );
   }
 
-  @:noUsing public static function fromPromise <A,B>(p:Promise<A,B>):Stream<Validation<A,B>> {
+  @:noUsing public static function fromPromise <A,B>(p:PromiseG<A,B>):Stream<Validation<A,B>> {
     var s = source();
     p.onComplete(function (v) s.sendEndLater(v));
     return s;
   }
 
   
-  public static function takeUntilPromise<T>(s:Stream<T>, p:Promise<Dynamic, Dynamic>):Stream<T>
+  public static function takeUntilPromise<T>(s:Stream<T>, p:Promise<Dynamic>):Stream<T>
   {
     return takeUntilS(s,fromPromise(p));
   }
