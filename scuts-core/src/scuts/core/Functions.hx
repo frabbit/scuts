@@ -18,6 +18,9 @@ class Functions {
 
   @:noUsing public static function unit ():Unit return Unit;
 
+  @:noUsing public static function firstOfTwo < A, B > (a:A, b:B) return a;
+
+  @:noUsing public static function secondOfTwo < A, B > (a:A, b:B) return b;
 }
 
 
