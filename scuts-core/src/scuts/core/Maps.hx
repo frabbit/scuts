@@ -252,7 +252,16 @@ class StringMaps {
   public static function getOption<A>(h:StringMap<A>, key:String):Option<A>
   {
     return h.get(key).nullToOption();
-    
+  }
+
+  public static function getOrInsert <A>(h:StringMap<A>, key:String, def:Void->A):A
+  {
+    var r = h.get(key);
+    return if (r == null) {
+      var x = def();
+      h.set(key, x);
+      x;
+    } else r;
   }
 
   public static function keyValueIter <B>(m:StringMap<B>):Iterator<{ key : String, value : B}>
