@@ -64,8 +64,8 @@ abstract Of<M,A>(OfI<M,A>)
 	@:from public static inline function fromState <A,R>(x:State<A,R>):Of<State<In,R>, A> return new Of(x);
 	@:to public static function toState <A,R>(x:OfI<State<In,R>, A>):State<A,R> return CastHelper.preservedCast(cast x);
 
-	@:from public static inline function fromMapElem <K>(x:Map<K, A>):Of<Map<K, In>, A> return new Of(x);
-	@:to public static function toMapElem <K,A>(x:OfI<Map<K, In>, A>):Map<K, A> return CastHelper.preservedCast(cast x);
+	@:from public static inline function fromMapElem <K:{}>(x:Map<K, A>):Of<Map<K, In>, A> return new Of(x);
+	@:to public static function toMapElem <K:{},A>(x:OfI<Map<K, In>, A>):Map<K, A> return CastHelper.preservedCast(cast x);
 	
 	@:from public static inline function fromValidation <F,A>(x:Validation<F,A>):Of<Validation<F, In>, A> return CastHelper.preservedCheckType(var _ :  Of<Validation<F, In>, A> = new Of(x));
 	@:to public static function toValidation <F,A>(x:OfI<Validation<F, In>, A>):Validation<F, A> return CastHelper.preservedCast(cast x);
