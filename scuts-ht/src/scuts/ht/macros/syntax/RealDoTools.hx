@@ -92,7 +92,7 @@ class RealDoTools {
       
       
       var isZero = requiresMonadEmpty(exprs);
-      var monadExpr = getMonadExpr(o, isZero);
+      var monadExpr = if (m == null) getMonadExpr(o, isZero) else m;
       
 
 
@@ -120,8 +120,11 @@ class RealDoTools {
 
     var isConstIdent = monad.isConstIdent();
     
-    var withMonadId = monadId != null;
+    //var withMonadId = monadId != null;
 
+
+    //trace(monadId);
+    //trace(monad);
 
     var monadExpr = if (isConstIdent) monad else macro ___monad;
     
@@ -131,17 +134,9 @@ class RealDoTools {
     // generate resulting expression
     var generated = ast.map(toExpr.bind(_, monadExpr)).getOrElse(handleErr);
     
-    var res = if (withMonadId) {
-      switch (monadId.expr) {
-        case EConst(CIdent(x)): 
-          if (isConstIdent) 
-            macro { var $x = $monad; generated; } 
-          else macro { var ___monad = $monad; var $x = ___monad; $generated; }
-        case _ : throw "invalid monadId, must be const ident";
-      }
-    } else {
-      if (isConstIdent) generated else macro { var ___monad = $monad; $generated; }
-    }
+    var res = if (isConstIdent) generated else macro { var ___monad = $monad; $generated; }
+
+    
     
     
     
