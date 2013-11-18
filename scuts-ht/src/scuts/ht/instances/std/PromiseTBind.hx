@@ -12,7 +12,7 @@ import scuts.ht.classes.Monad;
 
 
 
-class PromiseTBind<M> implements Bind<Of<M, PromiseD<In>>> {
+class PromiseTBind<M> implements Bind<Of<M, Promise<In>>> {
   
   var base:Monad<M>;
   
@@ -24,7 +24,7 @@ class PromiseTBind<M> implements Bind<Of<M, PromiseD<In>>> {
   {
     function f1 (a:PromiseD<A>):Of<M,PromiseD<B>> 
     {
-      var x:Deferred<Dynamic,B> = Promises.deferred();
+      var x:Deferred<B> = Promises.deferred();
       a.onFailure(x.failure);
       a.onSuccess(function (a1:A) 
       {
@@ -41,7 +41,7 @@ class PromiseTBind<M> implements Bind<Of<M, PromiseD<In>>> {
       });
       a.onProgress(function (p) x.progress(0.5 * p));
       
-      return base.pure(x);
+      return base.pure(x.asPromiseD());
     }
     
     return base.flatMap(val, f1);
