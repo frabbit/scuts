@@ -284,6 +284,10 @@ class Promises
   public static function asPromiseD <E,T>(p:PromiseG<E,T>):PromiseD<T> return p;
   public static function asPromiseU <E,T>(p:PromiseG<E,T>):PromiseU<T> return p.mapFailure(function (_) return Unit);
 
+
+  public static function successToUnit<E,T>(p:PromiseG<E,T>):PromiseG<E,Unit> return p.map(Functions.unit.promote());
+
+
   @:noUsing public static function zipIterableWith <A,B,E> (a:Iterable<PromiseG<E,A>>, f:Iterable<A>->B):PromiseG<E,B>
   {
 
@@ -415,11 +419,10 @@ class Promises
   public static function flatMap < E,S,T > (p:PromiseG<E,S>, f:S->PromiseG<E,T>):PromiseG<E,T>
   {
     var res = deferred();
-    trace("1");
+    
     function success(r) 
     {
       var p1 = f(r);
-      trace("helo");
       p1.onProgress(function (p) res.progress(0.5 + p * 0.5))
         .onSuccess(res.success)
         .onFailure(res.failure);
