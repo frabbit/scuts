@@ -11,14 +11,14 @@ using scuts.core.Promises;
 using scuts.core.Functions;
 
 @:allow(scuts.reactive.StreamSubscriptions)
-class StreamSubscription<T> {
+class StreamSubscription {
 
-	var base : Stream<T>;
-	var own : Stream<T>;
+	var base : Stream<Dynamic>;
+	var own : Stream<Dynamic>;
 	
 	var subscription:Subscription;
 
-	public function new (base:Stream<T>, own:Stream<T>) {
+	public function new (base:Stream<Dynamic>, own:Stream<Dynamic>) {
 		this.base = base;
 		this.own = own;
 

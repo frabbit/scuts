@@ -585,7 +585,7 @@ class Streams
 
     var calls = 0;
 
-    var sub:StreamSubscription<T> = null;
+    var sub:StreamSubscription = null;
 
     function once (x:T) {
 
@@ -606,7 +606,7 @@ class Streams
     
   }
 
-  public static function listen<T>(s:Stream<T>, f:T->Void): StreamSubscription<T>
+  public static function listen<T>(s:Stream<T>, f:T->Void): StreamSubscription
   {
 
     
