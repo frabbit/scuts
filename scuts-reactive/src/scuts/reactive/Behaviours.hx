@@ -15,6 +15,7 @@
 */
 package scuts.reactive;
 
+import kp.tools.CoreUsing.BehaviourSource;
 import scuts.core.Promises;
 import scuts.reactive.BehavioursBool;
 import scuts.core.Tuples;
@@ -429,13 +430,36 @@ class Behaviours
 
 
     
-  public static function flatMap<T,Z> (b:Beh<T>, f : T->Beh<Z>, init:Z):Beh<Z>
+  public static function flatMap<T,Z> (beh:Beh<T>, f : T->Beh<Z>):Beh<Z>
   {
+    var init: T = beh.get();
 
+    var currentSource: Stream<Z> = null;
 
-    //return b.stream.flatMapLatest(function (x) return f(x).stream).toBehaviour(init);
-    
-    return flatten(map(b,f));
+    var receiverE: Stream<Z> = Streams.identity();
+
+    //XXX could result in out-of-order propagation! Fix!
+    var makerE:Stream<T> = Streams.create(
+      function(p: Pulse<T>): Propagation<T> 
+      {
+        if (currentSource != null) {
+          currentSource.removeListener(receiverE);
+        }
+        var b = f(p.value);
+        currentSource = b.stream;
+        
+        currentSource.attachListener(receiverE);
+        receiverE.send(b.get());
+        
+        return NotPropagate;
+      },
+      [beh.stream]
+    );
+
+    makerE.send(init);
+
+    var initZ = f(init).get();
+    return receiverE.asBehaviour(initZ);
   }
     
   /**
@@ -466,8 +490,9 @@ class Behaviours
         prevSourceE = p.value.stream;
         
         prevSourceE.attachListener(receiverE);
-
-        receiverE.send(p.value.get());
+        var newVal = p.value.get();
+        
+        receiverE.send(newVal);
         
         return NotPropagate;
       },
