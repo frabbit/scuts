@@ -134,7 +134,7 @@ class ImLists
     return fromArrayWithBounds(it.toArray());
   }
   
-  @:generic @:noUsing public static inline function mkEmpty <T> ():List<T> {
+  @:noUsing public static inline function mkEmpty <T> ():List<T> {
     return Nil;
   }
   
