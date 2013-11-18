@@ -15,5 +15,9 @@ class Dates
   public static function diffFullDays (d1:Date, d2:Date):Int {
     return Math.floor((fullDays(d1).getTime() - fullDays(d2).getTime()) / 24 / 60 / 60 / 1000);
   }
+
+  public static function eq (d1:Date, d2:Date):Bool {
+  	return d1.getTime() == d2.getTime();
+  }
   
 }
