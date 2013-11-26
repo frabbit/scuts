@@ -13,6 +13,23 @@ using scuts.core.Options;
 using scuts.core.Nulls;
 
 
+class Maps 
+{
+  public static function concat <A,B,X:IMap<A,B>>(m1:X, m2:X, create:Void->X):X
+  {
+    var res = create();
+    for (k in m1.keys()) 
+    {
+      res.set(k, m1.get(k));
+    }
+    for (k in m2.keys()) 
+    {
+      res.set(k, m2.get(k));
+    }
+    return res;
+  }
+}
+
 class ObjectMaps 
 {
    

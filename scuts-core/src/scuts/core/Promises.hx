@@ -132,6 +132,19 @@ class Promises
   
 
 
+  #if js 
+  public static function delay <E,T>(p:PromiseG<E,T>, timeMs:Int):PromiseG<E,T>
+  {
+    var p1 = deferred();
+    p.onComplete(function (x) {
+      haxe.Timer.delay(function () {
+        p1.complete(x);
+        }, timeMs);
+    });
+    return p1;
+  }
+  #end
+
 
   public static function extract <E, T>(p:PromiseG<E, T>):Validation<E, T> 
   {
