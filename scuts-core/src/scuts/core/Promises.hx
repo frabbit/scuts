@@ -75,8 +75,10 @@ typedef Deferred<B> = DeferredG<Throwable, B>;
  * It can only be created with Promises.deferred().
  *
  */
-abstract DeferredG<A,B>(PromiseG<A,B>) to PromiseG<A,B> {
-  @:allow(scuts.core.Promises)
+@:allow(scuts.core.Promises)
+abstract DeferredG<A,B>(PromiseG<A,B>) to PromiseG<A,B> 
+{
+  
   inline function new (p:PromiseG<A,B>) this = p;
 
   public inline function promise ():PromiseG<A,B> {
@@ -378,21 +380,44 @@ class Promises
     return p;
   }
   
+  /**
+    Creates a resolved promise from a validation value. Based on v it can be successful or faulty.
+  **/
   @:noUsing public static function fromValidation <F,S>(v:Validation<F,S>):PromiseG<F,S> 
   {
     return deferred().complete(v);
   }
 
-  @:noUsing public static function failed <E,S>(s:E):PromiseG<E,S>
+  /**
+    Creates a resolved, but faulty promise with the error value `f`.
+  **/
+  @:noUsing public static function failed <E,S>(f:E):PromiseG<E,S>
   {
-    return deferred().failure(s);
+    return deferred().failure(f);
   } 
 
+  /**
+    Wraps/lifts a simple value into an already resolved promise.
+  **/
   @:noUsing public static function pure <E,S>(s:S):PromiseG<E,S> 
   {
     return deferred().success(s);
   }
   
+
+  /**
+    Creates a new deferred object which is an abstract wrapper around a promise. The purpose of this 
+    distinct type is to separate the creation from the usage of a promise. Only a Deferred Object
+    can be fullfilled with the functions `success`, `failure` or `complete`.
+        
+    ```haxe
+    var def = deferred();
+    def.success(1);
+    ```
+
+
+
+  **/
   @:noUsing public static function deferred <E,S>():DeferredG<E,S> 
   {
     return new DeferredG(new PromiseG());
@@ -474,7 +499,7 @@ class Promises
   public static function map < S, T,E > (p:PromiseG<E,S>, f:S->T):PromiseG<E,T>
   {
     var res = deferred();
-  
+
     p.onSuccess (f.next(res.success))
      .onFailure(res.failure)
      .onProgress (res.progress);
