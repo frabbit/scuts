@@ -3,6 +3,7 @@ package scuts.core;
 
 import scuts.core.Ordering;
 
+import scuts.ht.classes.Ord;
 import scuts.Scuts;
 
 import scuts.core.Tuples;
@@ -692,6 +693,15 @@ class Arrays
     return res;
   }
   
+  public static function orderByKeyFunc <A,K> (a:Array<A>, f:A->K, ord:Ord<K>) 
+  {
+    var r = a.copy();
+
+    r.sort(function (a, b) return ord.compareInt(f(a), f(b)));
+
+    return r;
+  }
+
   public static function removeElem <A> (a:Array<A>, e:A, ?equals:A->A->Bool):Array<A> 
   {
     equals = equals.nullGetOrElseConst(function (x1, x2) return x1 == x2);
@@ -753,6 +763,8 @@ class Arrays
     for (i in a) r.push(i);
     return r;
   }
+
+
   
  
   
