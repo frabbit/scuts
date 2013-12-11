@@ -15,7 +15,7 @@
 */
 package scuts.reactive;
 
-import kp.tools.CoreUsing.BehaviourSource;
+
 import scuts.core.Promises;
 import scuts.reactive.BehavioursBool;
 import scuts.core.Tuples;
