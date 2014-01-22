@@ -48,8 +48,8 @@ class PromiseG<Err, T>
   #end
   
   var _completeListeners:Array<Validation<Err, T>->Void>;
-  var _failureListeners:Array<Err->Void>;
-  var _successListeners:Array<T->Void>;
+  //var _failureListeners:Array<Err->Void>;
+  //var _successListeners:Array<T->Void>;
 
   var _progressListeners:Array<Percent->Void>;
   
@@ -96,9 +96,9 @@ class Promises
   inline static function clearListeners <T,E>(p:PromiseG<E,T>)
   {
     p._completeListeners = [];
-    p._failureListeners = [];
+    //p._failureListeners = [];
     p._progressListeners = [];
-    p._successListeners = [];
+    //p._successListeners = [];
   }
 
   inline static function lock <T,E>(p:PromiseG<E,T>) 
@@ -196,11 +196,6 @@ class Promises
       p.lock();
       if (!p.isCompleteDoubleCheck()) 
       {
-        switch (val) 
-        {
-          case Success(s): for (c in p.promise()._successListeners) c(s);
-          case Failure(f): for (c in p.promise()._failureListeners) c(f);
-        }
         for (c in p.promise()._completeListeners) c(val);
         p.promise()._value = Some(val);
         p.promise()._complete = true;
@@ -267,7 +262,7 @@ class Promises
     if (!p.isComplete()) 
     {
       p.lock();
-      if (!p.isCompleteDoubleCheck()) p._failureListeners.push(f);
+      if (!p.isCompleteDoubleCheck()) p._completeListeners.push(function (x) x.eachFailure(f));
       else p.onFailure(f);
       p.unlock();
     } 
@@ -281,7 +276,7 @@ class Promises
     if (!p.isComplete()) 
     {
       p.lock();
-      if (!p.isCompleteDoubleCheck()) p._successListeners.push(f);
+      if (!p.isCompleteDoubleCheck()) p._completeListeners.push(function (x) x.each(f));
       else p.onSuccess(f);
       p.unlock();
       
