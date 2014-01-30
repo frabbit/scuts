@@ -44,12 +44,19 @@ class Enums {
 			e.unapply(Tup2(x,_), x); // returns 1
 			e.unapply(Tup2(_,y), y); // returns "foo"
 	**/
-	macro public static function unapply (x:ExprOf<EnumValue>, caseExpr:Expr, zipExpr:Expr)
+	macro public static function unapply (x:ExprOf<EnumValue>, caseExpr:Expr, ?zipExpr:Expr)
 	{
+		switch (caseExpr.expr) {
+			case EBinop(OpArrow, e1,e2):
+				zipExpr = e2;
+				caseExpr = e1;
+			case _ : 
+		}
 		return macro @:pos(x.pos) switch ($x) {
 			case $caseExpr : $zipExpr;
 		}
-	} 
+	}
+
 
 	/**
 		Unapplies (deconstructs) an EnumValue in it's constituent parts. The parts are then combined with zipExpr and wrapped

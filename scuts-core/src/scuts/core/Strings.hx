@@ -185,5 +185,18 @@ class Strings
     return if (s.length == 0) s else s.charAt(0).toUpperCase() + s.substr(1);
   }
   
-  
+  public static function hashCode (s:String):Int 
+  {
+    var h:haxe.Int32 = 0;
+    var count = s.length;
+
+    if (count > 0) {
+      // s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]
+      for (i in 0...count) {
+        h += Std.int(StringTools.fastCodeAt(s, i)*(Math.pow(31,(count-1-i))));
+      }
+    }
+    return h;
+  }
+
 }
