@@ -321,14 +321,11 @@ class Behaviours
 
 
     function create() return f(b1.get(), b2.get());
-
-    return Streams.zipWith(b1.stream, b2.stream, f).asBehaviour(create());
-
-    // trace(create());
-    // return Streams.create(
-    //   function(pulse) return Propagate(pulse.withValue(create())),
-    //   [cast b1.stream, cast b2.stream]
-    // ).asBehaviour(create());
+    return Streams.create(
+      function(pulse) return Propagate(pulse.withValue(create())),
+      [cast b1.stream, cast b2.stream]
+    ).asBehaviour(create());
+    
   }
   
   public static function zipWith3<T, B, C, X>(b1:Beh<T>, b2: Beh<B>, b3: Beh<C>, f:T->B->C->X): Beh<X> {
@@ -428,8 +425,6 @@ class Behaviours
     return b._last;
   }
 
-
-    
   public static function flatMap<T,Z> (beh:Beh<T>, f : T->Beh<Z>):Beh<Z>
   {
     var init: T = beh.get();
