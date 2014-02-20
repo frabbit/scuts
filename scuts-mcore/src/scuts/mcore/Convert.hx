@@ -151,7 +151,10 @@ class Convert
     return switch (c) 
     {
       case TAnonymous(fields):   convFields(fields).map(ComplexType.TAnonymous);
-      case TExtend(p, fields):   convTypePath(p).zip(convFields(fields)).map(TExtend.tupled());
+      case TExtend(p, fields):   
+        var tps = [for (x in p) convTypePath(x)].catIfAllSuccess();
+        tps.zip(convFields(fields)).map(TExtend.tupled());
+        //convTypePath(p).zip(convFields(fields)).map(TExtend.tupled());
       case TFunction(args, ret): funcToFullQualified(args, ret);
       case TOptional(t):         ct(t).map(TOptional);
       case TParent(t):           ct(t).map(TParent);

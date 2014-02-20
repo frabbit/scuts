@@ -474,7 +474,16 @@ class Print
       case TExtend( p, fields ):
         add("{");
         add(">");
-        typePathStr1(p, buf, indent, indentStr);
+        var first = true;
+        for (p in p) {
+          if (!first) {
+            add(", >");
+          } else {
+            first = false;
+          }
+          typePathStr1(p, buf, indent, indentStr);  
+        }
+        
         for (f in fields) {
           field1(f, buf, indent, indentStr);
         }

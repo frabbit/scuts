@@ -27,7 +27,7 @@ class ComplexTypes
   public static function eq (c1:ComplexType, c2:ComplexType):Bool return switch [c1,c2]
   {
     case [TAnonymous(fields1),TAnonymous(fields2)]: Arrays.eq(fields1, fields2, Fields.eq);
-    case [TExtend(p1, fields1),TExtend(p2, fields2)]: TypePaths.eq(p1, p2) && Arrays.eq(fields1, fields2, Fields.eq);
+    case [TExtend(p1, fields1),TExtend(p2, fields2)]: Arrays.eq(p1,p2, TypePaths.eq) && Arrays.eq(fields1, fields2, Fields.eq);
     case [TFunction(args1, ret1),TFunction(args2, ret2)]: Arrays.eq(args1, args2, ComplexTypes.eq) && ComplexTypes.eq(ret1, ret2);
     case [TOptional(t1),TOptional(t2)]: eq(t1,t2); 
     case [TParent(t1), TParent(t2)]: eq(t1,t2);

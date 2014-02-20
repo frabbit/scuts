@@ -209,10 +209,14 @@ class Parse
     {
       case TPath(p):             convTypePath(p).map(TPath);
       case TFunction(args, ret): var a = mapAndCatIfAllSuccess(args, convertType.bind(_,ctx,pos));
-                                 zip2w(a, convertType(ret, ctx, pos), TFunction);
+                                 
+                                 zip2w(a, convertType(ret, ctx, pos), ComplexType.TFunction);
       case TAnonymous(fields):   convertFields(fields, ctx, pos).map(ComplexType.TAnonymous);
       case TParent(tp):          convertType(tp, ctx, pos).map(TParent);
-      case TExtend(tp, fields):  zip2w(convTypePath(tp), convertFields(fields, ctx, pos), TExtend);
+      case TExtend(tp, fields):  
+        var a = mapAndCatIfAllSuccess(tp, convTypePath);
+        zip2w(a, convertFields(fields, ctx, pos), TExtend);
+        //zip2w(convTypePath(tp), convertFields(fields, ctx, pos), TExtend);
       case TOptional(to):        convertType(to, ctx, pos).map(TOptional);
     }
   }
