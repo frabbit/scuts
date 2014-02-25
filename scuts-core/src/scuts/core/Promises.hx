@@ -148,6 +148,13 @@ class Promises
   #end
 
 
+  public static function flatBranch <E,T>(p:PromiseG<E, Bool>, ifTrue:Void->PromiseG<E,T>, ifFalse:Void->PromiseG<E,T>):PromiseG<E,T> 
+  {
+    return p.flatMap(function (x) {
+      return if (x) ifTrue() else ifFalse();
+    });
+  }
+
   public static function extract <E, T>(p:PromiseG<E, T>):Validation<E, T> 
   {
     return p._value.getOrError("error result is not available");
@@ -398,6 +405,8 @@ class Promises
   {
     return deferred().success(s);
   }
+
+  
   
 
   /**
