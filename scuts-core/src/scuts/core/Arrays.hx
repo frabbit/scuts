@@ -764,6 +764,19 @@ class Arrays
     return r;
   }
 
+  public static function mapToIterator <A,B>(a:Array<A>, f:A->B):Iterator<B>
+  {
+    var i = 0;
+    return {
+      hasNext : function () {
+        return i < a.length;
+      },
+      next : function () {
+        return f(a[i++]);
+      }
+    }
+  }
+
 
   
  
