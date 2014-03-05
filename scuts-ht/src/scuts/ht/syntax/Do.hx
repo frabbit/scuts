@@ -31,5 +31,10 @@ class Do
   {
     return DoTools.buildWith(m, exprs);
   }
+
+  @:noUsing macro public static function runPromise<M>(exprs:Array<Expr>)
+  {
+    return DoTools.buildWith(macro scuts.ht.instances.Monads.promiseMonad, exprs);
+  }
   
 }

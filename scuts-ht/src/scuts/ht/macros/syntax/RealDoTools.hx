@@ -118,7 +118,7 @@ class RealDoTools {
     // check if the passed monad is a const ident. 
     // If yes, we don't need to build a block for the resulting expression.
 
-    var isConstIdent = monad.isConstIdent();
+    var isConstIdent = false;
     
     //var withMonadId = monadId != null;
 
@@ -136,13 +136,24 @@ class RealDoTools {
     
     var res = if (isConstIdent) generated else macro { var ___monad = $monad; $generated; }
 
-    
+    function loop (x:Expr) 
+    {
+      return switch (x.expr) {
+        case EMeta(m, e) if (m.name == "pure"): 
+          var e = loop(e);
+          macro @:pos(x.pos) $monadExpr.pure($e);
+        case _ : 
+          ExprTools.map(x, loop);
+      }
+    }
+
+    var res = ExprTools.map(res, loop);
     
     
     
     #if scutsDebug
-    trace("Do-Construct for expression\n" + Print.expr(Make.block(exprs.cons(monad))));
-    trace("\n" + Print.expr(res));
+    trace("Do-Construct for expression\n" + ExprTools.toString(Make.block(exprs.cons(monad))));
+    trace("\n" + ExprTools.toString(res));
     #end
     return res;
   }

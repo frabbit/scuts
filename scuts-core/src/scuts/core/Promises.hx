@@ -498,6 +498,24 @@ class Promises
     return flatMap(p, f.tupled());
   }
 
+  public static function tryMap < S, T,E > (p:PromiseG<E,S>, f:S->T):Promise<T>
+  {
+    var res = deferred();
+
+    function fx (x) {
+      try {
+        res.success(f(x));
+      } catch (e:Dynamic) {
+        res.failure(e);
+      }
+    }
+
+    p.onSuccess (fx)
+     .onFailure(res.failure)
+     .onProgress (res.progress);
+      
+    return res;
+  }
   
 
   public static function map < S, T,E > (p:PromiseG<E,S>, f:S->T):PromiseG<E,T>
@@ -587,7 +605,7 @@ class Promises
     return res;
   }
 
-  public static function forceSwitchWith<A,B,Z> (p:PromiseG<Z,A>, b:Void->PromiseG<Z,B>):PromiseG<Z,B>
+  public static function forceSwitchTo<A,B,Z> (p:PromiseG<Z,A>, b:Void->PromiseG<Z,B>):PromiseG<Z,B>
   {
     return p.flatMapValidation(function (_) return b());
   }
@@ -596,19 +614,19 @@ class Promises
     return p.flatMapValidation(function (_) return b);
   }
 
-  public static function switchWith<A,B,Z> (a:PromiseG<Z,A>, b:Void->PromiseG<Z,B>):PromiseG<Z,B>
+  public static function switchTo<A,B,Z> (a:PromiseG<Z,A>, b:Void->PromiseG<Z,B>):PromiseG<Z,B>
   {
     return a.flatMap(function (_) return b());
   }
 
   public static inline function switchC<A,C,Z> (a:PromiseG<Z,A>, c:C):PromiseG<Z,C>
   {
-    return a.switchWith(function () return Promises.pure(c));
+    return a.switchTo(function () return Promises.pure(c));
   }
 
   public static inline function switchP<A,B,Z> (a:PromiseG<Z,A>, b:PromiseG<Z,B>):PromiseG<Z,B>
   {
-    return a.switchWith(function () return b);
+    return a.switchTo(function () return b);
   }
   
   public static inline function zip<A,B,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>):PromiseG<Z,Tup2<A,B>>
