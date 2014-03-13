@@ -46,7 +46,7 @@ class DoGen
   public static function doOpToExpr(op:DoOp, monad:Expr, isMonadZero:Bool, isUpcasted:Bool):Expr return switch (op) 
   {
     case OpFilter(_, _):           Scuts.unexpected();      
-    case OpFlatMap(ident, val, op): opFlatMapToExpr(monad, isMonadZero, isUpcasted, ident, val, op);
+    case OpFlatMap(idents, val, op): opFlatMapToExpr(monad, isMonadZero, isUpcasted, idents, val, op);
     case OpPure(e, optionOp):       opPureToExpr(monad, isMonadZero, isUpcasted, e, optionOp);
     case OpLast(op):                doOpToExpr(op, monad, isMonadZero, isUpcasted);
     case OpExpr(e):                 e;
@@ -57,7 +57,7 @@ class DoGen
   /**
    * Converts a OpFlatMap Expression into an Expr 
    */
-  static function opFlatMapToExpr (monad:Expr, isMonadZero:Bool, isUpcasted:Bool, ident:String, val:Expr, op:DoOp) 
+  static function opFlatMapToExpr (monad:Expr, isMonadZero:Bool, isUpcasted:Bool, idents:Array<String>, val:Expr, op:DoOp) 
   {
     function createFilterExpr (x:Tup2<Expr, DoOp>) 
     {
@@ -66,7 +66,7 @@ class DoGen
       
       function createBinaryFilter (y:Tup2<Expr, DoOp>) 
       {
-        var newOp = OpFlatMap(ident, val, OpFilter(x._1.inParenthesis().binopBoolAnd(y._1.inParenthesis()), y._2));
+        var newOp = OpFlatMap(idents, val, OpFilter(x._1.inParenthesis().binopBoolAnd(y._1.inParenthesis()), y._2));
         return doOpToExpr(newOp, monad, isMonadZero, isUpcasted);
       }
       
@@ -76,7 +76,7 @@ class DoGen
         // create guard expression
         var ifExpr = Make.ifExpr(x._1, doOpToExpr(x._2, monad, isMonadZero, isUpcasted), monad.field("empty").call([]));
         
-        var newOp = OpFlatMap(ident, val, OpExpr(ifExpr));
+        var newOp = OpFlatMap(idents, val, OpExpr(ifExpr));
         return doOpToExpr(newOp, monad, isMonadZero, isUpcasted);
       }
       
@@ -85,8 +85,8 @@ class DoGen
     
     function createMapOrFlatMapExpr () 
     {
-      var createMap = function (x) return createMapExpr(monad, isUpcasted, ident, val, op,x);
-      var createFlatMap = function () return createFlatMapExpr(monad, isMonadZero, isUpcasted, ident, val, op);
+      var createMap = function (x) return createMapExpr(monad, isUpcasted, idents, val, op,x);
+      var createFlatMap = function () return createFlatMapExpr(monad, isMonadZero, isUpcasted, idents, val, op);
       
       
       return op.getLastPureExpr().map(createMap).getOrElse(createFlatMap);
@@ -99,21 +99,46 @@ class DoGen
   /**
    * Creates a map-Expr with the inner expression op. (map are used for optimization).
    */
-  static function createMapExpr (monad:Expr, isUpcasted:Bool, ident:String, val:Expr, op:DoOp, x:Expr ):Expr 
+  static function createMapExpr (monad:Expr, isUpcasted:Bool, idents:Array<String>, val:Expr, op:DoOp, x:Expr ):Expr 
   {
     var e = isUpcasted ? macro $val.implicitUpcast() : val;
-    var args = [e, Make.funcExpr([Make.funcArg(ident, false)], x.asReturn())];
+    var args = [e, Make.funcExpr([Make.funcArg(idents[0], false)], x.asReturn())];
     return monad.field("map").call(args);
   }
   
   /**
    * Creates a flatMap-Expr without Filter with the inner expression represented by op.
    */
-  static function createFlatMapExpr (monad:Expr, isMonadZero:Bool, isUpcasted:Bool, ident:String, val:Expr, op:DoOp):Expr
+  static function createFlatMapExpr (monad:Expr, isMonadZero:Bool, isUpcasted:Bool, idents:Array<String>, val:Expr, op:DoOp):Expr
   {
     // maybe upcasting
     var e = isUpcasted ? macro $val.implicitUpcast() : val;
-    var args = [e, Make.funcExpr([Make.funcArg(ident, false)], Make.returnExpr(doOpToExpr(op, monad, isMonadZero, isUpcasted)))];
+    
+
+
+    var exprs = switch (idents.length) {
+      case 0 : [];
+      case 1 : 
+        var name = idents[0];
+        [macro var $name = _fm_res];
+      case _ : idents.mapWithIndex(function (e, index) {
+        var index = "_"+(index+1);
+        var ex = macro var $e = _fm_res.$index;
+
+        return ex;
+      });
+    }
+    
+
+    var resExpr = macro return ${doOpToExpr(op, monad, isMonadZero, isUpcasted)};
+
+    var f = macro function (_fm_res) $b{exprs.concat([resExpr])}
+
+      
+    
+
+    var args = [e, f];
+
     return monad.field("flatMap").call(args);
   }
 
@@ -130,7 +155,7 @@ class DoGen
       return switch (op) {
         
         case OpFlatMap(x, val, op2): createMapExpr(monad, isUpcasted, x, val, op2,  e);
-        default: doOpToExpr(OpFlatMap("_", createPureExpr() , op), monad, isMonadZero, isUpcasted);
+        default: doOpToExpr(OpFlatMap(["_"], createPureExpr() , op), monad, isMonadZero, isUpcasted);
       }
     }
 

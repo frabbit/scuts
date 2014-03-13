@@ -45,19 +45,21 @@ class DoParser
       return asCall.flatMap(getOpPure).getOrElse(function () return OpLast(OpExpr(expr)));
     }
     
+    
     function composeToDoOp (cur:Expr, acc1:DoParseResult):DoParseResult 
     {
       function convert (acc:DoOp):DoParseResult 
       {
         function doDefault () {
-          return OpFlatMap("_", cur, acc);
+          return OpFlatMap(["_"], cur, acc);
         }
         return switch (cur.expr) 
         {
           case EBinop(op,l,r): 
             if (op == OpLte) 
             {
-              l.selectEConstCIdentValue()
+              l.selectEConstCIdentValueInEArrayDecl()
+              //l.selectEConstCIdentValue()
               .map      (function (x) return OpFlatMap(x, r, acc).toSuccess())
               .getOrElse(LeftSideOfFlatMapMustBeConstIdent.toFailure);
             }

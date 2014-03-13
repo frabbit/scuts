@@ -12,7 +12,7 @@ import scuts.core.Validations;
 enum DoOp 
 {
   OpFilter(expr:Expr, op:DoOp); // Filters are only available in Conjunction with MonadZero.
-  OpFlatMap(ident:String, val:Expr, op:DoOp);
+  OpFlatMap(idents:Array<String>, val:Expr, op:DoOp);
   OpPure(e:Expr, op:Option<DoOp>);
   OpLast(op:DoOp); // special care for last statement, use map if its a pure statement, flatMap otherwise
   OpExpr(e:Expr);
