@@ -145,6 +145,20 @@ class Promises
     });
     return p1;
   }
+
+  public static function delayF <E,T>(p:Void->PromiseG<E,T>, timeMs:Int):PromiseG<E,T>
+  {
+    var p1 = deferred();
+    
+    haxe.Timer.delay(function () {
+      p().onComplete(function (x) {
+        p1.complete(x);
+      });
+      
+    }, timeMs);
+    
+    return p1;
+  }
   #end
 
 
@@ -605,6 +619,8 @@ class Promises
     return res;
   }
 
+
+
   public static function forceSwitchTo<A,B,Z> (p:PromiseG<Z,A>, b:Void->PromiseG<Z,B>):PromiseG<Z,B>
   {
     return p.flatMapValidation(function (_) return b());
@@ -632,6 +648,24 @@ class Promises
   public static inline function zip<A,B,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>):PromiseG<Z,Tup2<A,B>>
   {
     return liftF2(Tup2.create)(a,b);
+  }
+
+  public static inline function zipAfter<A,B,Z>(a:PromiseG<Z,A>, b:Void->PromiseG<Z,B>):PromiseG<Z,Tup2<A,B>>
+  {
+    return a.flatMap(function (x) {
+      return b().map(function (y) {
+        return Tup2.create(x,y);
+      });
+    });
+  }
+
+  public static inline function zip3After<A,B,C,Z>(a:PromiseG<Z,A>, b:Void->PromiseG<Z,B>, c:Void->PromiseG<Z,C>):PromiseG<Z,Tup3<A,B,C>>
+  {
+    return a.flatMap(function (x) {
+      return b().zip(c()).map2(function (y,z) {
+        return Tup3.create(x,y,z);
+      });
+    });
   }
   
   public static inline function 
@@ -781,6 +815,7 @@ class Promises
     }
   }
 
+  
   
 
 }
