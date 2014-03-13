@@ -98,6 +98,22 @@ class Exprs
   {
     return selectEConstConstant(e).flatMap(Constants.selectCIdentValue);
   }
+
+  public static function selectEConstCIdentValueInEArrayDecl (e:Expr):Option<Array<String>> 
+  {
+    return switch (e.expr) {
+      case EArrayDecl(arr):
+        var r = arr.map(function (x) {
+          return selectEConstConstant(x).flatMap(Constants.selectCIdentValue);
+        }).catOptions();
+
+        if (r.length == arr.length) Some(r) else None;
+      case EConst(CIdent(x)): Some([x]);
+      case _: None;
+
+    }
+    
+  }
   
   public static function extractBinOpRightExpr (e:Expr, filter:Binop->Bool ):Option<Expr> return switch (e.expr) 
   {
