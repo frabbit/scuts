@@ -57,7 +57,7 @@ class DoGen
   /**
    * Converts a OpFlatMap Expression into an Expr 
    */
-  static function opFlatMapToExpr (monad:Expr, isMonadZero:Bool, isUpcasted:Bool, idents:Array<String>, val:Expr, op:DoOp) 
+  static function opFlatMapToExpr (monad:Expr, isMonadZero:Bool, isUpcasted:Bool, idents:FlatMapExpr, val:Expr, op:DoOp) 
   {
     function createFilterExpr (x:Tup2<Expr, DoOp>) 
     {
@@ -99,40 +99,54 @@ class DoGen
   /**
    * Creates a map-Expr with the inner expression op. (map are used for optimization).
    */
-  static function createMapExpr (monad:Expr, isUpcasted:Bool, idents:Array<String>, val:Expr, op:DoOp, x:Expr ):Expr 
+  static function createMapExpr (monad:Expr, isUpcasted:Bool, fmExpr:FlatMapExpr, val:Expr, op:DoOp, x:Expr ):Expr 
   {
     var e = isUpcasted ? macro $val.implicitUpcast() : val;
-    var args = [e, Make.funcExpr([Make.funcArg(idents[0], false)], x.asReturn())];
+    var args = switch (fmExpr) {
+      case FMIdents(idents): [e, Make.funcExpr([Make.funcArg(idents[0], false)], x.asReturn())];
+      case _ : throw "not implemented";
+    }
     return monad.field("map").call(args);
   }
   
   /**
    * Creates a flatMap-Expr without Filter with the inner expression represented by op.
    */
-  static function createFlatMapExpr (monad:Expr, isMonadZero:Bool, isUpcasted:Bool, idents:Array<String>, val:Expr, op:DoOp):Expr
+  static function createFlatMapExpr (monad:Expr, isMonadZero:Bool, isUpcasted:Bool, fmExpr:FlatMapExpr, val:Expr, op:DoOp):Expr
   {
     // maybe upcasting
     var e = isUpcasted ? macro $val.implicitUpcast() : val;
     
 
 
-    var exprs = switch (idents.length) {
-      case 0 : [];
-      case 1 : 
-        var name = idents[0];
-        [macro var $name = _fm_res];
-      case _ : idents.mapWithIndex(function (e, index) {
-        var index = "_"+(index+1);
-        var ex = macro var $e = _fm_res.$index;
+    var f = switch (fmExpr) {
+      case FMIdents(idents):
+        var exprs = switch (idents.length) {
+          case 0 : [];
+          case 1 : 
+            var name = idents[0];
+            [macro var $name = _fm_res];
+          case _ : idents.mapWithIndex(function (e, index) {
+            var index = "_"+(index+1);
+            var ex = macro var $e = _fm_res.$index;
 
-        return ex;
-      });
+            return ex;
+          });
+          
+          
+        }
+        var resExpr = macro return ${doOpToExpr(op, monad, isMonadZero, isUpcasted)};
+
+        macro function (_fm_res) $b{exprs.concat([resExpr])}
+      case FMExtractor(x) : // extractor expression
+        
+        macro function (_fm_res) return switch (_fm_res) {
+          case $x : ${doOpToExpr(op, monad, isMonadZero, isUpcasted)};
+        }
     }
     
 
-    var resExpr = macro return ${doOpToExpr(op, monad, isMonadZero, isUpcasted)};
-
-    var f = macro function (_fm_res) $b{exprs.concat([resExpr])}
+    
 
       
     
@@ -155,7 +169,7 @@ class DoGen
       return switch (op) {
         
         case OpFlatMap(x, val, op2): createMapExpr(monad, isUpcasted, x, val, op2,  e);
-        default: doOpToExpr(OpFlatMap(["_"], createPureExpr() , op), monad, isMonadZero, isUpcasted);
+        default: doOpToExpr(OpFlatMap(FMIdents(["_"]), createPureExpr() , op), monad, isMonadZero, isUpcasted);
       }
     }
 

@@ -51,7 +51,7 @@ class DoParser
       function convert (acc:DoOp):DoParseResult 
       {
         function doDefault () {
-          return OpFlatMap(["_"], cur, acc);
+          return OpFlatMap(FMIdents(["_"]), cur, acc);
         }
         return switch (cur.expr) 
         {
@@ -60,7 +60,10 @@ class DoParser
             {
               l.selectEConstCIdentValueInEArrayDecl()
               //l.selectEConstCIdentValue()
-              .map      (function (x) return OpFlatMap(x, r, acc).toSuccess())
+              .map      (function (x) return OpFlatMap(FMIdents(x), r, acc).toSuccess())
+              .orElse(function () return Some(OpFlatMap(FMExtractor(l), r, acc).toSuccess()))
+              
+              
               .getOrElse(LeftSideOfFlatMapMustBeConstIdent.toFailure);
             }
             else OpExpr(cur).toSuccess();

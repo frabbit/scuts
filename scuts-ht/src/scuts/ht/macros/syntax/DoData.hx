@@ -6,13 +6,18 @@ import haxe.macro.Expr;
 import scuts.core.Options;
 import scuts.core.Validations;
 
+enum FlatMapExpr {
+	FMIdents(idents:Array<String>);
+	FMExtractor(e:Expr);
+}
+
 /**
  * The abstract Datatype of a Do-Operation.
  */
 enum DoOp 
 {
   OpFilter(expr:Expr, op:DoOp); // Filters are only available in Conjunction with MonadZero.
-  OpFlatMap(idents:Array<String>, val:Expr, op:DoOp);
+  OpFlatMap(fe:FlatMapExpr, val:Expr, op:DoOp);
   OpPure(e:Expr, op:Option<DoOp>);
   OpLast(op:DoOp); // special care for last statement, use map if its a pure statement, flatMap otherwise
   OpExpr(e:Expr);
