@@ -472,6 +472,11 @@ class Promises
     return res; 
   }
 
+  public static function before < E,S,T > (p:PromiseG<E,S>, f:Void->PromiseG<E,T>):PromiseG<E,T>
+  {
+    return p.flatMap(function (_) return f());
+  }
+
   public static function flatMap < E,S,T > (p:PromiseG<E,S>, f:S->PromiseG<E,T>):PromiseG<E,T>
   {
     var res = deferred();

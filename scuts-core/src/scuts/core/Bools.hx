@@ -8,4 +8,5 @@ class Bools
   public static inline function and(v1:Bool, v2:Bool) return v1 && v2;
   public static inline function or(v1:Bool, v2:Bool) return v1 || v2;
   public static inline function not(v:Bool) return !v;
+  public static inline function toInt(v:Bool) return if (v) 1 else 0;
 }
