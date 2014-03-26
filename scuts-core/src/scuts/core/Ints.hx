@@ -21,6 +21,8 @@ class Ints
   @:noUsing public static inline function ceil(x:Float):Int return Std.int(Math.ceil(x));
   
   public static inline function inRange(i:Int, min:Int, maxExcluded:Int) return i >= min && i < maxExcluded;
+
+  public static inline function toBool(i:Int) return i != 0;
   
   
   

@@ -1,5 +1,7 @@
 package scuts.core;
 
+using scuts.core.Maps;
+
 #if macro 
 
 import haxe.macro.Expr;
@@ -22,6 +24,29 @@ class Objects
   public static inline function hasField (v:{}, field:String):Bool return Reflect.hasField(v, field);
 
   public static inline function fields (v:{}, field:String):Array<String> return Reflect.fields(v);
+
+  macro public static inline function extend (x:ExprOf<{}>, n:ExprOf<{}>):Expr 
+  {
+    var baseType = Context.typeof(x);
+    var t = Context.follow(baseType);
+    return switch [t, n.expr] {
+      case [TAnonymous(a), EObjectDecl(fields2)]:
+        
+        var fields1 = [for (f in a.get().fields) f.name => { var name = f.name; macro $x.$name;}];
+        var fields2 = [for (f in fields2) f.field => f.expr];
+
+        var allFields = fields1.concat(fields2, function () return new Map());
+        
+        var resFields = [for (k in allFields.keys()) { field : k, expr : allFields[k]}];
+
+        return { expr : EObjectDecl(resFields), pos:n.pos};
+
+        // all fields are part of x
+
+
+      case _ : Context.error("unsupported arguments, x should be an Anonymous Object and n should be EObjectDecl.", x.pos);
+    } 
+  }
 
   macro public static inline function copyWith (x:ExprOf<{}>, n:ExprOf<{}>):Expr 
   {
