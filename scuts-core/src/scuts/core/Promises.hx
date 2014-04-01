@@ -420,6 +420,12 @@ class Promises
     return deferred().success(s);
   }
 
+
+  @:noUsing public static function unit <E>():PromiseG<E,Unit> 
+  {
+    return deferred().success(Unit);
+  }
+
   
   
 
