@@ -17,13 +17,13 @@ using scuts.core.Promises;
 
 
 #if scuts_multithreaded
-typedef Mutex = 
+typedef Mutex =
   #if cpp
-  cpp.vm.Mutex 
-  #elseif neko 
-  neko.vm.Mutex 
-  #else 
-  #error "not implemented" 
+  cpp.vm.Mutex
+  #elseif neko
+  neko.vm.Mutex
+  #else
+  #error "not implemented"
   #end
 
 #end
@@ -40,29 +40,29 @@ typedef PromiseU<T> = PromiseG<Unit, T>;
 typedef Promise<T> = PromiseG<Throwable, T>;
 
 @:allow(scuts.core.Promises)
-class PromiseG<Err, T> 
+class PromiseG<Err, T>
 {
-  
+
   #if scuts_multithreaded
   var _mutex:Mutex;
   #end
-  
+
   var _completeListeners:Array<Validation<Err, T>->Void>;
   //var _failureListeners:Array<Err->Void>;
   //var _successListeners:Array<T->Void>;
 
   var _progressListeners:Array<Percent->Void>;
-  
+
   var _value:Option<Validation<Err, T>>;
   var _complete:Bool;
-  
-  function new () 
+
+  function new ()
   {
     initMutex();
-    
+
     _complete = false;
     _value = None;
-    
+
     clearListeners();
   }
 
@@ -71,14 +71,14 @@ class PromiseG<Err, T>
 typedef Deferred<B> = DeferredG<Throwable, B>;
 
 /**
- * Represents a deferred value, that must be completed. 
+ * Represents a deferred value, that must be completed.
  * It can only be created with Promises.deferred().
  *
  */
 @:allow(scuts.core.Promises)
-abstract DeferredG<A,B>(PromiseG<A,B>) to PromiseG<A,B> 
+abstract DeferredG<A,B>(PromiseG<A,B>) to PromiseG<A,B>
 {
-  
+
   inline function new (p:PromiseG<A,B>) this = p;
 
   public inline function promise ():PromiseG<A,B> {
@@ -92,7 +92,7 @@ abstract DeferredG<A,B>(PromiseG<A,B>) to PromiseG<A,B>
 @:allow(scuts.core.Promise)
 class Promises
 {
-  
+
   inline static function clearListeners <T,E>(p:PromiseG<E,T>)
   {
     p._completeListeners = [];
@@ -101,29 +101,29 @@ class Promises
     //p._successListeners = [];
   }
 
-  inline static function lock <T,E>(p:PromiseG<E,T>) 
+  inline static function lock <T,E>(p:PromiseG<E,T>)
   {
     #if scuts_multithreaded
-    p._mutex.acquire(); 
+    p._mutex.acquire();
     #end
   }
-  
-  inline static function unlock <T,E>(p:PromiseG<E,T>) 
+
+  inline static function unlock <T,E>(p:PromiseG<E,T>)
   {
-    #if scuts_multithreaded 
-    p._mutex.release(); 
+    #if scuts_multithreaded
+    p._mutex.release();
     #end
   }
-  
-  inline static function initMutex <T,E>(p:PromiseG<E,T>) 
+
+  inline static function initMutex <T,E>(p:PromiseG<E,T>)
   {
     #if scuts_multithreaded
     p._mutex = new Mutex();
     #end
-    
+
   }
-  
-  inline static function isCompleteDoubleCheck<T,E>(p:PromiseG<E,T>) 
+
+  inline static function isCompleteDoubleCheck<T,E>(p:PromiseG<E,T>)
   {
     #if scuts_multithreaded
     return p.isComplete();
@@ -131,10 +131,10 @@ class Promises
     return false;
     #end
   }
-  
 
 
-  #if js 
+
+  #if js
   public static function delay <E,T>(p:PromiseG<E,T>, timeMs:Int):PromiseG<E,T>
   {
     var p1 = deferred();
@@ -149,27 +149,27 @@ class Promises
   public static function delayF <E,T>(p:Void->PromiseG<E,T>, timeMs:Int):PromiseG<E,T>
   {
     var p1 = deferred();
-    
+
     haxe.Timer.delay(function () {
       p().onComplete(function (x) {
         p1.complete(x);
       });
-      
+
     }, timeMs);
-    
+
     return p1;
   }
   #end
 
 
-  public static function flatBranch <E,T>(p:PromiseG<E, Bool>, ifTrue:Void->PromiseG<E,T>, ifFalse:Void->PromiseG<E,T>):PromiseG<E,T> 
+  public static function flatBranch <E,T>(p:PromiseG<E, Bool>, ifTrue:Void->PromiseG<E,T>, ifFalse:Void->PromiseG<E,T>):PromiseG<E,T>
   {
     return p.flatMap(function (x) {
       return if (x) ifTrue() else ifFalse();
     });
   }
 
-  public static function extract <E, T>(p:PromiseG<E, T>):Validation<E, T> 
+  public static function extract <E, T>(p:PromiseG<E, T>):Validation<E, T>
   {
     return p._value.getOrError("error result is not available");
   }
@@ -177,12 +177,12 @@ class Promises
   public inline static function isComplete <E,T>(p:PromiseG<E,T>) return p._complete;
 
   public inline static function isSuccess <E,T>(p:PromiseG<E,T>) return p._value.isSome() && p._value.extract().isSuccess();
-  
+
   public inline static function isFailure <E,T>(p:PromiseG<E,T>) return p._value.isSome() && p._value.extract().isFailure();
-  
+
   public static function valueOption <E,T>(p:PromiseG<E,T>):Option<Validation<E, T>> return p._value;
 
-  public static function onProgress <E,T>(p:PromiseG<E,T>,f:Percent->Void):PromiseG<E,T> 
+  public static function onProgress <E,T>(p:PromiseG<E,T>,f:Percent->Void):PromiseG<E,T>
   {
     if (isComplete(p)) f(1.0)
     else
@@ -191,10 +191,10 @@ class Promises
       if (!p.isCompleteDoubleCheck()) p._progressListeners.push(f)
       else p.onProgress(f);
       unlock(p);
-    } 
+    }
     return p;
   }
-  
+
 
 
   public static function progress <E,T>(p:DeferredG<E,T>,percent:Percent):DeferredG<E,T>
@@ -204,62 +204,62 @@ class Promises
     return asDeferred(p);
   }
 
-  public static function complete <E, T>(p:DeferredG<E, T>,val:Validation<E,T>):DeferredG<E,T> 
+  public static function complete <E, T>(p:DeferredG<E, T>,val:Validation<E,T>):DeferredG<E,T>
   {
     return if (!p.isComplete()) tryComplete(p, val) else throw "Cannot complete already completed Promise";
   }
- 
-  public static function tryComplete <E, T>(p:DeferredG<E, T>,val:Validation<E,T>):DeferredG<E,T> 
+
+  public static function tryComplete <E, T>(p:DeferredG<E, T>,val:Validation<E,T>):DeferredG<E,T>
   {
     return asDeferred(if (p.isComplete()) p
-    else 
+    else
     {
       p.lock();
-      if (!p.isCompleteDoubleCheck()) 
+      if (!p.isCompleteDoubleCheck())
       {
         for (c in p.promise()._completeListeners) c(val);
         p.promise()._value = Some(val);
         p.promise()._complete = true;
         p.progress(1.0);
-        
-        
+
+
         p.clearListeners();
       }
       p.unlock();
       p;
     });
   }
-  
+
   static inline function asDeferred <A,B>(p:PromiseG<A,B>) {
     return new DeferredG(p);
   }
 
-  public static function tryFailure <E, T>(p:DeferredG<E, T>, f : E):DeferredG<E,T>  
+  public static function tryFailure <E, T>(p:DeferredG<E, T>, f : E):DeferredG<E,T>
   {
     return asDeferred(p.tryComplete(Failure(f)));
   }
 
-  public static function trySuccess <E, T>(p:DeferredG<E, T>, t : T):DeferredG<E,T> 
+  public static function trySuccess <E, T>(p:DeferredG<E, T>, t : T):DeferredG<E,T>
   {
     return asDeferred(p.tryComplete(Success(t)));
   }
 
-  public static function failure <E, T>(p:DeferredG<E, T>, f : E):DeferredG<E,T> 
+  public static function failure <E, T>(p:DeferredG<E, T>, f : E):DeferredG<E,T>
   {
     return asDeferred(p.complete(Failure(f)));
   }
 
-  public static function success <E, T>(p:DeferredG<E, T>, t : T):DeferredG<E,T> 
+  public static function success <E, T>(p:DeferredG<E, T>, t : T):DeferredG<E,T>
   {
     return asDeferred(p.complete(Success(t)));
   }
-  
-  public static function onComplete <E, T>(p:PromiseG<E, T>,f:Validation<E,T>->Void) 
+
+  public static function onComplete <E, T>(p:PromiseG<E, T>,f:Validation<E,T>->Void)
   {
-    if (p.isComplete()) 
+    if (p.isComplete())
     {
       f(p.extract());
-    } 
+    }
     else
     {
       p.lock();
@@ -267,47 +267,47 @@ class Promises
         p._completeListeners.push(f);
       else p.onComplete(f);
       p.unlock();
-    } 
-    
+    }
+
     return p;
   }
-  
-  public static function onFailureVoid <E, T>(p:PromiseG<E,T>,f:Void->Void) 
+
+  public static function onFailureVoid <E, T>(p:PromiseG<E,T>,f:Void->Void)
   {
     return onFailure(p, f.promote());
-  } 
-  
+  }
 
-  public static function onFailure <E, T>(p:PromiseG<E,T>,f:E->Void) 
+
+  public static function onFailure <E, T>(p:PromiseG<E,T>,f:E->Void)
   {
-    if (!p.isComplete()) 
+    if (!p.isComplete())
     {
       p.lock();
       if (!p.isCompleteDoubleCheck()) p._completeListeners.push(function (x) x.eachFailure(f));
       else p.onFailure(f);
       p.unlock();
-    } 
+    }
     else if (p.isFailure()) f(p.extract().extractFailure());
-    
+
     return p;
   }
 
-  public static function onSuccess <E,T>(p:PromiseG<E,T>,f:T->Void) 
+  public static function onSuccess <E,T>(p:PromiseG<E,T>,f:T->Void)
   {
-    if (!p.isComplete()) 
+    if (!p.isComplete())
     {
       p.lock();
       if (!p.isCompleteDoubleCheck()) p._completeListeners.push(function (x) x.each(f));
       else p.onSuccess(f);
       p.unlock();
-      
-      
+
+
     } else if (p.isSuccess()) f(p.extract().extract());
     return p;
   }
 
   public static function toString <E,T>(p:PromiseG<E,T>) {
-    return 
+    return
       if (isComplete(p))       "Promise(" + p._value.extract() + ")"
       else                     "Unfullfilled Promise";
   }
@@ -325,21 +325,21 @@ class Promises
     var fut = deferred();
     var res = [];
     var progs = [];
-    
-    
-    
+
+
+
     var len = -1;
-    
+
     var count = 0;
     var isDelivered = false;
-    function check () 
+    function check ()
     {
       if (len > -1 && count == len) {
         if (isDelivered) {
           Scuts.error("Cannot deliver twice");
         }
         isDelivered = true;
-        
+
         fut.success(f(res));
       }
     }
@@ -351,19 +351,19 @@ class Promises
         }
         fut.progress(r/len);
       }
-       
+
     }
     var x = 0;
 
     for (f in a) {
       var index = x;
       progs[index] = 0.0;
-      f.onSuccess(function (v) { 
+      f.onSuccess(function (v) {
         if (res[index] != null) throw "ERROR";
-        res[index] = v; 
-        
-        count++; 
-        check(); 
+        res[index] = v;
+
+        count++;
+        check();
         } )
       .onFailure(fut.failure)
       .onProgress(function (p) {
@@ -377,29 +377,29 @@ class Promises
     check();
     return fut;
   }
-  
+
   @:noUsing public static function zipIterable <A,E> (a:Iterable<PromiseG<E,A>>):PromiseG<E,Iterable<A>>
   {
     return zipIterableWith(a, Scuts.id);
   }
 
 
-  
-  public static function apply<A,B,E>(f:PromiseG<E,A->B>, p:PromiseG<E,A>):PromiseG<E,B> 
+
+  public static function apply<A,B,E>(f:PromiseG<E,A->B>, p:PromiseG<E,A>):PromiseG<E,B>
   {
-    return zipWith(f, p, function (g, x) return g(x)); 
+    return zipWith(f, p, function (g, x) return g(x));
   }
-  
+
   @:noUsing public static function cancelled <E,S>(e:E):PromiseG<E,S> {
     var p = deferred();
     p.failure(e);
     return p;
   }
-  
+
   /**
     Creates a resolved promise from a validation value. Based on v it can be successful or faulty.
   **/
-  @:noUsing public static function fromValidation <F,S>(v:Validation<F,S>):PromiseG<F,S> 
+  @:noUsing public static function fromValidation <F,S>(v:Validation<F,S>):PromiseG<F,S>
   {
     return deferred().complete(v);
   }
@@ -410,30 +410,30 @@ class Promises
   @:noUsing public static function failed <E,S>(f:E):PromiseG<E,S>
   {
     return deferred().failure(f);
-  } 
+  }
 
   /**
     Wraps/lifts a simple value into an already resolved promise.
   **/
-  @:noUsing public static function pure <E,S>(s:S):PromiseG<E,S> 
+  @:noUsing public static function pure <E,S>(s:S):PromiseG<E,S>
   {
     return deferred().success(s);
   }
 
 
-  @:noUsing public static function unit <E>():PromiseG<E,Unit> 
+  @:noUsing public static function unit <E>():PromiseG<E,Unit>
   {
     return deferred().success(Unit);
   }
 
-  
-  
+
+
 
   /**
-    Creates a new deferred object which is an abstract wrapper around a promise. The purpose of this 
+    Creates a new deferred object which is an abstract wrapper around a promise. The purpose of this
     distinct type is to separate the creation from the usage of a promise. Only a Deferred Object
     can be fullfilled with the functions `success`, `failure` or `complete`.
-        
+
     ```haxe
     var def = deferred();
     def.success(1);
@@ -442,7 +442,7 @@ class Promises
 
 
   **/
-  @:noUsing public static function deferred <E,S>():DeferredG<E,S> 
+  @:noUsing public static function deferred <E,S>():DeferredG<E,S>
   {
     return new DeferredG(new PromiseG());
   }
@@ -451,31 +451,33 @@ class Promises
 
   public static function flatMapBoth < E,S,T,X,E2 > (p:PromiseG<E,S>, ff:E->PromiseG<E2,X>, fs:S->PromiseG<E2,X>):PromiseG<E2,X>
   {
-    function f1(v:Validation<E,S>) return switch (v) 
+    function f1(v:Validation<E,S>) return switch (v)
     {
       case Success(s): fs(s);
       case Failure(f): ff(f);
     }
     return flatMapValidation(p,f1);
-    
+
   }
+
+
 
   public static function flatMapValidation < E,S,E2,S2 > (p:PromiseG<E,S>, f:Validation<E,S>->PromiseG<E2,S2>):PromiseG<E2,S2>
   {
     var res = deferred();
-    
-    function next(v) 
+
+    function next(v)
     {
       var p1 = f(v);
       p1.onProgress(function (p) res.progress(0.5 + p * 0.5))
         .onComplete(res.complete);
-        
+
     }
-    
+
     p.onProgress(function (p) res.progress(p * 0.5))
      .onComplete(next);
-    
-    return res; 
+
+    return res;
   }
 
   public static function before < E,S,T > (p:PromiseG<E,S>, f:Void->PromiseG<E,T>):PromiseG<E,T>
@@ -486,39 +488,39 @@ class Promises
   public static function flatMap < E,S,T > (p:PromiseG<E,S>, f:S->PromiseG<E,T>):PromiseG<E,T>
   {
     var res = deferred();
-    
-    function success(r) 
+
+    function success(r)
     {
       var p1 = f(r);
       p1.onProgress(function (p) res.progress(0.5 + p * 0.5))
         .onSuccess(res.success)
         .onFailure(res.failure);
     }
-    
+
     p.onProgress(function (p) res.progress(p * 0.5))
      .onSuccess(success)
      .onFailure(res.failure);
-     
-    
+
+
     return res;
   }
 
-  public static inline function flatMap2 < E,S1,S2,T > (p:PromiseG<E,Tup2<S1,S2>>, f:S1->S2->PromiseG<E,T>):PromiseG<E,T> 
+  public static inline function flatMap2 < E,S1,S2,T > (p:PromiseG<E,Tup2<S1,S2>>, f:S1->S2->PromiseG<E,T>):PromiseG<E,T>
   {
     return flatMap(p, f.tupled());
   }
 
-  public static inline function flatMap3 < E,S1,S2,S3,T > (p:PromiseG<E,Tup3<S1,S2,S3>>, f:S1->S2->S3->PromiseG<E,T>):PromiseG<E,T> 
+  public static inline function flatMap3 < E,S1,S2,S3,T > (p:PromiseG<E,Tup3<S1,S2,S3>>, f:S1->S2->S3->PromiseG<E,T>):PromiseG<E,T>
   {
     return flatMap(p, f.tupled());
   }
 
-  public static inline function flatMap4 < E,S1,S2,S3,S4,T > (p:PromiseG<E,Tup4<S1,S2,S3,S4>>, f:S1->S2->S3->S4->PromiseG<E,T>):PromiseG<E,T> 
+  public static inline function flatMap4 < E,S1,S2,S3,S4,T > (p:PromiseG<E,Tup4<S1,S2,S3,S4>>, f:S1->S2->S3->S4->PromiseG<E,T>):PromiseG<E,T>
   {
     return flatMap(p, f.tupled());
   }
-  
-  public static inline function flatMap5 < E,S1,S2,S3,S4,S5,T > (p:PromiseG<E,Tup5<S1,S2,S3,S4,S5>>, f:S1->S2->S3->S4->S5->PromiseG<E,T>):PromiseG<E,T> 
+
+  public static inline function flatMap5 < E,S1,S2,S3,S4,S5,T > (p:PromiseG<E,Tup5<S1,S2,S3,S4,S5>>, f:S1->S2->S3->S4->S5->PromiseG<E,T>):PromiseG<E,T>
   {
     return flatMap(p, f.tupled());
   }
@@ -538,10 +540,19 @@ class Promises
     p.onSuccess (fx)
      .onFailure(res.failure)
      .onProgress (res.progress);
-      
+
     return res;
   }
-  
+
+  public static function mapValidation < S,T,E > (p:PromiseG<E,S>, f:Validation<E,S>->Validation<E, T>):PromiseG<E,T>
+  {
+    var res = deferred();
+
+    p.onComplete (f.next(res.complete))
+     .onProgress (res.progress);
+    return res;
+  }
+
 
   public static function map < S, T,E > (p:PromiseG<E,S>, f:S->T):PromiseG<E,T>
   {
@@ -550,7 +561,7 @@ class Promises
     p.onSuccess (f.next(res.success))
      .onFailure(res.failure)
      .onProgress (res.progress);
-      
+
     return res;
   }
 
@@ -572,7 +583,7 @@ class Promises
 
   public static function recover < T,E, EE > (p:PromiseG<E,T>, convert:E->T):PromiseG<E,T>
   {
-    return p.flatMapValidation(function (v) return switch (v) 
+    return p.flatMapValidation(function (v) return switch (v)
     {
       case Success(_): p;
       case Failure(f): Promises.pure(convert(f));
@@ -581,7 +592,7 @@ class Promises
 
   public static function recoverWith < T,E,E2> (p:PromiseG<E,T>, convert:E->PromiseG<E,T>):PromiseG<E,T>
   {
-    return p.flatMapValidation(function (v) return switch (v) 
+    return p.flatMapValidation(function (v) return switch (v)
     {
       case Success(_): p;
       case Failure(f): convert(f);
@@ -593,14 +604,14 @@ class Promises
   public static function mapFailure < T,E, EE > (p:PromiseG<E,T>, f:E->EE):PromiseG<EE,T>
   {
     var res = deferred();
- 
+
     p.onSuccess (res.success)
      .onFailure(f.next(res.failure))
      .onProgress (res.progress);
-      
+
     return res;
   }
-  
+
   public static function filter <E,T>(p:PromiseG<E,T>, f:T->Bool, failureVal:E):PromiseG<E, T>
   {
     var res = deferred();
@@ -609,21 +620,21 @@ class Promises
      .onProgress (res.progress);
     return res;
   }
-  
+
   public static inline function filterUnit <T>(p:Promise<T>, f:T->Bool):Promise<T>
   {
     return filter(p, f, Unit);
   }
-  
+
   public static function flatten <E,T>(p:PromiseG<E,PromiseG<E,T>>):PromiseG<E, T>
   {
     var res = deferred();
-    
+
     function complete (x:PromiseG<E, T>) {
       x.onComplete (res.complete)
        .onProgress (res.progress);
     }
-    
+
     p.onSuccess(complete)
      .onFailure( res.failure)
      .onProgress (res.progress);
@@ -655,7 +666,7 @@ class Promises
   {
     return a.switchTo(function () return b);
   }
-  
+
   public static inline function zip<A,B,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>):PromiseG<Z,Tup2<A,B>>
   {
     return liftF2(Tup2.create)(a,b);
@@ -678,43 +689,43 @@ class Promises
       });
     });
   }
-  
-  public static inline function 
+
+  public static inline function
   zip3<A,B,C,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>, c:PromiseG<Z,C>):PromiseG<Z,Tup3<A,B,C>>
   {
     return liftF3(Tup3.create)(a,b,c);
   }
-  
-  public static inline function 
+
+  public static inline function
   zip4<A,B,C,D,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>, c:PromiseG<Z,C>, d:PromiseG<Z,D>):PromiseG<Z,Tup4<A,B,C,D>>
   {
     return liftF4(Tup4.create)(a,b,c,d);
   }
-  
-  public static inline function 
+
+  public static inline function
   zipWith<A,B,C,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>, f:A->B->C):PromiseG<Z,C>
   {
     return liftF2(f)(a,b);
   }
-  
-  public static inline function 
+
+  public static inline function
   zipWith3<A,B,C,D,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>, c:PromiseG<Z,C>, f:A->B->C->D):PromiseG<Z,D>
   {
     return liftF3(f)(a,b,c);
   }
-  
-  public static inline function 
+
+  public static inline function
   zipWith4<A,B,C,D,E,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>, c:PromiseG<Z,C>, d:PromiseG<Z,D>, f:A->B->C->D->E):PromiseG<Z,E>
   {
     return liftF4(f)(a,b,c,d);
   }
-  
-  @:noUsing public static function liftF0 <E,A> (f:Void->A):Void->PromiseG<E,A> 
+
+  @:noUsing public static function liftF0 <E,A> (f:Void->A):Void->PromiseG<E,A>
   {
     return function () return deferred().success(f());
   }
 
-  @:noUsing public static function liftF1 <E,A, B> (f:A->B):PromiseG<E,A>->PromiseG<E,B> 
+  @:noUsing public static function liftF1 <E,A, B> (f:A->B):PromiseG<E,A>->PromiseG<E,B>
   {
     return function (a:PromiseG<E,A>) {
       var res = deferred();
@@ -725,21 +736,21 @@ class Promises
     }
   }
 
-  @:noUsing public static function liftF2 <A, B, C, E> (f:A->B->C):PromiseG<E,A>->PromiseG<E,B>->PromiseG<E,C> 
+  @:noUsing public static function liftF2 <A, B, C, E> (f:A->B->C):PromiseG<E,A>->PromiseG<E,B>->PromiseG<E,C>
   {
     return function (a:PromiseG<E,A>, b:PromiseG<E,B>) {
       var res = deferred();
-      
+
       var valA = None;
       var valB = None;
-      
-      function check () if (valA.isSome() && valB.isSome()) 
+
+      function check () if (valA.isSome() && valB.isSome())
       {
         res.success(f(valA.extract(), valB.extract()));
       }
-      
+
       function progress (p:Float) res.progress(p * 0.5);
-      
+
       a.onSuccess(function (r) { valA = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
       b.onSuccess(function (r) { valB = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
 
@@ -747,47 +758,47 @@ class Promises
     }
   }
 
-  @:noUsing public static function 
+  @:noUsing public static function
   liftF3 <A, B, C, D,Z> (f:A->B->C->D):PromiseG<Z,A>->PromiseG<Z,B>->PromiseG<Z,C>->PromiseG<Z,D>
   {
     return function (a:PromiseG<Z,A>, b:PromiseG<Z,B>, c:PromiseG<Z,C>) {
       var res = deferred();
-      
+
       var valA = None;
       var valB = None;
       var valC = None;
-      
+
       function check () if (valA.isSome() && valB.isSome() && valC.isSome()) {
         res.success(f(valA.extract(), valB.extract(), valC.extract()));
       }
 
       function progress (p:Float) res.progress(p * (1 / 3));
-      
+
       a.onSuccess(function (r) { valA = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
       b.onSuccess(function (r) { valB = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
       c.onSuccess(function (r) { valC = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
-      
+
       return res;
     }
   }
 
-  @:noUsing public static function 
+  @:noUsing public static function
   liftF4 <A, B, C, D, E,Z> (f:A->B->C->D->E):PromiseG<Z,A>->PromiseG<Z,B>->PromiseG<Z,C>->PromiseG<Z,D>->PromiseG<Z,E>
   {
     return function (a:PromiseG<Z,A>, b:PromiseG<Z,B>, c:PromiseG<Z,C>, d:PromiseG<Z,D>) {
       var res = deferred();
-      
+
       var valA = None;
       var valB = None;
       var valC = None;
       var valD = None;
-      
+
       function check () if (valA.isSome() && valB.isSome() && valC.isSome() && valD.isSome()) {
         res.success(f(valA.extract(), valB.extract(), valC.extract(), valD.extract()));
       }
 
       function progress (p:Float) res.progress(p * 0.25);
-      
+
       a.onSuccess(function (r) { valA = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
       b.onSuccess(function (r) { valB = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
       c.onSuccess(function (r) { valC = Some(r); check(); }).onFailure(res.tryFailure).onProgress(progress);
@@ -796,38 +807,38 @@ class Promises
       return res;
     }
   }
-  
-  @:noUsing public static function 
+
+  @:noUsing public static function
   liftF5 <A, B, C, D, E, F,Z> (f:A->B->C->D->E->F)
   :PromiseG<Z,A>->PromiseG<Z,B>->PromiseG<Z,C>->PromiseG<Z,D>->PromiseG<Z,E>->PromiseG<Z,F>
   {
     return function (a:PromiseG<Z,A>, b:PromiseG<Z,B>, c:PromiseG<Z,C>, d:PromiseG<Z,D>, e:PromiseG<Z,E>) {
       var res = deferred();
-      
+
       var valA = None;
       var valB = None;
       var valC = None;
       var valD = None;
       var valE = None;
-      
+
       function check () if (valA.isSome() && valB.isSome() && valC.isSome() && valD.isSome() && valE.isSome()) {
         res.success(f(valA.extract(), valB.extract(), valC.extract(), valD.extract(), valE.extract()));
       }
 
       function progress (p:Float) res.progress(p * 0.2);
-      
+
       a.onSuccess(function (r) { valA = Some(r); check(); } ).onFailure(res.tryFailure).onProgress(progress);
       b.onSuccess(function (r) { valB = Some(r); check(); } ).onFailure(res.tryFailure).onProgress(progress);
       c.onSuccess(function (r) { valC = Some(r); check(); } ).onFailure(res.tryFailure).onProgress(progress);
       d.onSuccess(function (r) { valD = Some(r); check(); } ).onFailure(res.tryFailure).onProgress(progress);
       e.onSuccess(function (r) { valE = Some(r); check(); } ).onFailure(res.tryFailure).onProgress(progress);
-      
+
       return res;
     }
   }
 
-  
-  
+
+
 
 }
 
