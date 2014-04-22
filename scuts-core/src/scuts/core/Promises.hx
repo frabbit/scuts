@@ -405,6 +405,19 @@ class Promises
   }
 
   /**
+    Creates a resolved promise from an option value. Based on v it can be successful (Some) or faulty (None).
+  **/
+  @:noUsing public static function fromOptionC <F,S>(v:Option<S>, failureValue:F):PromiseG<F,S>
+  {
+    var x = deferred();
+    return switch (v) {
+      case Some(a): x.success(a);
+      case None: x.failure(failureValue);
+    }
+
+  }
+
+  /**
     Creates a resolved, but faulty promise with the error value `f`.
   **/
   @:noUsing public static function failed <E,S>(f:E):PromiseG<E,S>
