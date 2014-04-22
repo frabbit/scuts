@@ -22,19 +22,19 @@ using scuts.ht.macros.syntax.DoTools;
 using scuts.mcore.ast.Exprs;
 using scuts.mcore.ast.Constants;
 
-class DoParser 
+class DoParser
 {
   /**
   * Creates an abstract Syntax Tree from Haxe Expressions.
   */
-  public static function parseExprs (exprs:Array<Expr>):DoParseResult 
+  public static function parseExprs (exprs:Array<Expr>):DoParseResult
   {
     var last = exprs[exprs.length -1];
     var head = exprs.removeLast();
-    
+
     var lastIndex = exprs.length-1;
-    
-    function convertLast (expr:Expr):DoOp 
+
+    function convertLast (expr:Expr):DoOp
     {
       function getOpPure (t:Tup2<Expr, Array<Expr>>) {
         return t._1.selectEConstCIdentValue()
@@ -44,40 +44,36 @@ class DoParser
       var asCall = expr.selectECall();
       return asCall.flatMap(getOpPure).getOrElse(function () return OpLast(OpExpr(expr)));
     }
-    
-    
-    function composeToDoOp (cur:Expr, acc1:DoParseResult):DoParseResult 
+
+
+    function composeToDoOp (cur:Expr, acc1:DoParseResult):DoParseResult
     {
-      function convert (acc:DoOp):DoParseResult 
+      function convert (acc:DoOp):DoParseResult
       {
         function doDefault () {
           return OpFlatMap(FMIdents(["_"]), cur, acc);
         }
-        return switch (cur.expr) 
+        return switch (cur.expr)
         {
-          case EBinop(op,l,r): 
-            if (op == OpLte) 
+          case EBinop(op,l,r):
+            if (op == OpLte)
             {
               l.selectEConstCIdentValueInEArrayDecl()
               //l.selectEConstCIdentValue()
               .map      (function (x) return OpFlatMap(FMIdents(x), r, acc).toSuccess())
               .orElse(function () return Some(OpFlatMap(FMExtractor(l), r, acc).toSuccess()))
-              
-              
+
+
               .getOrElse(LeftSideOfFlatMapMustBeConstIdent.toFailure);
             }
             else OpExpr(cur).toSuccess();
-          
-          case ECall(expr, params): 
+          case EMeta({ name : "if"}, x):
+            OpFilter(x, acc).toSuccess();
+          case ECall(expr, params):
             var asIdent = expr.selectEConstCIdentValue();
             asIdent
-            .filter   (function (x) return x == "filter")
-            .map      (function (_) return OpFilter(params[0], acc))
-            .orElse(
-              function () return asIdent
-                .filter(function (x) return x == "pure")
-                .map   (function (_) return OpPure(params[0], Some(acc)))
-            )
+            .filter(function (x) return x == "pure")
+            .map   (function (_) return OpPure(params[0], Some(acc)))
             .getOrElse(doDefault)
             .toSuccess();
 

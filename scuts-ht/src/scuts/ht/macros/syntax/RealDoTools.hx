@@ -47,7 +47,7 @@ class RealDoTools {
     }
     catch (e:Error)
     {
-      var id = if (zero) "MonadEmpty (required for filter) " else "Monad";
+      var id = if (zero) "MonadEmpty (required for @if) " else "Monad";
       Scuts.warning("Do-Comprehension build error",
         "No " + id + " instance in scope for expr " + Tools.prettyExpr(expr) + " of Type " + Tools.prettyTypeOfExpr(expr));
     }
@@ -60,10 +60,9 @@ class RealDoTools {
   {
     return exprs.any(function (e)
     {
-      return switch (e.selectECallExpr().flatMap(Exprs.selectEConstCIdentValue))
-      {
-        case Some(ident): return ident == "filter";
-        case None : false;
+      return switch (e.expr) {
+        case EMeta({ name : "if" }, e): true;
+        case _ : false;
       }
     });
   }
