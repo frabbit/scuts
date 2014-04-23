@@ -1,12 +1,15 @@
 package scuts.core;
 
 
-class Bools 
+class Bools
 {
   public static inline function eq(v1:Bool, v2:Bool) return v1 == v2;
-  
+
   public static inline function and(v1:Bool, v2:Bool) return v1 && v2;
   public static inline function or(v1:Bool, v2:Bool) return v1 || v2;
   public static inline function not(v:Bool) return !v;
   public static inline function toInt(v:Bool) return if (v) 1 else 0;
+
+  public static inline function isTrue(v:Bool) return v;
+  public static inline function isFalse(v:Bool) return !v;
 }
