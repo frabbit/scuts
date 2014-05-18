@@ -1,0 +1,10 @@
+-js bin/base.js
+-D nodejs
+-main Main
+--times
+-D macro_times
+#-D scutsProfile
+
+
+#-D excludeHtTests
+#-D excludeHtSamples

@@ -1,0 +1,8 @@
+-neko bin/base.n
+-main Main
+
+
+
+
+#-D excludeHtTests
+#-D excludeHtSamples

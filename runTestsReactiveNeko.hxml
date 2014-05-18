@@ -1,3 +1,0 @@
-runTestsReactiveCommon.hxml
---macro sys.FileSystem.createDirectory("scuts/bin/testReactiveNeko")
--neko scuts/bin/testReactiveNeko/test.n

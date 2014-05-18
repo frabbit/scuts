@@ -1,6 +1,0 @@
-runTestsCommon.hxml
---macro sys.FileSystem.createDirectory("scuts/bin/testFlash")
--swf scuts/bin/testFlash/main.swf
-
-#-D excludeHtTests
-#-D excludeHtSamples

@@ -1,6 +1,0 @@
-runTestsCommon.hxml
---macro sys.FileSystem.createDirectory("scuts/bin/testNeko")
--x scuts/bin/testNeko/testx
-
-#-D excludeHtTests
-#-D excludeHtSamples

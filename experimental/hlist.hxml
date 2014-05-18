@@ -1,5 +1,0 @@
-#build-name=HList
--main HLists
--cp src
--neko hlist.n
--D dump=pretty
