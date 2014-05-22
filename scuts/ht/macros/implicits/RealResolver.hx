@@ -386,15 +386,20 @@ class RealResolver
 
         var required = macro $helper.first($partial);
 
-        //var required = switch (Typer.typeof(required))  {
-        //  case Some(t):
-        //    var ct = TypeTools.toComplexType(t);
-        //    var e = macro (null:$ct);
-        //    trace(ExprTools.toString(e));
-        //    required;
-        //
-        //  case None: required;
-        //}
+        // var required = switch (Typer.typeof(required))  {
+        //   case Some(t):
+        //     var ct = TypeTools.toComplexType(t);
+        //     if (ct != null) {
+        //       trace(ct);
+        //       //trace(haxe.macro.ComplexTypeTools.toString(ct));
+        //       var e = macro (null:$ct);
+        //       //trace(ExprTools.toString(e));
+        //       e;
+        //       required;
+        //     } else required;
+
+        //   case None: required;
+        // }
 
         Profiler.pop();
 

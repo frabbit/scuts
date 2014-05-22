@@ -18,7 +18,7 @@ class ImplicitSyntaxImpl {
 		var fields = Context.getBuildFields();
 		var interfaces = cl.get().interfaces;
 		var doesExplicitImplement = interfaces.exists(function (i)
-			return i.t.get().name == "ImplicitSyntax" && switch (i.t.get().pack) {
+			return (i.t.get().name == "ImplicitSyntax" || i.t.get().name == "ExplicitSyntax") && switch (i.t.get().pack) {
 				case ["scuts", "ht", "syntax"]: true;
 				case _ : false;
 			}
