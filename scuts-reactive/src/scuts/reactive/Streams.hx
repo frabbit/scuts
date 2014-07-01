@@ -15,6 +15,7 @@
 */
 package scuts.reactive;
 
+import haxe.ds.Option;
 import scuts.core.Eithers;
 import scuts.core.Ints;
 import scuts.core.Unit;
@@ -47,34 +48,34 @@ typedef StreamT5<A,B,C,D,E> = Stream<Tup5<A,B,C,D,E>>
 
 
 @:allow(scuts.reactive.Streams)
-class Stream<T> 
+class Stream<T>
 {
   private var _rank: Int;
   private var _sendsTo: Array<Stream<Dynamic>>;
   private var _updater: Pulse<Dynamic> -> Propagation<T>;
-  
+
   private var _weak: Bool;
-  
+
   private var _cleanups: Array<Void -> Void>;
-  
-  private static function _new<T>(updater: Pulse<Dynamic> -> Propagation<T>, sources: Array<Stream<Dynamic>> = null):Stream<T> 
+
+  private static function _new<T>(updater: Pulse<Dynamic> -> Propagation<T>, sources: Array<Stream<Dynamic>> = null):Stream<T>
   {
     return new Stream(updater, sources);
   }
-  
-  function new(updater: Pulse<Dynamic> -> Propagation<T>, sources: Array<Stream<Dynamic>> = null) 
+
+  function new(updater: Pulse<Dynamic> -> Propagation<T>, sources: Array<Stream<Dynamic>> = null)
   {
     this._updater  = updater;
 
-    
+
     this._sendsTo  = [];
     this._weak     = false;
     this._rank     = Rank.nextRank();
     this._cleanups = [];
-    
-    if (sources != null) 
+
+    if (sources != null)
     {
-      for (source in sources) 
+      for (source in sources)
       {
         source.attachListener(this);
       }
@@ -112,16 +113,16 @@ class StreamSources {
 @:allow(scuts.reactive.Behaviours)
 @:allow(scuts.reactive.Behaviour)
 @:allow(scuts.reactive)
-class Streams 
+class Streams
 {
-  
-  
+
+
 
 
   @:noUsing public static function source <T>():StreamSource<T> {
     return new StreamSource(identity());
   }
-  
+
   /**
    * Creates a new stream with the specified updater and optional sources.
    *
@@ -129,22 +130,22 @@ class Streams
    * @param sources   (Optional) The sources.
    *
    */
-  @:noUsing static function create<I, O>(updater: Pulse<I> -> Propagation<O>, sources: Iterable<Stream<I>> = null): Stream<O> 
+  @:noUsing static function create<I, O>(updater: Pulse<I> -> Propagation<O>, sources: Iterable<Stream<I>> = null): Stream<O>
   {
     var sourceEvents = if (sources == null) null else (sources.toArray());
     return createRaw(cast updater, sourceEvents);
   }
-  
-  @:noUsing static function createRaw<O>(updater: Pulse<Dynamic> -> Propagation<O>, sourceEvents: Array<Stream<Dynamic>>): Stream<O> 
+
+  @:noUsing static function createRaw<O>(updater: Pulse<Dynamic> -> Propagation<O>, sourceEvents: Array<Stream<Dynamic>>): Stream<O>
   {
     return Stream._new(updater, sourceEvents);
   }
-  
-  private static function propagatePulse<T>(s:Stream<T>, pulse: Pulse<Dynamic>) 
+
+  private static function propagatePulse<T>(s:Stream<T>, pulse: Pulse<Dynamic>)
   {
     // XXX Change so that we won't propagate more than one value per time step???
     var queue = new PriorityQueue<{stream: Stream<Dynamic>, pulse: Pulse<Dynamic>}>();
-    
+
     var pulseIsEnd = switch (pulse.type) {
       case End: true;
       case _ : false;
@@ -153,28 +154,28 @@ class Streams
       pulse.withValue(pulse.value);
     } else pulse;
 
-    
+
     queue.insert({k: s._rank, v: {stream: s, pulse: pulseAsNext}});
-    
-    while (queue.length() > 0) 
+
+    while (queue.length() > 0)
     {
       var qv = queue.pop();
-      
+
       var stream = qv.v.stream;
       var pulse  = qv.v.pulse;
-      
+
       var propagation = stream._updater(pulse);
-      
-      switch (propagation) 
+
+      switch (propagation)
       {
-        case Propagate(nextPulse): 
-          
+        case Propagate(nextPulse):
+
           var weaklyHeld = true;
-          
-          for (recipient in stream._sendsTo) 
+
+          for (recipient in stream._sendsTo)
           {
             weaklyHeld = weaklyHeld && recipient.weaklyHeld();
-        
+
             queue.insert(
               {
                 k: recipient._rank,
@@ -195,7 +196,7 @@ class Streams
         s.setWeaklyHeld(true);
       case _:
     }
-    
+
   }
 
 
@@ -204,24 +205,24 @@ class Streams
    *
    * @param sources
    */
-  @:noUsing public static function identity<T>(sources: Iterable<Stream<T>> = null): Stream<T> 
+  @:noUsing public static function identity<T>(sources: Iterable<Stream<T>> = null): Stream<T>
   {
     var sourceArray = if (sources == null) null else (Arrays.fromIterable(sources));
     return createRaw(function(pulse) return Propagate(pulse), sourceArray);
   }
-  
-  
-  
+
+
+
   /**
-   * Creates an event stream that will never have any events. Calling 
+   * Creates an event stream that will never have any events. Calling
    * sendEvent() on such a stream will throw an exception.
    */
-  @:noUsing public static function zero<T>(): Stream<T> 
+  @:noUsing public static function zero<T>(): Stream<T>
   {
-    return Streams.create(function(pulse: Pulse<Dynamic>): Propagation<T> { 
-      
+    return Streams.create(function(pulse: Pulse<Dynamic>): Propagation<T> {
+
       return Scuts.error('zero : received a value; zeroE should not receive a value; the value was ' + pulse.value);
-    });            
+    });
   }
 
   /**
@@ -234,14 +235,14 @@ class Streams
     s.listenOnce(p.success);
     return p;
   }
-  
+
   /**
    * Creates an event stream that will send a single value.
    */
-  @:noUsing public static function one<T>(val: T): Stream<T> 
+  @:noUsing public static function one<T>(val: T): Stream<T>
   {
     var sent = false;
-    
+
     var stream = Streams.create(
       function(pulse) {
         return if (sent) {
@@ -252,22 +253,22 @@ class Streams
         }
       }
     );
-    
+
     sendLater(stream, val);
-    
+
     return stream;
   }
-  
+
   /**
-   * Merges the specified streams, or returns a zero stream if there are no 
+   * Merges the specified streams, or returns a zero stream if there are no
    * streams.
    */
-  public static function mergeIterable<T>(streams: Iterable<Stream<T>>): Stream<T> 
+  public static function mergeIterable<T>(streams: Iterable<Stream<T>>): Stream<T>
   {
     return if (streams.size() == 0) zero();
     else identity(streams);
   }
-  
+
   /**
    * Retrieves a constant stream. If sources are specified, events from the
    * sources will be mapped to the constant.
@@ -275,111 +276,111 @@ class Streams
    * @param value     The constant.
    * @param sources   (Optional) Source streams.
    */
-  @:noUsing public static function constantValue<I, O>(value: O, sources: Iterable<Stream<I>> = null): Stream<O> 
+  @:noUsing public static function constantValue<I, O>(value: O, sources: Iterable<Stream<I>> = null): Stream<O>
   {
     return Streams.create(
       function(pulse) return Propagate(pulse.withValue(value)),
       sources
     );
   }
-  
+
   /**
    * Switches off of an Stream of Bools, returning
    * the specified Stream<T> when true
-   * 
+   *
    *
    * @param conditions    An Iterable of Tuple2s, composed of a
-   *                      true/false Stream and an 'if true' 
-   *                      Stream that will be returned if 
+   *                      true/false Stream and an 'if true'
+   *                      Stream that will be returned if
    *                      Tuple._1 == 'true.'
    *
-   * @return              If 'conditions' contains aTuple2._1 
+   * @return              If 'conditions' contains aTuple2._1
    *                      == 'true', Stream<T> else a
    *                      zero Stream.
    */
-  @:noUsing public static function cond<T>(conditions: Iterable<Tup2<Stream<Bool>, Stream<T>>>): Stream<T> 
+  @:noUsing public static function cond<T>(conditions: Iterable<Tup2<Stream<Bool>, Stream<T>>>): Stream<T>
   {
     return switch (conditions.headOption()) {
         case None:    Streams.zero();
         case Some(h): StreamsBool.ifTrue(h._1, h._2, cond(conditions.tail()));
     }
   }
-  
+
   /**
    * Creates a stream of time events, spaced out by the specified number of
    * milliseconds.
    *
    * @param time The number of milliseconds.
    */
-  public static function timer(time: Int): Stream<Int> 
+  public static function timer(time: Int): Stream<Int>
   {
     return timerB(Behaviours.constant(time));
   }
-  
+
   /**
    * Creates a stream of time events, spaced out by the specified number of
    * milliseconds.
    *
    * @param time The number of milliseconds.
    */
-  public static function timerB(time: Beh<Int>): Stream<Int> 
+  public static function timerB(time: Beh<Int>): Stream<Int>
   {
     var stream: StreamSource<Int> = Streams.source();
-    
+
     var pulser: Void -> Void = null;
     var timer = null;
-    
+
     var createTimer = function() {
       return External.setTimeout(pulser, time.get());
     }
-    
+
     pulser = function() {
       stream.send(Std.int(External.now()));
-      
+
       if (timer != null) External.cancelTimeout(timer);
-      
+
       if (!stream.weaklyHeld()) {
           timer = createTimer();
       }
     }
-    
+
     timer = createTimer();
-    
+
     return stream;
   }
-  
+
   /**
    * Zips together the specified streams.
    */
-  @:noUsing public static function zipIterable<T>(streams: Iterable<Stream<T>>): Stream<Iterable<T>> 
+  @:noUsing public static function zipIterable<T>(streams: Iterable<Stream<T>>): Stream<Iterable<T>>
   {
     var stamps = streams.map(function(s) { return -1;   }).toArray();
     var values = streams.map(function(s) { return null; }).toArray();
-    
+
     var output: Stream<T> = Streams.identity();
-    
+
     for (index in 0...streams.size()) {
       var stream = streams.elemAt(index);
-      
+
       output = output.merge(Streams.create(
         function(pulse: Pulse<T>): Propagation<T> {
           stamps[index] = pulse.stamp;
           values[index] = pulse.value;
-          
+
           return Propagate(pulse);
         },
         [stream]
       ));
     }
-    
+
     return Streams.create(
-      function (pulse: Pulse<T>): Propagation<Iterable<T>> 
+      function (pulse: Pulse<T>): Propagation<Iterable<T>>
       {
         var stampsEqual = stamps.nub(Ints.eq).size() == 1;
-        
+
         return if (stampsEqual) {
           var iter: Iterable<T> = values.copy();
-          
+
           Propagate(pulse.withValue(iter));
         }
         else NotPropagate;
@@ -387,35 +388,35 @@ class Streams
       [output]
     ).uniqueSteps();
   }
-  
+
   /**
-   * Creates a stream of random number events, separated by the specified 
+   * Creates a stream of random number events, separated by the specified
    * number of milliseconds.
    */
-  public static function randomB(time: Beh<Int>): Stream<Float> 
+  public static function randomB(time: Beh<Int>): Stream<Float>
   {
     return timerB(time).map(function(e) { return Math.random(); });
   }
-  
+
   /**
-   * Creates a stream of random number events, separated by the specified 
+   * Creates a stream of random number events, separated by the specified
    * number of milliseconds.
    */
-  public static function random(time: Int): Stream<Float> 
+  public static function random(time: Int): Stream<Float>
   {
     return randomB(Behaviours.constant(time));
   }
-  
+
   /**
    * Converts an Stream of Streams into
-   * a single Stream, whose events represent 
+   * a single Stream, whose events represent
    * those of the last Stream to have an Event.
    *
-   * @param   streams     The Stream of 
+   * @param   streams     The Stream of
    *                      Streams to be
    *                      flattened.
    */
-  public static function flatten<T>(stream: Stream<Stream<T>>): Stream<T> 
+  public static function flatten<T>(stream: Stream<Stream<T>>): Stream<T>
   {
     return stream.flatMapLatest(
       function(stream: Stream<T>): Stream<T> {
@@ -423,55 +424,55 @@ class Streams
       }
     );
   }
-  
+
   /**
-   * Converts a collection to a stream, whose events are separated by the 
+   * Converts a collection to a stream, whose events are separated by the
    * specified amount of time.
    *
    * @param collection    The collection.
    * @param time          The time, in milliseconds.
    *
    */
-  @:noUsing public static function fromIterable<T>(collection: Iterable<T>, time: Int): Stream<T> 
+  @:noUsing public static function fromIterable<T>(collection: Iterable<T>, time: Int): Stream<T>
   {
     return fromIterableB(collection, Behaviours.constant(time));
   }
-  
+
   /**
-   * Converts a collection to a stream, whose events are separated by the 
+   * Converts a collection to a stream, whose events are separated by the
    * specified amount of time.
    *
    * @param collection    The collection.
    * @param time          The time, as a signal, in milliseconds.
    *
    */
-  @:noUsing public static function fromIterableB<T>(collection: Iterable<T>, time: Beh<Int>): Stream<T> 
+  @:noUsing public static function fromIterableB<T>(collection: Iterable<T>, time: Beh<Int>): Stream<T>
   {
     var startTime: Float = -1.0;
     var accum = 0;
-    
+
     var iterator = collection.iterator();
-    
+
     if (!iterator.hasNext()) return Streams.zero();
-    
+
     var stream: Stream<T> = Streams.identity();
-    
+
     var pulser: Void -> Void = null;
     var timer = null;
 
     var createTimer = function() {
       var nowTime = External.now();
-      
+
       if (startTime < 0.0) startTime = nowTime;
-      
+
       var delta = time.get();
-      
-      var endTime = startTime + accum + delta; 
-      
+
+      var endTime = startTime + accum + delta;
+
       var timeToWait = endTime - nowTime;
-      
+
       accum += delta;
-      
+
       return if (timeToWait < 0) {
         pulser();
         null;
@@ -481,11 +482,11 @@ class Streams
         t;
       }
     }
-    
-    pulser = function() 
+
+    pulser = function()
     {
       var next = iterator.next();
-      
+
       stream.send(next);
 
       if (timer != null) External.cancelTimeout(timer);
@@ -496,17 +497,17 @@ class Streams
     }
 
     timer = createTimer();
-    
+
     return stream;
   }
-  
+
   public static function hasListener <T>(s:Stream<T>, dependent : Stream<Dynamic>):Bool {
     return s._sendsTo.elem(dependent);
   }
 
-  public static function attachListener<T>(s:Stream<T>, dependent: Stream<Dynamic>): Void 
+  public static function attachListener<T>(s:Stream<T>, dependent: Stream<Dynamic>): Void
   {
-    
+
     // attach only once
     if (!hasListener(s, dependent)) {
       s._sendsTo.push(dependent);
@@ -517,25 +518,25 @@ class Streams
         var q: Array<Stream<Dynamic>> = [dependent];
         while (q.length > 0) {
             var cur = q.splice(0,1)[0];
-            
+
             cur._rank = Rank.nextRank();
-            
+
             q = q.concat(cur._sendsTo);
         }
       }
     }
   }
 
-  public static function removeListener<T>(s:Stream<T>, dependent: Stream<Dynamic>, isWeakReference: Bool = false): Bool 
+  public static function removeListener<T>(s:Stream<T>, dependent: Stream<Dynamic>, isWeakReference: Bool = false): Bool
   {
     var foundSending = false;
-    
+
     for (i in 0...s._sendsTo.length) {
       if (s._sendsTo[i] == dependent) {
           s._sendsTo.splice(i, 1);
-          
+
           foundSending = true;
-          
+
           break;
       }
     }
@@ -548,10 +549,10 @@ class Streams
   }
 
   /**
-   * Invokes the specified function when this stream is "finished", defined 
+   * Invokes the specified function when this stream is "finished", defined
    * as being unable to produce any more events.
    */
-  public static function whenFinishedDo<T>(s:Stream<T>, f: Void -> Void): Void 
+  public static function whenFinishedDo<T>(s:Stream<T>, f: Void -> Void): Void
   {
     if (s.weaklyHeld()) {
       f();
@@ -564,18 +565,18 @@ class Streams
   /**
    * Calls the specified function for each event.
    */
-  public static function each<T>(s:Stream<T>, f: T -> Void): Stream<T> 
+  public static function each<T>(s:Stream<T>, f: T -> Void): Stream<T>
   {
     var res = Streams.create(
       function(pulse: Pulse<T>): Propagation<T> {
           f(pulse.value);
-          
+
           return NotPropagate;
       },
       [s]
     );
-    
-    
+
+
     return res;
   }
 
@@ -590,52 +591,52 @@ class Streams
     function once (x:T) {
 
       if (calls > 0) {
-        
+
         throw "This should never be called twice";
-      } 
+      }
       sub.release();
 
-      
+
       f(x);
       calls++;
     }
 
     sub = listen(s, once);
-    
+
     return s;
-    
+
   }
 
   public static function listen<T>(s:Stream<T>, f:T->Void): StreamSubscription
   {
 
-    
-    
-    
+
+
+
 
     var dep = Streams.create(
       function(pulse: Pulse<T>): Propagation<T> {
-          f(pulse.value);  
+          f(pulse.value);
           return NotPropagate;
       },
       [s]
     );
 
     return new StreamSubscription(s, dep);
-    
+
   }
 
 
   /**
-   * Converts the stream to an array. Note: This array will grow 
+   * Converts the stream to an array. Note: This array will grow
    * continuously without bound unless clients remove elements from it.
    */
-  public static function toArray<T>(s:Stream<T> ): Array<T> 
+  public static function toArray<T>(s:Stream<T> ): Array<T>
   {
     var array: Array<T> = [];
-    
+
     s.each(function(e) { array.push(e); });
-    
+
     return array;
   }
 
@@ -645,32 +646,32 @@ class Streams
    * @param value The constant that every value will be mapped to.
    *
    */
-  public static function constant<Z, T>(s:Stream<T>, value: Z): Stream<Z> 
+  public static function constant<Z, T>(s:Stream<T>, value: Z): Stream<Z>
   {
     return s.map(function(v) return value );
   }
 
   /**
-   * AKA bind. Binds each value to another stream, and returns a 
+   * AKA bind. Binds each value to another stream, and returns a
    * flattened stream. It only propagates the Events from the latest Stream
    * created by k.
    *
    * @param k The flatMap function.
    */
 
-  @:require(deprecated) 
-  public static function flatMap<Z,T>(s:Stream<T>, k: T -> Stream<Z>): Stream<Z> 
+  //@:require(deprecated)
+  public static function flatMap<Z,T>(s:Stream<T>, k: T -> Stream<Z>): Stream<Z>
   {
     return flatMapLatest(s, k);
   }
 
-  public static function flatMapLatest<Z,T>(s:Stream<T>, k: T -> Stream<Z>): Stream<Z> 
+  public static function flatMapLatest<Z,T>(s:Stream<T>, k: T -> Stream<Z>): Stream<Z>
   {
     var prevE: Stream<Z> = null;
 
     var outE: Stream<Z> = Streams.identity();
 
-    function propagate(pulse: Pulse<Dynamic>): Propagation<Dynamic> 
+    function propagate(pulse: Pulse<Dynamic>): Propagation<Dynamic>
     {
       if (prevE != null) {
         prevE.removeListener(outE, true);
@@ -688,14 +689,14 @@ class Streams
   /**
    * Like flatMapLatest, but it aggregates the events of all streams created by k.
    */
-  public static function flatMapAggregate<Z,T>(s:Stream<T>, k: T -> Stream<Z>): Stream<Z> 
+  public static function flatMapAggregate<Z,T>(s:Stream<T>, k: T -> Stream<Z>): Stream<Z>
   {
     var prevE: Stream<Z> = null;
 
     var outE: Stream<Z> = Streams.identity();
 
     var inE: Stream<Dynamic> = Streams.create(
-      function (pulse: Pulse<Dynamic>): Propagation<Dynamic> 
+      function (pulse: Pulse<Dynamic>): Propagation<Dynamic>
       {
         prevE = k(pulse.value);
         prevE.attachListener(outE);
@@ -714,7 +715,7 @@ class Streams
    *
    * @param value The value to send.
    */
-  // private static function sendEventDynamic<T>(s:Stream<T>, value: Dynamic): Stream<T> 
+  // private static function sendEventDynamic<T>(s:Stream<T>, value: Dynamic): Stream<T>
   // {
   //   s.propagatePulse(new Pulse(Stamp.nextStamp(), value, Next));
   //   return s;
@@ -727,19 +728,19 @@ class Streams
    *
    * @param value The value to send.
    */
-  private static function send<T>(s:Stream<T>, value: T): Stream<T> 
+  private static function send<T>(s:Stream<T>, value: T): Stream<T>
   {
     s.propagatePulse(new Pulse(Stamp.nextStamp(), value, Next));
     return s;
   }
 
-  private static function sendEnd<T>(s:Stream<T>, value: T): Stream<T> 
+  private static function sendEnd<T>(s:Stream<T>, value: T): Stream<T>
   {
     s.propagatePulse(new Pulse(Stamp.nextStamp(), value, End));
     return s;
   }
-  
-  public static function apply<A,B>(f:Stream<A->B>, v:Stream<A>):Stream<B> 
+
+  public static function apply<A,B>(f:Stream<A->B>, v:Stream<A>):Stream<B>
   {
     return v.zipWith(f, function (v1,f1) return f1(v1));
   }
@@ -750,30 +751,30 @@ class Streams
    *
    * @param value     The value to send.
    *
-   * @param millis    The number of milliseconds to send it in. If this is 0, 
+   * @param millis    The number of milliseconds to send it in. If this is 0,
    *                  the event will be scheduled for "as soon as possible".
    *
    */
-  private static function sendLaterIn<T>(s:Stream<T>, value: Dynamic, millis: Int): Stream<T> 
+  private static function sendLaterIn<T>(s:Stream<T>, value: Dynamic, millis: Int): Stream<T>
   {
     External.setTimeout(
       function() s.send(value),
       millis
     );
-    
+
     return s;
   }
 
-  private static function sendEndLaterIn<T>(s:Stream<T>, value: Dynamic, millis: Int): Stream<T> 
+  private static function sendEndLaterIn<T>(s:Stream<T>, value: Dynamic, millis: Int): Stream<T>
   {
     External.setTimeout(
       function() s.sendEnd(value),
       millis
     );
-    
+
     return s;
   }
-  private static function sendEndLater<T>(s:Stream<T>, value: Dynamic): Stream<T> 
+  private static function sendEndLater<T>(s:Stream<T>, value: Dynamic): Stream<T>
   {
     return s.sendEndLaterIn(value, 0);
   }
@@ -782,27 +783,27 @@ class Streams
    *
    * @param value The value to send.
    */
-  private static function sendLater<T>(s:Stream<T>, value: Dynamic): Stream<T> 
+  private static function sendLater<T>(s:Stream<T>, value: Dynamic): Stream<T>
   {
     return s.sendLaterIn(value, 0);
   }
 
   /**
-   * Creates a signal backed by this event stream, which starts with the 
+   * Creates a signal backed by this event stream, which starts with the
    * specified value.
    *
    * @param init  The initial value.
    */
-  
-  
-  
+
+
+
   @:require(!NO_DEPRECATION, "please use toBehaviour")
-  public static function asBehaviour<T>(s:Stream<T>, init: T): Beh<T> 
+  public static function asBehaviour<T>(s:Stream<T>, init: T): Beh<T>
   {
     return toBehaviour(s, init);
   }
 
-  public static function toBehaviour<T>(s:Stream<T>, init: T): Beh<T> 
+  public static function toBehaviour<T>(s:Stream<T>, init: T): Beh<T>
   {
     return Behaviours.fromStream(s, init);
   }
@@ -812,13 +813,13 @@ class Streams
    *
    * @param   time    Time in milliseconds as an Int
    */
-  public static function delay<T>(s:Stream<T>, time: Int): Stream<T> 
+  public static function delay<T>(s:Stream<T>, time: Int): Stream<T>
   {
     var resE = Streams.identity();
 
     Streams.create(
       function(pulse)
-      { 
+      {
         sendLaterIn(resE, pulse.value, time);
         return NotPropagate;
       },
@@ -830,39 +831,39 @@ class Streams
 
   /**
    * Delays this stream by the specified number of milliseconds.
-   * 
+   *
    * @param   time    Time in milliseconds as a Signal
    */
-  public static function delayB<T>(s:Stream<T>, time: Beh<Int>): Stream<T> 
+  public static function delayB<T>(s:Stream<T>, time: Beh<Int>): Stream<T>
   {
     var receiverEE = Streams.identity();
-    
+
     var link = {
-      from:    s, 
+      from:    s,
       towards: s.delay(time.get())
     };
 
     // XXX: event is not guaranteed to output
     var switcherE = Streams.create(
       function (pulse: Pulse<Int>): Propagation<Int> {
-        link.from.removeListener(link.towards); 
-        
+        link.from.removeListener(link.towards);
+
         link = {
-            from:    s, 
+            from:    s,
             towards: s.delay(pulse.value)
         };
-        
+
         receiverEE.send(link.towards);
-        
+
         return NotPropagate;
       },
       [time.changes()]
     );
 
     var resE = Streams.flatten(receiverEE);
-    
+
     switcherE.send(time.get());
-    
+
     return resE;
   }
 
@@ -872,81 +873,81 @@ class Streams
    *
    * @param time  The number of milliseconds.
    */
-  public static function calm<T>(s:Stream<T>, time: Int): Stream<T> 
+  public static function calm<T>(s:Stream<T>, time: Int): Stream<T>
   {
     return s.calmB(Behaviours.constant(time));
   }
 
   /**
-   * Calms the stream. No event will be get through unless it occurs T 
+   * Calms the stream. No event will be get through unless it occurs T
    * milliseconds or more before the following event.
    *
    * @param time  The numilber of milliseconds.
    */
-  public static function calmB<T>(s:Stream<T>, time: Beh<Int>): Stream<T> 
+  public static function calmB<T>(s:Stream<T>, time: Beh<Int>): Stream<T>
   {
     var out: Stream<T> = Streams.identity();
-  
+
     var towards: Timeout = null;
-  
+
     Streams.create(
-      function (pulse: Pulse<T>): Propagation<T> 
+      function (pulse: Pulse<T>): Propagation<T>
       {
-        if (towards != null) 
+        if (towards != null)
         {
           External.cancelTimeout(towards);
         }
-        
+
         towards = External.setTimeout(
-          function() 
+          function()
           {
             towards = null;
-            
+
             out.send(pulse.value);
           },
           time.get()
         );
-        
+
         return NotPropagate;
       },
       [s]
     );
-    
+
     return out;
   }
 
   /**
-   * Blinds the event stream to events occurring less than the specified 
+   * Blinds the event stream to events occurring less than the specified
    * milliseconds together.
    *
    * @param time The time to blind the stream to.
    */
-  public static function blind<T>(s:Stream<T>, time: Int): Stream<T> 
+  public static function blind<T>(s:Stream<T>, time: Int): Stream<T>
   {
     return s.blindB(Behaviours.constant(time));
   }
 
   /**
-   * Blinds the event stream to events occurring the specified 
+   * Blinds the event stream to events occurring the specified
    * number of milliseconds together or less.
    *
    * @param time The time to blind the stream to.
    */
-  public static function blindB<T>(s:Stream<T>, time: Beh<Int>): Stream<T> 
+  public static function blindB<T>(s:Stream<T>, time: Beh<Int>): Stream<T>
   {
     var lastSent = External.now() - time.get() - 1;
-    
-    return Streams.create(            
-      function (p: Pulse<T>): Propagation<T> 
+
+    return Streams.create(
+      function (p: Pulse<T>): Propagation<T>
       {
         var curTime = External.now();
-        
+
         if (curTime - lastSent > time.get()) { // XXX What happens if signal time decreases, then we "owe" a prior event???
           lastSent = curTime;
-          
+
           return Propagate(p);
         }
-        else { 
+        else {
           return NotPropagate;
         }
       },
@@ -955,12 +956,12 @@ class Streams
   }
 
   /**
-   * Maps this stream into a stream of values determined by "snapshotting" 
+   * Maps this stream into a stream of values determined by "snapshotting"
    * the value of the signal.
    *
    * @param value The value.
    */
-  public static function snapshot<Z,T>(s:Stream<T>, value: Beh<Z>): Stream<Z> 
+  public static function snapshot<Z,T>(s:Stream<T>, value: Beh<Z>): Stream<Z>
   {
     return s.map(function(t) return value.get());
   }
@@ -971,7 +972,7 @@ class Streams
    * @param optStart  An optional start value.
    */
   /*
-  public function filterRepeats(?optStart: T, eq:T->T->Bool): Stream<T> {                     
+  public function filterRepeats(?optStart: T, eq:T->T->Bool): Stream<T> {
     return filterRepeatsBy(optStart, function(v1, v2) return eq(v1, v2));
   }
   */
@@ -982,18 +983,18 @@ class Streams
    * @param optStart  An optional start value.
    * @param eq        An equality function.
    */
-  public static function filterRepeatsBy<T>(s:Stream<T>, ?optStart: T, eq: T -> T -> Bool): Stream<T> 
+  public static function filterRepeatsBy<T>(s:Stream<T>, ?optStart: T, eq: T -> T -> Bool): Stream<T>
   {
     var hadFirst = optStart == null ? false : true;
     var prev     = optStart;
-    
+
     return s.filter(
-      function(v) 
+      function(v)
       {
         return if (!hadFirst || !eq(prev,v)) {
           hadFirst = true;
           prev     = v;
-          
+
           true;
         }
         else false;
@@ -1006,36 +1007,36 @@ class Streams
    *
    * @param mapper    The mapping function.
    */
-  public static function map<Z, T>(s:Stream<T>, mapper: T -> Z): Stream<Z> 
-  { 
+  public static function map<Z, T>(s:Stream<T>, mapper: T -> Z): Stream<Z>
+  {
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<Z> 
+      function(pulse: Pulse<T>): Propagation<Z>
       {
         return Propagate(pulse.map(mapper));
       },
       [s]
     );
   }
-  
-  
-  
+
+
+
   /**
    * A stream of values resulting from left folding.
    *
    * @param initial   The initial value.
    * @param folder    The folding function.
    */
-  public static function scanl<Z, T>(s:Stream<T>, initial: Z, folder: Z -> T -> Z): Stream<Z> 
+  public static function scanl<Z, T>(s:Stream<T>, initial: Z, folder: Z -> T -> Z): Stream<Z>
   {
     var acc = initial;
-    
+
     return s.map(
-      function (n: T): Z 
+      function (n: T): Z
       {
         var next = folder(acc, n);
-        
+
         acc = next;
-        
+
         return next;
       }
     );
@@ -1044,45 +1045,45 @@ class Streams
   /**
    * Same as scanl, but without an initial value.
    */
-  public static function scanlP<T>(s:Stream<T>, folder: T -> T -> T): Stream<T> 
-  { 
+  public static function scanlP<T>(s:Stream<T>, folder: T -> T -> T): Stream<T>
+  {
     var acc = null;
-    
+
     return s.map(
-      function (n: T): T 
+      function (n: T): T
       {
         var next: T;
-        
+
         if (acc != null) {
           next = folder(acc, n);
         }
         else {
           next = n;
         }
-        
+
         acc = next;
-        
+
         return next;
       }
     );
   }
 
   /**
-   * Returns a finite stream consisting of the first n elements of this 
+   * Returns a finite stream consisting of the first n elements of this
    * stream.
    *
    * @param n The number of values.
    */
-  public static function take<T>(s:Stream<T>, n: Int): Stream<T> 
+  public static function take<T>(s:Stream<T>, n: Int): Stream<T>
   {
     var count = n;
 
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T>
       {
-        return if (count > 0) { 
-          --count; 
-          Propagate(pulse); 
+        return if (count > 0) {
+          --count;
+          Propagate(pulse);
         }
         else {
           s.setWeaklyHeld(true);
@@ -1099,19 +1100,19 @@ class Streams
    *
    * @param n The number of values.
    */
-  public static function takeWhile<T>(s:Stream<T>, filter: T -> Bool): Stream<T> 
+  public static function takeWhile<T>(s:Stream<T>, filter: T -> Bool): Stream<T>
   {
     var stillChecking = true;
-    
-    
+
+
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T>
       {
-        return if (stillChecking) 
+        return if (stillChecking)
         {
-          if (filter(pulse.value)) 
+          if (filter(pulse.value))
             Propagate(pulse)
-          else 
+          else
           {
             stillChecking = false;
 
@@ -1127,19 +1128,19 @@ class Streams
 
   /**
    * Shifts events forward in time by the specified number of events.
-   * 
+   *
    * @param n The number of events to shift by.
    */
-  public static function shift<T>(s:Stream<T>, n: Int): Stream<T> 
+  public static function shift<T>(s:Stream<T>, n: Int): Stream<T>
   {
     var queue: Array<T> = [];
-    
+
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T>
       {
         queue.push(pulse.value);
-        
-        return 
+
+        return
           if (queue.length <= n) NotPropagate;
           else Propagate(pulse.withValue(queue.shift()));
       },
@@ -1148,26 +1149,26 @@ class Streams
   }
 
   /**
-   * Shifts events forward in time until the specified predicate returns 
+   * Shifts events forward in time until the specified predicate returns
    * false for an event.
    *
    * @param pred  The predicate.
    */
-  public static function shiftWhile<T>(s:Stream<T>, pred: T -> Bool): Stream<T> 
+  public static function shiftWhile<T>(s:Stream<T>, pred: T -> Bool): Stream<T>
   {
     var queue: Array<T> = [];
-    
+
     var checking = true;
-    
+
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T>
       {
         queue.push(pulse.value);
-        
-        return if (checking) 
+
+        return if (checking)
         {
           if (pred(pulse.value)) NotPropagate;
-          else 
+          else
           {
             checking = false;
             Propagate(pulse.withValue(queue.shift()));
@@ -1185,18 +1186,18 @@ class Streams
    *
    * @param elements  The elements to use in time shifting.
    */
-  public static function shiftWith<T>(s:Stream<T>, elements: Iterable<T>): Stream<T> 
+  public static function shiftWith<T>(s:Stream<T>, elements: Iterable<T>): Stream<T>
   {
     var queue: Array<T> = elements.toArray();
-    
+
     var n = queue.length;
-    
+
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T>
       {
         queue.push(pulse.value);
-        
-        return 
+
+        return
           if (queue.length <= n) NotPropagate;
           else Propagate(pulse.withValue(queue.shift()));
       },
@@ -1210,13 +1211,13 @@ class Streams
    *
    * @param n The number to drop.
    */
-  public static function drop<T>(s:Stream<T>, n: Int): Stream<T> 
+  public static function drop<T>(s:Stream<T>, n: Int): Stream<T>
   {
     var count = n;
-    
+
     return Streams.create(
       function(pulse: Pulse<T>): Propagation<T> {
-        return 
+        return
           if (count > 0) { --count; NotPropagate; }
           else Propagate(pulse);
       },
@@ -1229,17 +1230,17 @@ class Streams
    *
    * @param pred  The predicate.
    */
-  public static function dropWhile<T>(s:Stream<T>, pred: T -> Bool): Stream<T> 
+  public static function dropWhile<T>(s:Stream<T>, pred: T -> Bool): Stream<T>
   {
     var checking = true;
-    
+
     return Streams.create(
       function(pulse: Pulse<T>): Propagation<T> {
         return if (checking) {
           if (pred(pulse.value)) NotPropagate;
           else {
             checking = false;
-               
+
             Propagate(pulse);
           }
         }
@@ -1250,27 +1251,27 @@ class Streams
   }
 
   /**
-   * Partitions the stream into two event streams, one for which the 
+   * Partitions the stream into two event streams, one for which the
    * predicate is true, one for which the predicate is false.
    *
    * @param pred  The predicate.
    */
-  public static function partition<T>(s:Stream<T>, pred: T -> Bool): Tup2<Stream<T>, Stream<T>> 
-  { 
+  public static function partition<T>(s:Stream<T>, pred: T -> Bool): Tup2<Stream<T>, Stream<T>>
+  {
     var trueStream = Streams.create(
       function(pulse: Pulse<T>): Propagation<T> {
           return if (pred(pulse.value)) Propagate(pulse); else NotPropagate;
       },
       [s]
     );
-    
+
     var falseStream = Streams.create(
       function(pulse: Pulse<T>): Propagation<T> {
           return if (!pred(pulse.value)) Propagate(pulse); else NotPropagate;
       },
       [s]
     );
-    
+
     return Tup2.create(trueStream, falseStream);
   }
 
@@ -1279,11 +1280,11 @@ class Streams
    *
    * @param pred  The predicate.
    */
-  public static function partitionWhile<T>(s:Stream<T>, pred: T -> Bool): Tup2<Stream<T>, Stream<T>> 
-  { 
+  public static function partitionWhile<T>(s:Stream<T>, pred: T -> Bool): Tup2<Stream<T>, Stream<T>>
+  {
     var trueStream  = s.takeWhile(pred);
     var falseStream = s.dropWhile(pred);
-    
+
     return Tup2.create(trueStream, falseStream);
   }
 
@@ -1292,12 +1293,26 @@ class Streams
    *
     * @param pred The predicate.
     */
-  public static function filter<T>(s:Stream<T>, pred: T -> Bool): Stream<T> 
+  public static function filter<T>(s:Stream<T>, pred: T -> Bool): Stream<T>
   {
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T>
       {
         return if (pred(pulse.value)) Propagate(pulse); else NotPropagate;
+      },
+      [s]
+    );
+  }
+
+  public static function filterSome<T>(s:Stream<Option<T>>): Stream<T>
+  {
+    return Streams.create(
+      function(pulse: Pulse<Option<T>>): Propagation<T>
+      {
+        return switch (pulse.value) {
+          case Some(x): Propagate(pulse.withValue(x));
+          case None: NotPropagate;
+        }
       },
       [s]
     );
@@ -1309,7 +1324,7 @@ class Streams
     return s;
   }
 
-  
+
   public static function takeUntilPromise<T>(s:Stream<T>, p:Promise<Dynamic>):Stream<T>
   {
     return takeUntilS(s,fromPromise(p));
@@ -1326,13 +1341,13 @@ class Streams
     });
     var res:Stream<T> = null;
     res = Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T>
       {
-        return if (checking) 
+        return if (checking)
         {
-          if (valid) 
-            Propagate(pulse); 
-          else 
+          if (valid)
+            Propagate(pulse);
+          else
           {
             checking = false;
             s.setWeaklyHeld(true);
@@ -1340,11 +1355,11 @@ class Streams
 
             NotPropagate;
           }
-        } 
-        else NotPropagate; 
+        }
+        else NotPropagate;
       },
       [s]
-    ); 
+    );
     return res;
   }
 
@@ -1353,12 +1368,12 @@ class Streams
    *
    * @param pred  The predicate.
    */
-  public static function filterWhile<T>(s:Stream<T>, pred: T -> Bool): Stream<T> 
-  { 
+  public static function filterWhile<T>(s:Stream<T>, pred: T -> Bool): Stream<T>
+  {
     var checking = true;
 
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T>
       {
         return if (checking) {
           if (pred(pulse.value)) {
@@ -1366,9 +1381,9 @@ class Streams
           }
           else {
             checking = false;
-            
+
             s.setWeaklyHeld(true);
-            
+
             NotPropagate;
           }
         }
@@ -1388,29 +1403,29 @@ class Streams
    * @param f  The function that will be used to get the result from the inputs streams ('this' and as).
    *
    * @return     The Stream of the result of the application of the function on using both stream elements as input.
-  * 
+  *
    */
-  public static function zipWith<A, R, T>(s:Stream<T>, as: Stream<A>, f : T -> A -> R): Stream<R> 
-  { 
+  public static function zipWith<A, R, T>(s:Stream<T>, as: Stream<A>, f : T -> A -> R): Stream<R>
+  {
     var testStamp = -1;
-    
+
     var value1: T = null;
 
     Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> { 
-        testStamp = pulse.stamp; 
-        
-        value1 = pulse.value; 
-        
-        return NotPropagate; 
+      function(pulse: Pulse<T>): Propagation<T> {
+        testStamp = pulse.stamp;
+
+        value1 = pulse.value;
+
+        return NotPropagate;
       },
       [s]
     );
-     
+
     return Streams.create(
-      function(pulse: Pulse<A>): Propagation<R> { 
-        return if (testStamp == pulse.stamp) 
-          Propagate(pulse.withValue(f(value1, pulse.value))) 
+      function(pulse: Pulse<A>): Propagation<R> {
+        return if (testStamp == pulse.stamp)
+          Propagate(pulse.withValue(f(value1, pulse.value)))
         else NotPropagate;
       },
       [as]
@@ -1427,10 +1442,10 @@ class Streams
    *
    * @param as  The stream with which to zip 'this'.
    *
-   * @return     A Tuple slice containing an element from each 
+   * @return     A Tuple slice containing an element from each
    *             stream
    */
-  public static function zip<A,T>(s:Stream<T>, as: Stream<A>): Stream < Tup2 < T, A >> 
+  public static function zip<A,T>(s:Stream<T>, as: Stream<A>): Stream < Tup2 < T, A >>
   {
     return s.zipWith(as, Tup2.create);
   }
@@ -1445,42 +1460,42 @@ class Streams
    * @param as  The a stream with which to zip 'this'.
    * @param bs  The b stream with which to zip 'this' and as.
    *
-   * @return     A Tuple slice containing an element from each 
+   * @return     A Tuple slice containing an element from each
    *             stream
    */
-  public static function zip3<A, B, T>(s:Stream<T>, as: Stream<A>, bs: Stream<B>): Stream<Tup3<T, A, B>> 
-  { 
+  public static function zip3<A, B, T>(s:Stream<T>, as: Stream<A>, bs: Stream<B>): Stream<Tup3<T, A, B>>
+  {
     var streams: Array<Dynamic> = [];
-    
+
     streams.push(s);
     streams.push(as);
     streams.push(bs);
-    
+
     return Streams.zipIterable(streams).map(function(i: Iterable<Dynamic>): Tup3<T, A, B> { return Tup3.create(i.elemAt(0), i.elemAt(1), i.elemAt(2)); });
   }
 
-  public static function zipWith3<A, B,X,T>(s:Stream<T>, as: Stream<A>, bs: Stream<B>, f:T->A->B->X): Stream<X> 
-  { 
+  public static function zipWith3<A, B,X,T>(s:Stream<T>, as: Stream<A>, bs: Stream<B>, f:T->A->B->X): Stream<X>
+  {
     var streams: Array<Dynamic> = [];
-    
+
     streams.push(s);
     streams.push(as);
     streams.push(bs);
-    
+
     return Streams.zipIterable(streams).map(function(i: Iterable<Dynamic>): X { return f(i.elemAt(0), i.elemAt(1), i.elemAt(2)); });
   }
 
-  public static function zipWith4<A, B,C, X,T>(s:Stream<T>, as: Stream<A>, bs: Stream<B>, cs:Stream<C>, f:T->A->B->C->X): Stream<X> 
-  { 
+  public static function zipWith4<A, B,C, X,T>(s:Stream<T>, as: Stream<A>, bs: Stream<B>, cs:Stream<C>, f:T->A->B->C->X): Stream<X>
+  {
     var streams: Array<Dynamic> = [];
-    
+
     streams.push(s);
     streams.push(as);
     streams.push(bs);
     streams.push(cs);
-    
-    return Streams.zipIterable(streams).map(function(i: Iterable<Dynamic>): X { 
-      return f(i.elemAt(0), i.elemAt(1), i.elemAt(2), i.elemAt(3)); 
+
+    return Streams.zipIterable(streams).map(function(i: Iterable<Dynamic>): X {
+      return f(i.elemAt(0), i.elemAt(1), i.elemAt(2), i.elemAt(3));
     });
   }
 
@@ -1494,20 +1509,20 @@ class Streams
    * @param bs  The b stream with which to zip 'this' and as.
    * @param cs  The c stream with which to zip 'this,' as, and bs.
    *
-   * @return     A Tuple slice containing one element from each 
+   * @return     A Tuple slice containing one element from each
    *             stream
    */
-  public static function zip4<A, B, C, T>(s:Stream<T>, as: Stream<A>, bs: Stream<B>, cs: Stream<C>): Stream<Tup4<T, A, B, C>> 
-  { 
+  public static function zip4<A, B, C, T>(s:Stream<T>, as: Stream<A>, bs: Stream<B>, cs: Stream<C>): Stream<Tup4<T, A, B, C>>
+  {
     var streams: Array<Dynamic> = [];
-    
+
     streams.push(s);
     streams.push(as);
     streams.push(bs);
     streams.push(cs);
-    
-    return Streams.zipIterable(streams).map(function(i: Iterable<Dynamic>): Tup4<T, A, B, C> { 
-      return Tup4.create(i.elemAt(0), i.elemAt(1), i.elemAt(2), i.elemAt(3)); 
+
+    return Streams.zipIterable(streams).map(function(i: Iterable<Dynamic>): Tup4<T, A, B, C> {
+      return Tup4.create(i.elemAt(0), i.elemAt(1), i.elemAt(2), i.elemAt(3));
     });
   }
 
@@ -1522,21 +1537,21 @@ class Streams
    * @param cs  The c stream with which to zip 'this,' as, and bs.
    * @param ds  The d stream with which to zip 'this,' as, bs, and cs.
    *
-   * @return     A Tuple slice containing one element from each 
+   * @return     A Tuple slice containing one element from each
    *             stream
    */
-  public static function zip5<A, B, C, D, T>(s:Stream<T>, as : Stream<A>, bs: Stream<B>, cs: Stream<C>, ds: Stream<D>): Stream<Tup5<T, A, B, C, D>> 
-  { 
+  public static function zip5<A, B, C, D, T>(s:Stream<T>, as : Stream<A>, bs: Stream<B>, cs: Stream<C>, ds: Stream<D>): Stream<Tup5<T, A, B, C, D>>
+  {
     var streams: Array<Dynamic> = [];
-    
+
     streams.push(s);
     streams.push(as);
     streams.push(bs);
     streams.push(cs);
     streams.push(ds);
-    
-    return Streams.zipIterable(streams).map(function(i: Iterable<Dynamic>) { 
-      return Tup5.create(i.elemAt(0), i.elemAt(1), i.elemAt(2), i.elemAt(3), i.elemAt(4)); 
+
+    return Streams.zipIterable(streams).map(function(i: Iterable<Dynamic>) {
+      return Tup5.create(i.elemAt(0), i.elemAt(1), i.elemAt(2), i.elemAt(3), i.elemAt(4));
     });
   }
 
@@ -1547,7 +1562,7 @@ class Streams
    *
    * @return     An Stream of grouped elements
    */
-  public static function group<T>(s:Stream<T>): Stream<Iterable<T>> 
+  public static function group<T>(s:Stream<T>): Stream<Iterable<T>>
   {
     return groupBy(s,function(e1, e2) { return e1 == e2; });
   }
@@ -1559,43 +1574,43 @@ class Streams
    * and returns these in a new stream
    *
    * @param   eq      The comparison function that
-   *                  will be used fo evaluate the 
+   *                  will be used fo evaluate the
    *                  equality of the stream
    *                  elements.
    *
    * @return     An Stream of grouped elements
    */
-  public static function groupBy<T>(s:Stream<T>, eq: T -> T -> Bool): Stream<Iterable<T>> 
-  { 
+  public static function groupBy<T>(s:Stream<T>, eq: T -> T -> Bool): Stream<Iterable<T>>
+  {
     var prev = null;
-    
+
     var cur: Array<T> = [];
-    
+
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<Iterable<T>> 
+      function(pulse: Pulse<T>): Propagation<Iterable<T>>
       {
         var ret: Propagation<Iterable<T>> = NotPropagate;
-        
-        if (prev != null) 
+
+        if (prev != null)
         {
-          if (!eq(prev, pulse.value)) 
+          if (!eq(prev, pulse.value))
           {
             var iter: Iterable<T> = cur;
-            
+
             ret = Propagate(pulse.withValue(iter));
-            
+
             cur = [];
-            
+
             cur.push(pulse.value);
-            
+
             prev = null;
           }
           else cur.push(pulse.value);
         }
         else cur.push(pulse.value);
-        
+
         prev = pulse.value;
-        
+
         return ret;
       },
       [s]
@@ -1605,32 +1620,32 @@ class Streams
   /**
    * Merges this stream and the specified stream.
    *
-   * @param that  The Stream with which to 
+   * @param that  The Stream with which to
    *              merge 'this' stream
    */
-  public static function merge<T>(s:Stream<T>, that: Stream<T>): Stream<T> 
+  public static function merge<T>(s:Stream<T>, that: Stream<T>): Stream<T>
   {
     return Streams.create(function(p) return Propagate(p), [s, that]);
   }
 
-  public static function mergeEither<T,S>(s:Stream<T>, that: Stream<S>): Stream<Either<T,S>> 
+  public static function mergeEither<T,S>(s:Stream<T>, that: Stream<S>): Stream<Either<T,S>>
   {
     return Streams.create(function(p) return Propagate(p), [s.map(Left), that.map(Right)]);
   }
-  
+
   /**
-   * Creates a new Stream in which only events on 
+   * Creates a new Stream in which only events on
    * different time steps will appear
    *
    */
-  public static function uniqueSteps<T>(s:Stream<T>): Stream<T> 
+  public static function uniqueSteps<T>(s:Stream<T>): Stream<T>
   {
     var lastStamp = -1;
-    
+
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T>
       {
-        return if (pulse.stamp != lastStamp) 
+        return if (pulse.stamp != lastStamp)
         {
           lastStamp = pulse.stamp;
           Propagate(pulse);
@@ -1647,16 +1662,16 @@ class Streams
    *
    * @param eq  The Function used to check event equality
    */
-  public static function uniqueEvents<T>(s:Stream<T>, ?eq: T -> T -> Bool): Stream<T> 
+  public static function uniqueEvents<T>(s:Stream<T>, ?eq: T -> T -> Bool): Stream<T>
   {
     if (eq == null) eq = function(e1, e2) { return e1 == e2; }
-    
+
     var lastEvent: T = null;
-    
+
     return Streams.create(
-      function(pulse: Pulse<T>): Propagation<T> 
+      function(pulse: Pulse<T>): Propagation<T>
       {
-        return if (lastEvent==null || !eq(pulse.value, lastEvent)) 
+        return if (lastEvent==null || !eq(pulse.value, lastEvent))
         {
           lastEvent = pulse.value;
           Propagate(pulse);
@@ -1672,30 +1687,30 @@ class Streams
    *
    * @param eq  The Function used to check event equality
    */
-  public static function unique<T>(s:Stream<T>, ?eq: T -> T -> Bool): Stream<T> 
+  public static function unique<T>(s:Stream<T>, ?eq: T -> T -> Bool): Stream<T>
   {
     return s.uniqueSteps().uniqueEvents(eq);
   }
 
-  
-  
-  public static function setWeaklyHeld<T>(s:Stream<T>, held: Bool): Bool 
+
+
+  public static function setWeaklyHeld<T>(s:Stream<T>, held: Bool): Bool
   {
-    if (s._weak != held) 
+    if (s._weak != held)
     {
       s._weak = held;
-  
-      if (!held) 
+
+      if (!held)
       {
         for (cleanup in s._cleanups) cleanup();
         s._cleanups = [];
       }
     }
-    
+
     return s._weak;
   }
 
-  public static function weaklyHeld<T>(s:Stream<T>): Bool 
+  public static function weaklyHeld<T>(s:Stream<T>): Bool
   {
     return s._weak;
   }
