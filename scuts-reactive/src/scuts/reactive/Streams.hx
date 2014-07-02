@@ -1002,6 +1002,12 @@ class Streams
     );
   }
 
+  public static function toUnit <T>(s:Stream<T>):Stream<Unit>
+  {
+    return map(s, function (_) return Unit);
+  }
+
+
   /**
    * Maps this stream to another stream by using the specified function.
    *
