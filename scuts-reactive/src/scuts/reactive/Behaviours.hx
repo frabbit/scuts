@@ -21,6 +21,7 @@ import scuts.reactive.BehavioursBool;
 import scuts.core.Tuples;
 
 import scuts.reactive.Reactive;
+import scuts.reactive.StreamSubscriptions.StreamSubscription;
 
 using scuts.core.Iterables;
 using scuts.reactive.Streams;
@@ -189,6 +190,14 @@ class Behaviours
   public static function uniqueEvents<T>(s:Behaviour<T>, ?eq: T -> T -> Bool): Behaviour<T>
   {
     return s.stream.uniqueEvents(eq).toBehaviour(s.get());
+  }
+
+  public static function applyTo <T>(s:Behaviour<T>, f:T->Void):StreamSubscription
+  {
+
+
+    f(s.get());
+    return s.stream.listen(f);
   }
 
   /**
