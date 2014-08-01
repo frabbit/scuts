@@ -483,6 +483,16 @@ class Arrays
     return None;
   }
 
+  public static function someReversed <T>(arr:Array<T>, e:T->Bool):Option<T>
+  {
+    var l = arr.length;
+    while (--l > -1) {
+      var i = arr[l];
+      if (e(i)) return Some(i);
+    }
+    return None;
+  }
+
 
   public static function mapThenSomeOption <T,S>(arr:Array<T>, map:T->Option<S>):Option<S>
   {
