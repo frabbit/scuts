@@ -367,6 +367,16 @@ class Behaviours
     ).asBehaviour(create());
   }
 
+  public static function zipWith6<T, B, C, D,E, F, X>(b1:Beh<T>, b2: Beh<B>, b3: Beh<C>, b4:Beh<D>, b5:Beh<E>,b6:Beh<F>, f:T->B->C->D->E->F->X): Beh<X>
+  {
+    function create() return f(b1.get(), b2.get(), b3.get(), b4.get(), b5.get(), b6.get());
+
+    return Streams.create(
+      function(pulse) return Propagate(pulse.withValue(create())),
+      [cast b1.stream, cast b2.stream, cast b3.stream, cast b4.stream, cast b5.stream, cast b6.stream]
+    ).asBehaviour(create());
+  }
+
 
   /**
    * Applies a function to a value and returns the
