@@ -439,11 +439,6 @@ class Behaviours
     return b._underlying;
   }
 
-  /**
-   * Returns the present value of 'this' Signal.
-   *
-   */
-
 
   /**
    * Returns the present value of 'this' Signal.
