@@ -810,7 +810,15 @@ class Arrays
     }
   }
 
-
+  public static function partition <A>(a:Array<A>, by:A->Bool) {
+    var r1 = [];
+    var r2 = [];
+    for (e in a) {
+      var t = if (by(e)) r1 else r2;
+      t.push(e);
+    }
+    return Tup2.create(r1, r2);
+  }
 
 
 

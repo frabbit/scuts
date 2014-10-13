@@ -89,7 +89,7 @@ abstract DeferredG<A,B>(PromiseG<A,B>) to PromiseG<A,B>
 
 
 
-@:allow(scuts.core.Promise)
+@:allow(scuts.core.Promise, scuts.core.PromiseG)
 class Promises
 {
 
@@ -684,6 +684,8 @@ class Promises
   {
     return liftF2(Tup2.create)(a,b);
   }
+
+
 
   public static inline function zipAfter<A,B,Z>(a:PromiseG<Z,A>, b:Void->PromiseG<Z,B>):PromiseG<Z,Tup2<A,B>>
   {
