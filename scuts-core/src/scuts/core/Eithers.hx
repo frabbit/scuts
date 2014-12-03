@@ -106,7 +106,7 @@ class Eithers
   {
     case [Left(_),  Left(l)] | [Left(l),  _] | [_, Left(l)  ]: Left(l);
     case [Right(r1), Right(r2)]: Right(r1(r2));
-    case _ : throw "assert";
+    //case _ : throw "assert";
 
   }
 
