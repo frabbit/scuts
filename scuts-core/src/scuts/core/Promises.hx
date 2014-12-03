@@ -718,6 +718,12 @@ class Promises
   }
 
   public static inline function
+  zip5<A,B,C,D,E,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>, c:PromiseG<Z,C>, d:PromiseG<Z,D>, e:PromiseG<Z,E>):PromiseG<Z,Tup5<A,B,C,D,E>>
+  {
+    return liftF5(Tup5.create)(a,b,c,d,e);
+  }
+
+  public static inline function
   zipWith<A,B,C,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>, f:A->B->C):PromiseG<Z,C>
   {
     return liftF2(f)(a,b);
@@ -851,7 +857,6 @@ class Promises
       return res;
     }
   }
-
 
 
 
