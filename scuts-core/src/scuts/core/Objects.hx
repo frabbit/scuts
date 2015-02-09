@@ -2,7 +2,7 @@ package scuts.core;
 
 using scuts.core.Maps;
 
-#if macro 
+#if macro
 
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -14,29 +14,29 @@ import haxe.macro.TypeTools;
 class Objects
 {
   public static inline function field (v:{}, field:String):Dynamic return Reflect.field(v, field);
-  
+
   public static inline function setField  <T>(v:{}, field:String, value:Dynamic):{}
   {
     Reflect.setField(v, field, value);
     return v;
   }
-  
+
   public static inline function hasField (v:{}, field:String):Bool return Reflect.hasField(v, field);
 
   public static inline function fields (v:{}, field:String):Array<String> return Reflect.fields(v);
 
-  macro public static inline function extend (x:ExprOf<{}>, n:ExprOf<{}>):Expr 
+  macro public static inline function extend (x:ExprOf<{}>, n:ExprOf<{}>):Expr
   {
     var baseType = Context.typeof(x);
     var t = Context.follow(baseType);
     return switch [t, n.expr] {
       case [TAnonymous(a), EObjectDecl(fields2)]:
-        
+
         var fields1 = [for (f in a.get().fields) f.name => { var name = f.name; macro $x.$name;}];
         var fields2 = [for (f in fields2) f.field => f.expr];
 
-        var allFields = fields1.concat(fields2, function () return new Map());
-        
+        var allFields = fields1.concat(fields2, function () return new Map<String, haxe.macro.Expr>());
+
         var resFields = [for (k in allFields.keys()) { field : k, expr : allFields[k]}];
 
         return { expr : EObjectDecl(resFields), pos:n.pos};
@@ -45,10 +45,10 @@ class Objects
 
 
       case _ : Context.error("unsupported arguments, x should be an Anonymous Object and n should be EObjectDecl.", x.pos);
-    } 
+    }
   }
 
-  macro public static inline function copyWith (x:ExprOf<{}>, n:ExprOf<{}>):Expr 
+  macro public static inline function copyWith (x:ExprOf<{}>, n:ExprOf<{}>):Expr
   {
   	var baseType = Context.typeof(x);
   	var t = Context.follow(baseType);
@@ -68,8 +68,8 @@ class Objects
 
   			var resFields = [for (k in fields1.keys()) { field : fields1[k].name, expr : getExpr(k)}];
 
-  			var e = { expr : ECheckType({expr:EObjectDecl(resFields), pos:n.pos}, TypeTools.toComplexType(baseType)), pos : n.pos }; 
-  			
+  			var e = { expr : ECheckType({expr:EObjectDecl(resFields), pos:n.pos}, TypeTools.toComplexType(baseType)), pos : n.pos };
+
 
   			return e;
 
@@ -79,5 +79,5 @@ class Objects
   		case _ : Context.error("unsupported arguments, x should be an Anonymous Object and n should be EObjectDecl.", x.pos);
   	}
   }
-  
+
 }
