@@ -1,5 +1,6 @@
 package scuts.core;
 
+using haxe.ds.StringMap;
 using scuts.core.Maps;
 
 #if macro
