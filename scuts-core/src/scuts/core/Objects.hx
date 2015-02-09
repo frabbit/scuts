@@ -32,12 +32,12 @@ class Objects
     return switch [t, n.expr] {
       case [TAnonymous(a), EObjectDecl(fields2)]:
 
-        var fields1 = [for (f in a.get().fields) f.name => { var name = f.name; macro $x.$name;}];
-        var fields2 = [for (f in fields2) f.field => f.expr];
+        var fields1:StringMap<Expr> = [for (f in a.get().fields) f.name => { var name = f.name; macro $x.$name;}];
+        var fields2:StringMap<Expr> = [for (f in fields2) f.field => f.expr];
 
-        var allFields = fields1.concat(fields2, function () return new Map<String, haxe.macro.Expr>());
+        var allFields = Maps.concat(fields1, fields2, function () return new Map<String, haxe.macro.Expr>());
 
-        var resFields = [for (k in allFields.keys()) { field : k, expr : allFields[k]}];
+        var resFields = [for (k in allFields.keys()) { field : k, expr : allFields.get(k)}];
 
         return { expr : EObjectDecl(resFields), pos:n.pos};
 
