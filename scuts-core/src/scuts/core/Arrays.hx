@@ -242,6 +242,12 @@ class Arrays
       i++;
     }
   }
+  public static function orderByIntCompare <A> (a:Array<A>, cmp:A->A->Int):Array<A>
+  {
+    var res = a.copy();
+    res.sort(cmp);
+    return res;
+  }
 
   public static function mutatingRemove <A> (a:Array<A>, removeWhen:A->Bool):Void
   {
