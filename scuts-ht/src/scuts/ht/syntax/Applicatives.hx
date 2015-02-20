@@ -11,14 +11,14 @@ import scuts.Scuts;
 
 class Applicatives
 {
-    
-  public static inline function thenRight<M,A,B>(x:Of<M,A>, y:Of<M,B>, a:Applicative<M>):Of<M,B>  return a.thenRight(x,y);
-  
 
-  public static inline function thenLeft<M,A,B>(x:Of<M,A>, y:Of<M,B>, a:Applicative<M>):Of<M,A>  return a.thenLeft(x, y);
-  
-  
-  
+  public static inline function thenRight<M,A,B>(x:M<A>, y:M<B>, a:Applicative<M>):M<B>  return a.thenRight(x,y);
+
+
+  public static inline function thenLeft<M,A,B>(x:M<A>, y:M<B>, a:Applicative<M>):M<A>  return a.thenLeft(x, y);
+
+
+
 }
 
 

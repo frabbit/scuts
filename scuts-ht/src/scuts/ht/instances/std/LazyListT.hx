@@ -5,7 +5,7 @@ import scuts.ht.core.OfOf;
 import scuts.ht.core.Of;
 import scuts.ds.LazyLists;
 
-abstract LazyListTOf<M,A>(Of<M, LazyList<A>>) to Of<M, LazyList<A>> from Of<M, LazyList<A>> { 
+abstract LazyListTOf<M,A>(M<LazyList<A>>) to M<LazyList<A>> from M<LazyList<A>> {
 
 	private function new (x) this = x;
 

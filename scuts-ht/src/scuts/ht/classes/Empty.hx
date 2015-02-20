@@ -4,5 +4,5 @@ import scuts.ht.core.Of;
 
 interface Empty<M>
 {
-  public function empty <A>():Of<M,A>;
+  public function empty <A>():M<A>;
 }

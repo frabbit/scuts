@@ -5,5 +5,5 @@ import scuts.ht.core.Of;
 
 interface Copure<F>
 {
-  public function copure <A>(v:A):Of<F,A>;
+  public function copure <A>(v:A):F<A>;
 }

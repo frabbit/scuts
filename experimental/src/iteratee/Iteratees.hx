@@ -29,57 +29,45 @@ enum IterV<E,A> {
 }
 
 
-abstract IterVOf<E,A>(IterV<E,A>) to IterV<E,A> from IterV<E,A> 
-{
-
-	public function new (x:IterV<E,A>) this = x;
-
-	@:from public static function fromOf <E,A> (x:Of<IterV<E,In>, A>):IterVOf<E,A> return new IterVOf(cast x);
-
-	@:to public static function toOf <E,A>(x:IterV<E,A>):Of<IterV<E,In>, A> return new Of(x);
-
-}
-
-
-class IterVFunctor<E> implements Functor<IterV<E,In>> 
+class IterVFunctor<E> implements Functor<IterV<E,In>>
 {
 	public function new () {}
-	public function map <A,B>(it:IterVOf<E,A>, f:A->B):IterVOf<E,B>
+	public function map <A,B>(it:IterV<E,A>, f:A->B):IterV<E,B>
 	{
 		return Iteratees.map(it, f);
 	}
 }
 
-class IterVBind<E> implements scuts.ht.classes.Bind<IterV<E,In>> 
+class IterVBind<E> implements scuts.ht.classes.Bind<IterV<E,In>>
 {
 	public function new () {}
-	public function flatMap <A,B>(it:IterVOf<E,A>, f:A->IterVOf<E,B>):IterVOf<E,B>
+	public function flatMap <A,B>(it:IterV<E,A>, f:A->IterV<E,B>):IterV<E,B>
 	{
 		return Iteratees.flatMap(it, f);
 	}
 }
 
-class IterVPure<E> implements Pure<IterV<E,In>> 
+class IterVPure<E> implements Pure<IterV<E,In>>
 {
 	public function new () {}
-	
-	public function pure <A>(x:A):IterVOf<E,A> 
+
+	public function pure <A>(x:A):IterV<E,A>
 	{
 		return Iteratees.pure(x);
 	}
 }
 
-class IterVApply<E> extends scuts.ht.classes.ApplyAbstract<IterV<E,In>> 
+class IterVApply<E> extends scuts.ht.classes.ApplyAbstract<IterV<E,In>>
 {
-	override public function apply<A,B>(val:IterVOf<E,A>, f1:IterVOf<E,A->B>):IterVOf<E,B> 
+	override public function apply<A,B>(val:IterV<E,A>, f1:IterV<E,A->B>):IterV<E,B>
 	{
   		return Iteratees.apply(val, f1);
   	}
 }
 
-class IterVInstances 
+class IterVInstances
 {
-	
+
 	@:implicit @:noUsing public static function iterVPure<E>():Pure<IterV<E,In>> {
 		return new IterVPure();
 	}
@@ -102,17 +90,13 @@ class IterVInstances
 
 
 class Iteratees {
- 
-	public static function fromOf <E,A> (x:Of<IterV<E,In>, A>):IterVOf<E,A> return IterVOf.fromOf(x);
 
-	public static function toOf <E,A>(x:IterV<E,A>):Of<IterV<E,In>, A> return IterVOf.toOf(x);
-
-	public static function run <E,A>(iter:IterV<E,A>):Option<A> 
+	public static function run <E,A>(iter:IterV<E,A>):Option<A>
 	{
 		return switch (iter) {
 			case Done(a,_): Some(a);
-			case Cont(k): 
-				function run1 (iter) return switch (iter) 
+			case Cont(k):
+				function run1 (iter) return switch (iter)
 				{
 					case Done(x,_): Some(x);
 					case _ : None;
@@ -120,7 +104,7 @@ class Iteratees {
 				run1(k(Eof));
 		}
 	}
- 
+
 	public static function enumerate <E,A>(iter:IterV<E,A>,  l:LazyList<E>):IterV<E,A>
 	{
 		return switch [iter, l.get()] {
@@ -151,11 +135,11 @@ class Iteratees {
 		return Cont(step);
 	}
 
-	public static function drop <E,A>(num:Int):IterV<E,Unit> 
+	public static function drop <E,A>(num:Int):IterV<E,Unit>
 	{
 		return switch num {
 			case 0: Done(Unit, Empty);
-			case n: 
+			case n:
 				function step (e:Input<E>) return switch (e) {
 					case Elem(_): drop(n-1);
 					case Empty: Cont(step);
@@ -163,7 +147,7 @@ class Iteratees {
 				}
 				Cont(step);
 		}
-		
+
 	}
 
 	public static function length <E,A>():IterV<E,Int> {
@@ -182,7 +166,7 @@ class Iteratees {
 	}
 
 	public static function map <E,A,B>(iter:IterV<E,A>, f:A->B):IterV<E,B> {
-		return switch (iter) 
+		return switch (iter)
 		{
 			case Done(x, str): Done(f(x), str);
 			case Cont(k): Cont(map.bind(_,f).compose(k));
@@ -190,7 +174,7 @@ class Iteratees {
 	}
 
 	public static function flatMap <E,A,B>(iter:IterV<E,A>, f:A->IterV<E,B>):IterV<E,B> {
-		return switch (iter) 
+		return switch (iter)
 		{
 			case Done(x, str): switch (f(x)) {
 				case Done(x1, _): Done(x1, str);
@@ -207,6 +191,6 @@ class Iteratees {
   		}
   	}
 
- 
+
 }
 

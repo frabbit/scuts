@@ -15,18 +15,18 @@ import scuts.core.Tuples;
 
 
 
-class StateTFunctor<M,ST> implements Functor<Of<M, State<ST,In>>> {
-  
+class StateTFunctor<M,ST> implements Functor<M<State<ST,In>>> {
+
   var functorM:Functor<M>;
-  
-  public function new (functorM:Functor<M>) 
+
+  public function new (functorM:Functor<M>)
   {
     this.functorM = functorM;
   }
 
-  public function map<A,B>(v:StateTOf<M, ST, A>, f:A->B):StateTOf<M, ST, B> 
+  public function map<A,B>(v:StateTOf<M, ST, A>, f:A->B):StateTOf<M, ST, B>
   {
-    
+
 
     return functorM.map(v, States.map.bind(_, f));
   }

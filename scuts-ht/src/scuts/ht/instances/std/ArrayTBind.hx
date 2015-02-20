@@ -21,7 +21,7 @@ class ArrayTBind<M> implements Bind<ArrayT<M,In>>
 
   public function flatMap<A,B>(val:ArrayT<M,A>, f: A->ArrayT<M,B>):ArrayT<M,B>
   {
-    function f1 (a:Array<A>):Of<M, Array<B>>
+    function f1 (a:Array<A>):M<Array<B>>
     {
       var res = [];
       function pushElems (x:Array<B>) for (e2 in x) res.push(e2);

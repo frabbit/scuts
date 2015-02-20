@@ -5,12 +5,12 @@ import scuts.ht.core.Of;
 
 import scuts.ht.classes.Functor;
 
-class Functors 
+class Functors
 {
-  
-  public static inline function map <F,A,B> (x:Of<F, A>, f:A->B, functor:Functor<F>):Of<F,B> 
+
+  public static inline function map <F,A,B> (x:F<A>, f:A->B, functor:Functor<F>):F<B>
   	return functor.map(x, f);
-  
-  
+
+
 
 }

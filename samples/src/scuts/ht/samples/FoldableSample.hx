@@ -11,7 +11,7 @@ using scuts.ht.Context;
 class FoldableSample {
 
 	public static function main () {
-		
+
 		trace([1,2,3].foldLeft_(0, function (acc, cur) return acc + cur));
 		trace(ImLists.fromArray([1,2,3]).foldLeft_(0, function (acc, cur) return acc + cur));
 		trace(LazyLists.fromArray([1,2,3]).foldLeft_(0, function (acc, cur) return acc + cur));
@@ -21,8 +21,8 @@ class FoldableSample {
 		// or define a abstract function that uses a foldable and a semigroup to fold
 		// over abstract collections/container and sums the elements up.
 
-		function sum <M, A>(x:Of<M, A>, init:A, f:Foldable<M>, m:Semigroup<A>) {
-			return f.foldLeft(x, init, m.append); 
+		function sum <M, A>(x:M<A>, init:A, f:Foldable<M>, m:Semigroup<A>) {
+			return f.foldLeft(x, init, m.append);
 		}
 
 		// same call for all collections

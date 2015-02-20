@@ -10,22 +10,22 @@ private typedef R = scuts.ht.macros.implicits.Resolver;
 
 
 
-class ApplicativesM 
+class ApplicativesM
 {
-  
 
-  macro public static function thenRight_<M,A,B>(x:ExprOf<Of<M,A>>, y:ExprOf<Of<M,B>>):ExprOf<Of<M,B>> 
-  {
-    return R.resolve(macro scuts.ht.syntax.Applicatives.thenRight, [x,y]); 
-  } 
-  
 
-  macro public static function thenLeft_<M,A,B>(x:ExprOf<Of<M,A>>, y:ExprOf<Of<M,B>>):ExprOf<Of<M,A>> 
+  macro public static function thenRight_<M,A,B>(x:ExprOf<M<A>>, y:ExprOf<M<B>>):ExprOf<M<B>>
   {
-    return R.resolve(macro scuts.ht.syntax.Applicatives.thenLeft, [x,y]); 
+    return R.resolve(macro scuts.ht.syntax.Applicatives.thenRight, [x,y]);
   }
-  
-  
+
+
+  macro public static function thenLeft_<M,A,B>(x:ExprOf<M<A>>, y:ExprOf<M<B>>):ExprOf<M<A>>
+  {
+    return R.resolve(macro scuts.ht.syntax.Applicatives.thenLeft, [x,y]);
+  }
+
+
 }
 
 

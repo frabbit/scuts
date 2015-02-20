@@ -9,13 +9,13 @@ import scuts.ht.classes.Foldable;
 interface Traversable<T> extends Functor<T> extends Foldable<T>
 {
   // functions
-  public function sequence <M,A> (val:Of<T, Of<M,A>>, monad:Monad<M>):Of<M, Of<T,A>>;
-  
-  public function sequenceA <F,A> (val:Of<T, Of<F,A>>, app:Applicative<F>):Of<F, Of<T,A>>;
-  
-  public function traverse <F,A,B> (v:Of<T,A>, f:A->Of<F,B>, app:Applicative<F>):Of<F, Of<T,B>>;
-  
-  public function mapM <M,A,B> (v:Of<T,A>, f:A->Of<M,B>, monad:Monad<M>):Of<M, Of<T,B>>;
-  
+  public function sequence <M,A> (val:T<M<A>>, monad:Monad<M>):M<T<A>>;
+
+  public function sequenceA <F,A> (val:T<F<A>>, app:Applicative<F>):F<T<A>>;
+
+  public function traverse <F,A,B> (v:T<A>, f:A->F<B>, app:Applicative<F>):F<T<B>>;
+
+  public function mapM <M,A,B> (v:T<A>, f:A->M<B>, monad:Monad<M>):M<T<B>>;
+
 }
 

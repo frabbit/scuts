@@ -10,9 +10,9 @@ import scuts.Scuts;
    */
 interface MonadPlus<M> extends MonadEmpty<M> extends Plus<M>
 {
-  
+
   /**
    * Appends two monadic values, val1 and val2.
    */
-  public function plus <A>(a:Of<M,A>, b:Of<M,A>):Of<M,A>;
+  public function plus <A>(a:M<A>, b:M<A>):M<A>;
 }

@@ -12,18 +12,18 @@ class DisplayDoTools {
     return build(exprs);
   }
 
-  public static function build (exprs:Array<Expr>) 
+  public static function build (exprs:Array<Expr>)
   {
-    return if (exprs.length > 0) 
+    return if (exprs.length > 0)
     {
-      var x = switch (exprs[0].expr) 
+      var x = switch (exprs[0].expr)
       {
         case EBinop(OpLte, _, x): x;
         case _ : exprs[0];
       }
       //trace(ExprTools.toString(x));
       macro {
-        inline function asOf <M,A>(t:scuts.ht.core.Of<M,A>):scuts.ht.core.Of<M,A> return t;
+        inline function asOf <M,A>(t:scuts.ht.core.M<A>):scuts.ht.core.M<A> return t;
         asOf($x);
       };
     } else {

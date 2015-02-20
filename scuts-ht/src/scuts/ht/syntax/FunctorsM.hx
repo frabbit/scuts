@@ -6,11 +6,11 @@ import haxe.macro.Expr;
 import scuts.ht.macros.implicits.Resolver;
 #end
 
-class FunctorsM 
+class FunctorsM
 {
-  macro public static function map_ <F,A,B> (x:ExprOf<Of<F, A>>, f:ExprOf<A->B>):ExprOf<Of<F,B>> 
+  macro public static function map_ <F,A,B> (x:ExprOf<F<A>>, f:ExprOf<A->B>):ExprOf<F<B>>
   {
-  	return Resolver.resolve(macro scuts.ht.syntax.Functors.map, [x, f], 3);	
+  	return Resolver.resolve(macro scuts.ht.syntax.Functors.map, [x, f], 3);
   }
-  
+
 }

@@ -5,6 +5,6 @@ import scuts.ht.core.Of;
 
 interface ContraVariant<F> {
 
-	public function contraMap <A,B>(x : Of<F,A>, f:B->A):Of<F,B>;
+	public function contraMap <A,B>(x : F<A>, f:B->A):F<B>;
 
 }

@@ -45,7 +45,7 @@ class Applicatives
   @:implicit @:noUsing public static function promiseTApplicative  <M>(base:Applicative<M>):Applicative<PromiseT<M,In>>
     return AB.create(promiseTPure(base), promiseTApply(base, base), promiseTFunctor(base));
 
-  // @:implicit @:noUsing public static function lazyTApplicative  <M>(base:Applicative<M>):Applicative<Void->Of<M,In>>
+  // @:implicit @:noUsing public static function lazyTApplicative  <M>(base:Applicative<M>):Applicative<Void->M<In>>
   //   return AB.create(lazyTPure(base), lazyTApply(base, base), lazyTFunctor(base));
 
 

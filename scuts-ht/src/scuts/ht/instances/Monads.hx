@@ -38,7 +38,7 @@ class Monads
   @:implicit @:noUsing public static function arrayTMonad      <M>(base:Monad<M>):Monad<ArrayT<M, In>>
     return MB.createFromApplicativeAndBind(arrayTApplicative(base), arrayTBind(base));
 
-  // @:implicit @:noUsing public static function lazyTMonad      <M>(base:Monad<M>):Monad<Void->Of<M,In>>
+  // @:implicit @:noUsing public static function lazyTMonad      <M>(base:Monad<M>):Monad<Void->M<In>>
   //   return MB.createFromApplicativeAndBind(lazyTApplicative(base), lazyTBind(base));
 
   @:implicit @:noUsing public static function promiseTMonad      <M>(base:Monad<M>):Monad<PromiseT<M, In>>

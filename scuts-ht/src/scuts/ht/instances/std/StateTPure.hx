@@ -9,11 +9,11 @@ import scuts.core.Tuples;
 
 
 
-class StateTPure<M,ST> implements Pure<Of<M,State<ST, In>>> {
-  
+class StateTPure<M,ST> implements Pure<M<State<ST, In>>> {
+
   var pureM:Pure<M>;
 
-  public function new (pureM:Pure<M>) 
+  public function new (pureM:Pure<M>)
   {
     this.pureM = pureM;
   }
@@ -24,6 +24,6 @@ class StateTPure<M,ST> implements Pure<Of<M,State<ST, In>>> {
   public function pure<A>(x:A):StateTOf<M,ST, A> {
     return pureM.pure(States.pure(x));
   }
-  
+
 
 }

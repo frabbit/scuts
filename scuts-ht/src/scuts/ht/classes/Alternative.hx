@@ -6,12 +6,12 @@ import scuts.ht.core.Of;
 interface AlternativeArray<F> extends Applicative<F>
 {
   /* one or more */
-  public function some <A>(v:Of<F, A>):Of<F, Array<A>>;
+  public function some <A>(v:F<A>):F<Array<A>>;
   /* zero or more */
-  public function many <A>(v:Of<F, A>):Of<F, Array<A>>;
-  
-  public function empty <A>():Of<F, A>;
-  
-  public function append <A>():Of<F, A>;
-  
+  public function many <A>(v:F<A>):F<Array<A>>;
+
+  public function empty <A>():F<A>;
+
+  public function append <A>():F<A>;
+
 }

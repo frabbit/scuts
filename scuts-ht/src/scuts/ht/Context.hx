@@ -4,8 +4,6 @@ package scuts.ht;
 import scuts.ht.classes.MonadOr;
 
 
-typedef OfOf<M,A,B> = scuts.ht.core.OfOf<M,A,B>;
-
 
 typedef ShowInstances = scuts.ht.instances.Shows;
 typedef MonadInstances = scuts.ht.instances.Monads;

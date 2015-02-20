@@ -10,20 +10,20 @@ import scuts.ht.macros.implicits.Resolver;
 
 class BindsM {
 
-		
+
 	//#if display
 	//
-	//public static function flatMap_ <M,A,B> (x:Of<M, A>, f:A->Of<M, B>):Of<M,B> return null;
+	//public static function flatMap_ <M,A,B> (x:M<A>, f:A->M<B>):M<B> return null;
 	//
 	//#else
-	
-	macro public static function flatMap_ <M,A,B> (x:ExprOf<Of<M, A>>, f:ExprOf<A->Of<M, B>>):ExprOf<Of<M,B>>
+
+	macro public static function flatMap_ <M,A,B> (x:ExprOf<M<A>>, f:ExprOf<A->M<B>>):ExprOf<M<B>>
 	{
 		return Resolver.resolve(macro scuts.ht.syntax.Binds.flatMap, [x, f], 3);
 	}
-	
+
 	//#end
 
-	   
+
 }
 

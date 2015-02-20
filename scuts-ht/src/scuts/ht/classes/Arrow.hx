@@ -1,6 +1,5 @@
 package scuts.ht.classes;
 
-import scuts.ht.core.OfOf;
 
 import scuts.core.Tuples;
 import scuts.Scuts;
@@ -50,7 +49,7 @@ interface Arrow<AR> extends Category<AR>
    *
    * haskell: arr :: (b -> c) -> a b c
    */
-  public function arr <B,C>(f:B->C):OfOf<AR,B, C>;
+  public function arr <B,C>(f:B->C):AR<B, C>;
 
   /**
    * Send the first component of the input through the argument
@@ -58,7 +57,7 @@ interface Arrow<AR> extends Category<AR>
    *
    * haskell: first :: a b c -> a (b,d) (c,d)
    */
-  public function first <B,C,D>(f:OfOf<AR,B,C>):OfOf<AR, Tup2<B,D>, Tup2<C,D>>;
+  public function first <B,C,D>(f:AR<B,C>):AR<Tup2<B,D>, Tup2<C,D>>;
 
   /**
    * Send the second component of the input through the argument
@@ -66,7 +65,7 @@ interface Arrow<AR> extends Category<AR>
    *
    * haskell: second :: a b c -> a (d,b) (d,c)
    */
-  public function second <B,C,D>(f:OfOf<AR,B, C>):OfOf<AR, Tup2<D,B>, Tup2<D,C>>;
+  public function second <B,C,D>(f:AR<B, C>):AR<Tup2<D,B>, Tup2<D,C>>;
 
   /**
    * Split the input between the two argument arrows and combine
@@ -74,7 +73,7 @@ interface Arrow<AR> extends Category<AR>
    *
    * haskell: (***) :: a b c -> a b' c' -> a (b,b') (c,c')
    */
-  public function split <B,B1, C,C1,D >(f:OfOf<AR,B, C>, g:OfOf<AR, B1, C1>):OfOf<AR, Tup2<B,B1>, Tup2<C,C1>>;
+  public function split <B,B1, C,C1,D >(f:AR<B, C>, g:AR<B1, C1>):AR<Tup2<B,B1>, Tup2<C,C1>>;
 
   /**
    * Fanout: send the input to both argument arrows and combine
@@ -82,7 +81,7 @@ interface Arrow<AR> extends Category<AR>
    *
    * haskell: (&&&) :: a b c -> a b c' -> a b (c,c')
    */
-  public function fanout <B,C, C1>(f:OfOf<AR,B, C>, g:OfOf<AR, B, C1>):OfOf<AR, B, Tup2<C,C1>>;
+  public function fanout <B,C, C1>(f:AR<B, C>, g:AR<B, C1>):AR<B, Tup2<C,C1>>;
 
 }
 

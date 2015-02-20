@@ -4,7 +4,7 @@ import scuts.Scuts;
 
 /**
  * ...
- * @author 
+ * @author
  */
 
 
@@ -12,5 +12,5 @@ import scuts.Scuts;
 
 interface MonadOr<M> extends MonadEmpty<M>
 {
-  public function orElse <A>(val1:Of<M,A>, val2:Of<M,A>):Of<M,A>;
+  public function orElse <A>(val1:M<A>, val2:M<A>):M<A>;
 }

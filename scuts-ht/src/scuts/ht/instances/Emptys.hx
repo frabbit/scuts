@@ -22,7 +22,7 @@ class Emptys
 
   //@:implicit @:noUsing public static function stateEmpty <S>():Empty<S->Tup2<S,In>> return new StateEmpty()
 
-  //@:implicit @:noUsing public static function arrayTEmpty        <M>(base:Pure<M>):Empty<Of<M, Array<In>>> return new ArrayTEmpty(base)
+  //@:implicit @:noUsing public static function arrayTEmpty        <M>(base:Pure<M>):Empty<M<Array<In>>> return new ArrayTEmpty(base)
   @:implicit @:noUsing public static function optionTEmpty      <M>(base:Pure<M>):Empty<OptionT<M,In>> return new OptionTEmpty(base);
-  //@:implicit @:noUsing public static function validationTEmpty   <M,F>(base:Pure<M>):Empty<Of<M, Validation<F,In>>> return new ValidationTEmpty(base)
+  //@:implicit @:noUsing public static function validationTEmpty   <M,F>(base:Pure<M>):Empty<M<Validation<F,In>>> return new ValidationTEmpty(base)
 }

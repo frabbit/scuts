@@ -20,7 +20,7 @@ class PromiseTBind<M> implements Bind<PromiseT<M, In>> {
 
   public function flatMap<A,B>(val:PromiseT<M,A>, f: A->PromiseT<M,B>):PromiseT<M, B>
   {
-    function f1 (a:Promise<A>):Of<M,Promise<B>>
+    function f1 (a:Promise<A>):M<Promise<B>>
     {
       var x:Deferred<B> = Promises.deferred();
       a.onFailure(x.failure);

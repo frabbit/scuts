@@ -4,34 +4,21 @@ package fingertree.strict;
 import scuts.core.Arrays;
 import scuts.core.Options;
 import scuts.ds.ImLists;
-//import scuts.ds.LazyLists;
-// import scuts.ht.core.Of;
-// import scuts.ht.core.In;
 
 using scuts.core.Functions;
 
-// using scuts.ht.Context;
-
 
 using scuts.ds.LazyLists;
-//using fingertree.strict.StrictFingerTreeTest.LazyListReduce;
-//using fingertree.strict.StrictFingerTreeTest.ArrayReduce;
 
 using fingertree.strict.StrictFingerTreeTest.FingerTrees;
 
 
 
 
-// interface Reduce<F> 
-// {
-// 	function reduceRight<A,B>(x:Of<F, A>, b:B, f:A->B->B):B;
-// 	function reduceLeft<A,B>(x:Of<F, A>, b:B, f:B->A->B):B;
-// }
 
-
-@:publicFields class Nodes 
+@:publicFields class Nodes
 {
-	static function reduceRight<A,B>(x:Node<A>, z:B, f:A->B->B):B 
+	static function reduceRight<A,B>(x:Node<A>, z:B, f:A->B->B):B
 	{
 		return switch (x) {
 			case Node2(a,b): f(a, f(b,z));
@@ -49,7 +36,7 @@ using fingertree.strict.StrictFingerTreeTest.FingerTrees;
 
 	static function toDigit<A,B>(x:Node<A>):Digit<A>
 	{
-		return switch (x) 
+		return switch (x)
 		{
 			case Node2(a,b): Two(a,b);
 			case Node3(a,b,c): Three(a,b,c);
@@ -62,23 +49,23 @@ using fingertree.strict.StrictFingerTreeTest.FingerTrees;
 			case Node2(a,b):   Deep(One(a), Empty, One(b));
 			case Node3(a,b,c): Deep(One(a), Empty, Two(b,c));
 		}
-		
+
 	}
 
 	static function map<A,B>(x:Node<A>, f:A->B):Node<B> {
 		return switch (x) {
 			case Node2(a,b): Node2(f(a),f(b));
 			case Node3(a,b,c): Node3(f(a),f(b),f(c));
-		}	
+		}
 	}
 }
 
-@:publicFields class Digits 
+@:publicFields class Digits
 {
 
 	static function map<A,B>(x:Digit<A>, f:A->B):Digit<B>
 	{
-		return switch (x) 
+		return switch (x)
 		{
 			case One(a): 		One(f(a));
 			case Two(a,b): 	    Two(f(a), f(b));
@@ -94,13 +81,13 @@ using fingertree.strict.StrictFingerTreeTest.FingerTrees;
 			case One(a): 		ImLists.mkOne(a);
 			case Two(a,b): 	    ImLists.fromArray([a,b]);
 			case Three(a,b,c):  ImLists.fromArray([a,b,c]);
-			case Four(a,b,c,d): 
+			case Four(a,b,c,d):
 				trace(ImLists.fromArray([a,b,c,d]));
 				ImLists.fromArray([a,b,c,d]);
 		}
 	}
 
-	static function reduceRight<A,B>(x:Digit<A>, z:B, f:A->B->B):B 
+	static function reduceRight<A,B>(x:Digit<A>, z:B, f:A->B->B):B
 	{
 		return switch (x) {
 			case One(a): 		f(a, z);
@@ -110,7 +97,7 @@ using fingertree.strict.StrictFingerTreeTest.FingerTrees;
 		}
 	}
 
-	static function reduceLeft<A,B>(x:Digit<A>, z:B, f:B->A->B):B 
+	static function reduceLeft<A,B>(x:Digit<A>, z:B, f:B->A->B):B
 	{
 		return switch (x) {
 			case One(a): 		f( z, 		           a);
@@ -123,16 +110,16 @@ using fingertree.strict.StrictFingerTreeTest.FingerTrees;
 	// static function toTree <A>(x:Digit<A>):FingerTree<A>
 	// {
 	// 	return switch (x) {
-	// 		case One(a) : Single(a); 
+	// 		case One(a) : Single(a);
 	// 		case Two(a,b): Deep(One(a), Empty, One(b));
 	// 		case Three(a,b,c): Deep(Two(a,b), Empty, One(c));
 	// 		case Four(a,b,c,d): Deep(Three(a,b,c), Empty, One(c));
 	// 	}
 	// }
 
-	static function toTree <A>(x:Digit<A>):FingerTree<A> return switch (x) 
+	static function toTree <A>(x:Digit<A>):FingerTree<A> return switch (x)
 	{
-		case One(a) :       Single(a); 
+		case One(a) :       Single(a);
 		case Two(a,b):      Deep(One(a), Empty, One(b));
 		case Three(a,b,c):  Deep(One(a), Empty, Two(b,c));
 		case Four(a,b,c,d): Deep(One(a), Empty, Three(b,c,d));
@@ -152,7 +139,7 @@ using fingertree.strict.StrictFingerTreeTest.FingerTrees;
 			case Two(_,b):		 Some(One(b));
 			case Three(_,b,c):	 Some(Two(b,c));
 			case Four(_ ,b,c,d): Some(Three(b,c,d));
-			
+
 		}
 	}
 
@@ -163,7 +150,7 @@ using fingertree.strict.StrictFingerTreeTest.FingerTrees;
 		}
 	}
 
-	static function tailRight <A>(x:Digit<A>):Option<Digit<A>> return switch (x) 
+	static function tailRight <A>(x:Digit<A>):Option<Digit<A>> return switch (x)
 	{
 		case One(_):    	 None;
 		case Two(a,_):     	 Some(One(a));
@@ -172,41 +159,17 @@ using fingertree.strict.StrictFingerTreeTest.FingerTrees;
 	}
 }
 
-// abstract FingerTreeOf<T>(Of<FingerTree<In>,T>) to Of<FingerTree<In>, T> from Of<FingerTree<In>, T> {
-
-// 	public function new (a:Of<FingerTree<In>,T>) this = a;
-
-// 	@:from public static function fromOf <T>(x:Of<FingerTree<In>, T>):FingerTreeOf<T> return new FingerTreeOf(cast x);
-
-// 	@:to function toOf ():Of<FingerTree<In>, T> return new Of(this);
-
-// 	@:to function toFingerTree ():FingerTree<T> return cast this;
-
-// 	@:from public static function fromFingerTree <T>(f:FingerTree<T>):FingerTreeOf<T> return new FingerTreeOf(cast f);
-
-// }
-
 
 
 class FingerTrees {
 
-	
 
-	public static inline function isEmpty<A>(x:FingerTree<A>):Bool return switch (x) 
+
+	public static inline function isEmpty<A>(x:FingerTree<A>):Bool return switch (x)
 	{
 		case Empty : true;
 		case _ : 	 false;
 	}
-	
-	// public static function toImListFromLeft <A>(x:FingerTree<A>) 
-	// {
-	// 	return reduceLeft(x,scuts.ds.ImLists.mkEmpty(), scuts.ds.ImLists.cons);
-	// }
-
-	// public static function toImListFromRight <A>(x:FingerTree<A>) 
-	// {
-	// 	return reduceRight(x,scuts.ds.ImLists.mkEmpty(), scuts.ds.ImLists.cons.flip());
-	// }
 
 	public static inline function mkEmpty<A>():FingerTree<A>
 	{
@@ -215,43 +178,43 @@ class FingerTrees {
 
 	public static function headLeft<A>(x:FingerTree<A>):Option<A>
 	{
-		return switch (x) 
+		return switch (x)
 		{
 			case Empty : None;
 			case Single(x): Some(x);
-			case _ : switch (viewLeft(x)) 
+			case _ : switch (viewLeft(x))
 			{
 				case ViewNil : None;
 				case ViewCons(a,_):Some(a);
 			}
 		}
-		
+
 	}
 	public static function tailLeft<A>(x:FingerTree<A>):FingerTree<A>
 	{
-		return switch (x) 
+		return switch (x)
 		{
 			case Empty : Empty;
 			case Single(_) : Empty;
 			// case Deep(pf,m, Four(a,b,c,_)) : Deep(pf, m, Three(a,b,c));
 			// case Deep(pf,m, Three(a,b,c)) : Deep(pf, m, Two(a,b));
 			// case Deep(pf,m, Two(a,b)) : Deep(pf, m, One(a));
-			case _ : switch (viewLeft(x)) 
+			case _ : switch (viewLeft(x))
 			{
 				case ViewNil : mkEmpty();
 				case ViewCons(_,tail):tail;
 			}
 		}
-		
+
 	}
 
 	public static function headRight<A>(x:FingerTree<A>):Option<A>
 	{
-		return switch (x) 
+		return switch (x)
 		{
 			case Empty : None;
 			case Single(x): Some(x);
-			case _ : switch (viewRight(x)) 
+			case _ : switch (viewRight(x))
 			{
 				case ViewNil : None;
 				case ViewCons(a,_):Some(a);
@@ -264,7 +227,7 @@ class FingerTrees {
 		return switch (x) {
 			case Empty : Empty;
 			case Single(_) : Empty;
-			case _ : switch (viewRight(x)) 
+			case _ : switch (viewRight(x))
 			{
 				case ViewNil : mkEmpty();
 				case ViewCons(_,tail):tail;
@@ -275,7 +238,7 @@ class FingerTrees {
 	public static function deepLeft<A>(x:FingerTree<Node<A>>, tail:Option<Digit<A>>, sf:Digit<A>):FingerTree<A>
 	{
 		return switch [tail, x,sf] {
-			case [None, m, sf]: switch (viewLeft(m)) 
+			case [None, m, sf]: switch (viewLeft(m))
 			{
 				case ViewCons(a, m1): Deep(Nodes.toDigit(a), m1, sf);
 				case ViewNil: 		  Digits.toTree(sf);
@@ -284,13 +247,13 @@ class FingerTrees {
 		}
 	}
 
-	
+
 
 	public static function deepRight<A>(x:FingerTree<Node<A>>, tail:Option<Digit<A>>, pr:Digit<A>):FingerTree<A>
 	{
-		return switch [tail, x,pr] 
+		return switch [tail, x,pr]
 		{
-			case [None, m, pr]: switch (viewRight(m)) 
+			case [None, m, pr]: switch (viewRight(m))
 			{
 				case ViewCons(a, m1): Deep(pr, m1, Nodes.toDigit(a));
 				case ViewNil: 		  Digits.toTree(pr);
@@ -299,7 +262,7 @@ class FingerTrees {
 		}
 	}
 
-	
+
 
 	public static function viewLeft<A>(x:FingerTree<A>):View<A, FingerTree<A>>
 	{
@@ -307,7 +270,7 @@ class FingerTrees {
 			case Empty: ViewNil;
 			case Single(x): 			   ViewCons(x, Empty);
 			case Deep(pr, m, sf): ViewCons(Digits.headLeft(pr), deepLeft(m, Digits.tailLeft(pr), sf));
-			
+
 		}
 	}
 
@@ -319,13 +282,13 @@ class FingerTrees {
 			case Empty: ViewNil;
 			case Single(x): 			   ViewCons(x, Empty);
 			case Deep(pr, m, sf): ViewCons(Digits.headRight(sf), deepRight(m, Digits.tailRight(sf), pr));
-			
+
 		}
 	}
 
-	public static function reduceRight<A,B>(x:FingerTree<A>, z:B, f:A->B->B):B 
+	public static function reduceRight<A,B>(x:FingerTree<A>, z:B, f:A->B->B):B
 	{
-		function reduceDeep(pr, m, sf) 
+		function reduceDeep(pr, m, sf)
 		{
 			var r1 = Digits.reduceRight.bind(_,_,f);
 			var r2 = FingerTrees.reduceRight.bind(_,_,Nodes.reduceRight.bind(_,_,f));
@@ -333,7 +296,7 @@ class FingerTrees {
 			return r1(pr, r2(m, r1(sf, z)));
 		}
 
-		return switch (x) 
+		return switch (x)
 		{
 			case Empty: 				   z;
 			case Single(a): 			   f(a,z);
@@ -349,7 +312,7 @@ class FingerTrees {
 	// public static function app3<A>(f1:FingerTree<A>, l:ImList<A>, f2:FingerTree<A>):FingerTree<A>
 	// {
 
-	// 	function deepApp3(pr1, m1, sf1, ts, pr2, m2, sf2) 
+	// 	function deepApp3(pr1, m1, sf1, ts, pr2, m2, sf2)
 	// 	{
 	// 		function middle () {
 	// 			var l1 = Digits.toImList(sf1);
@@ -368,9 +331,9 @@ class FingerTrees {
 	// 		case [Single(x), ts, xs]: pushFront(Tools.liftRight(ts, xs,  ImListReduce.instance), x);
 	// 		case [xs, ts, Single(x)]: pushBack (Tools.liftLeft(ts, xs, ImListReduce.instance), x);
 	// 		case [Deep(pr1, m1, sf1), ts, Deep(pr2, m2, sf2)]: deepApp3(pr1, m1, sf1, ts, pr2, m2,   sf2);
-			
+
 	// 	}
-		
+
 	// }
 
 	// static function nodes <A>(x:ImList<A>):ImList<Node<A>>
@@ -384,25 +347,25 @@ class FingerTrees {
 	// 	}
 	// }
 
-	// public static function reduceLeft<A,B>(x:FingerTree<A>, z:B, f:B->A->B):B 
+	// public static function reduceLeft<A,B>(x:FingerTree<A>, z:B, f:B->A->B):B
 	// {
-	// 	function reduceDeep(pr, m, sf) 
+	// 	function reduceDeep(pr, m, sf)
 	// 	{
 	// 		var r1 = Digits.reduceLeft.bind(_,_,f).flip();
-				
+
 	// 		var r3 = Nodes.reduceLeft.bind(_,_,f).flip();
 	// 		var r2 = FingerTrees.reduceLeft.bind(_,_,r3).flip();
-			
-			
+
+
 	// 		return r1(r2(r1(z, pr),m),sf);
 	// 	}
-	// 	return switch (x) 
+	// 	return switch (x)
 	// 	{
 	// 		case Empty:  				   z;
 	// 		case Single(a): 			   f(z,a);
-			
+
 	// 		case Deep(pr, m, sf): reduceDeep(pr, m, sf);
-				
+
 	// 	}
 	// }
 
@@ -411,57 +374,57 @@ class FingerTrees {
 		return switch (x) {
 			case Empty:None;
 			case Single(a)
-			   | Deep(One(a) 
-			   | Two(a,_) 
-			   | Three(a,_,_) 
+			   | Deep(One(a)
+			   | Two(a,_)
+			   | Three(a,_,_)
 			   | Four(a,_,_,_),_,_):Some(a);
 		}
 	}
 
 	public static function last <A>(x:FingerTree<A>):Option<A>
 	{
-		return switch (x) 
+		return switch (x)
 		{
 			case Empty:None;
-			
-			case Single(a) 
-			   | Deep(_,_, One(a) 
-			   | Two(_,a) 
-			   | Three(_,_,a) 
+
+			case Single(a)
+			   | Deep(_,_, One(a)
+			   | Two(_,a)
+			   | Three(_,_,a)
 			   | Four(_,_,_,a)): Some(a);
-			
+
 		}
 	}
 
-	
+
 
 	public static function map <A,B>(x:FingerTree<A>, f:A->B):FingerTree<B>
 	{
 
-		function deepMap(sf, m, pf) 
+		function deepMap(sf, m, pf)
 		{
 			var f1 = function (x1) return Nodes.map(x1,f);
 
 			var sfMap = Digits.map(sf, f);
 			var mMap = map(m, f1);
 			var pfMap = Digits.map(pf, f);
-			
+
 			return Deep(sfMap, mMap, pfMap);
 		}
 
-		return switch (x) 
+		return switch (x)
 		{
 			case Empty:Empty;
 			case Single(a): Single(f(a));
-			
+
 			case Deep(sf,m,pf): deepMap(sf, m, pf);
-			
+
 		}
 	}
 
 	public static function pushFront <A>(x:FingerTree<A>, a:A):FingerTree<A>
 	{
-		return switch (x) 
+		return switch (x)
 		{
 			case Empty: 					 		  Single(a);
 			case Single(b): 				 		  Deep(One(a), Empty, One(b));
@@ -472,10 +435,10 @@ class FingerTrees {
 		}
 	}
 
-	
+
 	public static function pushBack <A>(x:FingerTree<A>, z:A):FingerTree<A>
 	{
-		return switch (x) 
+		return switch (x)
 		{
 			case Empty: 					 			Single(z);
 			case Single(a): 				 			Deep(One(a), Empty, One(z));
@@ -485,18 +448,18 @@ class FingerTrees {
 			case Deep(pf, m, Three(b,c,d)):  			Deep(pf, m, Four(b,c,d,z));
 		}
 	}
-	
+
 
 }
 
 // class LazyListReduce implements Reduce<LazyList<In>> {
 
-// 	public function reduceRight<A,B>(x:Of<LazyList<In>, A>, b:B, f:A->B->B):B 
+// 	public function reduceRight<A,B>(x:LazyList<A>, b:B, f:A->B->B):B
 // 	{
 // 		return LazyLists.foldRight(x,b,f);
 // 	}
 
-// 	public function reduceLeft<A,B>(x:Of<LazyList<In>, A>, b:B, f:B->A->B):B
+// 	public function reduceLeft<A,B>(x:LazyList<A>, b:B, f:B->A->B):B
 // 	{
 // 		return LazyLists.foldLeft(x,b,f);
 // 	}
@@ -506,11 +469,11 @@ class FingerTrees {
 // }
 
 // class ImListReduce implements Reduce<ImList<In>> {
-//  	public function reduceRight<A,B>(x:Of<ImList<In>, A>, b:B, f:A->B->B):B 
+//  	public function reduceRight<A,B>(x:ImList<A>, b:B, f:A->B->B):B
 //  	{
 //  		return ImLists.foldRight(x,b,f);
 //  	}
-//  	public function reduceLeft<A,B>(x:Of<ImList<In>, A>, b:B, f:B->A->B):B
+//  	public function reduceLeft<A,B>(x:ImList<A>, b:B, f:B->A->B):B
 //  	{
 //  		return ImLists.foldLeft(x,b,f);
 //  	}
@@ -521,12 +484,12 @@ class FingerTrees {
 
 // class ArrayReduce implements Reduce<Array<In>> {
 
-// 	public function reduceRight<A,B>(x:Of<Array<In>, A>, b:B, f:A->B->B):B 
+// 	public function reduceRight<A,B>(x:Array<A>, b:B, f:A->B->B):B
 // 	{
 // 		return Arrays.foldRight(x,b,f);
 // 	}
 
-// 	public function reduceLeft<A,B>(x:Of<Array<In>, A>, b:B, f:B->A->B):B
+// 	public function reduceLeft<A,B>(x:Array<A>, b:B, f:B->A->B):B
 // 	{
 // 		return Arrays.foldLeft(x,b,f);
 // 	}
@@ -537,33 +500,33 @@ class FingerTrees {
 
 class Tools {
 
-	
 
 
-	// public static function toList <F,A>(x:Of<F,A>, reduce:Reduce<F>):LazyList<A>
+
+	// public static function toList <F,A>(x:F<A>, reduce:Reduce<F>):LazyList<A>
 	// {
 	// 	return reduce.reduceRight(x,LazyLists.mkEmpty(),LazyLists.cons.flip());
 	// }
 
-	
-	// public static function liftLeft <F,A>(x:Of<F,A>, ft:FingerTree<A>, reduce:Reduce<F>):FingerTree<A>
+
+	// public static function liftLeft <F,A>(x:F<A>, ft:FingerTree<A>, reduce:Reduce<F>):FingerTree<A>
 	// {
 	// 	return reduce.reduceLeft(x,ft,FingerTrees.pushBack);
 	// }
 
-	// public static function liftRight <F,A>(x:Of<F,A>, ft:FingerTree<A>, reduce:Reduce<F>):FingerTree<A>
+	// public static function liftRight <F,A>(x:F<A>, ft:FingerTree<A>, reduce:Reduce<F>):FingerTree<A>
 	// {
 	// 	return reduce.reduceRight(x,ft,FingerTrees.pushFront.flip());
-		
+
 	// }
 
-	// public static function toTree <F,A>(x:Of<F,A>, fromLeft:Bool, reduce:Reduce<F>):FingerTree<A>
+	// public static function toTree <F,A>(x:F<A>, fromLeft:Bool, reduce:Reduce<F>):FingerTree<A>
 	// {
-	// 	return 
-	// 		if (fromLeft) liftRight(x, Empty, reduce) else 
+	// 	return
+	// 		if (fromLeft) liftRight(x, Empty, reduce) else
 	// 		liftRight(x, Empty, reduce);
-		
-	// }	
+
+	// }
 }
 
 
@@ -607,9 +570,9 @@ class StrictFingerTreeTest {
 		for (i in 0...loops) {
 			x1 = x1.pushFront(i);
 		}
-		
+
 		trace("runtime: " + (haxe.Timer.stamp()-time));
-		while (!x1.isEmpty()) 
+		while (!x1.isEmpty())
 		{
 		 	x1 = x1.tailLeft();
 		}
@@ -633,7 +596,7 @@ class StrictFingerTreeTest {
 
 		trace("-------- imList -----------");
 
-		
+
 		var x = ImLists.mkEmpty();
 		var time = haxe.Timer.stamp();
 		for (i in 0...loops) {
@@ -642,7 +605,7 @@ class StrictFingerTreeTest {
 		trace("runtime: " + (haxe.Timer.stamp()-time));
 		while (!ImLists.isEmpty(x)) {
 			x = ImLists.tail(x);
-		}		
+		}
 
 		trace("runtime: " + (haxe.Timer.stamp()-time));
 
@@ -656,7 +619,7 @@ class StrictFingerTreeTest {
 		trace("runtime: " + (haxe.Timer.stamp()-time));
 		while (!LazyLists.isEmpty(x)) {
 			x = LazyLists.tail(x);
-		}		
+		}
 
 		trace("runtime: " + (haxe.Timer.stamp()-time));
 
@@ -670,7 +633,7 @@ class StrictFingerTreeTest {
 
 		while (!x.isEmpty()) {
 			x.pop();
-		}		
+		}
 
 		trace("runtime: " + (haxe.Timer.stamp()-time));
 		/*
@@ -679,7 +642,7 @@ class StrictFingerTreeTest {
 
 		var x = FingerTree.Empty;
 
-		
+
 		trace(x.pushFront(1).pushBack(2).pushFront(3).pushBack(7).last());
 
 
@@ -691,7 +654,7 @@ class StrictFingerTreeTest {
 
 		trace(z.last());
 
-		trace(z);		
+		trace(z);
 
 		trace(x.pushFront(1).pushBack(2).pushFront(3).pushBack(7).first());
 
@@ -711,7 +674,7 @@ class StrictFingerTreeTest {
 
 		trace(doubleT.toImListFromLeft().show._());
 		trace(doubleT.map(function (x) return x + 10).toImListFromLeft().show._());
-		
+
 
 		trace(doubleT.toImListFromRight().show._());
 
@@ -732,7 +695,7 @@ class StrictFingerTreeTest {
 		trace(t.tailRight());
 		trace(t.headLeft());
 		trace(t.headRight());
-		
+
 
 		*/
 
@@ -747,7 +710,7 @@ class StrictFingerTreeTest {
 
 
 		// var l = scuts.ds.ImLists.fromArray([1,2,3,4]);
-		
+
 		// trace(scuts.ds.ImLists.foldLeft(l, scuts.ds.ImLists.mkEmpty(), scuts.ds.ImLists.cons));
 		// trace(scuts.ds.ImLists.foldRight(l, scuts.ds.ImLists.mkEmpty(), scuts.ds.ImLists.cons.flip()));
 	}

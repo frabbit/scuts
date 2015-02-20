@@ -45,7 +45,7 @@ class Pures {
   @:implicit @:noUsing public static function statePure <S>():Pure<State<S,In>> return new StatePure();
 
 
-  //@:implicit @:noUsing public static function lazyTPure        <M>(base:Pure<M>):Pure<Void->Of<M,In>> return new LazyTPure(base);
+  //@:implicit @:noUsing public static function lazyTPure        <M>(base:Pure<M>):Pure<Void->M<In>> return new LazyTPure(base);
   @:implicit @:noUsing public static function promiseTPure        <M>(base:Pure<M>):Pure<PromiseT<M,In>> return new PromiseTPure(base);
   @:implicit @:noUsing public static function arrayTPure        <M>(base:Pure<M>):Pure<ArrayT<M,In>> return new ArrayTPure(base);
   @:implicit @:noUsing public static function optionTPure       <M>(base:Pure<M>):Pure<OptionT<M,In>> return new OptionTPure(base);

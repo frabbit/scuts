@@ -7,9 +7,9 @@ import scuts.ht.core.Of;
 
 class Pures
 {
-  public static function pure<M,A>(x:A, m:Pure<M>):Of<M, A>
+  public static function pure<M,A>(x:A, m:Pure<M>):M<A>
   {
     return m.pure(x);
   }
-  
+
 }
