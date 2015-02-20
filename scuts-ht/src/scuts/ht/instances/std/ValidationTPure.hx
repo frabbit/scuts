@@ -2,23 +2,16 @@ package scuts.ht.instances.std;
 
 import scuts.ht.classes.Pure;
 
-import scuts.ht.core.In;
-import scuts.ht.core.Of;
-import scuts.ht.instances.std.ValidationTOf;
-
-
+using scuts.ht.instances.std.ValidationT;
 
 using scuts.core.Validations;
 
 
-
-
-
-class ValidationTPure<F, M> implements Pure<Of<M,Validation<F, In>>> 
+class ValidationTPure<F, M> implements Pure<ValidationT<M,F, In>>
 {
   var pureM:Pure<M>;
 
-  public function new (pureM:Pure<M>) 
+  public function new (pureM:Pure<M>)
   {
     this.pureM = pureM;
   }
@@ -26,10 +19,10 @@ class ValidationTPure<F, M> implements Pure<Of<M,Validation<F, In>>>
   /**
    * aka return
    */
-  public function pure<A>(x:A):ValidationTOf<M,F,A> 
+  public function pure<A>(x:A):ValidationT<M,F,A>
   {
-    return pureM.pure(x.toSuccess());
+    return pureM.pure(x.toSuccess()).validationT();
   }
-  
+
 
 }

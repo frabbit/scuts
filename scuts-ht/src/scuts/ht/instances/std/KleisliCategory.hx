@@ -4,38 +4,36 @@ package scuts.ht.instances.std;
 import scuts.ht.classes.Category;
 import scuts.ht.classes.CategoryAbstract;
 import scuts.ht.classes.Monad;
-import scuts.ht.core.In;
-import scuts.ht.core.Of;
-import scuts.ht.instances.std.KleisliOf;
+import scuts.ht.instances.std.Kleisli;
 
 
 
-class KleisliCategory<M> extends CategoryAbstract<In->Of<M,In>> 
+class KleisliCategory<M> extends CategoryAbstract<Kleisli<M,In,In>>
 {
   private var m:Monad<M>;
-  
-  public function new (m:Monad<M>) 
+
+  public function new (m:Monad<M>)
   {
     this.m = m;
   }
-  
-  override public function id <A>(a:A):KleisliOf<M, A, A> 
+
+  override public function id <A>(a:A):Kleisli<M, A, A>
   {
-    return (function (a) return m.pure(a));
+    return new Kleisli(function (a) return m.pure(a));
   }
   /**
    * aka (.)
    */
-  override public function dot <A,B,C>(f:KleisliOf<M, B, C>, g:KleisliOf<M, A, B>):KleisliOf<M, A, C> 
+  override public function dot <A,B,C>(f:Kleisli<M, B, C>, g:Kleisli<M, A, B>):Kleisli<M, A, C>
   {
-    var f1 = f.unbox(); // b -> m c
-    var g1 = g.unbox(); // a -> m b
-    
+    var f1 = f.run(); // b -> m c
+    var g1 = g.run(); // a -> m b
+
     // h :: a -> m c
     var h = function (a:A) {
       var c = g1(a); // m b
       return m.flatMap(c, f1); // m c
     }
-    return h;
+    return new Kleisli(h);
   }
 }

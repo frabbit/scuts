@@ -6,7 +6,6 @@ import scuts.core.Options;
 import scuts.core.Promises;
 import scuts.ds.ImLists;
 import scuts.ds.LazyLists;
-import scuts.ht.core.In;
 
 import scuts.ht.instances.Monads.*;
 import scuts.ht.instances.Emptys.*;

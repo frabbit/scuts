@@ -3,6 +3,7 @@ package scuts.ht.instances;
 
 import scuts.core.Ios;
 import scuts.core.Lazy;
+import scuts.core.States;
 import scuts.ht.classes.Pure;
 import scuts.ht.instances.std.ArrayPure;
 import scuts.ht.instances.std.ArrayTPure;
@@ -24,8 +25,12 @@ import scuts.core.Validations;
 import scuts.ds.ImLists;
 import scuts.ds.LazyLists;
 
-import scuts.ht.core.In;
-import scuts.ht.core.Of;
+import scuts.ht.instances.std.ValidationT;
+import scuts.ht.instances.std.PromiseT;
+import scuts.ht.instances.std.OptionT;
+import scuts.ht.instances.std.ArrayT;
+
+
 
 class Pures {
   @:implicit @:noUsing public static var promisePure         (default, null):Pure<PromiseD<In>> = new PromisePure();
@@ -36,13 +41,13 @@ class Pures {
   @:implicit @:noUsing public static var imListPure          (default, null):Pure<ImList<In>> = new ImListPure();
   @:implicit @:noUsing public static var lazyPure          (default, null):Pure<Lazy<In>> = new LazyPure();
   @:implicit @:noUsing public static function validationPure <F>():Pure<Validation<F,In>> return new ValidationPure();
-  
-  @:implicit @:noUsing public static function statePure <S>():Pure<S->Tup2<S,In>> return new StatePure();
-  
+
+  @:implicit @:noUsing public static function statePure <S>():Pure<State<S,In>> return new StatePure();
+
 
   //@:implicit @:noUsing public static function lazyTPure        <M>(base:Pure<M>):Pure<Void->Of<M,In>> return new LazyTPure(base);
-  @:implicit @:noUsing public static function promiseTPure        <M>(base:Pure<M>):Pure<Of<M, PromiseD<In>>> return new PromiseTPure(base);
-  @:implicit @:noUsing public static function arrayTPure        <M>(base:Pure<M>):Pure<Of<M, Array<In>>> return new ArrayTPure(base);
-  @:implicit @:noUsing public static function optionTPure       <M>(base:Pure<M>):Pure<Of<M, Option<In>>> return new OptionTPure(base);
-  @:implicit @:noUsing public static function validationTPure   <M,F>(base:Pure<M>):Pure<Of<M, Validation<F,In>>> return new ValidationTPure(base);
+  @:implicit @:noUsing public static function promiseTPure        <M>(base:Pure<M>):Pure<PromiseT<M,In>> return new PromiseTPure(base);
+  @:implicit @:noUsing public static function arrayTPure        <M>(base:Pure<M>):Pure<ArrayT<M,In>> return new ArrayTPure(base);
+  @:implicit @:noUsing public static function optionTPure       <M>(base:Pure<M>):Pure<OptionT<M,In>> return new OptionTPure(base);
+  @:implicit @:noUsing public static function validationTPure   <M,F>(base:Pure<M>):Pure<ValidationT<M,F,In>> return new ValidationTPure(base);
 }

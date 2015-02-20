@@ -2,9 +2,7 @@ package scuts.ht.instances.std;
 import scuts.ht.classes.Applicative;
 import scuts.ht.classes.Apply;
 import scuts.ht.classes.ApplyAbstract;
-import scuts.ht.core.In;
-import scuts.ht.core.Of;
-import scuts.ht.instances.std.ArrayTOf;
+using scuts.ht.instances.std.ArrayT;
 import scuts.core.Arrays;
 import scuts.ht.classes.Functor;
 
@@ -14,12 +12,12 @@ import scuts.ht.classes.Functor;
 
 
 
-class ArrayTApply<M> extends ApplyAbstract<Of<M,Array<In>>> {
-  
+class ArrayTApply<M> extends ApplyAbstract<ArrayT<M,In>> {
+
   var appM:Apply<M>;
   var funcM:Functor<M>;
 
-  public function new (appM, funcM, func) 
+  public function new (appM, funcM, func)
   {
     super(func);
     this.appM = appM;
@@ -29,16 +27,16 @@ class ArrayTApply<M> extends ApplyAbstract<Of<M,Array<In>>> {
   /**
    * aka <*>
    */
-  override public function apply<A,B>(of:ArrayTOf<M,A>, f:ArrayTOf<M,A->B>):ArrayTOf<M,B> 
+  override public function apply<A,B>(of:ArrayT<M,A>, f:ArrayT<M,A->B>):ArrayT<M,B>
   {
-    function f1 (x:Array<A->B>) 
+    function f1 (x:Array<A->B>)
     {
       return function (a:Array<A>) return Arrays.zipWith(x,a, function (x1,a1) return x1(a1));
     }
-    
-    var newF = funcM.map(f, f1);
-    
-    return appM.apply(of, newF);
+
+    var newF = funcM.map(f.runT(), f1);
+
+    return appM.apply(of.runT(), newF).arrayT();
   }
 
 }

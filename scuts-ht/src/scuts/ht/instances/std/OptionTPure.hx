@@ -1,9 +1,7 @@
 package scuts.ht.instances.std;
 import scuts.ht.classes.Pure;
-import scuts.ht.core.In;
-import scuts.ht.core.Of;
 import scuts.ht.classes.Functor;
-import scuts.ht.instances.std.OptionTOf;
+using scuts.ht.instances.std.OptionT;
 import scuts.core.Options;
 
 
@@ -11,11 +9,11 @@ import scuts.core.Options;
 
 
 
-class OptionTPure<M> implements Pure<Of<M,Option<In>>> {
-  
+class OptionTPure<M> implements Pure<OptionT<M,In>> {
+
   var pureM:Pure<M>;
 
-  public function new (pureM:Pure<M>) 
+  public function new (pureM:Pure<M>)
   {
     this.pureM = pureM;
   }
@@ -23,9 +21,9 @@ class OptionTPure<M> implements Pure<Of<M,Option<In>>> {
   /**
    * aka return
    */
-  public function pure<A>(x:A):OptionTOf<M,A> {
-    return pureM.pure(Options.pure(x));
+  public function pure<A>(x:A):OptionT<M,A> {
+    return pureM.pure(Options.pure(x)).optionT();
   }
-  
+
 
 }

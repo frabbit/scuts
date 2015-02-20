@@ -2,9 +2,7 @@ package scuts.ht.instances.std;
 
 import scuts.ht.classes.Functor;
 
-import scuts.ht.core.In;
-import scuts.ht.core.Of;
-import scuts.ht.instances.std.PromiseTOf;
+using scuts.ht.instances.std.PromiseT;
 
 import scuts.core.Promises;
 
@@ -15,18 +13,18 @@ import scuts.core.Promises;
 
 
 
-class PromiseTFunctor<M> implements Functor<Of<M, PromiseD<In>>> {
-  
+class PromiseTFunctor<M> implements Functor<PromiseT<M, In>> {
+
   var functorM:Functor<M>;
-  
-  public function new (functorM:Functor<M>) 
+
+  public function new (functorM:Functor<M>)
   {
     this.functorM = functorM;
   }
 
-  public function map<A,B>(v:PromiseTOf<M, A>, f:A->B):PromiseTOf<M, B> 
+  public function map<A,B>(v:PromiseT<M, A>, f:A->B):PromiseT<M, B>
   {
 
-    return functorM.map(v, Promises.map.bind(_,f));
+    return functorM.map(v.runT(), Promises.map.bind(_,f)).promiseT();
   }
 }

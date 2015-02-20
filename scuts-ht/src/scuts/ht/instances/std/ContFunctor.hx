@@ -1,17 +1,15 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Functor;
-import scuts.ht.core.In;
-import scuts.ht.instances.std.ContOf;
 import scuts.core.Conts;
 
 using scuts.core.Functions;
 
-class ContFunctor<R> implements Functor<Cont<In, R>>
+class ContFunctor<R> implements Functor<Cont<R, In>>
 {
   public function new () {}
-  
-  public function map<B,C>(x:ContOf<B,R>, f:B->C):ContOf<C,R> 
+
+  public function map<B,C>(x:Cont<R,B>, f:B->C):Cont<R,C>
   {
     return Conts.map(x, f);
   }

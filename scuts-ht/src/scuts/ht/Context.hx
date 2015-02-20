@@ -3,9 +3,9 @@ package scuts.ht;
 
 import scuts.ht.classes.MonadOr;
 
-typedef Of<M,A> = scuts.ht.core.Of<M,A>;
+
 typedef OfOf<M,A,B> = scuts.ht.core.OfOf<M,A,B>;
-typedef In = scuts.ht.core.In;
+
 
 typedef ShowInstances = scuts.ht.instances.Shows;
 typedef MonadInstances = scuts.ht.instances.Monads;
@@ -70,13 +70,7 @@ typedef Do = scuts.ht.syntax.Do;
 
 
 //typedef Transformers = scuts.ht.syntax.Transformers;
-typedef ArrayTransformer = scuts.ht.syntax.Transformers.ArrayTransformer;
-typedef PromiseTransformer = scuts.ht.syntax.Transformers.PromiseTransformer;
-typedef ValidationTransformer = scuts.ht.syntax.Transformers.ValidationTransformer;
-typedef LazyTransformer = scuts.ht.syntax.Transformers.LazyTransformer;
-typedef OptionTransformer = scuts.ht.syntax.Transformers.OptionTransformer;
 
-typedef FunctionSyntax = scuts.ht.syntax.FunctionSyntax;
 
 typedef Arrow<X> = scuts.ht.classes.Arrow<X>;
 typedef Foldable<X> = scuts.ht.classes.Foldable<X>;

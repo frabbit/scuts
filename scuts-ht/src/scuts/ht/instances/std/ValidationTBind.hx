@@ -1,33 +1,31 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Bind;
-import scuts.ht.core.In;
-import scuts.ht.core.Of;
-import scuts.ht.instances.std.ValidationTOf;
+using scuts.ht.instances.std.ValidationT;
 import scuts.core.Validations;
 import scuts.ht.classes.Monad;
 
 
 
 
-class ValidationTBind<M,F> implements Bind<Of<M, Validation<F,In>>> {
-  
+class ValidationTBind<M,F> implements Bind<ValidationT<M,F,In>> {
+
   var base:Monad<M>;
-  
+
   public function new (base:Monad<M>) {
     this.base = base;
   }
-  
-  public function flatMap<A,B>(val:ValidationTOf<M,F,A>, f: A->ValidationTOf<M,F,B>):ValidationTOf<M, F,B> 
+
+  public function flatMap<A,B>(val:ValidationT<M,F,A>, f: A->ValidationT<M,F,B>):ValidationT<M, F,B>
   {
-    function f1 (a) return switch (a) 
+    function f1 (a):M<Validation<F,B>> return switch (a)
     {
-      case Success(v): f(v);
+      case Success(v): f(v).runT();
       case Failure(f): base.pure(Failure(f));
     }
-    
-    return base.flatMap(val, f1);
+
+    return base.flatMap(val.runT(), f1).validationT();
   }
-  
+
 }
 

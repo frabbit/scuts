@@ -3,6 +3,7 @@ package scuts.ht.instances;
 
 import scuts.core.Ios;
 import scuts.core.Lazy;
+import scuts.core.States;
 import scuts.ht.classes.Functor;
 import scuts.ht.instances.std.ArrayFunctor;
 import scuts.ht.instances.std.ArrayTFunctor;
@@ -27,36 +28,40 @@ import scuts.core.Validations;
 import scuts.ds.ImLists;
 import scuts.ds.LazyLists;
 
-import scuts.ht.core.In;
-import scuts.ht.core.Of;
+import scuts.ht.instances.std.LazyT;
+import scuts.ht.instances.std.ArrayT;
+import scuts.ht.instances.std.OptionT;
+import scuts.ht.instances.std.PromiseT;
+import scuts.ht.instances.std.ValidationT;
 
 
 class Functors {
   @:implicit @:noUsing public static var optionFunctor          (default, null):Functor<Option<In>> = new OptionFunctor();
   @:implicit @:noUsing public static var ioFunctor          (default, null):Functor<Io<In>> = new IoFunctor();
-  
-  
-  @:implicit @:noUsing public static function stateFunctor          <S>():Functor<S->Tup2<S,In>> return new StateFunctor();
-  @:implicit @:noUsing public static function contFunctor         <R>():Functor<Cont<In,R>> return new ContFunctor();
+
+
+  @:implicit @:noUsing public static function stateFunctor          <S>():Functor<State<S,In>> return new StateFunctor();
+  @:implicit @:noUsing public static function contFunctor         <R>():Functor<Cont<R,In>> return new ContFunctor();
 
   @:implicit @:noUsing public static function validationFunctor  <F>():Functor<Validation<F,In>> return new ValidationFunctor();
-  
-  @:implicit @:noUsing public static function lazyTFunctor          <M>(f:Functor<M>):Functor<Of<M, Void->In>> return new LazyTFunctor(f);
-  
-  @:implicit @:noUsing public static function promiseTFunctor     <M>(base:Functor<M>):Functor<Of<M, PromiseD<In>>> return new PromiseTFunctor(base);
-  @:implicit @:noUsing public static function arrayTFunctor     <M>(base:Functor<M>):Functor<Of<M, Array<In>>> return new ArrayTFunctor(base);
-  @:implicit @:noUsing public static function optionTFunctor    <M>(base:Functor<M>):Functor<Of<M, Option<In>>> return new OptionTFunctor(base);
-  @:implicit @:noUsing public static function validationTFunctor    <M, F>(base:Functor<M>):Functor<Of<M, Validation<F, In>>> return new ValidationTFunctor(base);
 
-  
+  @:implicit @:noUsing public static function lazyTFunctor          <M>(f:Functor<M>):Functor<LazyT<M, In>> return new LazyTFunctor(f);
+
+
+  @:implicit @:noUsing public static function promiseTFunctor     <M>(base:Functor<M>):Functor<PromiseT<M,In>> return new PromiseTFunctor(base);
+  @:implicit @:noUsing public static function arrayTFunctor     <M>(base:Functor<M>):Functor<ArrayT<M,In>> return new ArrayTFunctor(base);
+  @:implicit @:noUsing public static function optionTFunctor    <M>(base:Functor<M>):Functor<OptionT<M,In>> return new OptionTFunctor(base);
+  @:implicit @:noUsing public static function validationTFunctor    <M, F>(base:Functor<M>):Functor<ValidationT<M,F,In>> return new ValidationTFunctor(base);
+
+
   @:implicit @:noUsing public static var lazyListFunctor           (default, null):Functor<LazyList<In>> = new LazyListFunctor();
-  
+
   @:implicit @:noUsing public static var imListFunctor           (default, null):Functor<ImList<In>> = new ImListFunctor();
-  
+
   @:implicit @:noUsing public static var lazyFunctor           (default, null):Functor<Lazy<In>> = new LazyFunctor();
 
 
   @:implicit @:noUsing public static var promiseFunctor          (default, null):Functor<PromiseD<In>> = new PromiseFunctor();
   @:implicit @:noUsing public static var arrayFunctor           (default, null):Functor<Array<In>> = new ArrayFunctor();
-  
+
 }

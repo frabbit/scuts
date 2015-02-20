@@ -8,10 +8,9 @@ import scuts.ht.instances.std.LazyListFoldable;
 import scuts.ds.ImLists;
 import scuts.ds.LazyLists;
 
-import scuts.ht.core.In;
 
 
-class Foldables 
+class Foldables
 {
   @:implicit @:noUsing public static var arrayFoldable             (default, null):Foldable<Array<In>> = new ArrayFoldable();
   @:implicit @:noUsing public static var lazyListFoldable          (default, null):Foldable<LazyList<In>> = new LazyListFoldable();

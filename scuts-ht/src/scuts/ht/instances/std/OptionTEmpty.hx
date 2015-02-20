@@ -2,27 +2,25 @@ package scuts.ht.instances.std;
 
 import scuts.ht.classes.Empty;
 import scuts.ht.classes.Pure;
-import scuts.ht.core.In;
-import scuts.ht.instances.std.OptionTOf;
+using scuts.ht.instances.std.OptionT;
 
-import scuts.ht.core.Of;
 import scuts.core.Options;
 import scuts.ht.classes.Monad;
 
 
 
 
-class OptionTEmpty<M> implements Empty<Of<M, Option<In>>> {
-  
+class OptionTEmpty<M> implements Empty<OptionT<M,In>> {
+
   var pureM:Pure<M>;
-  
+
   public function new (pureM:Pure<M>) {
     this.pureM = pureM;
   }
-  
-  public inline function empty <A>():OptionTOf<M,A> 
+
+  public inline function empty <A>():OptionT<M,A>
   {
-    return pureM.pure(None);
+    return pureM.pure(None).optionT();
   }
 }
 
