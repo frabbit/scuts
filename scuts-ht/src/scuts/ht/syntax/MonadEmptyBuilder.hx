@@ -3,8 +3,6 @@ import scuts.ht.classes.Empty;
 import scuts.ht.classes.Monad;
 import scuts.ht.classes.MonadEmpty;
 
-import scuts.ht.core.Of;
-
 import scuts.Scuts;
 
 class MonadEmptyBuilder

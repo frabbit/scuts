@@ -1,12 +1,10 @@
 package scuts.ht.classes;
 import scuts.ht.instances.std.DualSemigroup;
 import scuts.ht.instances.std.EndoSemigroup;
-import scuts.ht.core.Of;
 import scuts.ht.instances.Monoids.dualMonoid;
 import scuts.ht.instances.Semigroups.dualSemigroup;
 import scuts.ht.instances.Monoids.endoMonoid;
 
-import scuts.ht.core.Of;
 import scuts.Scuts;
 import scuts.core.Options;
 import scuts.ht.classes.Monoid;

@@ -5,7 +5,7 @@ import scuts.ht.classes.Applicative;
 import scuts.ht.classes.Apply;
 import scuts.ht.classes.Functor;
 import scuts.ht.classes.Pure;
-import scuts.ht.core.Of;
+
 
 class ApplicativeBuilder
 {

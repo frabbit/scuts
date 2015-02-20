@@ -2,7 +2,6 @@ package scuts.ht.syntax;
 import scuts.ht.classes.Foldable;
 import scuts.ht.classes.Monoid;
 import scuts.ht.classes.Ord;
-import scuts.ht.core.Of;
 #if macro
 import haxe.macro.Expr;
 private typedef R = scuts.ht.macros.implicits.Resolver;

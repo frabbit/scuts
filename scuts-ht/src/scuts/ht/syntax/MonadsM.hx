@@ -1,7 +1,5 @@
-
 package scuts.ht.syntax;
 
-import scuts.ht.core.Of;
 
 #if macro
 import haxe.macro.Expr;

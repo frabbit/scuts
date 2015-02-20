@@ -1,7 +1,6 @@
 package scuts.ht.classes;
 
 import scuts.ht.classes.Applicative;
-import scuts.ht.core.Of;
 
 
 import scuts.Scuts;

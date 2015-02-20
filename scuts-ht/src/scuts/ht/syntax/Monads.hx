@@ -4,13 +4,11 @@ package scuts.ht.syntax;
 using scuts.ds.LazyLists;
 import scuts.ht.classes.MonadEmpty;
 
-import scuts.ht.core.Of;
 import scuts.core.Arrays;
 import scuts.ht.classes.Monad;
 
 import scuts.ht.classes.Applicative;
 import scuts.ht.classes.Bind;
-import scuts.ht.core.Of;
 
 import scuts.Scuts;
 

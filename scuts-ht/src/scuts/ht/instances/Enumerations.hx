@@ -14,11 +14,8 @@ import scuts.core.Tuples;
 import scuts.core.Validations;
 
 
-import scuts.ht.core.Of;
-
-
 class Enumerations {
   @:implicit @:noUsing public static var intEnumeration        (default, null):Enumeration<Int> = new IntEnumeration();
-  
- 
+
+
 }

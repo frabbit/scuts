@@ -1,6 +1,5 @@
 package scuts.ht.syntax;
 
-import scuts.ht.core.Of;
 
 
 import scuts.ht.classes.Functor;

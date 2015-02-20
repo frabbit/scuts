@@ -2,7 +2,6 @@ package scuts.ht.syntax;
 import scuts.ht.classes.Applicative;
 import scuts.ht.classes.Monad;
 import scuts.ht.classes.Pure;
-import scuts.ht.core.Of;
 
 
 class Pures

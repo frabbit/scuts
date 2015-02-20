@@ -93,4 +93,3 @@ typedef Show<X> = scuts.ht.classes.Show<X>;
 typedef Ht = scuts.ht.core.Ht;
 
 
-typedef FunctionBoxing = scuts.ht.core.Boxing.FunctionBoxing;

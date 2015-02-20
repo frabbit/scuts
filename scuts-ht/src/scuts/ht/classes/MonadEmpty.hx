@@ -1,6 +1,5 @@
 package scuts.ht.classes;
 
-import scuts.ht.core.Of;
 import scuts.Scuts;
 
 /**
@@ -8,5 +7,5 @@ import scuts.Scuts;
  */
 interface MonadEmpty<M> extends Monad<M> extends Empty<M>
 {
-  
+
 }

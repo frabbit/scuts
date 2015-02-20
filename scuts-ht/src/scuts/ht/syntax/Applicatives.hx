@@ -4,7 +4,6 @@ import scuts.ht.classes.Apply;
 import scuts.ht.classes.Functor;
 import scuts.ht.classes.Monad;
 import scuts.ht.Context.Applicative;
-import scuts.ht.core.Of;
 import scuts.ht.classes.Pure;
 import scuts.Scuts;
 
