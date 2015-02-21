@@ -6,7 +6,7 @@ import scuts.core.Arrays;
 
 
 
-class LazyFunctor implements Functor<Lazy<In>>
+class LazyFunctor implements Functor<Lazy<_>>
 {
   public function new () {}
 

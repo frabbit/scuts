@@ -8,7 +8,7 @@ import scuts.ht.classes.Monad;
 
 
 
-class ValidationTBind<M,F> implements Bind<ValidationT<M,F,In>> {
+class ValidationTBind<M,F> implements Bind<ValidationT<M,F,_>> {
 
   var base:Monad<M>;
 

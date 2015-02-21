@@ -2,7 +2,7 @@ package scuts.ht.instances.std;
 
 import scuts.ht.classes.Functor;
 
-import scuts.ht.core.In;
+import scuts.ht.core._;
 import scuts.ht.core.Of;
 import scuts.ht.instances.std.StateOf;
 import scuts.ht.instances.std.StateTOf;
@@ -15,7 +15,7 @@ import scuts.core.Tuples;
 
 
 
-class StateTFunctor<M,ST> implements Functor<M<State<ST,In>>> {
+class StateTFunctor<M,ST> implements Functor<M<State<ST,_>>> {
 
   var functorM:Functor<M>;
 

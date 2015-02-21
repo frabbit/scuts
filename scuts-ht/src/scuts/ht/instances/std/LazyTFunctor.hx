@@ -3,7 +3,7 @@ import scuts.ht.classes.Functor;
 using scuts.ht.instances.std.LazyT;
 import scuts.core.Lazy;
 
-class LazyTFunctor<M> implements Functor<LazyT<M, In>>
+class LazyTFunctor<M> implements Functor<LazyT<M, _>>
 {
   var functorT:Functor<M>;
 

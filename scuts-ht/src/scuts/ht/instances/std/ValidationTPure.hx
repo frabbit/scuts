@@ -7,7 +7,7 @@ using scuts.ht.instances.std.ValidationT;
 using scuts.core.Validations;
 
 
-class ValidationTPure<F, M> implements Pure<ValidationT<M,F, In>>
+class ValidationTPure<F, M> implements Pure<ValidationT<M,F, _>>
 {
   var pureM:Pure<M>;
 

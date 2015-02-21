@@ -7,7 +7,7 @@ import scuts.ds.ImLists;
 
 using scuts.ht.core.Ht;
 
-class ImListApply extends ApplyAbstract<ImList<In>>
+class ImListApply extends ApplyAbstract<ImList<_>>
 {
   public function new (func) {
   	super(func);

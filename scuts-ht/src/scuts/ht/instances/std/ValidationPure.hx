@@ -9,7 +9,7 @@ import scuts.core.Validations;
 using scuts.core.Validations;
 
 
-class ValidationPure<F> implements Pure<Validation<F,In>>
+class ValidationPure<F> implements Pure<Validation<F,_>>
 {
   public function new () {}
 

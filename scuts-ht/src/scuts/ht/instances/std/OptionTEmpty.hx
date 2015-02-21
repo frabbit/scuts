@@ -10,7 +10,7 @@ import scuts.ht.classes.Monad;
 
 
 
-class OptionTEmpty<M> implements Empty<OptionT<M,In>> {
+class OptionTEmpty<M> implements Empty<OptionT<M,_>> {
 
   var pureM:Pure<M>;
 

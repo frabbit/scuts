@@ -7,7 +7,7 @@ import scuts.ds.ImLists;
 
 
 
-class ImListEmpty implements Empty<ImList<In>>
+class ImListEmpty implements Empty<ImList<_>>
 {
   public function new () {}
 

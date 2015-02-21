@@ -6,7 +6,7 @@ import scuts.ht.classes.Monad;
 
 
 
-class ValidationFunctor<F> implements Functor<Validation<F,In>> {
+class ValidationFunctor<F> implements Functor<Validation<F,_>> {
 
   public function new () {}
 

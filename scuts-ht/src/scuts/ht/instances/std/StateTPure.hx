@@ -1,6 +1,6 @@
 package scuts.ht.instances.std;
 import scuts.ht.classes.Pure;
-import scuts.ht.core.In;
+import scuts.ht.core._;
 import scuts.ht.core.Of;
 import scuts.ht.instances.std.StateTOf;
 import scuts.core.States;
@@ -9,7 +9,7 @@ import scuts.core.Tuples;
 
 
 
-class StateTPure<M,ST> implements Pure<M<State<ST, In>>> {
+class StateTPure<M,ST> implements Pure<M<State<ST, _>>> {
 
   var pureM:Pure<M>;
 

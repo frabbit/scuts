@@ -9,7 +9,7 @@ using scuts.ht.instances.std.PromiseT;
 
 using scuts.core.Promises;
 
-class PromiseTApply<M> extends ApplyAbstract<PromiseT<M, In>>
+class PromiseTApply<M> extends ApplyAbstract<PromiseT<M, _>>
 {
   var functorM:Functor<M>;
   var applyM:Apply<M>;

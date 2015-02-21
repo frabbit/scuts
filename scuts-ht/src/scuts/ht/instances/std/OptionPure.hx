@@ -5,7 +5,7 @@ import scuts.core.Options;
 
 
 
-class OptionPure implements Pure<Option<In>>
+class OptionPure implements Pure<Option<_>>
 {
   public function new () {}
 

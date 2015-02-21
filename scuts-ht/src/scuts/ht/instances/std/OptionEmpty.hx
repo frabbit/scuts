@@ -4,7 +4,7 @@ import scuts.ht.classes.Empty;
 import scuts.core.Options;
 
 
-class OptionEmpty implements Empty<Option<In>>
+class OptionEmpty implements Empty<Option<_>>
 {
   public function new () {}
 

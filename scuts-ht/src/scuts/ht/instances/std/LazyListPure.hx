@@ -3,7 +3,7 @@ package scuts.ht.instances.std;
 import scuts.ht.classes.Pure;
 import scuts.ds.LazyLists;
 
-class LazyListPure implements Pure<LazyList<In>>
+class LazyListPure implements Pure<LazyList<_>>
 {
   public function new () {}
 

@@ -6,7 +6,7 @@ import scuts.core.States;
 
 
 
-class StateBind<S> implements Bind<State<S,In>>
+class StateBind<S> implements Bind<State<S,_>>
 {
   public function new () {}
 

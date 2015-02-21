@@ -4,7 +4,7 @@ import scuts.ht.classes.Pure;
 import scuts.ds.ImLists;
 
 
-class ImListPure implements Pure<ImList<In>>
+class ImListPure implements Pure<ImList<_>>
 {
   public function new () {}
 

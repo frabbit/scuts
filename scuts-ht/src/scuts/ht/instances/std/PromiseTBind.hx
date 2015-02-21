@@ -10,7 +10,7 @@ import scuts.ht.classes.Monad;
 
 
 
-class PromiseTBind<M> implements Bind<PromiseT<M, In>> {
+class PromiseTBind<M> implements Bind<PromiseT<M, _>> {
 
   var base:Monad<M>;
 

@@ -7,7 +7,7 @@ import scuts.core.Options;
 
 
 
-class OptionApply extends ApplyAbstract<Option<In>>
+class OptionApply extends ApplyAbstract<Option<_>>
 {
   public function new (func) {
   	super(func);

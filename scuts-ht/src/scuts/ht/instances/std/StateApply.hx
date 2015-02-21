@@ -9,7 +9,7 @@ import scuts.core.Tuples;
 
 
 
-class StateApply<S> extends ApplyAbstract<State<S,In>>
+class StateApply<S> extends ApplyAbstract<State<S,_>>
 {
   public function new (func) super(func);
 

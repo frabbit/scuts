@@ -4,7 +4,7 @@ import scuts.ht.classes.Bind;
 import scuts.core.Arrays;
 
 
-class ArrayBind implements Bind<Array<In>>
+class ArrayBind implements Bind<Array<_>>
 {
   public function new () {}
 

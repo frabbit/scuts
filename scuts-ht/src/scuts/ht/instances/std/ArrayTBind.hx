@@ -9,7 +9,7 @@ import scuts.core.Arrays;
 
 
 
-class ArrayTBind<M> implements Bind<ArrayT<M,In>>
+class ArrayTBind<M> implements Bind<ArrayT<M,_>>
 {
 
   var monadM:Monad<M>;

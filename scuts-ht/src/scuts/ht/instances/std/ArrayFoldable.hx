@@ -3,7 +3,7 @@ import scuts.ht.classes.FoldableAbstract;
 import scuts.core.Arrays;
 
 
-class ArrayFoldable extends FoldableAbstract<Array<In>>
+class ArrayFoldable extends FoldableAbstract<Array<_>>
 {
   public function new () {}
 

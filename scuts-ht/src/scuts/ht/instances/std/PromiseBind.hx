@@ -5,7 +5,7 @@ import scuts.core.Promises;
 
 
 
-class PromiseBind implements Bind<Promise<In>>
+class PromiseBind implements Bind<Promise<_>>
 {
   public function new () {}
 

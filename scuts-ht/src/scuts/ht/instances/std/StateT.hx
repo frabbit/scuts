@@ -1,13 +1,13 @@
 package scuts.ht.instances.std;
 
-import scuts.ht.core.In;
+import scuts.ht.core._;
 import scuts.ht.core.Of;
 import scuts.core.States;
 import scuts.ht.core.OfOf;
 
-abstract StateTOf<M,ST,A>(OfOf<M, State<ST, In>, A>) from OfOf<M, State<ST, In>, A> to OfOf<M, State<ST, In>, A>
+abstract StateTOf<M,ST,A>(OfOf<M, State<ST, _>, A>) from OfOf<M, State<ST, _>, A> to OfOf<M, State<ST, _>, A>
 {
-	public inline function new (x:OfOf<M, State<ST, In>, A>) this = x;
+	public inline function new (x:OfOf<M, State<ST, _>, A>) this = x;
 
 
 	@:to inline function toOf():M<State<ST,A>> return new Of(cast this);

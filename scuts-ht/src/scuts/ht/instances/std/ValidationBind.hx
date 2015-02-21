@@ -6,7 +6,7 @@ import scuts.ht.classes.Semigroup;
 import scuts.core.Validations;
 
 
-class ValidationBind<F> implements Bind<Validation<F,In>> {
+class ValidationBind<F> implements Bind<Validation<F,_>> {
 
   public function new () {}
 

@@ -9,7 +9,7 @@ import scuts.core.Options.Option;
 
 
 
-class OptionTBind<M> implements Bind<OptionT<M,In>> {
+class OptionTBind<M> implements Bind<OptionT<M,_>> {
 
   var base:Monad<M>;
 

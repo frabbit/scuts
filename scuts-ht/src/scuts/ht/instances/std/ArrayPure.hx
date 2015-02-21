@@ -6,7 +6,7 @@ import scuts.ht.classes.Pure;
 import scuts.core.Options;
 
 
-class ArrayPure implements Pure<Array<In>>
+class ArrayPure implements Pure<Array<_>>
 {
   public function new () {}
 

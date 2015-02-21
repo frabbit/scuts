@@ -2,13 +2,13 @@ package scuts.ht.instances.std;
 import scuts.ht.instances.std.ArrayTOf;
 
 
-import scuts.ht.core.In;
+import scuts.ht.core._;
 import scuts.ht.core.Of;
 import scuts.ht.instances.std.ListTOf;
 import scuts.core.Lists;
 import scuts.ht.classes.Functor;
 
-class ListTFunctor<M> implements Functor<M<List<In>>>
+class ListTFunctor<M> implements Functor<M<List<_>>>
 {
   var functorM:Functor<M>;
 

@@ -4,7 +4,7 @@ import scuts.ht.classes.Functor;
 import scuts.core.Arrays;
 
 
-class ArrayFunctor implements Functor<Array<In>>
+class ArrayFunctor implements Functor<Array<_>>
 {
   public function new () {}
 

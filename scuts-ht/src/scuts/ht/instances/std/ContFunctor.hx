@@ -5,7 +5,7 @@ import scuts.core.Conts;
 
 using scuts.core.Functions;
 
-class ContFunctor<R> implements Functor<Cont<R, In>>
+class ContFunctor<R> implements Functor<Cont<R, _>>
 {
   public function new () {}
 

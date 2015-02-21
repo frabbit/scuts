@@ -4,7 +4,7 @@ import scuts.ht.classes.Functor;
 import scuts.core.Options;
 
 
-class OptionFunctor implements Functor<Option<In>>
+class OptionFunctor implements Functor<Option<_>>
 {
   public function new () {}
 

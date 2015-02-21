@@ -7,7 +7,7 @@ import scuts.core.Tuples;
 
 
 
-class StateFunctor<S> implements Functor<State<S,In>>
+class StateFunctor<S> implements Functor<State<S,_>>
 {
   public function new () {}
 

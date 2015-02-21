@@ -5,7 +5,7 @@ import scuts.ds.ImLists;
 
 
 
-class ImListBind implements Bind<ImList<In>>
+class ImListBind implements Bind<ImList<_>>
 {
   public function new () {}
 

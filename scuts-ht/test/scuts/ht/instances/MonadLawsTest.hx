@@ -5,7 +5,7 @@ package scuts.ht.instances;
 import scuts.ht.classes.Eq;
 import scuts.ht.classes.Monad;
 
-import scuts.ht.core.In;
+import scuts.ht.core._;
 
 
 import scuts.ht.instances.std.ArrayT;

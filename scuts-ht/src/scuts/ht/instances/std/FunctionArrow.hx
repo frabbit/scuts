@@ -11,7 +11,7 @@ using scuts.core.Functions;
 private typedef F<A,B> = Function<A,B>;
 
 // Arrow of Functions
-class FunctionArrow extends ArrowAbstract<F<In,In>>
+class FunctionArrow extends ArrowAbstract<F<_,_>>
 {
   public function new (cat) super(cat);
 

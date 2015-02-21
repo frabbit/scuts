@@ -9,7 +9,7 @@ import scuts.core.Options;
 
 
 
-class OptionTApply<M> extends ApplyAbstract<OptionT<M,In>>
+class OptionTApply<M> extends ApplyAbstract<OptionT<M,_>>
 {
   var functorM:Functor<M>;
   var applyM:Apply<M>;

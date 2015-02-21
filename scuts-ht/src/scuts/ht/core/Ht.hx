@@ -21,11 +21,11 @@ class Ht
 
   /**
    * Marks a local Variable as available for implicit resolution.
-   * 
+   *
    * Usage: Hots.implicit(someVal)
    */
-  @:noUsing 
-  macro public static function implicit (e:Array<Expr>):Expr 
+  @:noUsing
+  macro public static function implicit (e:Array<Expr>):Expr
   {
     #if display
     return macro null;
@@ -34,21 +34,21 @@ class Ht
     #end
   }
 
-  @:noUsing 
-  #if !macro macro #end public static function preservedCast (e:Expr):Expr 
+  @:noUsing
+  #if !macro macro #end public static function preservedCast (e:Expr):Expr
   {
     return macro (inline function () return $e)();
   }
-  @:noUsing 
-  #if !macro macro #end public static function checkType (e:Expr):Expr 
+  @:noUsing
+  #if !macro macro #end public static function checkType (e:Expr):Expr
   {
-    
+
     return switch (e.expr) {
       case EVars([{ name : "_", type : t, expr : ex}]): { expr : ECheckType(ex, t), pos: e.pos};
       case _ : throw "Unexpected";
 
     }
-    
+
     return macro (function () return $e)();
   }
 
@@ -56,31 +56,31 @@ class Ht
      return t;
   }
 
-  @:noUsing 
-  #if !macro macro #end public static function preservedCheckType (e:Expr):Expr 
+  @:noUsing
+  #if !macro macro #end public static function preservedCheckType (e:Expr):Expr
   {
     return switch (e.expr) {
-      case EVars([{ name : "_", type : t, expr : ex}]) if (t != null): 
+      case EVars([{ name : "_", type : t, expr : ex}]) if (t != null):
         var e = macro (function ():$t return $ex)();
         //trace(haxe.macro.ExprTools.toString(e));
         return e;
       case _ : throw "Unexpected";
 
     }
-    
+
   }
   /**
    * Returns an implicit Object based on the type passed as argument.
-   * 
-   * Usage: Hots.implicitByType("scuts.ht.classes.Monad<Array<In>>");
+   *
+   * Usage: Hots.implicitByType("scuts.ht.classes.Monad<Array<_>>");
    */
-  @:noUsing 
-  macro public static function implicitByType (type:String):Expr 
+  @:noUsing
+  macro public static function implicitByType (type:String):Expr
   {
     return Resolver.resolveImplicitObjByType(type);
   }
 
-  @:noUsing macro public static function implicitly (e:Expr):Expr 
+  @:noUsing macro public static function implicitly (e:Expr):Expr
   {
     var s = switch (e.expr) {
       case EConst(CString(s)): s;
@@ -91,52 +91,52 @@ class Ht
       case EBlock([{expr:EVars(v)},_]): v[0].type;
       case _ : throw "cannot type " + s; null;
     }
-    
-    //return { expr : ECheckType(macro null, ct), pos: Context.currentPos()}; 
+
+    //return { expr : ECheckType(macro null, ct), pos: Context.currentPos()};
     return macro { var x : $ct = null; x; };
   }
 
-  @:noUsing macro public static function implicitly2 ():Expr 
+  @:noUsing macro public static function implicitly2 ():Expr
   {
-    
+
     return macro { var x : String = null; x; };
   }
-  
+
   /**
    * Short alias for resolve, should be used with "using".
-   * 
+   *
    * Usage: myFunc._(1,2) instaed of myFunc.resolve(1,2) or Hots.resolve(myFunc, 1, 2)
-   * 
+   *
    */
-  #if !macro macro #end public static function _ (f:Expr, ?args:Array<Expr>):Expr 
+  #if !macro macro #end public static function _ (f:Expr, ?args:Array<Expr>):Expr
   {
-    
+
     return Resolver.resolve(f, args);
   }
-  
+
   /**
    * Resolves implicit casts and objects and adds them to a function call.
-   * 
+   *
    * Usage: Hots.resolve(myFunc, 1, 2)
    */
   @:noUsing #if !macro macro #end public static function resolve (f:Expr, ?args:Array<Expr>):Expr {
     return Resolver.resolve(f, args);
-    
+
   }
 
   /**
    * Helper function to resolve function f on object o, prevents compiler inlining when f is defined as inline.
-   * 
+   *
    * Usage: o.r_(myFunc, 1,2) instead of o.myFunc.resolve(1,2) or Hots.resolve(o.myFunc, 1, 2)
-   * 
+   *
    */
   macro public static function r_ (o:Expr, f:Expr, ?args:Array<Expr>):Expr {
     return switch (f.expr) {
       case EConst(CIdent(i)): Resolver.resolve(macro $o.$i, args);
       case _: throw "the second parameter f must be a const ident";
     }
-    
-    
+
+
   }
 }
 

@@ -9,7 +9,7 @@ import scuts.core.Options;
 
 
 
-class IoApply extends ApplyAbstract<Io<In>>
+class IoApply extends ApplyAbstract<Io<_>>
 {
   public function new (func) {
   	super(func);

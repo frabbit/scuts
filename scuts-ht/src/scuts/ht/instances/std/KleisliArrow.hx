@@ -15,7 +15,7 @@ using scuts.core.Functions;
 
 
 
-class KleisliArrow<M> extends ArrowAbstract<Kleisli<M,In,In>>
+class KleisliArrow<M> extends ArrowAbstract<Kleisli<M,_,_>>
 {
   var m:Monad<M>;
 

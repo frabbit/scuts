@@ -10,7 +10,7 @@ import scuts.ht.classes.Functor;
 import scuts.ht.classes.Monad;
 import scuts.ht.classes.Pure;
 import scuts.ht.core.Of;
-import scuts.ht.core.In;
+import scuts.ht.core._;
 
 
 
@@ -29,7 +29,7 @@ enum IterV<E,A> {
 }
 
 
-class IterVFunctor<E> implements Functor<IterV<E,In>>
+class IterVFunctor<E> implements Functor<IterV<E,_>>
 {
 	public function new () {}
 	public function map <A,B>(it:IterV<E,A>, f:A->B):IterV<E,B>
@@ -38,7 +38,7 @@ class IterVFunctor<E> implements Functor<IterV<E,In>>
 	}
 }
 
-class IterVBind<E> implements scuts.ht.classes.Bind<IterV<E,In>>
+class IterVBind<E> implements scuts.ht.classes.Bind<IterV<E,_>>
 {
 	public function new () {}
 	public function flatMap <A,B>(it:IterV<E,A>, f:A->IterV<E,B>):IterV<E,B>
@@ -47,7 +47,7 @@ class IterVBind<E> implements scuts.ht.classes.Bind<IterV<E,In>>
 	}
 }
 
-class IterVPure<E> implements Pure<IterV<E,In>>
+class IterVPure<E> implements Pure<IterV<E,_>>
 {
 	public function new () {}
 
@@ -57,7 +57,7 @@ class IterVPure<E> implements Pure<IterV<E,In>>
 	}
 }
 
-class IterVApply<E> extends scuts.ht.classes.ApplyAbstract<IterV<E,In>>
+class IterVApply<E> extends scuts.ht.classes.ApplyAbstract<IterV<E,_>>
 {
 	override public function apply<A,B>(val:IterV<E,A>, f1:IterV<E,A->B>):IterV<E,B>
 	{
@@ -68,22 +68,22 @@ class IterVApply<E> extends scuts.ht.classes.ApplyAbstract<IterV<E,In>>
 class IterVInstances
 {
 
-	@:implicit @:noUsing public static function iterVPure<E>():Pure<IterV<E,In>> {
+	@:implicit @:noUsing public static function iterVPure<E>():Pure<IterV<E,_>> {
 		return new IterVPure();
 	}
-	@:implicit @:noUsing public static function iterVFunctor<E>():Functor<IterV<E,In>> {
+	@:implicit @:noUsing public static function iterVFunctor<E>():Functor<IterV<E,_>> {
 		return new IterVFunctor();
 	}
-	@:implicit @:noUsing public static function iterVApply<E>():Apply<IterV<E,In>> {
+	@:implicit @:noUsing public static function iterVApply<E>():Apply<IterV<E,_>> {
 		return new IterVApply(iterVFunctor());
 	}
-	@:implicit @:noUsing public static function iterVBind<E>():Bind<IterV<E,In>> {
+	@:implicit @:noUsing public static function iterVBind<E>():Bind<IterV<E,_>> {
 		return new IterVBind();
 	}
-	@:implicit @:noUsing public static function iterVApplicative<E>():Applicative<IterV<E,In>> {
+	@:implicit @:noUsing public static function iterVApplicative<E>():Applicative<IterV<E,_>> {
 		return scuts.ht.syntax.ApplicativeBuilder.create(iterVPure(), iterVApply(),iterVFunctor());
 	}
-	@:implicit @:noUsing public static function iterVMonad<E>():Monad<IterV<E,In>> {
+	@:implicit @:noUsing public static function iterVMonad<E>():Monad<IterV<E,_>> {
 		return scuts.ht.syntax.MonadBuilder.createFromApplicativeAndBind(iterVApplicative(), iterVBind());
 	}
 }

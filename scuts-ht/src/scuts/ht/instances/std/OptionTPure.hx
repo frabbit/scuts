@@ -9,7 +9,7 @@ import scuts.core.Options;
 
 
 
-class OptionTPure<M> implements Pure<OptionT<M,In>> {
+class OptionTPure<M> implements Pure<OptionT<M,_>> {
 
   var pureM:Pure<M>;
 

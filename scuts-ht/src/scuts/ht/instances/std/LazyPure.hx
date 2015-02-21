@@ -7,7 +7,7 @@ import scuts.ht.classes.Pure;
 import scuts.core.Options;
 
 
-class LazyPure implements Pure<Lazy<In>>
+class LazyPure implements Pure<Lazy<_>>
 {
   public function new () {}
 

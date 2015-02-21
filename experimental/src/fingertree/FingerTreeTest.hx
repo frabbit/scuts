@@ -6,7 +6,7 @@ import scuts.core.Options;
 import scuts.ds.ImLists;
 import scuts.ds.LazyLists;
 import scuts.ht.core.Of;
-import scuts.ht.core.In;
+import scuts.ht.core._;
 
 using scuts.core.Functions;
 
@@ -62,13 +62,13 @@ interface DsVector<F>
 	function set <X>(x:F<X>, index:Int, val:X):F<X>;
 }
 
-@:publicFields class ArrayInstances implements DsVector<Array<In>> implements Size<Array<In>>
+@:publicFields class ArrayInstances implements DsVector<Array<_>> implements Size<Array<_>>
 {
-	inline function at <X>(x:Of<Array<In>, X>, index:Int):X {
+	inline function at <X>(x:Of<Array<_>, X>, index:Int):X {
 		return (x:Array<X>)[index];
 	}
 
-	function set <X>(x:Of<Array<In>, X>, index:Int, val:X):Of<Array<In>, X>
+	function set <X>(x:Of<Array<_>, X>, index:Int, val:X):Of<Array<_>, X>
 	{
 		var r = (x:Array<X>).copy();
 		r[index] = val;
@@ -76,11 +76,11 @@ interface DsVector<F>
 	}
 
 
-	private static inline function asArray <X>(x:Of<Array<In>,X>):Array<X> {
+	private static inline function asArray <X>(x:Of<Array<_>,X>):Array<X> {
 		return x;
 	}
 
-	inline function size<X>(x:Of<Array<In>, X>):Int
+	inline function size<X>(x:Of<Array<_>, X>):Int
 	{
 		return asArray(x).length;
 	}
@@ -90,9 +90,9 @@ interface DsVector<F>
 	private static var instance:ArrayInstances = new ArrayInstances();
 
 	// make them implicit
-	@:implicit static inline function arraySize ():Size<Array<In>> return instance;
+	@:implicit static inline function arraySize ():Size<Array<_>> return instance;
 	@:implicit static inline function arraySizeInline ():ArrayInstances return instance;
-	@:implicit static inline function arrayDsVector ():DsVector<Array<In>> return instance;
+	@:implicit static inline function arrayDsVector ():DsVector<Array<_>> return instance;
 
 }
 
@@ -579,7 +579,7 @@ class FingerTrees {
 
 }
 
-class LazyListReduce implements Reduce<LazyList<In>> {
+class LazyListReduce implements Reduce<LazyList<_>> {
 
 	public function reduceRight<A,B>(x:LazyList<A>, b:B, f:A->B->B):B
 	{
@@ -592,10 +592,10 @@ class LazyListReduce implements Reduce<LazyList<In>> {
 	}
 
 	public function new () {}
-	@:noUsing @:implicit public static var instance:Reduce<LazyList<In>> = new LazyListReduce();
+	@:noUsing @:implicit public static var instance:Reduce<LazyList<_>> = new LazyListReduce();
 }
 
-class ImListReduce implements Reduce<ImList<In>> {
+class ImListReduce implements Reduce<ImList<_>> {
 
 	public function reduceRight<A,B>(x:ImList<A>, b:B, f:A->B->B):B
 	{
@@ -608,10 +608,10 @@ class ImListReduce implements Reduce<ImList<In>> {
 	}
 
 	public function new () {}
-	@:noUsing @:implicit public static var instance:Reduce<ImList<In>> = new ImListReduce();
+	@:noUsing @:implicit public static var instance:Reduce<ImList<_>> = new ImListReduce();
 }
 
-class ArrayReduce implements Reduce<Array<In>> {
+class ArrayReduce implements Reduce<Array<_>> {
 
 	public function reduceRight<A,B>(x:Array<A>, b:B, f:A->B->B):B
 	{
@@ -624,7 +624,7 @@ class ArrayReduce implements Reduce<Array<In>> {
 	}
 
 	public function new () {}
-	@:noUsing @:implicit public static var instance:Reduce<Array<In>> = new ArrayReduce();
+	@:noUsing @:implicit public static var instance:Reduce<Array<_>> = new ArrayReduce();
 }
 
 class Tools {

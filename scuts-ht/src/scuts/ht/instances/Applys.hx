@@ -41,22 +41,22 @@ import scuts.ht.instances.Functors.*;
 private typedef A = scuts.ht.syntax.ApplyBuilder;
 
 class Applys {
-  @:implicit @:noUsing public static var promiseApply         (default, null):Apply<PromiseD<In>> = new PromiseApply(promiseFunctor);
-  @:implicit @:noUsing public static var optionApply          (default, null):Apply<Option<In>> = new OptionApply(optionFunctor);
-  @:implicit @:noUsing public static var arrayApply           (default, null):Apply<Array<In>> = new ArrayApply(arrayFunctor);
-  @:implicit @:noUsing public static var ioApply           (default, null):Apply<Io<In>> = new IoApply(ioFunctor);
-  @:implicit @:noUsing public static var lazyListApply        (default, null):Apply<LazyList<In>> = new LazyListApply(lazyListFunctor);
-  @:implicit @:noUsing public static var imListApply          (default, null):Apply<ImList<In>> = new ImListApply(imListFunctor);
-  @:implicit @:noUsing public static var lazyApply          (default, null):Apply<Lazy<In>> = new LazyApply(lazyFunctor);
+  @:implicit @:noUsing public static var promiseApply         (default, null):Apply<PromiseD<_>> = new PromiseApply(promiseFunctor);
+  @:implicit @:noUsing public static var optionApply          (default, null):Apply<Option<_>> = new OptionApply(optionFunctor);
+  @:implicit @:noUsing public static var arrayApply           (default, null):Apply<Array<_>> = new ArrayApply(arrayFunctor);
+  @:implicit @:noUsing public static var ioApply           (default, null):Apply<Io<_>> = new IoApply(ioFunctor);
+  @:implicit @:noUsing public static var lazyListApply        (default, null):Apply<LazyList<_>> = new LazyListApply(lazyListFunctor);
+  @:implicit @:noUsing public static var imListApply          (default, null):Apply<ImList<_>> = new ImListApply(imListFunctor);
+  @:implicit @:noUsing public static var lazyApply          (default, null):Apply<Lazy<_>> = new LazyApply(lazyFunctor);
 
-  @:implicit @:noUsing public static function contApply            <R>():Apply<Cont<R,In>> return A.createFromFunctorAndBind(contFunctor(), contBind());
+  @:implicit @:noUsing public static function contApply            <R>():Apply<Cont<R,_>> return A.createFromFunctorAndBind(contFunctor(), contBind());
 
-  @:implicit @:noUsing public static function validationApply <F>(failureSemi:Semigroup<F>):Apply<Validation<F,In>> return new ValidationApply(failureSemi, validationFunctor());
+  @:implicit @:noUsing public static function validationApply <F>(failureSemi:Semigroup<F>):Apply<Validation<F,_>> return new ValidationApply(failureSemi, validationFunctor());
 
-  @:implicit @:noUsing public static function stateApply <S>():Apply<State<S, In>> return new StateApply(stateFunctor());
+  @:implicit @:noUsing public static function stateApply <S>():Apply<State<S, _>> return new StateApply(stateFunctor());
 
-  @:implicit @:noUsing public static function promiseTApply        <M>(appM:Apply<M>, funcM:Functor<M>):Apply<PromiseT<M,In>> return new PromiseTApply(appM, funcM, promiseTFunctor(funcM));
-  @:implicit @:noUsing public static function arrayTApply        <M>(appM:Apply<M>, funcM:Functor<M>):Apply<ArrayT<M,In>> return new ArrayTApply(appM, funcM, arrayTFunctor(funcM));
-  @:implicit @:noUsing public static function optionTApply       <M>(appM:Apply<M>, funcM:Functor<M>):Apply<OptionT<M,In>> return new OptionTApply(appM, funcM, optionTFunctor(funcM));
-  @:implicit @:noUsing public static function validationTApply   <M,F>(funcM:Functor<M>, appM:Apply<M>):Apply<ValidationT<M,F, In>> return new ValidationTApply(funcM, appM, validationTFunctor(funcM));
+  @:implicit @:noUsing public static function promiseTApply        <M>(appM:Apply<M>, funcM:Functor<M>):Apply<PromiseT<M,_>> return new PromiseTApply(appM, funcM, promiseTFunctor(funcM));
+  @:implicit @:noUsing public static function arrayTApply        <M>(appM:Apply<M>, funcM:Functor<M>):Apply<ArrayT<M,_>> return new ArrayTApply(appM, funcM, arrayTFunctor(funcM));
+  @:implicit @:noUsing public static function optionTApply       <M>(appM:Apply<M>, funcM:Functor<M>):Apply<OptionT<M,_>> return new OptionTApply(appM, funcM, optionTFunctor(funcM));
+  @:implicit @:noUsing public static function validationTApply   <M,F>(funcM:Functor<M>, appM:Apply<M>):Apply<ValidationT<M,F, _>> return new ValidationTApply(funcM, appM, validationTFunctor(funcM));
 }

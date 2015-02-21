@@ -8,7 +8,7 @@ import scuts.core.Options;
 
 
 
-class OptionTFunctor<M> implements Functor<OptionT<M,In>>
+class OptionTFunctor<M> implements Functor<OptionT<M,_>>
 {
 
   var functorM:Functor<M>;

@@ -1,7 +1,7 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Empty;
-import scuts.ht.core.In;
+import scuts.ht.core._;
 import scuts.ht.instances.std.PromiseTOf;
 import scuts.core.Promises;
 
@@ -12,7 +12,7 @@ import scuts.ht.classes.Monad;
 
 
 
-class PromiseTEmpty<M> implements Empty<M<PromiseD<In>>>
+class PromiseTEmpty<M> implements Empty<M<PromiseD<_>>>
 {
   var monadM:Monad<M>;
 

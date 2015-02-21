@@ -33,21 +33,21 @@ import scuts.ht.instances.std.ArrayT;
 
 
 class Pures {
-  @:implicit @:noUsing public static var promisePure         (default, null):Pure<PromiseD<In>> = new PromisePure();
-  @:implicit @:noUsing public static var optionPure          (default, null):Pure<Option<In>> = new OptionPure();
-  @:implicit @:noUsing public static var arrayPure           (default, null):Pure<Array<In>> = new ArrayPure();
-  @:implicit @:noUsing public static var ioPure           (default, null):Pure<Io<In>> = new IoPure();
-  @:implicit @:noUsing public static var lazyListPure        (default, null):Pure<LazyList<In>> = new LazyListPure();
-  @:implicit @:noUsing public static var imListPure          (default, null):Pure<ImList<In>> = new ImListPure();
-  @:implicit @:noUsing public static var lazyPure          (default, null):Pure<Lazy<In>> = new LazyPure();
-  @:implicit @:noUsing public static function validationPure <F>():Pure<Validation<F,In>> return new ValidationPure();
+  @:implicit @:noUsing public static var promisePure         (default, null):Pure<PromiseD<_>> = new PromisePure();
+  @:implicit @:noUsing public static var optionPure          (default, null):Pure<Option<_>> = new OptionPure();
+  @:implicit @:noUsing public static var arrayPure           (default, null):Pure<Array<_>> = new ArrayPure();
+  @:implicit @:noUsing public static var ioPure           (default, null):Pure<Io<_>> = new IoPure();
+  @:implicit @:noUsing public static var lazyListPure        (default, null):Pure<LazyList<_>> = new LazyListPure();
+  @:implicit @:noUsing public static var imListPure          (default, null):Pure<ImList<_>> = new ImListPure();
+  @:implicit @:noUsing public static var lazyPure          (default, null):Pure<Lazy<_>> = new LazyPure();
+  @:implicit @:noUsing public static function validationPure <F>():Pure<Validation<F,_>> return new ValidationPure();
 
-  @:implicit @:noUsing public static function statePure <S>():Pure<State<S,In>> return new StatePure();
+  @:implicit @:noUsing public static function statePure <S>():Pure<State<S,_>> return new StatePure();
 
 
-  //@:implicit @:noUsing public static function lazyTPure        <M>(base:Pure<M>):Pure<Void->M<In>> return new LazyTPure(base);
-  @:implicit @:noUsing public static function promiseTPure        <M>(base:Pure<M>):Pure<PromiseT<M,In>> return new PromiseTPure(base);
-  @:implicit @:noUsing public static function arrayTPure        <M>(base:Pure<M>):Pure<ArrayT<M,In>> return new ArrayTPure(base);
-  @:implicit @:noUsing public static function optionTPure       <M>(base:Pure<M>):Pure<OptionT<M,In>> return new OptionTPure(base);
-  @:implicit @:noUsing public static function validationTPure   <M,F>(base:Pure<M>):Pure<ValidationT<M,F,In>> return new ValidationTPure(base);
+  //@:implicit @:noUsing public static function lazyTPure        <M>(base:Pure<M>):Pure<Void->M<_>> return new LazyTPure(base);
+  @:implicit @:noUsing public static function promiseTPure        <M>(base:Pure<M>):Pure<PromiseT<M,_>> return new PromiseTPure(base);
+  @:implicit @:noUsing public static function arrayTPure        <M>(base:Pure<M>):Pure<ArrayT<M,_>> return new ArrayTPure(base);
+  @:implicit @:noUsing public static function optionTPure       <M>(base:Pure<M>):Pure<OptionT<M,_>> return new OptionTPure(base);
+  @:implicit @:noUsing public static function validationTPure   <M,F>(base:Pure<M>):Pure<ValidationT<M,F,_>> return new ValidationTPure(base);
 }

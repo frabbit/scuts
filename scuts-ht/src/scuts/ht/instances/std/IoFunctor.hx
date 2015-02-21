@@ -4,7 +4,7 @@ import scuts.ht.classes.Functor;
 using scuts.core.Ios;
 
 
-class IoFunctor implements Functor<Io<In>>
+class IoFunctor implements Functor<Io<_>>
 {
   public function new () {}
 

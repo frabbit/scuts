@@ -6,7 +6,7 @@ import scuts.core.Options;
 
 
 
-class OptionBind implements Bind<Option<In>>
+class OptionBind implements Bind<Option<_>>
 {
   public function new () {}
 

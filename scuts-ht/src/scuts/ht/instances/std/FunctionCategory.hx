@@ -5,9 +5,9 @@ import scuts.ht.instances.std.Function;
 
 using scuts.core.Functions;
 
-private typedef F<A,B> = Function<In,In>;
+private typedef F<A,B> = Function<_,_>;
 
-class FunctionCategory extends CategoryAbstract<F<In,In>>
+class FunctionCategory extends CategoryAbstract<F<_,_>>
 {
 
   public function new() {}

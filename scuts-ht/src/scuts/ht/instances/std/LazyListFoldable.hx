@@ -4,7 +4,7 @@ import scuts.ds.LazyLists;
 
 
 
-class LazyListFoldable extends FoldableAbstract<LazyList<In>>
+class LazyListFoldable extends FoldableAbstract<LazyList<_>>
 {
   public function new () {}
 

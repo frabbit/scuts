@@ -446,7 +446,7 @@ import scuts.ht.instances.std.EndoZero;
 import scuts.ht.instances.std.IoApply;
 import scuts.ht.instances.std.OptionTPure;
 import scuts.ht.instances.std.ArrayShow;
-import scuts.ht.core.In;
+import scuts.ht.core._;
 import scuts.ht.core.CastHelper;
 import scuts.ht.core.Ht;
 import scuts.ht.core.Of;

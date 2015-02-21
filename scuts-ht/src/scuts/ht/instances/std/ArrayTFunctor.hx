@@ -5,7 +5,7 @@ import scuts.core.Arrays;
 import scuts.ht.classes.Functor;
 
 
-class ArrayTFunctor<M> implements Functor<ArrayT<M,In>>
+class ArrayTFunctor<M> implements Functor<ArrayT<M,_>>
 {
   var functorM:Functor<M>;
 

@@ -8,7 +8,7 @@ import scuts.core.Ios;
 
 
 
-class IoBind implements Bind<Io<In>>
+class IoBind implements Bind<Io<_>>
 {
   public function new () {}
 

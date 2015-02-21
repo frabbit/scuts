@@ -6,7 +6,7 @@ import scuts.core.Ios;
 
 
 
-class IoPure implements Pure<Io<In>>
+class IoPure implements Pure<Io<_>>
 {
   public function new () {}
 

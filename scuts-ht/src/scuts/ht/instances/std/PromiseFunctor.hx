@@ -4,7 +4,7 @@ import scuts.ht.classes.Functor;
 import scuts.core.Promises;
 
 
-class PromiseFunctor implements Functor<PromiseD<In>>
+class PromiseFunctor implements Functor<PromiseD<_>>
 {
   public function new () {}
 

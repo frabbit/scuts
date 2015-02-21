@@ -5,7 +5,7 @@ import scuts.ds.ImLists;
 
 
 
-class ImListFoldable extends FoldableAbstract<ImList<In>>
+class ImListFoldable extends FoldableAbstract<ImList<_>>
 {
   public function new () {}
 

@@ -452,7 +452,7 @@ class FingerTrees {
 
 }
 
-// class LazyListReduce implements Reduce<LazyList<In>> {
+// class LazyListReduce implements Reduce<LazyList<_>> {
 
 // 	public function reduceRight<A,B>(x:LazyList<A>, b:B, f:A->B->B):B
 // 	{
@@ -465,10 +465,10 @@ class FingerTrees {
 // 	}
 
 // 	public function new () {}
-// 	@:noUsing @:implicit public static var instance:Reduce<LazyList<In>> = new LazyListReduce();
+// 	@:noUsing @:implicit public static var instance:Reduce<LazyList<_>> = new LazyListReduce();
 // }
 
-// class ImListReduce implements Reduce<ImList<In>> {
+// class ImListReduce implements Reduce<ImList<_>> {
 //  	public function reduceRight<A,B>(x:ImList<A>, b:B, f:A->B->B):B
 //  	{
 //  		return ImLists.foldRight(x,b,f);
@@ -479,10 +479,10 @@ class FingerTrees {
 //  	}
 
 //  	public function new () {}
-//  	@:noUsing @:implicit public static var instance:Reduce<ImList<In>> = new ImListReduce();
+//  	@:noUsing @:implicit public static var instance:Reduce<ImList<_>> = new ImListReduce();
 // }
 
-// class ArrayReduce implements Reduce<Array<In>> {
+// class ArrayReduce implements Reduce<Array<_>> {
 
 // 	public function reduceRight<A,B>(x:Array<A>, b:B, f:A->B->B):B
 // 	{
@@ -495,7 +495,7 @@ class FingerTrees {
 // 	}
 
 // 	public function new () {}
-// 	@:noUsing @:implicit public static var instance:Reduce<Array<In>> = new ArrayReduce();
+// 	@:noUsing @:implicit public static var instance:Reduce<Array<_>> = new ArrayReduce();
 // }
 
 class Tools {

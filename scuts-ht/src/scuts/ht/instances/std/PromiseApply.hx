@@ -6,7 +6,7 @@ import scuts.core.Promises;
 
 
 
-class PromiseApply extends ApplyAbstract<Promise<In>>
+class PromiseApply extends ApplyAbstract<Promise<_>>
 {
   public function new (func) super(func);
 

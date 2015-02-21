@@ -6,7 +6,7 @@ import scuts.core.Promises;
 
 
 
-class PromiseEmpty implements Empty<Promise<In>>
+class PromiseEmpty implements Empty<Promise<_>>
 {
   public function new () {}
 

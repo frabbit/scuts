@@ -50,7 +50,7 @@ interface Foldable<F>
 
   /**
    * Performs a left fold over x, where f is the accumulating function.
-   * In contrast to foldLeft no init must be specified, but this function
+   * _ contrast to foldLeft no init must be specified, but this function
    * fails if the value x has no Elements of type A.
    *
    * Haskell: foldl1 :: (a -> a -> a) -> t a -> a
@@ -60,7 +60,7 @@ interface Foldable<F>
 
   /**
    * Performs a right fold over x, where f is the accumulating function.
-   * In contrast to rightLeft no init must be specified, but this function
+   * _ contrast to rightLeft no init must be specified, but this function
    * fails if the value x has no Elements of type A.
    *
    * Haskell: foldr1 :: (a -> a -> a) -> t a -> a

@@ -5,7 +5,7 @@ import scuts.ds.ImLists;
 
 
 
-class ImListFunctor implements Functor<ImList<In>>
+class ImListFunctor implements Functor<ImList<_>>
 {
   public function new () {}
 

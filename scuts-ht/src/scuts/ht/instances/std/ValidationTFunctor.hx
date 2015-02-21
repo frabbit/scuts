@@ -9,7 +9,7 @@ import scuts.core.Options;
 
 
 
-class ValidationTFunctor<M, F> implements Functor<ValidationT<M, F, In>>
+class ValidationTFunctor<M, F> implements Functor<ValidationT<M, F, _>>
 {
 
   var functorM:Functor<M>;

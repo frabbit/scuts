@@ -1,5 +1,5 @@
 package scuts.ht.instances.std;
-import scuts.ht.core.In;
+import scuts.ht.core._;
 import scuts.ht.core.Of;
 import scuts.core.Eithers;
 

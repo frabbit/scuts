@@ -6,7 +6,7 @@ using scuts.ht.instances.std.PromiseT;
 import scuts.core.Tuples;
 
 
-class PromiseTPure<M> implements Pure<PromiseT<M, In>> {
+class PromiseTPure<M> implements Pure<PromiseT<M, _>> {
 
   var pureM:Pure<M>;
 

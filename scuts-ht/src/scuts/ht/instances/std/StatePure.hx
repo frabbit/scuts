@@ -6,7 +6,7 @@ import scuts.core.States;
 
 
 
-class StatePure<S> implements Pure<State<S,In>>
+class StatePure<S> implements Pure<State<S,_>>
 {
   public function new () {}
 

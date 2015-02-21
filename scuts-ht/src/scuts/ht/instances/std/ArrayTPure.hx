@@ -9,7 +9,7 @@ import scuts.core.Arrays;
 import scuts.ht.classes.Functor;
 
 
-class ArrayTPure<M> implements Pure<ArrayT<M,In>>
+class ArrayTPure<M> implements Pure<ArrayT<M,_>>
 {
   var pureM:Pure<M>;
 

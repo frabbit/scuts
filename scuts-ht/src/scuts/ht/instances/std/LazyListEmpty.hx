@@ -6,7 +6,7 @@ import scuts.ds.LazyLists;
 
 
 
-class LazyListEmpty implements Empty<LazyList<In>>
+class LazyListEmpty implements Empty<LazyList<_>>
 {
   public function new () {}
 

@@ -13,7 +13,7 @@ import scuts.ht.instances.Categorys.*;
 
 class Arrows
 {
-  @:implicit @:noUsing public static var functionArrow          (default, null):Arrow<Function<In,In>> = new FunctionArrow(functionCategory);
+  @:implicit @:noUsing public static var functionArrow          (default, null):Arrow<Function<_,_>> = new FunctionArrow(functionCategory);
 
-  @:implicit @:noUsing public static function kleisliArrow      <M>(m:Monad<M>):Arrow<Kleisli<M,In,In>> return new KleisliArrow(m, kleisliCategory(m));
+  @:implicit @:noUsing public static function kleisliArrow      <M>(m:Monad<M>):Arrow<Kleisli<M,_,_>> return new KleisliArrow(m, kleisliCategory(m));
 }

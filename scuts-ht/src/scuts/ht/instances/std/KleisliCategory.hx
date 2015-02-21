@@ -8,7 +8,7 @@ import scuts.ht.instances.std.Kleisli;
 
 
 
-class KleisliCategory<M> extends CategoryAbstract<Kleisli<M,In,In>>
+class KleisliCategory<M> extends CategoryAbstract<Kleisli<M,_,_>>
 {
   private var m:Monad<M>;
 

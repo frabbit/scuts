@@ -7,7 +7,7 @@ import scuts.core.Validations;
 
 
 
-class ValidationEmpty<F> implements Empty<Validation<F,In>> {
+class ValidationEmpty<F> implements Empty<Validation<F,_>> {
 
   private var failureMonoid:Monoid<F>;
 

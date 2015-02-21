@@ -11,7 +11,7 @@ import scuts.core.Validations;
 
 
 
-class ValidationApply<F> extends ApplyAbstract<Validation<F,In>>
+class ValidationApply<F> extends ApplyAbstract<Validation<F,_>>
 {
   var failureSemi:Semigroup<F>;
 

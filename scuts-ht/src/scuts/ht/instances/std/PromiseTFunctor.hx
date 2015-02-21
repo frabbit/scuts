@@ -13,7 +13,7 @@ import scuts.core.Promises;
 
 
 
-class PromiseTFunctor<M> implements Functor<PromiseT<M, In>> {
+class PromiseTFunctor<M> implements Functor<PromiseT<M, _>> {
 
   var functorM:Functor<M>;
 

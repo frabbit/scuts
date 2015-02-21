@@ -6,7 +6,7 @@ import scuts.core.Conts;
 
 using scuts.core.Functions;
 
-class ContBind<R> implements Bind<Cont<R, In>>
+class ContBind<R> implements Bind<Cont<R, _>>
 {
   public function new () {}
 

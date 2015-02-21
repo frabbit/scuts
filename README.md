@@ -32,7 +32,7 @@ scuts.ht
 Higher Order Types
 ------------------
 
-Type constructor polymorphism is essential to implement type classes like Monads, Functors etc. Haxe at its core is missing this functionality. Because of this, scuts simulates this feature with 2 special types: [Of](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/core/Of.hx) and [In](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/core/In.hx). 
+Type constructor polymorphism is essential to implement type classes like Monads, Functors etc. Haxe at its core is missing this functionality. Because of this, scuts simulates this feature with 2 special types: [Of](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/core/Of.hx) and [_](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/core/_.hx).
 
 Some Examples how these types relate to a scala-like type constructor notation:
 
@@ -44,19 +44,19 @@ Some Examples how these types relate to a scala-like type constructor notation:
 		<td>M&lt;T&gt;</td><td>Of&lt;M, T&gt;</td>
 	</tr>
 	<tr>
-		<td>Array&lt;T&gt;</td><td>Of&lt;Array&lt;In&gt;, T&gt;</td>
+		<td>Array&lt;T&gt;</td><td>Of&lt;Array&lt;_&gt;, T&gt;</td>
 	</tr>
 	<tr>
-		<td>Option&lt;T&gt;</td><td>Of&lt;Option&lt;In&gt;, T&gt;</td>
+		<td>Option&lt;T&gt;</td><td>Of&lt;Option&lt;_&gt;, T&gt;</td>
 	</tr>
 	<tr>
-		<td>Array&lt;Option&lt;T&gt;&gt;</td><td>Of&lt;Array&lt;In&gt;, Option&lt;T&gt;&gt;</td>
+		<td>Array&lt;Option&lt;T&gt;&gt;</td><td>Of&lt;Array&lt;_&gt;, Option&lt;T&gt;&gt;</td>
 	</tr>
 	<tr>
-		<td>M&lt;Option&lt;T&gt;&gt;</td><td>Of&lt;Array&lt;In&gt;, Option&lt;T&gt;&gt;</td>
+		<td>M&lt;Option&lt;T&gt;&gt;</td><td>Of&lt;Array&lt;_&gt;, Option&lt;T&gt;&gt;</td>
 	</tr>
 	<tr>
-		<td>A -&gt; B</td><td>OfOf&lt;In-&gt;In, A, B&gt;</td>
+		<td>A -&gt; B</td><td>OfOf&lt;_-&gt;_, A, B&gt;</td>
 	</tr>
 </table>
 
@@ -106,7 +106,7 @@ The correspondend macro syntax class EqsM contains the macro function eq_ (the l
 	EqsM.eq_(1,1)
 	EqsM.eq_([1],[1])
 	EqsM.eq_([[1]],[[1]])
-	
+
 or with using
 
 	1.eq_(1)
@@ -118,13 +118,13 @@ It is important to understand that the functions found in all of these macro syn
 Implicit resolution of type classes
 -----------------------------------
 
-Type classes are resolved with the help of a resolver macro (function `resolve` in [scuts.ht.core.Ht](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/core/Ht.hx)). It resolves the required type classes based on the current context of the function/macro call. 
+Type classes are resolved with the help of a resolver macro (function `resolve` in [scuts.ht.core.Ht](https://github.com/frabbit/scuts/blob/master/scuts-ht/src/scuts/ht/core/Ht.hx)). It resolves the required type classes based on the current context of the function/macro call.
 
-The expression `1.eq_(1)` from the following section is just syntactic sugar for `Ht.resolve(Eqs.eq, 1, 1)`. To have a short and nice way to call arbitrary functions with implicit resolution, there is also an alias for resolve named `_` (yes, just an underscore ;)) which can be used via using on every function. To make things clear, the following calls are equivalent: 
+The expression `1.eq_(1)` from the following section is just syntactic sugar for `Ht.resolve(Eqs.eq, 1, 1)`. To have a short and nice way to call arbitrary functions with implicit resolution, there is also an alias for resolve named `_` (yes, just an underscore ;)) which can be used via using on every function. To make things clear, the following calls are equivalent:
 
 	1.eq_(1) // using of eq_
 	1.eq._(1,1) // using of eq and _
-	Eqs.eq._(1,1) 
+	Eqs.eq._(1,1)
 	Ht._(Eqs.eq, 1, 1)
 	Ht.resolve(Eqs.eq, 1, 1)
 
@@ -135,7 +135,7 @@ Please take a look at the [test cases](https://github.com/frabbit/scuts/blob/mas
 
 Local type classes can be registered for implicit resolution with the help of `Ht.implicit`, these type classes are only available in the current and in nested local scopes.
 
-	// create an Ord<Int> with reversed int comparision, OrdBuilder.createByIntCompare is a helper function which 
+	// create an Ord<Int> with reversed int comparision, OrdBuilder.createByIntCompare is a helper function which
 	// creates an Ord Instance based on the given comparison function.
 	var myIntOrd = OrdBuilder.createByIntCompare(
 		function (x:Int, y:Int) return if (x < y) 1 else if (x > y) -1 else 0

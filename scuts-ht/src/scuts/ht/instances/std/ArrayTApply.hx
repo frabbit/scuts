@@ -12,7 +12,7 @@ import scuts.ht.classes.Functor;
 
 
 
-class ArrayTApply<M> extends ApplyAbstract<ArrayT<M,In>> {
+class ArrayTApply<M> extends ApplyAbstract<ArrayT<M,_>> {
 
   var appM:Apply<M>;
   var funcM:Functor<M>;

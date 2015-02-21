@@ -10,7 +10,7 @@ import scuts.ht.classes.ApplyAbstract;
 
 
 
-class ValidationTApply<M,F> extends ApplyAbstract<ValidationT<M, F, In>>
+class ValidationTApply<M,F> extends ApplyAbstract<ValidationT<M, F, _>>
 {
 
   var funcM:Functor<M>;

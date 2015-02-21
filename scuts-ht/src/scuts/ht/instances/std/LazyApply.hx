@@ -5,7 +5,7 @@ import scuts.ht.classes.Apply;
 import scuts.ht.classes.ApplyAbstract;
 import scuts.ht.classes.Applicative;
 
-class LazyApply extends ApplyAbstract<Lazy<In>>
+class LazyApply extends ApplyAbstract<Lazy<_>>
 {
   public function new (func) {
   	super(func);

@@ -6,7 +6,7 @@ import scuts.ht.classes.Applicative;
 
 using scuts.ht.syntax.Arrays;
 
-class ArrayApply extends ApplyAbstract<Array<In>>
+class ArrayApply extends ApplyAbstract<Array<_>>
 {
   public function new (func) {
   	super(func);
