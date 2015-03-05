@@ -7,7 +7,7 @@ import scuts.ht.classes.Ord;
 // based on http://matt.might.net/articles/implementation-of-immutable-purely-functional-okasaki-red-black-tree-maps-in-scala/
 
 
-// package data.pure.map 
+// package data.pure.map
 
 
 // /*** Okasaki-style red-black tree maps. ***/
@@ -16,7 +16,7 @@ import scuts.ht.classes.Ord;
 // // http://www.eecs.usma.edu/webs/people/okasaki/jfp99.ps
 
 // /*
- 
+
 //  Red-black trees are binary search trees obeying two key invariants:
 
 //  (1) Any path from a root node to a leaf node contains the same number
@@ -58,7 +58,7 @@ import scuts.ht.classes.Ord;
 //       case T(_,l,k,v,r) => T(B,l,k,v,r)
 //     }
 //   }
-  
+
 //   // balance: Balance a tree with balanced subtrees.
 //   protected def balance (c : Color) (l : RBMap[K,V]) (k : K) (v : Option[V]) (r : RBMap[K,V]) : RBMap[K,V] = {
 //     (c,l,k,v,r) match {
@@ -71,10 +71,10 @@ import scuts.ht.classes.Ord;
 //   }
 
 //   // modWith: Helper method; top node could be red.
-//   private[map] def modWith (k : K, f : (K, Option[V]) => Option[V]) : RBMap[K,V] 
+//   private[map] def modWith (k : K, f : (K, Option[V]) => Option[V]) : RBMap[K,V]
 
-//   // modifiedWith: Insert, update and delete all in one. 
-//   def modifiedWith (k : K, f : (K, Option[V]) => Option[V]) : RBMap[K,V] = 
+//   // modifiedWith: Insert, update and delete all in one.
+//   def modifiedWith (k : K, f : (K, Option[V]) => Option[V]) : RBMap[K,V] =
 //     blacken(modWith(k,f))
 
 //   // get: Retrieve a value for a key.
@@ -103,7 +103,7 @@ import scuts.ht.classes.Ord;
 //   def get(k : K) : Option[V] = {
 //     if (k < this.k) l.get(k) else
 //     if (k > this.k) r.get(k) else
-//     v 
+//     v
 //   }
 
 //   private[map] def modWith (k : K, f : (K, Option[V]) => Option[V]) : RBMap[K,V] = {
@@ -116,7 +116,7 @@ import scuts.ht.classes.Ord;
 
 // // A helper object.
 // object RBMap {
-  
+
 //   // empty: Converts an orderable type into an empty RBMap.
 //   def empty[K <: Ordered[K], V] : RBMap[K,V] = L()((k : K) => k)
 
@@ -142,10 +142,10 @@ import scuts.ds.RBTrees.Color;
 
 
 
-private abstract RBMap<K,V>(RBTree<K,Option<V>>) 
+private abstract RBMap<K,V>(RBTree<K,Option<V>>)
 {
   private inline function new (x) this = x;
-  
+
   @:allow(scuts.ds.RBMaps)
   @:to static inline function toRBTree <K,V>(x:RBTree<K, Option<V>>): RBTree<K, Option<V>> return x;
   @:allow(scuts.ds.RBMaps)
@@ -156,7 +156,7 @@ private abstract RBMap<K,V>(RBTree<K,Option<V>>)
 
 
 class RBMaps {
-	
+
 
   public static function keysAsImList <K,V>(rb:RBMap<K,V>):ImList<K>
   {
@@ -179,10 +179,10 @@ class RBMaps {
     var l2 = asImList(rb2);
 
     return l1.eq(l2, scuts.ht.instances.Eqs.tup2Eq(eqK, eqV));
-   
+
   }
 
-  public static function foldLeft <K,A,V>(rb:RBMap<K,V>, init:A, f:A->K->V->A):A 
+  public static function foldLeft <K,A,V>(rb:RBMap<K,V>, init:A, f:A->K->V->A):A
   {
     return rb.foldLeft(init, function (a,k,v) {
       return switch (v) {
@@ -192,7 +192,7 @@ class RBMaps {
     });
   }
 
-  public static function foldRight <K,A,V>(rb:RBMap<K,V>, init:A, f:K->V->A->A):A 
+  public static function foldRight <K,A,V>(rb:RBMap<K,V>, init:A, f:K->V->A->A):A
   {
     return rb.foldRight(init, function (k,v,a) {
       return switch (v) {
@@ -203,7 +203,7 @@ class RBMaps {
   }
 
   // // modWith: Helper method; top node could be red.
-  // public  static function modWith <K,V>(rb:RBMap<K,V>, k : K, f : Tup2<K, Option<V>> -> Option<V>, ord:Ord<K>) : RBMap<K,V> 
+  // public  static function modWith <K,V>(rb:RBMap<K,V>, k : K, f : Tup2<K, Option<V>> -> Option<V>, ord:Ord<K>) : RBMap<K,V>
   // {
   //   return switch (rb.toRBTree()) {
   //     case Leaf: Node(R, Leaf, k, f.untupled()(k, None), Leaf);
@@ -213,15 +213,15 @@ class RBMaps {
   //       RBTrees.balance(c, l, k1, v, modWith(r,k,f,ord));
 
   //   }
-  // } 
-  
+  // }
 
-  // // modifiedWith: Insert, update and delete all in one. 
-  // public static function modifiedWith <K,V>(rb:RBMap<K,V>, k : K, f : Tup2<K, Option<V>> -> Option<V>, ord:Ord<K>) : RBMap<K,V> 
+
+  // // modifiedWith: Insert, update and delete all in one.
+  // public static function modifiedWith <K,V>(rb:RBMap<K,V>, k : K, f : Tup2<K, Option<V>> -> Option<V>, ord:Ord<K>) : RBMap<K,V>
   // {
   //   return RBTrees.blacken(modWith(rb, k,f, ord));
-  // } 
-    
+  // }
+
 
   // get: Retrieve a value for a key.
   public static function get <K,V>(rb:RBMap<K, V>, k : K, ord:Ord<K>) : Option<V>
@@ -230,31 +230,31 @@ class RBMaps {
   }
 
   // insert: Insert a value at a key.
-  public static function insert <K,V>(rb:RBMap<K, V>, k : K, v : V, ord:Ord<K>) 
+  public static function insert <K,V>(rb:RBMap<K, V>, k : K, v : V, ord:Ord<K>)
   {
   	return RBTrees.modifiedWith(rb, k, function (_) return Some(v), ord);
-  } 
+  }
 
   // remove: Delete a key.
-  public static function remove <K,V>(rb:RBMap<K, V>, k : K, ord:Ord<K>) 
+  public static function remove <K,V>(rb:RBMap<K, V>, k : K, ord:Ord<K>)
   {
     return RBTrees.modifiedWith(rb, k, function (_) return None, ord);
   }
 
-  public static function empty<K, V>() : RBMap<K,V> 
+  public static function empty<K, V>() : RBMap<K,V>
   {
   	return RBTrees.empty();
   }
 
   /*
-  
+
   private static function deleteNode <K,V>(rb:RBMap<K,V>, key:K, ord:Ord<K>) {
     return switch (rb) {
-      case Node(c,l,k,v,r): 
-        if (ord.less(key, k))    bubble(c, deleteNode(l,ord), k, v, r) else 
-        if (ord.greater(key, k)) removeNode(rb) else 
+      case Node(c,l,k,v,r):
+        if (ord.less(key, k))    bubble(c, deleteNode(l,ord), k, v, r) else
+        if (ord.greater(key, k)) removeNode(rb) else
         bubble(c, l, k, v, deleteNode(r,ord));
-        
+
       case Leaf: rb;
     }
   }
@@ -275,7 +275,7 @@ class RBMaps {
 
   }
 
-  private static function redden <K,V>(n : RBMap<K,V>):RBMap<K,V> 
+  private static function redden <K,V>(n : RBMap<K,V>):RBMap<K,V>
   {
       return switch (n) {
         case Leaf: throw "Can't redden a Leaf";
@@ -285,9 +285,9 @@ class RBMaps {
   }
   */
 
-  
-  
-  
+
+
+
 }
 
 // REMOVAL OF NODES NOT YET IMPLEMENTED, TAKE A LOOK AT THIS RACKET IMPLEMENTATION
@@ -308,20 +308,20 @@ class RBMaps {
 (module sorted-map racket/base
 
 (require racket/match)
-  
+
 ; This provides more than necessary.
 ; Oh well.
 (provide (all-defined-out))
-  
+
 ; Syntactic sugar for define forms
 ; with match as their body:
-(define-syntax define/match 
+(define-syntax define/match
   (syntax-rules ()
     [(_ (id name) clause ...)
      ; =>
      (define (id name)
        (match name clause ...))]))
-  
+
 (define-syntax define/match*
   (syntax-rules ()
     [(_ (id name ...) clause ...)
@@ -331,10 +331,10 @@ class RBMaps {
                clause ...))]))
 
 ; A form for matching the result of a comparison:
-(define-syntax switch-compare 
+(define-syntax switch-compare
   (syntax-rules (= < >)
     [(_ (cmp v1 v2)
-        [< action1 ...] 
+        [< action1 ...]
         [= action2 ...]
         [> action3 ...])
      ; =>
@@ -343,8 +343,8 @@ class RBMaps {
          [(< dir 0) action1 ...]
          [(= dir 0) action2 ...]
          [(> dir 0) action3 ...]))]))
-    
-   
+
+
 
 ; Struct definition for sorted-map:
 (define-struct sorted-map (compare))
@@ -359,7 +359,7 @@ class RBMaps {
 ;  Double-black leaf nodes:
 (define-struct (BBL sorted-map) ())
 
-  
+
 ; Color manipulators.
 
 ; Turns a node black.
@@ -397,7 +397,7 @@ class RBMaps {
 
 
 ;; Custom patterns.
-   
+
 ; Matches internal nodes:
 (define-match-expander T!
   (syntax-rules ()
@@ -407,7 +407,7 @@ class RBMaps {
     [(_ l k v r)    (T _ _ l k v r)]
     [(_ c l k v r)  (T _ c l k v r)]))
 
-; Matches leaf nodes: 
+; Matches leaf nodes:
 (define-match-expander L!
   (syntax-rules ()
     [(_)     (L _)]))
@@ -467,17 +467,17 @@ class RBMaps {
          (T! (or 'B 'BB) a xk xv (R b yk yv (R c zk zv d))))
      ; =>
      (T cmp (black-1 (T-color node)) (T cmp 'B a xk xv b) yk yv (T cmp 'B c zk zv d))]
-    
+
     [(BB a xk xv (-B (B b yk yv c) zk zv (and d (B))))
      ; =>
      (T cmp 'B (T cmp 'B a xk xv b) yk yv (balance cmp 'B c zk zv (redden d)))]
-    
+
     [(BB (-B (and a (B)) xk xv (B b yk yv c)) zk zv d)
      ; =>
      (T cmp 'B (balance cmp 'B (redden a) xk xv b) yk yv (T cmp 'B c zk zv d))]
-    
+
     [else     node]))
-  
+
 (define (balance cmp c l k v r)
   (balance-node (T cmp c l k v r)))
 
@@ -485,35 +485,35 @@ class RBMaps {
 ; Moves to a location in the map and
 ; peformes an update with the function:
 (define (sorted-map-modify-at node key f)
-  
+
   (define (internal-modify-at node key f)
-    (match node 
+    (match node
       [(T cmp c l k v r)
        ; =>
        (switch-compare (cmp key k)
         [<  (balance cmp c (internal-modify-at l key f) k v r)]
         [=  (T cmp c l k (f k v) r)]
         [>  (balance cmp c l k v (internal-modify-at r key f))])]
-      
+
       [(L cmp)
        ; =>
        (T cmp 'R node key (f key #f) node)]))
-  
+
   (blacken (internal-modify-at node key f)))
 
-  
+
 ; Inserts an element into the map
 (define (sorted-map-insert node key value)
   (sorted-map-modify-at node key (lambda (k v) value)))
 
-  
+
 ; Inserts several elements into the map:
 (define (sorted-map-insert* node keys values)
   (if (or (not (pair? keys))
           (not (pair? values)))
       node
-      (sorted-map-insert* 
-       (sorted-map-insert node (car keys) (car values)) 
+      (sorted-map-insert*
+       (sorted-map-insert node (car keys) (car values))
        (cdr keys) (cdr values))))
 
 
@@ -526,29 +526,29 @@ class RBMaps {
 
 ; Converts a sorted map into an alist:
 (define (sorted-map-to-alist node)
-  
+
   (define (sorted-map-prepend-as-alist node alist)
     (match node
       [(T! l k v r)
        ; =>
-       (sorted-map-prepend-as-alist 
+       (sorted-map-prepend-as-alist
         l
         (cons (cons k v)
               (sorted-map-prepend-as-alist r alist)))]
-            
+
       [(L _)
        ; =>
        alist]))
-  
+
   (sorted-map-prepend-as-alist node '()))
-  
+
 
 ; Tests whether this map is a submap of another map:
 (define (sorted-map-submap? map1 map2 #:by [by equal?])
   (define amap1 (sorted-map-to-alist map1))
   (define amap2 (sorted-map-to-alist map2))
   (define cmp   (sorted-map-compare map1))
-  
+
   (define (compare-alists amap1 amap2)
     (match* (amap1 amap2)
       [(`((,k1 . ,v1) . ,rest1)
@@ -559,13 +559,13 @@ class RBMaps {
            [(< dir 0) #f]
            [(= dir 0) (and (by v1 v2) (compare-alists rest1 rest2))]
            [else      (compare-alists amap1 rest2)]))]
-      
+
       [('() '())   #t]
-      
+
       [(_ '())     #f]
-      
+
       [('() _)     #t]))
-  
+
   (compare-alists amap1 amap2))
 
 
@@ -573,7 +573,7 @@ class RBMaps {
 (define (sorted-map-get node key)
   (match node
     [(L!)    #f]
-    
+
     [(T cmp c l k v r)
      ; =>
      (switch-compare (cmp key k)
@@ -585,11 +585,11 @@ class RBMaps {
 ; Returns the size of the sorted map:
 (define (sorted-map-size smap)
   (match smap
-    [(T! l r)   (+ 1 (sorted-map-size l) 
+    [(T! l r)   (+ 1 (sorted-map-size l)
                      (sorted-map-size r))]
     [(L!)           0]))
 
-  
+
 ; Returns the maxium (key . value) pair:
 (define/match (sorted-map-max node)
   [(T! _ k v (L!))   (cons k v)]
@@ -598,50 +598,50 @@ class RBMaps {
 
 ; Performs a check to see if both invariants are met:
 (define (sorted-map-is-legal? node)
-  
+
   ; Calculates the max black nodes on path:
   (define/match (max-black-height node)
     [(T! c l r)
      ; =>
-     (+ (if (eq? c 'B) 1 0) (max (max-black-height l) 
+     (+ (if (eq? c 'B) 1 0) (max (max-black-height l)
                                  (max-black-height r)))]
-    
+
     [(L!)     1])
-  
+
   ; Calculates the min black nodes on a path:
   (define/match (min-black-height node)
     [(T! c l r)
      ; =>
-     (+ (if (eq? c 'B) 1 0) (min (min-black-height l) 
+     (+ (if (eq? c 'B) 1 0) (min (min-black-height l)
                                  (min-black-height r)))]
-    
+
     [(L!)     1])
-  
+
   ; Is this tree black-balanced?
   (define (black-balanced? node)
     (= (max-black-height node)
        (min-black-height node)))
-  
+
   ; Does this tree contain a red child of red?
   (define/match (no-red-red? node)
     [(or (B l r)
          (R (and l (B)) (and r (B))))
      ; =>
      (and (no-red-red? l) (no-red-red? r))]
-    
+
     [(L!)    #t]
     [else    #f])
-  
+
   (let ((colored?  (no-red-red? node))
         (balanced? (black-balanced? node)))
     (and colored? balanced?)))
-    
+
 
 ; Deletes a key from this map:
 (define (sorted-map-delete node key)
-    
+
   (define cmp (sorted-map-compare node))
-  
+
   ; Finds the node to be removed:
   (define/match (del node)
     [(T! c l k v r)
@@ -650,7 +650,7 @@ class RBMaps {
        [<   (bubble c (del l) k v r)]
        [=   (remove node)]
        [>   (bubble c l k v (del r))])]
-    
+
     [else     node])
 
   ; Removes this node; it might
@@ -659,48 +659,48 @@ class RBMaps {
     ; Leaves are easiest to kill:
     [(R (L!) (L!))     (L cmp)]
     [(B (L!) (L!))     (BBL cmp)]
-    
+
     ; Killing a node with one child;
     ; parent or child is red:
     [(or (R child (L!))
          (R (L!)  child))
      ; =>
      child]
-    
+
     [(or (B (R l k v r) (L!))
          (B (L!) (R l k v r)))
      ; =>
      (T cmp 'B l k v r)]
-    
+
     ; Killing a black node with one black child:
     [(or (B (L!) (and child (B)))
          (B (and child (B)) (L!)))
      ; =>
      (black+1 child)]
-    
+
     ; Killing a node with two sub-trees:
     [(T! c (and l (T!)) (and r (T!)))
      ; =>
      (match-let (((cons k v) (sorted-map-max l))
                  (l*         (remove-max l)))
        (bubble c l* k v r))])
-  
+
   ; Kills a double-black, or moves it to the top:
   (define (bubble c l k v r)
     (cond
       [(or (double-black? l) (double-black? r))
        ; =>
        (balance cmp (black+1 c) (black-1 l) k v (black-1 r))]
-      
+
       [else (T cmp c l k v r)]))
-  
+
   ; Removes the max node:
   (define/match (remove-max node)
     [(T!   l     (L!))  (remove node)]
     [(T! c l k v r   )  (bubble c l k v (remove-max r))])
-   
+
   ; Delete the key, and color the new root black:
   (blacken (del node)))
-  
+
 )
 */

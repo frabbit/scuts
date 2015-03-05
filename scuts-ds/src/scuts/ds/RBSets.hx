@@ -10,7 +10,7 @@ using scuts.core.Options;
 // based on http://matt.might.net/articles/implementation-of-immutable-purely-functional-okasaki-red-black-tree-maps-in-scala/
 
 
-// package data.pure.map 
+// package data.pure.map
 
 
 // /*** Okasaki-style red-black tree maps. ***/
@@ -19,7 +19,7 @@ using scuts.core.Options;
 // // http://www.eecs.usma.edu/webs/people/okasaki/jfp99.ps
 
 // /*
- 
+
 //  Red-black trees are binary search trees obeying two key invariants:
 
 //  (1) Any path from a root node to a leaf node contains the same number
@@ -61,7 +61,7 @@ using scuts.core.Options;
 //       case T(_,l,k,v,r) => T(B,l,k,v,r)
 //     }
 //   }
-  
+
 //   // balance: Balance a tree with balanced subtrees.
 //   protected def balance (c : Color) (l : RBSet[K,V]) (k : K) (v : Option[V]) (r : RBSet[K,V]) : RBSet[K,V] = {
 //     (c,l,k,v,r) match {
@@ -74,10 +74,10 @@ using scuts.core.Options;
 //   }
 
 //   // modWith: Helper method; top node could be red.
-//   private[map] def modWith (k : K, f : (K, Option[V]) => Option[V]) : RBSet[K,V] 
+//   private[map] def modWith (k : K, f : (K, Option[V]) => Option[V]) : RBSet[K,V]
 
-//   // modifiedWith: Insert, update and delete all in one. 
-//   def modifiedWith (k : K, f : (K, Option[V]) => Option[V]) : RBSet[K,V] = 
+//   // modifiedWith: Insert, update and delete all in one.
+//   def modifiedWith (k : K, f : (K, Option[V]) => Option[V]) : RBSet[K,V] =
 //     blacken(modWith(k,f))
 
 //   // get: Retrieve a value for a key.
@@ -106,7 +106,7 @@ using scuts.core.Options;
 //   def get(k : K) : Option[V] = {
 //     if (k < this.k) l.get(k) else
 //     if (k > this.k) r.get(k) else
-//     v 
+//     v
 //   }
 
 //   private[map] def modWith (k : K, f : (K, Option[V]) => Option[V]) : RBSet[K,V] = {
@@ -119,7 +119,7 @@ using scuts.core.Options;
 
 // // A helper object.
 // object RBSet {
-  
+
 //   // empty: Converts an orderable type into an empty RBSet.
 //   def empty[K <: Ordered[K], V] : RBSet[K,V] = L()((k : K) => k)
 
@@ -151,7 +151,7 @@ abstract RBSet<V>(RBTree<V,Bool>) {
 
 
 class RBSets {
-	
+
   public static function asImList <V>(rb:RBSet<V>):ImList<V>
   {
     return foldRight(rb, ImLists.mkEmpty(), function (v,a) return a.cons(v));
@@ -161,65 +161,65 @@ class RBSets {
   {
     var l1 = asImList(s1);
     var l2 = asImList(s2);
-    
+
 
     return l1.eq(l2, eqV);
-    
+
   }
 
-  public static function foldLeft <A,V>(rb:RBSet<V>, init:A, f:A->V->A):A 
+  public static function foldLeft <A,V>(rb:RBSet<V>, init:A, f:A->V->A):A
   {
     return rb.foldLeft(init, function (a,v,b) {
       return if (b) f(a,v) else a;
-      
+
     });
   }
 
-  public static function foldRight <A,V>(rb:RBSet<V>, init:A, f:V->A->A):A 
+  public static function foldRight <A,V>(rb:RBSet<V>, init:A, f:V->A->A):A
   {
     return rb.foldRight(init, function (v,b,a) {
       return if (b) f(v,a) else a;
     });
   }
 
-  public static function insert <V>(rb:RBSet<V>, v : V, ord:Ord<V>) 
+  public static function insert <V>(rb:RBSet<V>, v : V, ord:Ord<V>)
   {
     return RBTrees.modifiedWith(rb, v, function (_) return true, ord);
-  } 
+  }
 
-  public static function union <V>(s1:RBSet<V>, s2:RBSet<V>, ord:Ord<V>) 
+  public static function union <V>(s1:RBSet<V>, s2:RBSet<V>, ord:Ord<V>)
   {
     return foldLeft(s2, s1, insert.bind(_,_, ord));
-  } 
+  }
 
-  public static function intersection <V>(s1:RBSet<V>, s2:RBSet<V>, ord:Ord<V>) 
+  public static function intersection <V>(s1:RBSet<V>, s2:RBSet<V>, ord:Ord<V>)
   {
     return foldLeft(s1, empty(), function (r, x) {
-      return if (exists(s2, x, ord)) insert(r, x, ord) else r;  
+      return if (exists(s2, x, ord)) insert(r, x, ord) else r;
     });
 
-  } 
+  }
 
-  public static function difference <V>(s1:RBSet<V>, s2:RBSet<V>, ord:Ord<V>) 
+  public static function difference <V>(s1:RBSet<V>, s2:RBSet<V>, ord:Ord<V>)
   {
     return foldLeft(s1, empty(), function (r, x) {
-      return if (!exists(s2, x, ord)) insert(r, x, ord) else r;  
+      return if (!exists(s2, x, ord)) insert(r, x, ord) else r;
     });
 
-  } 
+  }
 
   // remove: Delete a key.
-  public static function remove <V>(rb:RBSet<V>, v : V, ord:Ord<V>) 
+  public static function remove <V>(rb:RBSet<V>, v : V, ord:Ord<V>)
   {
     return RBTrees.modifiedWith(rb, v, function (_) return false, ord);
   }
 
-  public static function exists <V>(rb:RBSet<V>, v : V, ord:Ord<V>) 
+  public static function exists <V>(rb:RBSet<V>, v : V, ord:Ord<V>)
   {
     return RBTrees.get(rb, v, ord).getOrElseConst(false);
   }
 
-  public static function empty<V>() : RBSet<V> 
+  public static function empty<V>() : RBSet<V>
   {
     return RBTrees.empty();
   }
