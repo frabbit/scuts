@@ -273,9 +273,14 @@ class RealResolver
 
     var isBind = false;
     switch (f.expr) {
-      case EField(f, "bind"):
-        f = f;
+      case EField(f1, "bind"):
+        f = f1;
         isBind = true;
+      case _ :
+    }
+    switch (funtyped.expr) {
+      case EField(f1, "bind"):
+        funtyped = f1;
       case _ :
     }
     //trace(Tools.prettyTypeOfExpr(f));
