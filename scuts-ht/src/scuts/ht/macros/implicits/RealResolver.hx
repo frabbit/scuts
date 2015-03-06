@@ -270,6 +270,14 @@ class RealResolver
    */
   static function resolve1 (f:Expr, funtyped:Expr, args:Array<Expr>, scopes:Scopes, lastNeeded:Array<Expr>, numArgs:Int = -1):Validation<ResolverError, Expr>
   {
+
+    var isBind = false;
+    switch (f.expr) {
+      case EField(f, "bind"):
+        f = f;
+        isBind = true;
+      case _ :
+    }
     //trace(Tools.prettyTypeOfExpr(f));
     //trace(Tools.prettyTypeOfExpr(funtyped));
     return Profiler.profile(function ()
@@ -294,13 +302,6 @@ class RealResolver
 
           switch (adjustArgs(f, args, numParams, scopes, lastNeeded)) {
             case Success(res):
-              var isBind = args.foldLeft(false,
-                function (acc, e) return acc || switch (e.expr)
-                {
-                  case EConst(CIdent("_")):  true;
-                  case _ : false;
-                }
-              );
 
               var fn = isBind ? macro ($funtyped).bind : funtyped;
               var callExpr = macro @:pos(funtyped.pos) $fn($a{res});
