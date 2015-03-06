@@ -124,7 +124,7 @@ class RealResolver
   public static function resolve (f:Expr, args:Array<Expr>, ?numArgs:Int = -1)
   {
     if (args == null) throw "args should not be null";
-    trace("------------- start");
+    //trace("------------- start");
     //trace(ExprTools.toString(macro $f($a{args}) ));
     return Profiler.profile(function ()
     {
@@ -177,7 +177,7 @@ class RealResolver
           case EBlock(_) | EParenthesis({ expr : EBlock(_) | ECall(_)}) | ECall(_): true;
           case _ : false;
         }
-        trace("------------- pre return");
+        //trace("------------- pre return");
         return Profiler.profile(function () return if (outsourceFirstArg || outsourceFunc)
         {
           var p = Context.currentPos();
@@ -207,10 +207,10 @@ class RealResolver
           //trace(ExprTools.toString(res));
           res;
         } else {
-          trace("------------- pre regular");
+          //trace("------------- pre regular");
           var r = resolveRegular();
-          trace("------------- after regular");
-          trace(ExprTools.toString(r));
+          //trace("------------- after regular");
+          //trace(ExprTools.toString(r));
           return macro @:allowPrivate $r;
         }, "outsource complex expressions");
 
