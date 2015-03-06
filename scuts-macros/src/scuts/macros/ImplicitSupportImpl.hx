@@ -51,7 +51,7 @@ class ImplicitSupportImpl {
 					case _ : true;
 				});
 				if (newParams.length != params.length) {
-					var args = [convertExpr(e2)].concat(newParams.map(convertExpr));
+					var args = [convertExpr(e1)].concat(newParams.map(convertExpr));
 					macro scuts.ht.core.Ht.resolve($a{args});
 				} else {
 					ExprTools.map(e, convertExpr);
