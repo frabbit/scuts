@@ -87,7 +87,7 @@ class Ht
   /**
    * Resolves implicit casts and objects and adds them to a function call.
    *
-   * Usage: Hots.resolve(myFunc, 1, 2)
+   * Usage: Ht.resolve(myFunc, 1, 2)
    */
   @:noUsing #if !macro macro #end public static function resolve (f:Expr, ?args:Array<Expr>):Expr {
     return Resolver.resolve(f, args);
@@ -97,7 +97,7 @@ class Ht
   /**
    * Helper function to resolve function f on object o, prevents compiler inlining when f is defined as inline.
    *
-   * Usage: o.r_(myFunc, 1,2) instead of o.myFunc.resolve(1,2) or Hots.resolve(o.myFunc, 1, 2)
+   * Usage: o.r_(myFunc, 1,2) instead of o.myFunc.resolve(1,2) or Ht.resolve(o.myFunc, 1, 2)
    *
    */
   macro public static function r_ (o:Expr, f:Expr, ?args:Array<Expr>):Expr {
