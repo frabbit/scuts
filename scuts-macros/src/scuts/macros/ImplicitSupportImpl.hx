@@ -22,7 +22,8 @@ class ImplicitSupportImpl {
 
 		return switch (x.kind) {
 			case FieldType.FFun(f):
-				f.expr = convertExpr(f.expr);
+				f.expr = convertExpr(f.
+					expr);
 				//trace(ExprTools.toString(f.expr));
 				x;
 			case _: x;
