@@ -81,7 +81,7 @@ class Ht
   #if !macro macro #end public static function _ (f:Expr, ?args:Array<Expr>):Expr
   {
 
-    return Resolver.resolve(f, args);
+    return resolve(f, args);
   }
 
   /**
@@ -90,6 +90,7 @@ class Ht
    * Usage: Ht.resolve(myFunc, 1, 2)
    */
   @:noUsing #if !macro macro #end public static function resolve (f:Expr, ?args:Array<Expr>):Expr {
+    if (args == null) args = [];
     return Resolver.resolve(f, args);
 
   }
@@ -102,7 +103,7 @@ class Ht
    */
   macro public static function r_ (o:Expr, f:Expr, ?args:Array<Expr>):Expr {
     return switch (f.expr) {
-      case EConst(CIdent(i)): Resolver.resolve(macro $o.$i, args);
+      case EConst(CIdent(i)): resolve(macro $o.$i, args);
       case _: throw "the second parameter f must be a const ident";
     }
 
