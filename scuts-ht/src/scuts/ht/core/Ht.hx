@@ -78,7 +78,7 @@ class Ht
    * Usage: myFunc._(1,2) instaed of myFunc.resolve(1,2) or Hots.resolve(myFunc, 1, 2)
    *
    */
-  #if !macro macro #end public static function _ (f:Expr, ?args:Array<Expr>):Expr
+  #if !macro macro #end public static function _ (f:Expr, args:Array<Expr>):Expr
   {
 
     return resolve(f, args);
@@ -89,7 +89,7 @@ class Ht
    *
    * Usage: Ht.resolve(myFunc, 1, 2)
    */
-  @:noUsing #if !macro macro #end public static function resolve (f:Expr, ?args:Array<Expr>):Expr {
+  @:noUsing #if !macro macro #end public static function resolve (f:Expr, args:Array<Expr>):Expr {
     if (args == null) args = [];
     return Resolver.resolve(f, args);
 
@@ -101,7 +101,7 @@ class Ht
    * Usage: o.r_(myFunc, 1,2) instead of o.myFunc.resolve(1,2) or Ht.resolve(o.myFunc, 1, 2)
    *
    */
-  macro public static function r_ (o:Expr, f:Expr, ?args:Array<Expr>):Expr {
+  macro public static function r_ (o:Expr, f:Expr, args:Array<Expr>):Expr {
     return switch (f.expr) {
       case EConst(CIdent(i)): resolve(macro $o.$i, args);
       case _: throw "the second parameter f must be a const ident";
