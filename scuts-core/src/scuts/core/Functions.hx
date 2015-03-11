@@ -10,6 +10,14 @@ import scuts.core.Unit;
 import scuts.core.Tuples.*;
 using scuts.core.Options;
 
+#if macro
+import haxe.macro.Context;
+import haxe.macro.Expr;
+import haxe.macro.Type;
+import haxe.macro.TypeTools;
+
+#end
+
 class Functions {
   @:noUsing public static function identity <X> (x:X):X
   {
@@ -21,13 +29,42 @@ class Functions {
   @:noUsing public static function firstOfTwo < A, B > (a:A, b:B) return a;
 
   @:noUsing public static function secondOfTwo < A, B > (a:A, b:B) return b;
+
+
+  macro public static function aggregate (e:ExprOf<haxe.Constraints.Function>) {
+    var t = Context.typeof(e);
+
+    return switch t {
+      case TFun(a1, TFun(a2, t)):
+
+        var ct = TypeTools.toComplexType(t);
+        // function (a1...a2) return origF(a1)(a2)
+        var am1 = [for (a in a1) { name : a.name + "_inj_1", type : TypeTools.toComplexType(a.t)}];
+        var am2 = [for (a in a2) { name : a.name + "_inj_2", type : TypeTools.toComplexType(a.t)}];
+
+        var a1 = [for (a in am1) macro @:pos(e.pos) $i{a.name}];
+        var a2 = [for (a in am2) macro @:pos(e.pos) $i{a.name}];
+
+        var am = am1.concat(am2);
+
+        var fexpr = EFunction(null, {
+          args: am,
+          ret: ct,
+          expr: macro @:pos(e.pos) $e($a{a1})($a{a2})
+        });
+        { expr : fexpr, pos : e.pos};
+      case _ :
+        Context.error("aggregate can only be called on functions returning functions", e.pos);
+    }
+  }
+
 }
 
 
 
-class Function0s 
+class Function0s
 {
-  
+
 
   /**
    * Creates a Memoized (Lazy) Version of f where only the first call is evaluated and every further
@@ -37,7 +74,7 @@ class Function0s
   {
     var o = None;
 
-    return function () return switch (o) 
+    return function () return switch (o)
     {
       case None: var r = f(); o = Some(r); r;
       case Some(x): x;
@@ -48,18 +85,18 @@ class Function0s
   {
     return function () return f(a());
   }
-  
+
   public static function flatMap <A,B>(a:Thunk<A>, f:A->Thunk<B>):Thunk<B>
   {
     return function () return f(a())();
   }
-  
+
   @:noUsing public static function pure <A>(a:A):Thunk<A>
   {
     return function () return a;
   }
-  
-  
+
+
   /**
    * Converts f into a effectful function with no return type.
    */
@@ -67,7 +104,7 @@ class Function0s
   {
     return function () f();
   }
-  
+
   /**
    * Promotes a function taking no arguments into a one argument function
    * by simply ignoring it's argument.
@@ -76,24 +113,24 @@ class Function0s
   {
     return function (x) return f();
   }
-  
+
 }
 
-class Function1Opts 
+class Function1Opts
 {
   public static function withoutOptionals <A,B>(f:?A->B):Option<A>->B
   {
-    return function (a) return switch (a) 
+    return function (a) return switch (a)
     {
       case Some(x): f(x);
       case None: f();
     }
   }
-  
+
 }
 
 
-class Function1s 
+class Function1s
 {
 
 
@@ -108,7 +145,7 @@ class Function1s
   {
     return function (a:A) return mapper(f(a));
   }
-  
+
   /**
    * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
    */
@@ -118,7 +155,7 @@ class Function1s
     return f;
   }
   */
-  
+
   /**
    * Converts a curried function into a function taking multiple arguments.
    */
@@ -127,10 +164,10 @@ class Function1s
     return function (a:A) return f(a)();
   }
   /**
-   * Composes 2 Functions together. 
-   * 
+   * Composes 2 Functions together.
+   *
    * f1.compose(f2)(x) := f1(f2(x))
-   * 
+   *
    * usage:
    *   var f1:Int->String = ...
    *   var f2:Float->Int = ...
@@ -140,8 +177,8 @@ class Function1s
   {
     return function (a:A) return f1(f2(a));
   }
-  
-  
+
+
   /**
    * Reversed function composition, like a unix pipe.
    */
@@ -149,7 +186,7 @@ class Function1s
   {
     return compose(to, from);
   }
-  
+
   /**
    * Converts f into a effectful function with no return type.
    */
@@ -157,58 +194,58 @@ class Function1s
   {
     return function (x) f(x);
   }
-  
-  
+
+
 }
 
-class Function2OptsPosInfos 
+class Function2OptsPosInfos
 {
   public static function compose < A, B, C,D > (f1:B->?PosInfos->D, f2:A->B):A->D
   {
     return function (a:A) return f1(f2(a));
   }
- 
-  
+
+
 }
 
-class Function2Opts 
+class Function2Opts
 {
   public static function compose < A, B, C,D > (f1:B->?C->D, f2:A->B):A->D
   {
     return function (a:A) return f1(f2(a));
   }
-  
+
   public static function withoutOptionals <A,B,Z>(f:A->?B->Z):A->Option<B>->Z
   {
-    return function (a,b) return switch (b) 
+    return function (a,b) return switch (b)
     {
       case Some(x): f(a,x);
       case None: f(a);
     }
   }
-  
-  
+
+
 }
 
 
 
-class Function2s 
+class Function2s
 {
-  
+
   public static function map <A,B,C,R>(f:A->B->C, mapper:C->R):A->B->R
   {
     return function (a:A, b:B) return mapper(f(a,b));
   }
-  
+
   /**
    * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
    */
   public static function curry < A, B, C > (f:A->B->C):A->(B->C)
   {
-    return function (a:A) 
+    return function (a:A)
       return function (b:B) return f(a, b);
   }
-  
+
   /**
    * Converts a curried function into a function taking multiple arguments.
    */
@@ -216,13 +253,13 @@ class Function2s
   {
     return function (a:A, b:B) return f(a)(b);
   }
-  
-  
-  
-  
 
-  
-  
+
+
+
+
+
+
   /**
    * Reverses the first 2 arguments of f.
    */
@@ -238,7 +275,7 @@ class Function2s
   {
     return function (t) return f(t._1, t._2);
   }
-  
+
   /**
    * Converts f into a function taking 2 parameters instead of a Tuple.
    */
@@ -246,7 +283,7 @@ class Function2s
   {
     return function (a,b) return f(tup2(a,b));
   }
-  
+
   /**
    * Converts f into a effectful function with no return type.
    */
@@ -262,8 +299,8 @@ class Function2s
 
 class Function3Opts2
 {
- 
-  
+
+
   public static function compose < A, B, C,D,X > (f1:A->?B->?C->D, f2:X->A):X->D
   {
     return function (a:X) return f1(f2(a));
@@ -290,24 +327,24 @@ class Function3Opts1
     {
       case Some(c1): f(a,b,c1);
       case None: f(a,b);
-      
+
     }
   }
-  
+
 }
 
-class Function3s 
+class Function3s
 {
   /**
    * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
    */
   public static function curry < A, B, C, D > (f:A->B->C->D):A->(B->(C->D))
   {
-    return function (a:A) 
-      return function (b:B) 
+    return function (a:A)
+      return function (b:B)
         return function(c:C) return f(a, b, c);
   }
-  
+
   /**
    * Converts a curried function into a function taking multiple arguments.
    */
@@ -322,7 +359,7 @@ class Function3s
   {
     return function (b, a, c) return f(a, b, c);
   }
-  
+
   /**
    * Converts f into a function taking a Tuple as only parameter instead of 3 values.
    */
@@ -330,7 +367,7 @@ class Function3s
   {
     return function (t) return f(t._1, t._2, t._3);
   }
-  
+
   /**
    * Converts f into a function taking 3 parameters instead of a Tuple.
    */
@@ -338,7 +375,7 @@ class Function3s
   {
     return function (a,b,c) return f(tup3(a,b,c));
   }
-  
+
   /**
    * Converts f into a effectful function with no return type.
    */
@@ -346,9 +383,9 @@ class Function3s
   {
     return function (a,b,c) f(a,b,c);
   }
-  
- 
-  
+
+
+
 
 }
 
@@ -359,10 +396,10 @@ class Function4Opt1s {
     {
       case Some(d1): f(a,b,c,d1);
       case None: f(a,b,c);
-      
+
     }
   }
-  
+
 }
 
 class Function4Opt3s {
@@ -373,11 +410,11 @@ class Function4Opt3s {
       case [Some(b1), None     , None     ]: f(a,b1);
       case [None,     Some(c1) , None     ]: f(a,c1);
       case [None,     None     , Some(d1) ]: f(a,d1);
-      
+
       case [Some(b1), Some(c1) , None     ]: f(a,b1,c1);
       case [Some(b1), None     , Some(d1) ]: f(a,b1,d1);
       case [None    , Some(c1) , Some(d1) ]: f(a,c1,d1);
-      
+
       case [Some(b1), Some(c1) , Some(d1) ]: f(a,b1,c1,d1);
 
       case [None,     None     , None     ]: f(a);
@@ -387,7 +424,7 @@ class Function4Opt3s {
   }
 }
 
-class Function4s 
+class Function4s
 {
 
   /**
@@ -395,10 +432,10 @@ class Function4s
    */
   public static function curry < A, B, C, D, Z > (f:A->B->C->D->Z):A->(B->(C->(D->Z)))
   {
-    return function (a:A) 
-      return function (b:B) 
-        return function(c:C) 
-          return function(d:D) 
+    return function (a:A)
+      return function (b:B)
+        return function(c:C)
+          return function(d:D)
             return f(a, b, c,d);
   }
 
@@ -409,7 +446,7 @@ class Function4s
   {
     return function (a,b,c,d) return f(a)(b)(c)(d);
   }
-  
+
   /**
    * Reverses the first 2 arguments of f.
    */
@@ -417,7 +454,7 @@ class Function4s
   {
     return function (b, a, c, d) return f(a, b, c, d);
   }
-  
+
   /**
    * Converts f into a effectful function with no return type.
    */
@@ -425,7 +462,7 @@ class Function4s
   {
     return function (a,b,c,d) f(a,b,c,d);
   }
-  
+
   /**
    * Converts f into a function taking a Tuple as only parameter instead of 4 values.
    */
@@ -433,7 +470,7 @@ class Function4s
   {
     return function (t) return f(t._1, t._2, t._3, t._4);
   }
-  
+
   /**
    * Converts f into a function taking 4 parameters instead of a Tuple.
    */
@@ -442,25 +479,25 @@ class Function4s
     return function (a,b,c,d) return f(tup4(a,b,c,d));
   }
 
-  
-  
-  
+
+
+
 }
 
 
 
-class Function5s 
+class Function5s
 {
   /**
    * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
    */
   public static function curry < A, B, C, D, E,Z > (f:A->B->C->D->E->Z):A->(B->(C->(D->(E->Z))))
   {
-    return function (a:A) 
-      return function (b:B) 
-        return function(c:C) 
-          return function(d:D) 
-            return function(e:E) 
+    return function (a:A)
+      return function (b:B)
+        return function(c:C)
+          return function(d:D)
+            return function(e:E)
               return f(a, b, c, d, e);
   }
 
@@ -486,7 +523,7 @@ class Function5s
   {
     return function (t) return f(t._1, t._2, t._3, t._4, t._5);
   }
-  
+
   /**
    * Converts f into a function taking 5 parameters instead of a Tuple.
    */
@@ -494,23 +531,23 @@ class Function5s
   {
     return function (a,b,c,d,e) return f(tup5(a,b,c,d,e));
   }
-  
-  
+
+
 }
 
-class Function6s 
+class Function6s
 {
   /**
    * Transform f into a function taking only one parameter and returning another function also only taking one paramter as the result.
    */
   public static function curry < A, B, C, D, E, F, Z > (f:A->B->C->D->E->F->Z):A->(B->(C->(D->(E->(F->Z)))))
   {
-    return function (a:A) 
-      return function (b:B) 
-        return function(c:C) 
-          return function(d:D) 
-            return function(e:E) 
-              return function(f1:F) 
+    return function (a:A)
+      return function (b:B)
+        return function(c:C)
+          return function(d:D)
+            return function(e:E)
+              return function(f1:F)
                 return f(a, b, c, d, e, f1);
   }
 
