@@ -50,7 +50,7 @@ class Functions {
         var fexpr = EFunction(null, {
           args: am,
           ret: ct,
-          expr: macro @:pos(e.pos) $e($a{a1})($a{a2})
+          expr: macro @:pos(e.pos) return $e($a{a1})($a{a2})
         });
         { expr : fexpr, pos : e.pos};
       case _ :
