@@ -31,7 +31,7 @@ class Functions {
   @:noUsing public static function secondOfTwo < A, B > (a:A, b:B) return b;
 
 
-  macro public static function aggregate (e:ExprOf<haxe.Constraints.Function>) {
+  macro public static function uncurryOnce (e:ExprOf<haxe.Constraints.Function>) {
     var t = Context.typeof(e);
 
     return switch t {
