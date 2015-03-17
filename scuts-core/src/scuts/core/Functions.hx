@@ -39,8 +39,10 @@ class Functions {
 
         var ct = TypeTools.toComplexType(t);
         // function (a1...a2) return origF(a1)(a2)
-        var am1 = [for (a in a1) { name : a.name + "_inj_1", type : TypeTools.toComplexType(a.t)}];
-        var am2 = [for (a in a2) { name : a.name + "_inj_2", type : TypeTools.toComplexType(a.t)}];
+
+        var id = 0; // sometimes argument name is not available, but we need to make arg names unique
+        var am1 = [for (a in a1) { name : a.name + "_inj_1"+ id++, type : TypeTools.toComplexType(a.t)}];
+        var am2 = [for (a in a2) { name : a.name + "_inj_2"+ id++, type : TypeTools.toComplexType(a.t)}];
 
         var a1 = [for (a in am1) macro @:pos(e.pos) $i{a.name}];
         var a2 = [for (a in am2) macro @:pos(e.pos) $i{a.name}];
