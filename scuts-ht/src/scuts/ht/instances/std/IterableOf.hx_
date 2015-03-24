@@ -1,7 +1,6 @@
 package scuts.ht.instances.std;
 
-import scuts.ht.core.Of;
-import scuts.ht.core._;
+
 
 abstract IterableOf<T>(Iterable<T>) to Iterable<T> from Iterable<T> {
 

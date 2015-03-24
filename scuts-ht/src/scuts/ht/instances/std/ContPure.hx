@@ -1,17 +1,15 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Pure;
-import scuts.ht.instances.std.ContOf;
 import scuts.core.Conts;
 
-import scuts.ht.core._;
 
 
-class ContPure<R> implements Pure<Cont<_,R>>
+class ContPure<R> implements Pure<Cont<R,_>>
 {
   public function new () {}
 
-  public function pure<B>(b:B):ContOf<B,R>
+  public function pure<B>(b:B):Cont<R,B>
   {
     return Conts.pure(b);
   }

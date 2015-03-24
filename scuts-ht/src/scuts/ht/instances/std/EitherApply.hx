@@ -2,8 +2,6 @@ package scuts.ht.instances.std;
 
 import scuts.ht.classes.Apply;
 import scuts.ht.classes.ApplyAbstract;
-import scuts.ht.core._;
-import scuts.ht.instances.std.EitherOf;
 
 
 
@@ -15,7 +13,7 @@ class EitherApply<L> extends ApplyAbstract<Either<L,_>>
   	super(func);
   }
 
-  override public function apply<A,B>(x:EitherOf<L,A>, f:EitherOf<L,A->B>):EitherOf<L,B>
+  override public function apply<A,B>(x:Either<L,A>, f:Either<L,A->B>):Either<L,B>
   {
     return Eithers.applyRight(x, f);
   }

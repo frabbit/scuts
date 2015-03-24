@@ -8,7 +8,7 @@ using scuts.reactive.Streams;
 
 using scuts.core.Promises;
 
-using scuts.reactive.StreamSources;
+using scuts.reactive.Streams;
 using scuts.reactive.StreamSubscriptions;
 
 
@@ -17,7 +17,7 @@ using scuts.reactive.StreamSubscriptions;
 
 
 class StreamsTest {
-	
+
 	public function new () {}
 	public function testSubscription () {
 
@@ -29,7 +29,7 @@ class StreamsTest {
 		Assert.equals(0, x);
 		s.send(1);
 		Assert.equals(1, x);
-		
+
 		subscription.pause();
 
 		s.send(3);
@@ -52,9 +52,9 @@ class StreamsTest {
 
 		s.send(11);
 
-		Assert.equals(11, x);		
+		Assert.equals(11, x);
 
 	}
-	
+
 
 }

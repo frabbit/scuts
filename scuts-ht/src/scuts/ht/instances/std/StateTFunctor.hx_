@@ -2,10 +2,8 @@ package scuts.ht.instances.std;
 
 import scuts.ht.classes.Functor;
 
-import scuts.ht.core._;
-import scuts.ht.core.Of;
-import scuts.ht.instances.std.StateOf;
-import scuts.ht.instances.std.StateTOf;
+
+import scuts.ht.instances.std.StateT;
 
 import scuts.core.States;
 import scuts.core.Tuples;
@@ -24,7 +22,7 @@ class StateTFunctor<M,ST> implements Functor<M<State<ST,_>>> {
     this.functorM = functorM;
   }
 
-  public function map<A,B>(v:StateTOf<M, ST, A>, f:A->B):StateTOf<M, ST, B>
+  public function map<A,B>(v:StateT<M, ST, A>, f:A->B):StateT<M, ST, B>
   {
 
 

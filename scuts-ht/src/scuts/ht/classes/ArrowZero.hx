@@ -2,7 +2,7 @@ package scuts.ht.classes;
 
 /**
  * The Arrow type class in Haskell:
- * 
+ *
  * class Category a => Arrow a where
  *
  *   -- | Lift a function to an arrow.
@@ -39,13 +39,12 @@ package scuts.ht.classes;
  *   f &&& g = arr (\b -> (b,b)) >>> f *** g
  */
 
-import scuts.ht.core.OfOf;
 
 import scuts.core.Tuples;
 import scuts.Scuts;
 
 
-interface ArrowZero<AR> extends Arrow<AR> 
+interface ArrowZero<AR> extends Arrow<AR>
 {
-  public function zero <B,C>():OfOf<AR, B, C>;
+  public function zero <B,C>():AR<B, C>;
 }

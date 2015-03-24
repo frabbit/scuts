@@ -87,7 +87,11 @@ abstract DeferredG<A,B>(PromiseG<A,B>) to PromiseG<A,B>
 }
 
 
-
+class PromisesOption {
+  public static function filterOption <X>(p:Promise<Option<X>>, f:X->Bool) {
+    return p.map(function (x) return Options.filter(x, f));
+  }
+}
 
 @:allow(scuts.core.Promise, scuts.core.PromiseG)
 class Promises

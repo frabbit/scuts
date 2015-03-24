@@ -1,15 +1,17 @@
 package scuts.ht.instances.std;
 
-abstract ContT<M,A>(M<Cont<A>>)
+import scuts.core.Conts;
+
+abstract ContT<M,R, A>(M<Cont<R,A>>)
 {
 
-	inline function new (x:M<Cont<A>>) this = x;
+	inline function new (x:M<Cont<R,A>>) this = x;
 
-	public function unwrap ():M<Cont<A>> {
+	public function unwrap ():M<Cont<R,A>> {
    		return this;
   	}
 
-	public static inline function runT<M,A>(x:ContT<M,A>):M<Cont<A>> return x.unwrap();
+	public static inline function runT<M,R,A>(x:ContT<M,R,A>):M<Cont<R,A>> return x.unwrap();
 
-	public static inline function contT<M,A>(x:M<Cont<A>>):ContT<M,A> return new ContT(x);
+	public static inline function contT<M,R,A>(x:M<Cont<R,A>>):ContT<M,R,A> return new ContT(x);
 }

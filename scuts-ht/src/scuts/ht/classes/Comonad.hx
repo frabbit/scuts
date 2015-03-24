@@ -2,7 +2,6 @@ package scuts.ht.classes;
 import scuts.ht.classes.Cobind;
 import scuts.ht.classes.Cojoin;
 import scuts.ht.classes.Copure;
-import scuts.ht.core.Of;
 import scuts.Scuts;
 
 

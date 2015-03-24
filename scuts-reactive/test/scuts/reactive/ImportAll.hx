@@ -5,7 +5,6 @@ import scuts.reactive.BehavioursTest;
 import scuts.reactive.AllTests;
 import scuts.reactive.ReactiveTest;
 import scuts.reactive.StreamsBool;
-import scuts.reactive.StreamSources;
 import scuts.reactive.StreamSubscriptions;
 import scuts.reactive.Reactive;
 import scuts.reactive.BehavioursFloat;

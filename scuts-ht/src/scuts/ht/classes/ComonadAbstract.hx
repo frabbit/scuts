@@ -2,7 +2,6 @@ package scuts.ht.classes;
 import scuts.ht.classes.Cobind;
 import scuts.ht.classes.Cojoin;
 import scuts.ht.classes.Copure;
-import scuts.ht.core.Of;
 import scuts.Scuts;
 
 using scuts.core.Functions;
@@ -30,7 +29,7 @@ class ComonadAbstract<W> implements Comonad<W>
     this._copure = copure;
   }
 
-  public function cojoin <A>(f:W<A>):Of<W, Of<W, A>> return _cojoin.cojoin(f);
+  public function cojoin <A>(f:W<A>):W<W<A>> return _cojoin.cojoin(f);
 
 
   public function cobind <A,B>(x:W<A>, f: W<A> -> B): W<B> return _cobind.cobind(x, f);

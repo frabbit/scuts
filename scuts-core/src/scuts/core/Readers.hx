@@ -1,7 +1,5 @@
 package scuts.core;
 
-import scuts.ht.core._;
-import scuts.ht.core.Of;
 
 abstract Reader<Ctx, R>(Ctx->R)
 {
@@ -12,9 +10,6 @@ abstract Reader<Ctx, R>(Ctx->R)
 		return this;
 	}
 
-	@:from static function fromOf <T>(x:Of<Reader<Ctx,_>, R>):Reader<Ctx,R> return cast x;
-
-	@:to function toOf ():Of<Reader<Ctx,_>, R> return new Of(this);
 }
 
 class Readers

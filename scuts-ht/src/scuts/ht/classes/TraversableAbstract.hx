@@ -1,6 +1,4 @@
 package scuts.ht.classes;
-import scuts.ht.core.OfOf;
-import scuts.ht.core.Of;
 import scuts.ht.classes.Foldable;
 import scuts.Scuts;
 

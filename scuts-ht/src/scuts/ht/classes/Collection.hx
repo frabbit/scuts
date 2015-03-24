@@ -1,5 +1,4 @@
 package scuts.ht.classes;
-import scuts.ht.core.Of;
 
 
 interface Collection<M>

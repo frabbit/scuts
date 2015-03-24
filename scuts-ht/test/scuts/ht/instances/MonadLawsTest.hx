@@ -5,13 +5,11 @@ package scuts.ht.instances;
 import scuts.ht.classes.Eq;
 import scuts.ht.classes.Monad;
 
-import scuts.ht.core._;
 
 
 import scuts.ht.instances.std.ArrayT;
 import scuts.ht.instances.std.OptionT;
 import scuts.ht.instances.std.ValidationT;
-import scuts.ht.core.OfOf;
 import scuts.ds.LazyLists;
 
 import scuts.core.Validations;

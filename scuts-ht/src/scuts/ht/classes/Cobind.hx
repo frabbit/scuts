@@ -1,7 +1,6 @@
 
 package scuts.ht.classes;
 
-import scuts.ht.core.Of;
 
 interface Cobind<W> extends Functor<W>{
 

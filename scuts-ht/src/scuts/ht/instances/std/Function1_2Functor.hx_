@@ -1,9 +1,8 @@
 package scuts.ht.instances.std;
 
 import scuts.ht.classes.Functor;
-import scuts.ht.core._;
+
 import scuts.ht.instances.std.Function1Semigroup;
-import scuts.ht.core.Of;
 
 import scuts.ht.instances.std.FunctionOf;
 

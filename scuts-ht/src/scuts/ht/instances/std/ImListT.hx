@@ -1,5 +1,7 @@
 package scuts.ht.instances.std;
 
+import scuts.ds.ImLists;
+
 abstract ImListT<M,A>(M<ImList<A>>)
 {
 	inline function new (x:M<ImList<A>>) this = x;

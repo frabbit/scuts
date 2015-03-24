@@ -11,8 +11,6 @@ import scuts.ds.ImLists;
 import scuts.ht.classes.Foldable;
 import scuts.ht.instances.Foldables;
 import scuts.ht.instances.std.ImListFoldable;
-import scuts.ht.core.Of;
-import scuts.ht.core._;
 
 using scuts.core.Functions;
 

@@ -1,5 +1,5 @@
 package scuts.ht.instances.std;
-import scuts.ht.core._;
+
 import scuts.ht.classes.ArrowAbstract;
 import scuts.ht.instances.std.ContOfOf;
 import scuts.ht.instances.std.FunctionOfOf;
