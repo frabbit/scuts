@@ -96,6 +96,10 @@ class PromisesOption {
     return p.map(function (x) return Options.isSome(x));
   }
 
+  public static function isNone <X>(p:Promise<Option<X>>):Promise<Bool> {
+    return p.map(function (x) return Options.isNone(x));
+  }
+
   public static function mapOption <X,Y>(p:Promise<Option<X>>, f:X->Y):Promise<Option<Y>> {
     return p.map(function (x) return Options.map(x, f));
   }
