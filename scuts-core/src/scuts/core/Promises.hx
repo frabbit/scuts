@@ -91,6 +91,20 @@ class PromisesOption {
   public static function filterOption <X>(p:Promise<Option<X>>, f:X->Bool) {
     return p.map(function (x) return Options.filter(x, f));
   }
+
+  public static function isSome <X>(p:Promise<Option<X>>):Promise<Bool> {
+    return p.map(function (x) return Options.isSome(x));
+  }
+
+  public static function mapOption <X,Y>(p:Promise<Option<X>>, f:X->Y):Promise<Option<Y>> {
+    return p.map(function (x) return Options.map(x, f));
+  }
+  public static function flatMapOption <X,Y>(p:Promise<Option<X>>, f:X->Promise<Y>):Promise<Option<Y>> {
+    return p.flatMap(function (x) return switch (x) {
+      case Some(x): f(x).map(function (x) return Some(x));
+      case None : Promises.pure(None);
+    });
+  }
 }
 
 @:allow(scuts.core.Promise, scuts.core.PromiseG)
