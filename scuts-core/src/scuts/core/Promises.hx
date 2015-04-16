@@ -103,8 +103,19 @@ class PromisesBool {
 
 class PromisesOption
 {
+
   public static function filterOption <X>(p:Promise<Option<X>>, f:X->Bool) {
     return p.map(Options.filter.bind(_, f));
+  }
+
+  public static function extractOrFail <X>(p:Promise<Option<X>>, fail:Throwable):Promise<X> {
+    return p.flatMap(function (x) {
+      return switch(x) {
+        case Some(x): Promises.pure(x);
+        case None: Promises.failed(fail);
+      }
+    });
+
   }
 
   public static function isSome <X>(p:Promise<Option<X>>):Promise<Bool> {
