@@ -403,7 +403,7 @@ class Promises
         count++;
         check();
         } )
-      .onFailure(fut.failure)
+      .onFailure(fut.tryFailure)
       .onProgress(function (p) {
         progs[index] = p;
         updateProgress();
