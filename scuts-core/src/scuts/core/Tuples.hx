@@ -6,40 +6,54 @@ class Tuples {
     return Tup2.create(a,b);
   }
 
-  @:noUsing public static function tup3 <A,B,C>(_1:A, _2:B, _3:C) 
+  @:noUsing public static function tup3 <A,B,C>(_1:A, _2:B, _3:C)
   {
     return Tup3.create(_1, _2, _3);
   }
 
-  @:noUsing public static function tup4 <A,B,C,D>(_1:A, _2:B, _3:C, _4:D) 
+  @:noUsing public static function tup4 <A,B,C,D>(_1:A, _2:B, _3:C, _4:D)
   {
     return Tup4.create(_1, _2, _3, _4);
   }
 
-  @:noUsing public static function tup5 <A,B,C,D,E>(_1:A, _2:B, _3:C, _4:D, _5:E) 
+  @:noUsing public static function tup5 <A,B,C,D,E>(_1:A, _2:B, _3:C, _4:D, _5:E)
   {
     return Tup5.create(_1, _2, _3, _4, _5);
   }
 
-  @:noUsing public static function tup6 <A,B,C,D,E,F>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F) 
+  @:noUsing public static function tup6 <A,B,C,D,E,F>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F)
   {
     return Tup6.create(_1, _2, _3, _4, _5, _6);
+  }
+
+  @:noUsing public static function tup7 <A,B,C,D,E,F,G>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F, _7:G)
+  {
+    return Tup7.create(_1, _2, _3, _4, _5, _6, _7);
+  }
+
+  @:noUsing public static function tup8 <A,B,C,D,E,F,G,H>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F, _7:G, _8:H)
+  {
+    return Tup8.create(_1, _2, _3, _4, _5, _6, _7, _8);
+  }
+  @:noUsing public static function tup9 <A,B,C,D,E,F,G,H,I>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F, _7:G, _8:H, _9:I)
+  {
+    return Tup9.create(_1, _2, _3, _4, _5, _6, _7, _8,_9);
   }
 }
 
 
-class Tup2s 
+class Tup2s
 {
   /**
    * Swaps the values of a tuple.
-   * 
+   *
    * Tup2.create(1,2).swap(); // (2,1)
    */
   public static function swap <A,B>(t:Tup2<A,B>) return Tup2.create(t._2, t._1);
-  
+
   public static inline function first  <A,B>(t:Tup2<A,B>) return t._1;
   public static inline function second <A,B>(t:Tup2<A,B>) return t._2;
-  
+
 
   public static inline function into <A,B,C>(t:Tup2<A,B>, f:A->B->C) return f(t._1, t._2);
 
@@ -52,19 +66,19 @@ class Tup2s
   }
 }
 
-class Tup3s 
+class Tup3s
 {
   /**
    * Swaps the first 2 values of `t`.
-   * 
+   *
    * `Tup3.create(1,2,3).swap(); // (2,1,3)`
    */
   public static function swap <A,B,C>(t:Tup3<A,B,C>) return Tup3.create(t._2, t._1, t._3);
-  
+
   public static inline function first  <A,B,C>(t:Tup3<A,B,C>) return t._1;
   public static inline function second <A,B,C>(t:Tup3<A,B,C>) return t._2;
   public static inline function third <A,B,C>(t:Tup3<A,B,C>) return t._3;
-  
+
 
   public static inline function into <A,B,C,D>(t:Tup3<A,B,C>, f:A->B->C->D) return f(t._1, t._2, t._3);
 
@@ -77,20 +91,20 @@ class Tup3s
   }
 }
 
-class Tup4s 
+class Tup4s
 {
   /**
    * Swaps the first 2 values of `t`.
-   * 
+   *
    * `Tup3.create(1,2,3).swap(); // (2,1,3)`
    */
   public static function swap <A,B,C,D>(t:Tup4<A,B,C,D>) return Tup4.create(t._2, t._1, t._3,t._4);
-  
+
   public static inline function first  <A,B,C,D>(t:Tup4<A,B,C,D>) return t._1;
   public static inline function second <A,B,C,D>(t:Tup4<A,B,C,D>) return t._2;
   public static inline function third <A,B,C,D>(t:Tup4<A,B,C,D>) return t._3;
   public static inline function fourth <A,B,C,D>(t:Tup4<A,B,C,D>) return t._4;
-  
+
 
   public static inline function into <A,B,C,D,E>(t:Tup4<A,B,C,D>, f:A->B->C->D->E) return f(t._1, t._2, t._3,t._4);
 
@@ -105,92 +119,92 @@ class Tup4s
 
 
 
-class Tup2<A,B> 
+class Tup2<A,B>
 {
   public var _1(default, null):A;
   public var _2(default, null):B;
-  
-  function new (_1:A, _2:B) 
+
+  function new (_1:A, _2:B)
   {
     this._1 = _1;
     this._2 = _2;
   }
-  
-  public static function create <A,B>(_1:A, _2:B) 
+
+  public static function create <A,B>(_1:A, _2:B)
   {
     return new Tup2<A,B>(_1, _2);
   }
-  
-  public function toString () 
+
+  public function toString ()
   {
     var s = Std.string;
     return "(" + s(_1) + "," + s(_2) + ")";
   }
 }
 
-class Tup3<A,B,C> 
+class Tup3<A,B,C>
 {
   public var _1(default, null):A;
   public var _2(default, null):B;
   public var _3(default, null):C;
-  
-  function new (_1:A, _2:B, _3:C) 
+
+  function new (_1:A, _2:B, _3:C)
   {
     this._1 = _1;
     this._2 = _2;
     this._3 = _3;
   }
-  
-  public static function create <A,B,C>(_1:A, _2:B, _3:C) 
+
+  public static function create <A,B,C>(_1:A, _2:B, _3:C)
   {
     return new Tup3(_1, _2, _3);
   }
-  
-  public function toString () 
+
+  public function toString ()
   {
     var s = Std.string;
     return "(" + s(_1) + "," + s(_2) + "," + s(_3) + ")";
   }
-  
-  
+
+
 }
 
-class Tup4<A,B,C,D> 
+class Tup4<A,B,C,D>
 {
   public var _1(default, null):A;
   public var _2(default, null):B;
   public var _3(default, null):C;
   public var _4(default, null):D;
-  
-  function new (_1:A, _2:B, _3:C, _4:D) 
+
+  function new (_1:A, _2:B, _3:C, _4:D)
   {
     this._1 = _1;
     this._2 = _2;
     this._3 = _3;
     this._4 = _4;
   }
-  public static function create <A,B,C,D>(_1:A, _2:B, _3:C, _4:D) 
+  public static function create <A,B,C,D>(_1:A, _2:B, _3:C, _4:D)
   {
     return new Tup4(_1, _2, _3, _4);
   }
-  public function toString () 
+  public function toString ()
   {
     var s = Std.string;
     return "(" + s(_1) + "," + s(_2) + "," + s(_3) + "," + s(_4) + ")";
   }
-  
-  
+
+
 }
 
-class Tup5<A,B,C,D,E> 
+class Tup5<A,B,C,D,E>
 {
   public var _1(default, null):A;
   public var _2(default, null):B;
   public var _3(default, null):C;
   public var _4(default, null):D;
   public var _5(default, null):E;
-  
-  function new (_1:A, _2:B, _3:C, _4:D, _5:E) 
+
+  function new (_1:A, _2:B, _3:C, _4:D, _5:E)
   {
     this._1 = _1;
     this._2 = _2;
@@ -198,30 +212,30 @@ class Tup5<A,B,C,D,E>
     this._4 = _4;
     this._5 = _5;
   }
-  public static function create <A,B,C,D, E>(_1:A, _2:B, _3:C, _4:D, _5:E) 
+  public static function create <A,B,C,D, E>(_1:A, _2:B, _3:C, _4:D, _5:E)
   {
     return new Tup5(_1, _2, _3, _4, _5);
   }
-  public function toString () 
+  public function toString ()
   {
     var s = Std.string;
     return "(" +s( _1) + "," + s(_2) + "," + s(_3) + "," + s(_4) + "," + s(_5) + ")";
   }
-  
+
 }
 
 
-class Tup6<A,B,C,D,E,F> 
+class Tup6<A,B,C,D,E,F>
 {
-  
+
   public var _1(default, null):A;
   public var _2(default, null):B;
   public var _3(default, null):C;
   public var _4(default, null):D;
   public var _5(default, null):E;
   public var _6(default, null):F;
-  
-  function new (_1:A, _2:B, _3:C, _4:D, _5:E,_6:F) 
+
+  function new (_1:A, _2:B, _3:C, _4:D, _5:E,_6:F)
   {
     this._1 = _1;
     this._2 = _2;
@@ -230,22 +244,163 @@ class Tup6<A,B,C,D,E,F>
     this._5 = _5;
     this._6 = _6;
   }
-  
-  public static function create <A,B,C,D,E,F>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F) 
+
+  public static function create <A,B,C,D,E,F>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F)
   {
     return new Tup6(_1, _2, _3, _4, _5, _6);
   }
-  
-  public function toString () 
+
+  public function toString ()
   {
     var s = Std.string;
-    
+
     return "(" + s(_1) + ","
-               + s(_2) + "," 
-               + s(_3) + "," 
-               + s(_4) + "," 
-               + s(_5) + "," 
+               + s(_2) + ","
+               + s(_3) + ","
+               + s(_4) + ","
+               + s(_5) + ","
                + s(_6) + ")";
   }
-  
+
 }
+
+
+class Tup7<A,B,C,D,E,F,G>
+{
+
+  public var _1(default, null):A;
+  public var _2(default, null):B;
+  public var _3(default, null):C;
+  public var _4(default, null):D;
+  public var _5(default, null):E;
+  public var _6(default, null):F;
+  public var _7(default, null):G;
+
+  function new (_1:A, _2:B, _3:C, _4:D, _5:E,_6:F, _7:G)
+  {
+    this._1 = _1;
+    this._2 = _2;
+    this._3 = _3;
+    this._4 = _4;
+    this._5 = _5;
+    this._6 = _6;
+    this._7 = _7;
+  }
+
+  public static function create <A,B,C,D,E,F,G>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F, _7:G)
+  {
+    return new Tup7(_1, _2, _3, _4, _5, _6, _7);
+  }
+
+  public function toString ()
+  {
+    var s = Std.string;
+
+    return "(" + s(_1) + ","
+               + s(_2) + ","
+               + s(_3) + ","
+               + s(_4) + ","
+               + s(_5) + ","
+               + s(_6) + ","
+               + s(_7) + ")";
+  }
+
+}
+
+
+class Tup8<A,B,C,D,E,F,G,H>
+{
+
+  public var _1(default, null):A;
+  public var _2(default, null):B;
+  public var _3(default, null):C;
+  public var _4(default, null):D;
+  public var _5(default, null):E;
+  public var _6(default, null):F;
+  public var _7(default, null):G;
+  public var _8(default, null):H;
+
+  function new (_1:A, _2:B, _3:C, _4:D, _5:E,_6:F, _7:G, _8:H)
+  {
+    this._1 = _1;
+    this._2 = _2;
+    this._3 = _3;
+    this._4 = _4;
+    this._5 = _5;
+    this._6 = _6;
+    this._7 = _7;
+    this._8 = _8;
+  }
+
+  public static function create <A,B,C,D,E,F,G,H>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F, _7:G, _8:H)
+  {
+    return new Tup8(_1, _2, _3, _4, _5, _6,_7, _8);
+  }
+
+  public function toString ()
+  {
+    var s = Std.string;
+
+    return "(" + s(_1) + ","
+               + s(_2) + ","
+               + s(_3) + ","
+               + s(_4) + ","
+               + s(_5) + ","
+               + s(_6) + ","
+               + s(_7) + ","
+               + s(_8) + ")";
+  }
+
+}
+
+
+
+class Tup9<A,B,C,D,E,F,G,H,I>
+{
+
+  public var _1(default, null):A;
+  public var _2(default, null):B;
+  public var _3(default, null):C;
+  public var _4(default, null):D;
+  public var _5(default, null):E;
+  public var _6(default, null):F;
+  public var _7(default, null):G;
+  public var _8(default, null):H;
+  public var _9(default, null):I;
+
+  function new (_1:A, _2:B, _3:C, _4:D, _5:E,_6:F, _7:G, _8:H, _9:I)
+  {
+    this._1 = _1;
+    this._2 = _2;
+    this._3 = _3;
+    this._4 = _4;
+    this._5 = _5;
+    this._6 = _6;
+    this._7 = _7;
+    this._8 = _8;
+    this._9 = _9;
+  }
+
+  public static function create <A,B,C,D,E,F,G,H,I>(_1:A, _2:B, _3:C, _4:D, _5:E, _6:F, _7:G, _8:H, _9:I)
+  {
+    return new Tup9(_1, _2, _3, _4, _5, _6,_7, _8, _9);
+  }
+
+  public function toString ()
+  {
+    var s = Std.string;
+
+    return "(" + s(_1) + ","
+               + s(_2) + ","
+               + s(_3) + ","
+               + s(_4) + ","
+               + s(_5) + ","
+               + s(_6) + ","
+               + s(_7) + ","
+               + s(_8) + ","
+               + s(_9) + ")";
+  }
+
+}
+
+
