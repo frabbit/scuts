@@ -341,7 +341,7 @@ class Promises
     return p;
   }
 
-  public static function onSuccess <E,T>(p:PromiseG<E,T>,f:T->Void)
+  public static function onSuccess <E,T>(p:PromiseG<E,T>,f:T->Void):PromiseG<E,T>
   {
     if (!p.isComplete())
     {
