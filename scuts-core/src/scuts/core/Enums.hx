@@ -91,6 +91,15 @@ class Enums {
 
 	}
 
+	macro public static function matchWithGuard (x:ExprOf<EnumValue>, caseExpr:Expr, guard:Expr)
+	{
+		return 
+			macro @:pos(x.pos) switch ($x) {
+				case $caseExpr if ($guard): true;
+				case _ : false;
+			}
+	}
+
 
 	macro public static function extractAsVars (x:ExprOf<EnumValue>, m:ExprOf<EnumValue>, ?force:Bool = false)
 	{
