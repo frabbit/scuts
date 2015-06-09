@@ -54,7 +54,7 @@ class Make
     
   public static inline function ifExpr (econd:Expr, ethen:Expr, ?eelse:Expr = null, ?pos:Position):Expr
     return expr(EIf(econd, ethen, eelse), pos);
-	
+  
   public static function anon (fields:Array<{ field : String, expr : Expr }>, ?pos:Position) 
     return expr(EObjectDecl(fields), pos);
   
@@ -67,12 +67,12 @@ class Make
     
   public static function funcExpr (
     ?name:String, ?args:Array<FunctionArg>, ?ret:ComplexType, ?eexpr:Expr, 
-    ?params:Array<{ ?params : Array<TypeParamDecl>, name:String, ?constraints:Array<ComplexType>}>, ?pos:Position) 
+    ?params:Array<{ ?params : Array<TypeParamDecl>, name:String, ?constraints:Array<ComplexType>, ?meta : Metadata}>, ?pos:Position) 
   {
     return expr(EFunction(name, func(args, ret, eexpr, params)), pos);
   }
   
-  public static function func (?args:Array<FunctionArg>, ?ret:ComplexType, ?expr:Expr, ?params:Array<{?params : Array<TypeParamDecl>, name:String, ?constraints:Array<ComplexType>}>) {
+  public static function func (?args:Array<FunctionArg>, ?ret:ComplexType, ?expr:Expr, ?params:Array<{?params : Array<TypeParamDecl>, name:String, ?constraints:Array<ComplexType>, ?meta : Metadata}>) {
     return {
       args: args == null ? [] : args,
       ret: ret,
@@ -92,21 +92,21 @@ class Make
     
   static function anonFields (declarations:Array<String>, ?p:Position) 
   {
-		var e = Context.parse( "{var x: {" + declarations.join("\n") + "}}", p);
+    var e = Context.parse( "{var x: {" + declarations.join("\n") + "}}", p);
 
-		return switch (e.expr) {
-			case EBlock(exprs): switch (exprs[0].expr) {
-				case EVars(v):
-					switch (v[0].type) {
-						case TAnonymous(f): f;
-						default: Scuts.error("Assert");
-					}
-				default: Scuts.error("Assert");
-			}
-			default: Scuts.error("Assert");
-		}
-	}
-	
+    return switch (e.expr) {
+      case EBlock(exprs): switch (exprs[0].expr) {
+        case EVars(v):
+          switch (v[0].type) {
+            case TAnonymous(f): f;
+            default: Scuts.error("Assert");
+          }
+        default: Scuts.error("Assert");
+      }
+      default: Scuts.error("Assert");
+    }
+  }
+  
   public static function call (e:Expr, params:Array<Expr>, ?pos:Position)
     return expr(ECall(e, params), pos);
   
