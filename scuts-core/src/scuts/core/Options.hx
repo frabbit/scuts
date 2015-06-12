@@ -142,11 +142,7 @@ class Options {
     }
   }
   
-  public static inline function isSome <T>(o:Option<T>):Bool return switch (o) 
-  {
-    case Some(_): true;
-    case None:    false;
-  }
+  public static inline function isSome <T>(o:Option<T>):Bool return o.match(Some(_));
   
   public static inline function isNone <T>(o:Option<T>):Bool 
   {
