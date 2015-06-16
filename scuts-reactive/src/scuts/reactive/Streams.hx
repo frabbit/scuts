@@ -1668,11 +1668,11 @@ class Streams
    *
    * @param eq  The Function used to check event equality
    */
-  public static function uniqueEvents<T>(s:Stream<T>, ?eq: T -> T -> Bool): Stream<T>
+  public static function uniqueEvents<T>(s:Stream<T>, ?eq: T -> T -> Bool, ?init:T = null): Stream<T>
   {
     if (eq == null) eq = function(e1, e2) { return e1 == e2; }
 
-    var lastEvent: T = null;
+    var lastEvent: T = init;
 
     return Streams.create(
       function(pulse: Pulse<T>): Propagation<T>

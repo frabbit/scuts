@@ -189,7 +189,7 @@ class Behaviours
 
   public static function uniqueEvents<T>(s:Behaviour<T>, ?eq: T -> T -> Bool): Behaviour<T>
   {
-    return s.stream.uniqueEvents(eq).toBehaviour(s.get());
+    return s.stream.uniqueEvents(eq, s.get()).toBehaviour(s.get());
   }
 
   public static function applyTo <T>(s:Behaviour<T>, f:T->Void):StreamSubscription
