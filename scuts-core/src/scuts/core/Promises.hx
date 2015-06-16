@@ -789,6 +789,11 @@ class Promises
   {
     return liftF4(f)(a,b,c,d);
   }
+  public static inline function
+  zipWith5<A,B,C,D,E,F,Z>(a:PromiseG<Z,A>, b:PromiseG<Z,B>, c:PromiseG<Z,C>, d:PromiseG<Z,D>, e:PromiseG<Z,E>, f:A->B->C->D->E->F):PromiseG<Z,F>
+  {
+    return liftF5(f)(a,b,c,d,e);
+  }
 
   @:noUsing public static function liftF0 <E,A> (f:Void->A):Void->PromiseG<E,A>
   {
