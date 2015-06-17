@@ -249,7 +249,9 @@ class Promises
   public static function progress <E,T>(p:DeferredG<E,T>,percent:Percent):DeferredG<E,T>
   {
     Assert.isTrue(percent >= 0.0 && percent <= 1.0, null);
-    for (l in p.promise()._progressListeners) l(percent);
+    if (!p.isComplete()) {
+      for (l in p.promise()._progressListeners) l(percent);
+    }
     return asDeferred(p);
   }
 
