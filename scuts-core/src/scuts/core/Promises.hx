@@ -269,9 +269,10 @@ class Promises
       if (!p.isCompleteDoubleCheck())
       {
         for (c in p.promise()._completeListeners) c(val);
+        
+        p.progress(1.0);
         p.promise()._value = Some(val);
         p.promise()._complete = true;
-        p.progress(1.0);
 
 
         p.clearListeners();
