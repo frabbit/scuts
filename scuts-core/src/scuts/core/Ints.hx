@@ -12,6 +12,8 @@ class Ints
 
   public static inline  function div(a:Int, b:Int):Int return Std.int(a / b);
 
+  public static inline  function abs(a:Int):Int return a < 0 ? -a : a;
+
   public static inline  function eq(a:Int, b:Int):Bool return a == b;
 
   public static inline function max(a:Int, b:Int) return a > b ? a : b;
