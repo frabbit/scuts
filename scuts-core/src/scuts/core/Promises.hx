@@ -237,7 +237,11 @@ class Promises
     else
     {
       lock(p);
-      if (!p.isCompleteDoubleCheck()) p._progressListeners.push(f)
+
+      if (!p.isCompleteDoubleCheck()) {
+        Assert.isTrue(p._progressListeners != null);
+        p._progressListeners.push(f);
+      }
       else p.onProgress(f);
       unlock(p);
     }
@@ -250,6 +254,7 @@ class Promises
   {
     Assert.isTrue(percent >= 0.0 && percent <= 1.0, null);
     if (!p.isComplete()) {
+      Assert.isTrue(p.promise()._progressListeners != null);
       for (l in p.promise()._progressListeners) l(percent);
     }
     return asDeferred(p);
@@ -269,6 +274,7 @@ class Promises
       if (!p.isCompleteDoubleCheck())
       {
         p.progress(1.0);
+        Assert.isTrue(p.promise()._completeListeners != null);
         for (c in p.promise()._completeListeners) c(val);
         p.promise()._value = Some(val);
         p.promise()._complete = true;
@@ -314,8 +320,10 @@ class Promises
     else
     {
       p.lock();
-      if (!p.isCompleteDoubleCheck())
+      if (!p.isCompleteDoubleCheck()) {
+        Assert.isTrue(p._completeListeners != null);
         p._completeListeners.push(f);
+      }
       else p.onComplete(f);
       p.unlock();
     }
@@ -334,7 +342,10 @@ class Promises
     if (!p.isComplete())
     {
       p.lock();
-      if (!p.isCompleteDoubleCheck()) p._completeListeners.push(function (x) x.eachFailure(f));
+      if (!p.isCompleteDoubleCheck()) {
+        Assert.isTrue(p._completeListeners != null);
+        p._completeListeners.push(function (x) x.eachFailure(f));
+      }
       else p.onFailure(f);
       p.unlock();
     }
@@ -348,7 +359,10 @@ class Promises
     if (!p.isComplete())
     {
       p.lock();
-      if (!p.isCompleteDoubleCheck()) p._completeListeners.push(function (x) x.each(f));
+      if (!p.isCompleteDoubleCheck()) {
+        Assert.isTrue(p._completeListeners != null);
+        p._completeListeners.push(function (x) x.each(f));
+      }
       else p.onSuccess(f);
       p.unlock();
 
