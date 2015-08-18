@@ -234,6 +234,16 @@ class Arrays
     return res;
   }
 
+  public static inline function count <A> (a:Array<A>, pred:A->Bool):Array<A>
+  {
+    var res = 0;
+    for ( e in a)
+    {
+      if (pred(e)) res += 1;
+    }
+    return res;
+  }
+
   public static function mutatingFilter <A> (a:Array<A>, filter:A->Bool):Void
   {
     var i = 0;
