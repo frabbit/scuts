@@ -234,7 +234,7 @@ class Arrays
     return res;
   }
 
-  public static inline function count <A> (a:Array<A>, pred:A->Bool):Array<A>
+  public static inline function count <A> (a:Array<A>, pred:A->Bool):Int
   {
     var res = 0;
     for ( e in a)
