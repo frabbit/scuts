@@ -55,9 +55,46 @@ class Dates
     return Date.fromTime( Math.floor(d.getTime() / 1000)*1000);
   }
 
-  public static function eq (d1:Date, d2:Date):Bool
+  public static inline function eq (d1:Date, d2:Date):Bool
   {
-  	return d1.getTime() == d2.getTime();
+  	return compare(d1, d2) == 0;
+  }
+
+  public static function compare (d1:Date, d2:Date):Int
+  {
+    var diff = d1.getTime() - d2.getTime();
+    return diff < 0 ? -1 : (diff > 0 ? 1 : 0);
+  }
+
+  public static inline function less (d1:Date, d2:Date):Bool {
+    return compare(d1, d2) < 0;
+  }
+
+  public static inline function greater (d1:Date, d2:Date):Bool {
+    return compare(d1, d2) > 0;
+  }
+
+  public static inline function lessOrEq (d1:Date, d2:Date):Bool {
+    return compare(d1, d2) <= 0;
+  }
+
+  public static inline function greaterOrEq (d1:Date, d2:Date):Bool {
+    return compare(d1, d2) >= 0;
+  }
+
+  public static inline function isBefore (d:Date, other:Date):Bool
+  {
+    return less(d, other);
+  }
+
+  public static inline function isAfter (d:Date, other:Date):Bool
+  {
+    return greater(d, other);
+  }
+
+  public static inline function isInBetween (d:Date, begin:Date, end:Date):Bool
+  {
+    return greaterOrEq(d, begin) && lessOrEq(d, end);
   }
 
 }
