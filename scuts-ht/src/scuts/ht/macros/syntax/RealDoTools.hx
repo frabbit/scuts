@@ -80,6 +80,9 @@ class RealDoTools {
   public static function build (exprs:Array<Expr>, ?m:Expr)
   {
 
+    var id = Context.signature(exprs);
+    if (Caches.doCache.exists(id)) return Caches.doCache.get(id);
+
     var res = if (exprs.length > 0)
     {
       var e = exprs[0];
@@ -95,6 +98,7 @@ class RealDoTools {
     {
       Scuts.error("Invalid Do-Syntax - You have to provide at least one Expression");
     }
+    Caches.doCache.set(id, res);
     return res;
   }
 
