@@ -80,30 +80,21 @@ class RealDoTools {
   public static function build (exprs:Array<Expr>, ?m:Expr)
   {
 
-    var id = Context.signature(exprs);
-    if (Caches.doCache.exists(id)) return Caches.doCache.get(id);
-
     var res = if (exprs.length > 0)
     {
       var e = exprs[0];
       var o = e.extractBinOpRightExpr(function (b) return b == Binop.OpLte).getOrElseConst(e);
-      //var upcast = try Tup2.create(Resolver.applyImplicitUpcast(o, false, true), true) catch (e:Error) Tup2.create(o, false);
-
 
       var isZero = requiresMonadEmpty(exprs);
       var monadExpr = if (m == null) getMonadExpr(o, isZero) else m;
 
-
-
       var res = buildWithMonad(monadExpr, exprs, false, isZero, m);
-      //Resolver.applyImplicitDowncast(res, true);
       res;
     }
     else
     {
       Scuts.error("Invalid Do-Syntax - You have to provide at least one Expression");
     }
-    Caches.doCache.set(id, res);
     return res;
   }
 
