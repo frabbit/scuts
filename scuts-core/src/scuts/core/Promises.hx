@@ -275,11 +275,9 @@ class Promises
       {
         p.progress(1.0);
         Assert.isTrue(p.promise()._completeListeners != null);
-        for (c in p.promise()._completeListeners) c(val);
         p.promise()._value = Some(val);
         p.promise()._complete = true;
-
-
+        for (c in p.promise()._completeListeners) c(val);
         p.clearListeners();
       }
       p.unlock();
