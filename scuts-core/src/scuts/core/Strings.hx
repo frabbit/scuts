@@ -191,19 +191,11 @@ class Strings
     var count = s.length;
 
     if (count > 0) {
-      // s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]
       for (i in 0...count) {
-        h = h + StringTools.fastCodeAt(s, i)*(powInt32(31,(count-1-i)));
+        h = h * (31:haxe.Int32) + (StringTools.fastCodeAt(s, i):haxe.Int32);
       }
     }
     return h;
   }
-
-  static function powInt32 (a:haxe.Int32, b:haxe.Int32):haxe.Int32 {
-    for (x in 0...b) {
-      a = a * b;
-    }
-    return a;
-   }
 
 }
