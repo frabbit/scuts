@@ -248,8 +248,11 @@ class Arrays
   {
     var i = 0;
     while (i < a.length) {
-      if (!filter(a[i])) a.splice(i,1);
-      i++;
+      if (!filter(a[i])) {
+        a.splice(i,1);
+      } else {
+        i++;
+      }
     }
   }
   public static function orderByIntCompare <A> (a:Array<A>, cmp:A->A->Int):Array<A>
@@ -265,8 +268,9 @@ class Arrays
     while (i < a.length) {
       if (removeWhen(a[i])) {
         a.splice(i,1);
+      } else {
+        i++;
       }
-      i++;
     }
 
   }
